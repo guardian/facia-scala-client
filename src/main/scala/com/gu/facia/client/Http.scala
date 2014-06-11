@@ -1,5 +1,7 @@
 package com.gu.facia.client
 
+import scala.concurrent.Future
+
 case class HttpResponse(
   statusCode: Int,
   statusLine: String,
@@ -7,5 +9,5 @@ case class HttpResponse(
 )
 
 trait Http {
-  def get(url: String): HttpResponse
+  def get(url: Url): Future[HttpResponse]
 }
