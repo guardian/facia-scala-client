@@ -1,0 +1,61 @@
+{
+  "live" : [ {
+    "id" : "football/2014/jun/11/mesut-ozil-germany-criticism-low-wenger",
+    "frontPublicationDate" : 1402561816302,
+    "meta" : {
+      "headline" : "Özil hits back at his critics",
+      "group" : "0"
+    }
+  }, {
+    "id" : "football/ng-interactive/2014/jun/11/-sp-world-cup-2014-predictions-game",
+    "frontPublicationDate" : 1402561266726,
+    "meta" : {
+      "group" : "0"
+    }
+  }, {
+    "id" : "football/blog/2014/jun/11/world-cup-stunning-moments-johan-cruyff-turn-1974",
+    "frontPublicationDate" : 1402500087629,
+    "meta" : {
+      "headline" : "Stunning World Cup moments: the Cruyff Turn is born, 1974",
+      "trailText" : "<strong>Scott Murray: </strong>How Cruyff's dummy became the enduring symbol of Total Football",
+      "group" : "0"
+    }
+  }, {
+    "id" : "football/quiz/2014/jun/11/world-cup-2014-the-ultimate-world-cup-trivia-quiz",
+    "frontPublicationDate" : 1402500092818,
+    "meta" : {
+      "headline" : "The ultimate World Cup trivia quiz",
+      "group" : "0"
+    }
+  }, {
+    "id" : "football/blog/2014/jun/11/sepp-blatter-fifa-qatar",
+    "frontPublicationDate" : 1402500242485,
+    "meta" : {
+      "headline" : "Why Blatter sees Fifa, not Qatar, as the victim of prejudice",
+      "group" : "0"
+    }
+  }, {
+    "id" : "football/blog/2014/jun/11/world-cup-2014-guardian-writers-predictions",
+    "frontPublicationDate" : 1402561307174,
+    "meta" : {
+      "group" : "0"
+    }
+  }, {
+    "id" : "football/2014/jun/11/world-cup-2014-metro-strikes-threaten-to-clog-football-excitement",
+    "frontPublicationDate" : 1402515536384,
+    "meta" : {
+      "headline" : "Strikes leave Saõ Paulo frozen rather than at fever pitch",
+      "group" : "0"
+    }
+  }, {
+    "id" : "football/2014/jun/11/croatia-niko-kovac-park-bus-brazil-world-cup-2014",
+    "frontPublicationDate" : 1402512543292,
+    "meta" : {
+      "headline" : "Big interview: Niko Kovac",
+      "group" : "0"
+    }
+  } ],
+  "lastUpdated" : "2014-06-12T08:30:20.067Z",
+  "updatedBy" : "Katherine Le Ruez",
+  "updatedEmail" : "katherine.leruez@guardian.co.uk"
+}
