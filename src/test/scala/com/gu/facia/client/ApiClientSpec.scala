@@ -14,7 +14,7 @@ class ApiClientSpec extends Specification {
     }
   }
 
-  val client = ApiClient("loldongs", FakeS3Client)
+  val client = ApiClient("not used", "DEV", FakeS3Client)
 
   "ApiClient" should {
     "fetch the config" in {
