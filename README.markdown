@@ -10,7 +10,7 @@ Usage
 
 Add the following line to your [SBT build file] (http://www.scala-sbt.org/0.13.5/docs/Getting-Started/Basic-Def.html):
 
-    libraryDependencies += "com.gu" %% "facia-api-client" % "0.1"
+    libraryDependencies += "com.gu" %% "facia-api-client" % "0.2"
 
 ### Making calls to the API
 
