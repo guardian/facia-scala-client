@@ -11,7 +11,7 @@ trait S3Client {
   def get(bucket: String, path: String): Future[Array[Byte]]
 }
 
-case class AmazonSdkS3Client(client: AmazonS3Client)(implicit executionContext: ExecutionContext) {
+case class AmazonSdkS3Client(client: AmazonS3Client)(implicit executionContext: ExecutionContext) extends S3Client {
   def get(bucket: String, path: String) = Future {
     IOUtils.toByteArray(client.getObject(bucket, path).getObjectContent)
   }
