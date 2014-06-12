@@ -5,16 +5,16 @@ import scala.concurrent.Future
 import scala.concurrent.Await
 import com.gu.facia.client.lib.ResourcesHelper
 import scala.concurrent.duration.Duration
+import scala.concurrent.ExecutionContext.Implicits.global
 
 class ApiClientSpec extends Specification {
-  object FakeHttp extends Http with ResourcesHelper {
-    override def get(url: Url): Future[HttpResponse] =
-      Future {
-        HttpResponse(200, "OK", slurpOrDie(url.url))
-      }
+  object FakeS3Client extends S3Client with ResourcesHelper {
+    override def get(bucket: String, path: String): Future[Array[Byte]] = Future {
+      slurpOrDie(path).getBytes("utf-8")
+    }
   }
 
-  val client = ApiClient(Url("."), FakeHttp)
+  val client = ApiClient("loldongs", FakeS3Client)
 
   "ApiClient" should {
     "fetch the config" in {
