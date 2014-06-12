@@ -4,17 +4,17 @@ import org.joda.time.DateTime
 import play.api.libs.json.Json
 
 object Trail {
-  implicit val jsonFormat = Json.format[Trail]
+  implicit val jsonReads = Json.reads[Trail]
 }
 
 case class Trail(
   id: String,
-  frontPublicationDate: Int,
+  frontPublicationDate: Long,
   meta: Map[String, String]
 )
 
 object Collection {
-  implicit val jsonFormat = Json.format[Collection]
+  implicit val jsonReads = Json.reads[Collection]
 }
 
 case class Collection(
