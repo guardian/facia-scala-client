@@ -9,7 +9,7 @@ class CollectionSpec extends Specification with ResourcesHelper {
   "Collection" should {
     "deserialize" in {
       val collection = Json.fromJson[Collection](
-        Json.parse(slurpOrDie("aws-frontend-store/frontsapi/collection/2409-31b3-83df0-de5a/collection.json"))
+        Json.parse(slurpOrDie("frontsapi/collection/2409-31b3-83df0-de5a/collection.json"))
       ).get
 
       collection.live must haveLength(8)

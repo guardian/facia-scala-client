@@ -18,8 +18,8 @@ case class ApiClient(bucket: String, s3Client: S3Client)(implicit executionConte
   }
 
   def config: Future[Config] =
-    retrieve[Config]("aws-frontend-store/frontsapi/config/config.json")
+    retrieve[Config]("frontsapi/config/config.json")
 
   def collection(id: String): Future[Collection] =
-    retrieve[Collection](s"aws-frontend-store/frontsapi/collection/$id/collection.json")
+    retrieve[Collection](s"frontsapi/collection/$id/collection.json")
 }
