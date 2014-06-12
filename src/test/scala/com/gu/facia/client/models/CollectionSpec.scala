@@ -8,7 +8,9 @@ import org.joda.time.{DateTimeZone, DateTime}
 class CollectionSpec extends Specification with ResourcesHelper {
   "Collection" should {
     "deserialize" in {
-      val collection = Json.fromJson[Collection](Json.parse(slurpOrDie("2409-31b3-83df0-de5a/collection.json"))).get
+      val collection = Json.fromJson[Collection](
+        Json.parse(slurpOrDie("frontsapi/collection/2409-31b3-83df0-de5a/collection.json"))
+      ).get
 
       collection.live must haveLength(8)
 
