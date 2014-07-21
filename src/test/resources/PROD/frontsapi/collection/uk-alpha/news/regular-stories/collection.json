@@ -1,0 +1,226 @@
+{
+  "live" : [ {
+    "id" : "internal-code/content/442598394",
+    "frontPublicationDate" : 1405921414513,
+    "meta" : {
+      "headline" : "Gaza crisis: Barack Obama calls for immediate ceasefire",
+      "imageAdjust" : "boost",
+      "group" : "2",
+      "supporting" : [ {
+        "id" : "internal-code/content/442603354",
+        "meta" : {
+          "headline" : "Obama adds to international pressure on Israel"
+        }
+      }, {
+        "id" : "internal-code/content/442568601",
+        "meta" : {
+          "headline" : "Special report: Scores killed in deadliest assault in Gaza so far",
+          "imageAdjust" : "boost",
+          "group" : "2"
+        }
+      }, {
+        "id" : "internal-code/content/442626330",
+        "meta" : {
+          "headline" : "How the game has changed since Egypt's tabling of ceasefire plan"
+        }
+      } ]
+    }
+  }, {
+    "id" : "internal-code/content/442617778",
+    "frontPublicationDate" : 1405936947582,
+    "meta" : {
+      "headline" : "First major outbreak of hostilities in Ukraine since MH17 plane crash",
+      "group" : "2",
+      "supporting" : [ {
+        "id" : "internal-code/content/442574155",
+        "meta" : {
+          "headline" : "Chaos reigns in crash site 'free-for-all'",
+          "imageAdjust" : "boost",
+          "group" : "2"
+        }
+      }, {
+        "id" : "internal-code/content/442586117",
+        "meta" : {
+          "headline" : "International pressure builds on rebels to allow free access"
+        }
+      }, {
+        "id" : "internal-code/content/442514261",
+        "meta" : {
+          "headline" : "'Ordinary Russians are horrified and frightened'"
+        }
+      }, {
+        "id" : "internal-code/content/442566852"
+      } ]
+    }
+  }, {
+    "id" : "internal-code/content/442619212",
+    "frontPublicationDate" : 1405937270256,
+    "meta" : {
+      "group" : "0"
+    }
+  }, {
+    "id" : "internal-code/content/442609169",
+    "frontPublicationDate" : 1405937990052,
+    "meta" : {
+      "headline" : "Tony Blair's speech to mark 20 years since being elected Labour leader - follow it here",
+      "group" : "0"
+    }
+  }, {
+    "id" : "internal-code/content/442608867",
+    "frontPublicationDate" : 1405928251646,
+    "meta" : {
+      "group" : "0"
+    }
+  }, {
+    "id" : "internal-code/content/442620759",
+    "frontPublicationDate" : 1405939712346,
+    "meta" : {
+      "group" : "0"
+    }
+  }, {
+    "id" : "internal-code/content/442616753",
+    "frontPublicationDate" : 1405940831903,
+    "meta" : {
+      "group" : "0"
+    }
+  }, {
+    "id" : "internal-code/content/442624241",
+    "frontPublicationDate" : 1405940799595,
+    "meta" : {
+      "group" : "0"
+    }
+  }, {
+    "id" : "internal-code/content/442629754",
+    "frontPublicationDate" : 1405942408426,
+    "meta" : {
+      "group" : "0"
+    }
+  }, {
+    "id" : "internal-code/content/442557408",
+    "frontPublicationDate" : 1405921053884,
+    "meta" : {
+      "group" : "0"
+    }
+  }, {
+    "id" : "internal-code/content/442471299",
+    "frontPublicationDate" : 1405936139520,
+    "meta" : {
+      "group" : "0"
+    }
+  }, {
+    "id" : "internal-code/content/442619565",
+    "frontPublicationDate" : 1405939730462,
+    "meta" : {
+      "group" : "0"
+    }
+  }, {
+    "id" : "internal-code/content/442608866",
+    "frontPublicationDate" : 1405928387952,
+    "meta" : {
+      "group" : "0"
+    }
+  }, {
+    "id" : "internal-code/content/442276220",
+    "frontPublicationDate" : 1405941628508,
+    "meta" : {
+      "group" : "0"
+    }
+  }, {
+    "id" : "internal-code/content/442610331",
+    "frontPublicationDate" : 1405932790501,
+    "meta" : {
+      "group" : "0"
+    }
+  }, {
+    "id" : "internal-code/content/442566430",
+    "frontPublicationDate" : 1405930530471,
+    "meta" : {
+      "headline" : "Superfoods: swap spinach for goji berries and save a packet, says Which?",
+      "group" : "0"
+    }
+  }, {
+    "id" : "internal-code/content/442569239",
+    "frontPublicationDate" : 1405878952943,
+    "meta" : {
+      "headline" : "Ed Balls says Labour supports 'big reform, not big spending'",
+      "trailText" : "Balls says vote at end of three-day conference is evidence of support for manifesto based on 'big reform, not big spending'",
+      "group" : "0"
+    }
+  }, {
+    "id" : "internal-code/content/442579213",
+    "frontPublicationDate" : 1405886177173,
+    "meta" : {
+      "group" : "0"
+    }
+  }, {
+    "id" : "internal-code/content/442613386",
+    "frontPublicationDate" : 1405939756668,
+    "meta" : {
+      "group" : "0"
+    }
+  }, {
+    "id" : "internal-code/content/442571027",
+    "frontPublicationDate" : 1405879508378,
+    "meta" : {
+      "headline" : "I was sacked by Cameron to appease 'the green blob', says Paterson",
+      "group" : "0"
+    }
+  }, {
+    "id" : "internal-code/content/442564447",
+    "frontPublicationDate" : 1405897477766,
+    "meta" : {
+      "group" : "0"
+    }
+  }, {
+    "id" : "internal-code/content/442572038",
+    "frontPublicationDate" : 1405880491371,
+    "meta" : {
+      "group" : "0"
+    }
+  }, {
+    "id" : "internal-code/content/442575911",
+    "frontPublicationDate" : 1405897645566,
+    "meta" : {
+      "group" : "0"
+    }
+  }, {
+    "id" : "internal-code/content/442621289",
+    "frontPublicationDate" : 1405940401394,
+    "meta" : {
+      "group" : "0"
+    }
+  }, {
+    "id" : "internal-code/content/442559128",
+    "frontPublicationDate" : 1405897485966,
+    "meta" : {
+      "group" : "0"
+    }
+  }, {
+    "id" : "internal-code/content/442566432",
+    "frontPublicationDate" : 1405876838535,
+    "meta" : {
+      "group" : "0"
+    }
+  }, {
+    "id" : "internal-code/content/442474434",
+    "frontPublicationDate" : 1405940735738,
+    "meta" : {
+      "group" : "0"
+    }
+  }, {
+    "id" : "internal-code/content/442618800",
+    "frontPublicationDate" : 1405940747658,
+    "meta" : {
+      "group" : "0"
+    }
+  }, {
+    "id" : "internal-code/content/442604288",
+    "frontPublicationDate" : 1405934758672,
+    "meta" : {
+      "group" : "0"
+    }
+  } ],
+  "lastUpdated" : "2014-07-21T11:34:27.928Z",
+  "updatedBy" : "Celine Bijleveld",
+  "updatedEmail" : "celine.bijleveld@guardian.co.uk"
+}
