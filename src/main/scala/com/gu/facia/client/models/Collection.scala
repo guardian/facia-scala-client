@@ -13,8 +13,8 @@ sealed trait MetaDataCommonFields {
   val group: Option[String]
   val imageAdjust: Option[String]
   val imageSrc: Option[String]
-  val imageSrcWidth: Option[Int]
-  val imageSrcHeight: Option[Int]
+  val imageSrcWidth: Option[String]
+  val imageSrcHeight: Option[String]
   val isBreaking: Option[Boolean]
 }
 
@@ -47,8 +47,8 @@ case class SupportingItemMetaData(
   group: Option[String],
   imageAdjust: Option[String],
   imageSrc: Option[String],
-  imageSrcWidth: Option[Int],
-  imageSrcHeight: Option[Int],
+  imageSrcWidth: Option[String],
+  imageSrcHeight: Option[String],
   isBreaking: Option[Boolean]
 ) extends MetaDataCommonFields
 
@@ -91,8 +91,8 @@ case class TrailMetaData(
   group: Option[String],
   imageAdjust: Option[String],
   imageSrc: Option[String],
-  imageSrcWidth: Option[Int],
-  imageSrcHeight: Option[Int],
+  imageSrcWidth: Option[String],
+  imageSrcHeight: Option[String],
   isBreaking: Option[Boolean],
   supporting: Option[List[SupportingItem]]
 ) extends MetaDataCommonFields

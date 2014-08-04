@@ -6,11 +6,13 @@ import com.gu.facia.client.lib.ResourcesHelper
 import org.joda.time.{DateTimeZone, DateTime}
 
 class CollectionSpec extends Specification with ResourcesHelper {
+  def getCollectionFixture(path: String) = Json.fromJson[Collection](
+    Json.parse(slurpOrDie(path))
+  ).get
+
   "Collection" should {
     "deserialize" in {
-      val collection = Json.fromJson[Collection](
-        Json.parse(slurpOrDie("DEV/frontsapi/collection/2409-31b3-83df0-de5a/collection.json"))
-      ).get
+      val collection = getCollectionFixture("DEV/frontsapi/collection/2409-31b3-83df0-de5a/collection.json")
 
       collection.live must haveLength(8)
 
@@ -29,10 +31,16 @@ class CollectionSpec extends Specification with ResourcesHelper {
       collection.updatedEmail mustEqual "katherine.leruez@guardian.co.uk"
     }
 
+    "deserialize content with image src widths and heights attached" in {
+      val collection = getCollectionFixture("PROD/frontsapi/collection/uk-alpha/news/regular-stories/collection2.json")
+
+      collection.live.lift(1) must beSome.which({ item =>
+        item.meta.imageSrcWidth mustEqual Some("940") and (item.meta.imageSrcHeight mustEqual Some("564"))
+      })
+    }
+
     "deserialize content with supporting items" in {
-      val collection = Json.fromJson[Collection](
-        Json.parse(slurpOrDie("PROD/frontsapi/collection/uk-alpha/news/regular-stories/collection.json"))
-      ).get
+      val collection = getCollectionFixture("PROD/frontsapi/collection/uk-alpha/news/regular-stories/collection.json")
 
       collection.live.headOption must beSome.which({ item =>
         item.meta.supporting must beSome.which({ supportingContent =>
