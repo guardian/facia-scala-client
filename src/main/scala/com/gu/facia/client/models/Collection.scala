@@ -104,8 +104,10 @@ object Trail {
 case class Trail(
   id: String,
   frontPublicationDate: Long,
-  meta: TrailMetaData
-)
+  meta: Option[TrailMetaData]
+) {
+  def safeMeta = meta.getOrElse(TrailMetaData.empty)
+}
 
 object Collection {
   implicit val jsonReads = Json.reads[Collection]
