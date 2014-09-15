@@ -7,7 +7,7 @@ import org.joda.time.{DateTimeZone, DateTime}
 
 class CollectionSpec extends Specification with ResourcesHelper {
   def getCollectionFixture(path: String) = Json.fromJson[Collection](
-    Json.parse(slurpOrDie(path))
+    Json.parse(slurpOrDie(path).get)
   ) match {
     case JsSuccess(a, _) => a
     case e @ JsError(_) => println(e)
