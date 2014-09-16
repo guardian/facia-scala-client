@@ -58,7 +58,7 @@ object SupportingItem {
 
 case class SupportingItem(
   id: String,
-  frontPublictionDate: Long,
+  frontPublicationDate: Option[Long],
   meta: Option[SupportingItemMetaData]
 )
 
