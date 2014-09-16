@@ -77,6 +77,7 @@ object TrailMetaData {
     None,
     None,
     None,
+    None,
     None
   )
 }
@@ -94,7 +95,8 @@ case class TrailMetaData(
   imageSrcWidth: Option[String],
   imageSrcHeight: Option[String],
   isBreaking: Option[Boolean],
-  supporting: Option[List[SupportingItem]]
+  supporting: Option[List[SupportingItem]],
+  showMainVideo: Option[Boolean]
 ) extends MetaDataCommonFields
 
 object Trail {
