@@ -19,7 +19,7 @@ sealed trait MetaDataCommonFields {
 }
 
 object SupportingItemMetaData {
-  implicit val jsonFormat = Json.reads[SupportingItemMetaData]
+  implicit val jsonFormat = Json.format[SupportingItemMetaData]
 
   val empty = SupportingItemMetaData(
     None,
