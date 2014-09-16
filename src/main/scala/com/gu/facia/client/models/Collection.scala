@@ -19,7 +19,7 @@ sealed trait MetaDataCommonFields {
 }
 
 object SupportingItemMetaData {
-  implicit val jsonReads = Json.reads[SupportingItemMetaData]
+  implicit val jsonFormat = Json.reads[SupportingItemMetaData]
 
   val empty = SupportingItemMetaData(
     None,
@@ -53,7 +53,7 @@ case class SupportingItemMetaData(
 ) extends MetaDataCommonFields
 
 object SupportingItem {
-  implicit val jsonReads = Json.reads[SupportingItem]
+  implicit val jsonFormat = Json.format[SupportingItem]
 }
 
 case class SupportingItem(
@@ -62,7 +62,7 @@ case class SupportingItem(
 )
 
 object TrailMetaData {
-  implicit val jsonReads = Json.reads[TrailMetaData]
+  implicit val jsonFormat = Json.format[TrailMetaData]
 
   val empty = TrailMetaData(
     None,
@@ -100,7 +100,7 @@ case class TrailMetaData(
 ) extends MetaDataCommonFields
 
 object Trail {
-  implicit val jsonReads = Json.reads[Trail]
+  implicit val jsonFormat = Json.format[Trail]
 }
 
 case class Trail(
@@ -112,7 +112,7 @@ case class Trail(
 }
 
 object Collection {
-  implicit val jsonReads = Json.reads[Collection]
+  implicit val jsonFormat = Json.format[Collection]
 }
 
 case class Collection(
