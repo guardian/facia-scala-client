@@ -2,7 +2,7 @@ package com.gu.facia.client
 
 import scala.concurrent.{ExecutionContext, Future}
 import com.gu.facia.client.models.{Collection, Config}
-import play.api.libs.json.{Reads, Json}
+import play.api.libs.json.{Format, Json}
 
 object ApiClient {
   val Encoding = "utf-8"
@@ -16,7 +16,7 @@ case class ApiClient(
 )(implicit executionContext: ExecutionContext) {
   import ApiClient._
 
-  private def retrieve[A: Reads](key: String) = s3Client.get(bucket, key) map { bytes: Array[Byte] =>
+  private def retrieve[A: Format](key: String) = s3Client.get(bucket, key) map { bytes: Array[Byte] =>
     Json.fromJson[A](Json.parse(new String(bytes, Encoding))) getOrElse {
       throw new JsonDeserialisationError(s"Could not deserialize JSON in $bucket, $key")
     }
