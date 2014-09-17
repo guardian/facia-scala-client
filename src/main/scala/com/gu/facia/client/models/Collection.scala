@@ -16,6 +16,7 @@ sealed trait MetaDataCommonFields {
   val imageSrcWidth: Option[String]
   val imageSrcHeight: Option[String]
   val isBreaking: Option[Boolean]
+  val showMainVideo: Option[Boolean]
 }
 
 object SupportingItemMetaData {
