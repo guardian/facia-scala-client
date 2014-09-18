@@ -106,7 +106,7 @@ case class Trail(
   frontPublicationDate: Long,
   meta: Option[TrailMetaData]
 ) {
-  def safeMeta = meta.getOrElse(TrailMetaData.empty)
+  lazy val safeMeta = meta.getOrElse(TrailMetaData.empty)
 }
 
 object Collection {
