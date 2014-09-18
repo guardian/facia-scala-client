@@ -21,9 +21,9 @@ case class ApiClient(
         Json.fromJson[A](Json.parse(new String(bytes, Encoding))) getOrElse {
           throw new JsonDeserialisationError(s"Could not deserialize JSON in $bucket, $key")
         }
-    case notAuthorized: FaciaNotAuthorized => throw new BackendError(notAuthorized.message)
-    case notFound: FaciaNotFound => throw new BackendError(notFound.message)
-    case unknown: FaciaUnknownError => throw new BackendError(unknown.message)
+    case FaciaNotAuthorized(message) => throw new BackendError(message)
+    case FaciaNotFound(message)  => throw new BackendError(message)
+    case FaciaUnknownError(message)  => throw new BackendError(message)
   }
 
   def config: Future[Config] =
