@@ -18,6 +18,7 @@ sealed trait MetaDataCommonFields {
   val isBreaking: Option[Boolean]
   val isBoosted: Option[Boolean]
   val imageHide: Option[Boolean]
+  val imageReplace: Option[Boolean]
   val showMainVideo: Option[Boolean]
 }
 
@@ -58,6 +59,7 @@ case class SupportingItemMetaData(
   isBreaking: Option[Boolean],
   isBoosted: Option[Boolean],
   imageHide: Option[Boolean],
+  imageReplace: Option[Boolean],
   showMainVideo: Option[Boolean]
 ) extends MetaDataCommonFields
 
@@ -108,6 +110,7 @@ case class TrailMetaData(
   isBreaking: Option[Boolean],
   isBoosted: Option[Boolean],
   imageHide: Option[Boolean],
+  imageReplace: Option[Boolean],
   supporting: Option[List[SupportingItem]],
   showMainVideo: Option[Boolean]
 ) extends MetaDataCommonFields
