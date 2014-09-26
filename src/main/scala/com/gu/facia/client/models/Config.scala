@@ -27,6 +27,11 @@ case class Front(
   webTitle: Option[String],
   title: Option[String],
   description: Option[String],
+  onPageDescription: Option[String],
+  imageUrl: Option[String],
+  imageWidth: Option[Int],
+  imageHeight: Option[Int],
+  isImageDisplayed: Option[Boolean],
   priority: Option[String]
 )
 
