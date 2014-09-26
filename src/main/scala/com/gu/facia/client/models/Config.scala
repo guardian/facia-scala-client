@@ -7,6 +7,7 @@ object CollectionConfig {
 }
 
 case class CollectionConfig(
+  id: String,
   displayName: Option[String],
   apiQuery: Option[String],
   `type`: Option[String],
@@ -15,7 +16,9 @@ case class CollectionConfig(
   uneditable: Option[Boolean],
   showTags: Option[Boolean],
   showSections: Option[Boolean]
-)
+) {
+  val collectionType = `type`
+}
 
 object Front {
   implicit val jsonReads = Json.reads[Front]
@@ -37,6 +40,8 @@ case class Front(
 
 object Config {
   implicit val jsonReads = Json.reads[Config]
+
+  def empty = Config(Map.empty, Map.empty)
 }
 
 case class Config(
