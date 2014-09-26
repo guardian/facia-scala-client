@@ -5,17 +5,16 @@ import play.api.libs.json.Json
 object CollectionConfig {
   implicit val jsonReads = Json.reads[CollectionConfig]
 
-  val emptyConfig = CollectionConfig("", None, None, None, None, None, None, None, None)
+  val emptyConfig: CollectionConfig = withDefaults(None, None, None, None, None, None, None, None)
 
-  def apply(id: String = "", displayName: Option[String] = None, apiQuery: Option[String] = None,
+  def withDefaults(displayName: Option[String] = None, apiQuery: Option[String] = None,
             `type`: Option[String] = None, href: Option[String] = None, groups: Option[List[String]] = None,
             uneditable: Option[Boolean] = None, showTags: Option[Boolean] = None,
             showSections: Option[Boolean] = None): CollectionConfig
-    = CollectionConfig(id, displayName, apiQuery, `type`, href, groups, uneditable, showTags, showSections)
+    = CollectionConfig(displayName, apiQuery, `type`, href, groups, uneditable, showTags, showSections)
 }
 
 case class CollectionConfig(
-  id: String,
   displayName: Option[String],
   apiQuery: Option[String],
   `type`: Option[String],
