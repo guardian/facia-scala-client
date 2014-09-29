@@ -8,11 +8,13 @@
       "group" : "2",
       "supporting" : [ {
         "id" : "internal-code/content/442603354",
+        "frontPublicationDate" : 1405936947582,
         "meta" : {
           "headline" : "Obama adds to international pressure on Israel"
         }
       }, {
         "id" : "internal-code/content/442568601",
+        "frontPublicationDate" : 1405936947582,
         "meta" : {
           "headline" : "Special report: Scores killed in deadliest assault in Gaza so far",
           "imageAdjust" : "boost",
@@ -20,6 +22,7 @@
         }
       }, {
         "id" : "internal-code/content/442626330",
+        "frontPublicationDate" : 1405936947582,
         "meta" : {
           "headline" : "How the game has changed since Egypt's tabling of ceasefire plan"
         }
@@ -33,6 +36,7 @@
       "group" : "2",
       "supporting" : [ {
         "id" : "internal-code/content/442574155",
+        "frontPublicationDate" : 1405936947582,
         "meta" : {
           "headline" : "Chaos reigns in crash site 'free-for-all'",
           "imageAdjust" : "boost",
@@ -40,16 +44,19 @@
         }
       }, {
         "id" : "internal-code/content/442586117",
+        "frontPublicationDate" : 1405936947582,
         "meta" : {
           "headline" : "International pressure builds on rebels to allow free access"
         }
       }, {
         "id" : "internal-code/content/442514261",
+        "frontPublicationDate" : 1405936947582,
         "meta" : {
           "headline" : "'Ordinary Russians are horrified and frightened'"
         }
       }, {
-        "id" : "internal-code/content/442566852"
+        "id" : "internal-code/content/442566852",
+        "frontPublicationDate" : 1405936947582
       } ]
     }
   }, {

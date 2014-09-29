@@ -8,13 +8,15 @@
       "group" : "2",
       "supporting" : [ {
         "id" : "internal-code/content/443689915",
+        "frontPublicationDate" : 1405936947582,
         "meta" : {
           "headline" : "Gaza refugee camp struck after Israel calls temporary ceasefire",
           "imageAdjust" : "boost",
           "group" : "2"
         }
       }, {
-        "id" : "internal-code/content/443703787"
+        "id" : "internal-code/content/443703787",
+        "frontPublicationDate" : 1405936947582
       } ]
     }
   }, {
@@ -27,11 +29,13 @@
       "imageSrcHeight" : "564",
       "supporting" : [ {
         "id" : "internal-code/content/443704054",
+        "frontPublicationDate" : 1405936947582,
         "meta" : {
           "headline" : "A time of decadence as well as death"
         }
       }, {
         "id" : "internal-code/content/443711599",
+        "frontPublicationDate" : 1405936947582,
         "meta" : {
           "headline" : "Cameron: principles at stake then still relevant"
         }
@@ -83,11 +87,13 @@
       "group" : "0",
       "supporting" : [ {
         "id" : "internal-code/content/443646514",
+        "frontPublicationDate" : 1405936947582,
         "meta" : {
           "headline" : "Reducing immigration would slow UK economy and lead to tax rises, says thinktank"
         }
       }, {
         "id" : "internal-code/content/443660696",
+        "frontPublicationDate" : 1405936947582,
         "meta" : {
           "headline" : "Labour must seize agenda on EU, or risk exit",
           "group" : "0"
