@@ -129,8 +129,8 @@ case class Trail(
   frontPublicationDate: Long,
   meta: Option[TrailMetaData]
 ) {
-  def safeMeta = meta.getOrElse(TrailMetaData.empty)
   val isSnap: Boolean = id.startsWith("snap/")
+  lazy val safeMeta = meta.getOrElse(TrailMetaData.empty)
 }
 
 object Collection {

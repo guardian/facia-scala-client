@@ -16,10 +16,14 @@ case class ApiClient(
 )(implicit executionContext: ExecutionContext) {
   import ApiClient._
 
-  private def retrieve[A: Format](key: String) = s3Client.get(bucket, key) map { bytes: Array[Byte] =>
-    Json.fromJson[A](Json.parse(new String(bytes, Encoding))) getOrElse {
-      throw new JsonDeserialisationError(s"Could not deserialize JSON in $bucket, $key")
-    }
+  private def retrieve[A: Format](key: String) = s3Client.get(bucket, key) map {
+    case FaciaSuccess(bytes) =>
+        Json.fromJson[A](Json.parse(new String(bytes, Encoding))) getOrElse {
+          throw new JsonDeserialisationError(s"Could not deserialize JSON in $bucket, $key")
+        }
+    case FaciaNotAuthorized(message) => throw new BackendError(message)
+    case FaciaNotFound(message)  => throw new BackendError(message)
+    case FaciaUnknownError(message)  => throw new BackendError(message)
   }
 
   def config: Future[Config] =

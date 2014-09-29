@@ -9,8 +9,8 @@ import scala.concurrent.ExecutionContext.Implicits.global
 
 class ApiClientSpec extends Specification {
   object FakeS3Client extends S3Client with ResourcesHelper {
-    override def get(bucket: String, path: String): Future[Array[Byte]] = Future {
-      slurpOrDie(path).getBytes("utf-8")
+    override def get(bucket: String, path: String): Future[FaciaResult] = Future {
+      slurpOrDie(path)
     }
   }
 
