@@ -4,6 +4,14 @@ import play.api.libs.json.Json
 
 object CollectionConfig {
   implicit val jsonFormat = Json.format[CollectionConfig]
+
+  val emptyConfig: CollectionConfig = withDefaults(None, None, None, None, None, None, None, None)
+
+  def withDefaults(displayName: Option[String] = None, apiQuery: Option[String] = None,
+            `type`: Option[String] = None, href: Option[String] = None, groups: Option[List[String]] = None,
+            uneditable: Option[Boolean] = None, showTags: Option[Boolean] = None,
+            showSections: Option[Boolean] = None): CollectionConfig
+    = CollectionConfig(displayName, apiQuery, `type`, href, groups, uneditable, showTags, showSections)
 }
 
 case class CollectionConfig(
@@ -15,7 +23,9 @@ case class CollectionConfig(
   uneditable: Option[Boolean],
   showTags: Option[Boolean],
   showSections: Option[Boolean]
-)
+) {
+  val collectionType = `type`
+}
 
 object Front {
   implicit val jsonFormat = Json.format[Front]
@@ -27,11 +37,18 @@ case class Front(
   webTitle: Option[String],
   title: Option[String],
   description: Option[String],
+  onPageDescription: Option[String],
+  imageUrl: Option[String],
+  imageWidth: Option[Int],
+  imageHeight: Option[Int],
+  isImageDisplayed: Option[Boolean],
   priority: Option[String]
 )
 
 object Config {
   implicit val jsonFormat = Json.format[Config]
+
+  def empty = Config(Map.empty, Map.empty)
 }
 
 case class Config(
