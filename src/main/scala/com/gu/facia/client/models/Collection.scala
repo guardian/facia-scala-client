@@ -20,12 +20,16 @@ sealed trait MetaDataCommonFields {
   val imageHide: Option[Boolean]
   val imageReplace: Option[Boolean]
   val showMainVideo: Option[Boolean]
+  val showKickerTag: Option[Boolean]
+  val showKickerSection: Option[Boolean]
 }
 
 object SupportingItemMetaData {
   implicit val jsonFormat = Json.format[SupportingItemMetaData]
 
   val empty = SupportingItemMetaData(
+    None,
+    None,
     None,
     None,
     None,
@@ -61,7 +65,9 @@ case class SupportingItemMetaData(
   isBoosted: Option[Boolean],
   imageHide: Option[Boolean],
   imageReplace: Option[Boolean],
-  showMainVideo: Option[Boolean]
+  showMainVideo: Option[Boolean],
+  showKickerTag: Option[Boolean],
+  showKickerSection: Option[Boolean]
 ) extends MetaDataCommonFields
 
 object SupportingItem {
@@ -80,6 +86,8 @@ object TrailMetaData {
   implicit val jsonFormat = Json.format[TrailMetaData]
 
   val empty = TrailMetaData(
+    None,
+    None,
     None,
     None,
     None,
@@ -117,7 +125,9 @@ case class TrailMetaData(
   imageHide: Option[Boolean],
   imageReplace: Option[Boolean],
   supporting: Option[List[SupportingItem]],
-  showMainVideo: Option[Boolean]
+  showMainVideo: Option[Boolean],
+  showKickerTag: Option[Boolean],
+  showKickerSection: Option[Boolean]
 ) extends MetaDataCommonFields
 
 object Trail {
