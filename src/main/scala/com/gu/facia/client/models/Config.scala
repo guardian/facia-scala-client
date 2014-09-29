@@ -3,7 +3,7 @@ package com.gu.facia.client.models
 import play.api.libs.json.Json
 
 object CollectionConfig {
-  implicit val jsonReads = Json.reads[CollectionConfig]
+  implicit val jsonFormat = Json.format[CollectionConfig]
 }
 
 case class CollectionConfig(
@@ -18,7 +18,7 @@ case class CollectionConfig(
 )
 
 object Front {
-  implicit val jsonReads = Json.reads[Front]
+  implicit val jsonFormat = Json.format[Front]
 }
 
 case class Front(
@@ -31,7 +31,7 @@ case class Front(
 )
 
 object Config {
-  implicit val jsonReads = Json.reads[Config]
+  implicit val jsonFormat = Json.format[Config]
 }
 
 case class Config(
