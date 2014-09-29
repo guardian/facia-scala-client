@@ -59,7 +59,9 @@ object SupportingItem {
 case class SupportingItem(
   id: String,
   meta: Option[SupportingItemMetaData]
-)
+) {
+  val isSnap: Boolean = id.startsWith("snap/")
+}
 
 object TrailMetaData {
   implicit val jsonReads = Json.reads[TrailMetaData]
@@ -109,6 +111,7 @@ case class Trail(
   meta: Option[TrailMetaData]
 ) {
   def safeMeta = meta.getOrElse(TrailMetaData.empty)
+  val isSnap: Boolean = id.startsWith("snap/")
 }
 
 object Collection {
