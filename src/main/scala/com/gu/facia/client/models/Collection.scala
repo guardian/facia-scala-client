@@ -22,6 +22,8 @@ sealed trait MetaDataCommonFields {
   val showMainVideo: Option[Boolean]
   val showKickerTag: Option[Boolean]
   val showKickerSection: Option[Boolean]
+  val showBoostedHeadline: Option[Boolean]
+  val showQuotedHeadline: Option[Boolean]
 }
 
 object SupportingItemMetaData {
@@ -67,7 +69,9 @@ case class SupportingItemMetaData(
   imageReplace: Option[Boolean],
   showMainVideo: Option[Boolean],
   showKickerTag: Option[Boolean],
-  showKickerSection: Option[Boolean]
+  showKickerSection: Option[Boolean],
+  showBoostedHeadline: Option[Boolean],
+  showQuotedHeadline: Option[Boolean]
 ) extends MetaDataCommonFields
 
 object SupportingItem {
@@ -127,7 +131,9 @@ case class TrailMetaData(
   supporting: Option[List[SupportingItem]],
   showMainVideo: Option[Boolean],
   showKickerTag: Option[Boolean],
-  showKickerSection: Option[Boolean]
+  showKickerSection: Option[Boolean],
+  showBoostedHeadline: Option[Boolean],
+  showQuotedHeadline: Option[Boolean]
 ) extends MetaDataCommonFields
 
 object Trail {
