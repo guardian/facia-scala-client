@@ -10,6 +10,8 @@ sealed trait MetaDataCommonFields {
   val snapCss: Option[String]
   val snapUri: Option[String]
   val trailText: Option[String]
+  val byline: Option[String]
+  val showByline: Option[Boolean]
   val group: Option[String]
   val imageHide: Option[Boolean]
   val imageReplace: Option[Boolean]
@@ -55,6 +57,8 @@ object SupportingItemMetaData {
     None,
     None,
     None,
+    None,
+    None,
     None
   )
 }
@@ -66,6 +70,8 @@ case class SupportingItemMetaData(
   snapCss: Option[String],
   snapUri: Option[String],
   trailText: Option[String],
+  byline: Option[String],
+  showByline: Option[Boolean],
   group: Option[String],
   imageHide: Option[Boolean],
   imageReplace: Option[Boolean],
@@ -123,6 +129,8 @@ object TrailMetaData {
     None,
     None,
     None,
+    None,
+    None,
     None
   )
 }
@@ -134,6 +142,8 @@ case class TrailMetaData(
   snapCss: Option[String],
   snapUri: Option[String],
   trailText: Option[String],
+  byline: Option[String],
+  showByline: Option[Boolean],
   group: Option[String],
   imageHide: Option[Boolean],
   imageReplace: Option[Boolean],
