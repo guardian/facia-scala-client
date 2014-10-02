@@ -11,14 +11,17 @@ sealed trait MetaDataCommonFields {
   val snapUri: Option[String]
   val trailText: Option[String]
   val group: Option[String]
-  val imageAdjust: Option[String]
+  val imageHide: Option[Boolean]
+  val imageReplace: Option[Boolean]
   val imageSrc: Option[String]
   val imageSrcWidth: Option[String]
   val imageSrcHeight: Option[String]
+  val imageCutoutReplace: Option[Boolean]
+  val imageCutoutSrc: Option[String]
+  val imageCutoutSrcWidth: Option[String]
+  val imageCutoutSrcHeight: Option[String]
   val isBreaking: Option[Boolean]
   val isBoosted: Option[Boolean]
-  val imageHide: Option[Boolean]
-  val imageReplace: Option[Boolean]
   val showMainVideo: Option[Boolean]
   val showKickerTag: Option[Boolean]
   val showKickerSection: Option[Boolean]
@@ -30,6 +33,11 @@ object SupportingItemMetaData {
   implicit val jsonFormat = Json.format[SupportingItemMetaData]
 
   val empty = SupportingItemMetaData(
+    None,
+    None,
+    None,
+    None,
+    None,
     None,
     None,
     None,
@@ -59,14 +67,17 @@ case class SupportingItemMetaData(
   snapUri: Option[String],
   trailText: Option[String],
   group: Option[String],
-  imageAdjust: Option[String],
+  imageHide: Option[Boolean],
+  imageReplace: Option[Boolean],
   imageSrc: Option[String],
   imageSrcWidth: Option[String],
   imageSrcHeight: Option[String],
+  imageCutoutReplace: Option[Boolean],
+  imageCutoutSrc: Option[String],
+  imageCutoutSrcWidth: Option[String],
+  imageCutoutSrcHeight: Option[String],
   isBreaking: Option[Boolean],
   isBoosted: Option[Boolean],
-  imageHide: Option[Boolean],
-  imageReplace: Option[Boolean],
   showMainVideo: Option[Boolean],
   showKickerTag: Option[Boolean],
   showKickerSection: Option[Boolean],
@@ -108,6 +119,10 @@ object TrailMetaData {
     None,
     None,
     None,
+    None,
+    None,
+    None,
+    None,
     None
   )
 }
@@ -120,15 +135,17 @@ case class TrailMetaData(
   snapUri: Option[String],
   trailText: Option[String],
   group: Option[String],
-  imageAdjust: Option[String],
+  imageHide: Option[Boolean],
+  imageReplace: Option[Boolean],
   imageSrc: Option[String],
   imageSrcWidth: Option[String],
   imageSrcHeight: Option[String],
+  imageCutoutReplace: Option[Boolean],
+  imageCutoutSrc: Option[String],
+  imageCutoutSrcWidth: Option[String],
+  imageCutoutSrcHeight: Option[String],
   isBreaking: Option[Boolean],
   isBoosted: Option[Boolean],
-  imageHide: Option[Boolean],
-  imageReplace: Option[Boolean],
-  supporting: Option[List[SupportingItem]],
   showMainVideo: Option[Boolean],
   showKickerTag: Option[Boolean],
   showKickerSection: Option[Boolean],
