@@ -47,6 +47,8 @@ object SupportingItemMetaData {
     None,
     None,
     None,
+    None,
+    None,
     None
   )
 }
@@ -90,6 +92,8 @@ object TrailMetaData {
   implicit val jsonFormat = Json.format[TrailMetaData]
 
   val empty = TrailMetaData(
+    None,
+    None,
     None,
     None,
     None,
