@@ -1,7 +1,7 @@
 package com.gu.facia.client.models
 
 import org.specs2.mutable.Specification
-import play.api.libs.json.{JsSuccess, JsError, Json}
+import play.api.libs.json.{JsString, JsSuccess, JsError, Json}
 import com.gu.facia.client.lib.ResourcesHelper
 import org.joda.time.{DateTimeZone, DateTime}
 
@@ -22,9 +22,9 @@ class CollectionSpec extends Specification with ResourcesHelper {
 
       collection.live.find(_.id == "football/quiz/2014/jun/11/world-cup-2014-the-ultimate-world-cup-trivia-quiz") must
         beSome.which({ front =>
-          (front.frontPublicationDate mustEqual 1402500092818l) and (front.meta mustEqual Some(TrailMetaData.empty.copy(
-            headline = Some("The ultimate World Cup trivia quiz"),
-            group = Some("0")
+          (front.frontPublicationDate mustEqual 1402500092818l) and (front.meta mustEqual Some(TrailMetaData.withDefaults(
+            ("headline", JsString("The ultimate World Cup trivia quiz")),
+            ("group", JsString("0"))
           )))
         })
 
