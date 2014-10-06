@@ -43,7 +43,8 @@ case class Front(
   imageWidth: Option[Int],
   imageHeight: Option[Int],
   isImageDisplayed: Option[Boolean],
-  priority: Option[String]
+  priority: Option[String],
+  isHidden: Option[Boolean]
 )
 
 object Config {
