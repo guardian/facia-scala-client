@@ -3,6 +3,16 @@ package com.gu.facia.client.models
 import org.joda.time.DateTime
 import play.api.libs.json.Json
 
+case class Kicker(
+                   customKicker: Option[String],
+                   showCustomKicker: Option[Boolean],
+                   showKickerTag: Option[Boolean],
+                   showKickerSection: Option[Boolean])
+
+object Kicker {
+  implicit val kickerFormat = Json.format[Kicker]
+}
+
 sealed trait MetaDataCommonFields {
   val headline: Option[String]
   val href: Option[String]
@@ -20,17 +30,15 @@ sealed trait MetaDataCommonFields {
   val imageHide: Option[Boolean]
   val imageReplace: Option[Boolean]
   val showMainVideo: Option[Boolean]
-  val showKickerTag: Option[Boolean]
-  val showKickerSection: Option[Boolean]
   val byline: Option[String]
   val showByline: Option[Boolean]
+  val kicker: Option[Kicker]
 }
 
 object SupportingItemMetaData {
   implicit val jsonFormat = Json.format[SupportingItemMetaData]
 
   val empty = SupportingItemMetaData(
-    None,
     None,
     None,
     None,
@@ -70,10 +78,9 @@ case class SupportingItemMetaData(
   imageHide: Option[Boolean],
   imageReplace: Option[Boolean],
   showMainVideo: Option[Boolean],
-  showKickerTag: Option[Boolean],
-  showKickerSection: Option[Boolean],
   byline: Option[String],
-  showByline: Option[Boolean]
+  showByline: Option[Boolean],
+  kicker: Option[Kicker]
 ) extends MetaDataCommonFields
 
 object SupportingItem {
@@ -92,7 +99,6 @@ object TrailMetaData {
   implicit val jsonFormat = Json.format[TrailMetaData]
 
   val empty = TrailMetaData(
-    None,
     None,
     None,
     None,
@@ -134,10 +140,9 @@ case class TrailMetaData(
   imageReplace: Option[Boolean],
   supporting: Option[List[SupportingItem]],
   showMainVideo: Option[Boolean],
-  showKickerTag: Option[Boolean],
-  showKickerSection: Option[Boolean],
   byline: Option[String],
-  showByline: Option[Boolean]
+  showByline: Option[Boolean],
+  kicker: Option[Kicker]
 ) extends MetaDataCommonFields
 
 object Trail {
