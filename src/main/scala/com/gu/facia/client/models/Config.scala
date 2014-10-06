@@ -5,13 +5,15 @@ import play.api.libs.json.Json
 object CollectionConfig {
   implicit val jsonFormat = Json.format[CollectionConfig]
 
-  val emptyConfig: CollectionConfig = withDefaults(None, None, None, None, None, None, None, None)
+  val emptyConfig: CollectionConfig = withDefaults(None, None, None, None, None, None, None, None, None, None, None)
 
   def withDefaults(displayName: Option[String] = None, apiQuery: Option[String] = None,
             `type`: Option[String] = None, href: Option[String] = None, groups: Option[List[String]] = None,
             uneditable: Option[Boolean] = None, showTags: Option[Boolean] = None,
-            showSections: Option[Boolean] = None, hideKickers: Option[Boolean] = None): CollectionConfig
-    = CollectionConfig(displayName, apiQuery, `type`, href, groups, uneditable, showTags, showSections, hideKickers)
+            showSections: Option[Boolean] = None, hideKickers: Option[Boolean] = None,
+            showDateHeader: Option[Boolean] = None, showLatestUpdate: Option[Boolean]): CollectionConfig
+    = CollectionConfig(displayName, apiQuery, `type`, href, groups, uneditable,
+                       showTags, showSections, hideKickers, showDateHeader, showLatestUpdate)
 }
 
 case class CollectionConfig(
@@ -23,7 +25,9 @@ case class CollectionConfig(
   uneditable: Option[Boolean],
   showTags: Option[Boolean],
   showSections: Option[Boolean],
-  hideKickers: Option[Boolean]
+  hideKickers: Option[Boolean],
+  showDateHeader: Option[Boolean],
+  showLatestUpdate: Option[Boolean]
   ) {
   val collectionType = `type`
 }
