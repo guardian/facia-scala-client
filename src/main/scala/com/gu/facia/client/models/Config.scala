@@ -11,7 +11,7 @@ object CollectionConfig {
             `type`: Option[String] = None, href: Option[String] = None, groups: Option[List[String]] = None,
             uneditable: Option[Boolean] = None, showTags: Option[Boolean] = None,
             showSections: Option[Boolean] = None, hideKickers: Option[Boolean] = None,
-            showDateHeader: Option[Boolean] = None, showLatestUpdate: Option[Boolean]): CollectionConfig
+            showDateHeader: Option[Boolean] = None, showLatestUpdate: Option[Boolean] = None): CollectionConfig
     = CollectionConfig(displayName, apiQuery, `type`, href, groups, uneditable,
                        showTags, showSections, hideKickers, showDateHeader, showLatestUpdate)
 }
