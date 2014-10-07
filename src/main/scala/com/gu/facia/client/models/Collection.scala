@@ -29,6 +29,10 @@ sealed trait MetaDataCommonFields {
   lazy val showByline: Option[Boolean] = json.get("showByline").flatMap(_.asOpt[Boolean])
   lazy val customKicker: Option[String] = json.get("customKicker").flatMap(_.asOpt[String])
   lazy val showCustomKicker: Option[Boolean] = json.get("customKicker").flatMap(_.asOpt[Boolean])
+  lazy val imageCutoutReplace: Option[Boolean] = json.get("imageCutoutReplace").flatMap(_.asOpt[Boolean])
+  lazy val imageCutoutSrc: Option[String] = json.get("imageCutoutSrc").flatMap(_.asOpt[String])
+  lazy val imageCutoutSrcWidth: Option[String] = json.get("imageCutoutSrcWidth").flatMap(_.asOpt[String])
+  lazy val imageCutoutSrcHeight: Option[String] = json.get("imageCutoutSrcHeight").flatMap(_.asOpt[String])
 }
 
 object SupportingItemMetaData {
