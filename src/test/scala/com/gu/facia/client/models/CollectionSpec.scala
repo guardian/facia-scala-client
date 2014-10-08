@@ -62,8 +62,6 @@ class CollectionSpec extends Specification with ResourcesHelper {
             item.id mustEqual "internal-code/content/442568601"
 
             item.meta must beSome.which({ meta =>
-              meta.imageAdjust mustEqual Some("boost")
-
               meta.group mustEqual Some("2")
 
               meta.headline mustEqual Some("Special report: Scores killed in deadliest assault in Gaza so far")
