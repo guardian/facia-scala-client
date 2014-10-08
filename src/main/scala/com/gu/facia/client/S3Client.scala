@@ -3,7 +3,7 @@ package com.gu.facia.client
 import com.amazonaws.services.s3.AmazonS3Client
 import com.amazonaws.services.s3.model.AmazonS3Exception
 import org.apache.commons.io.IOUtils
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.{ExecutionContext, Future, blocking}
 import scala.util.Try
 
 /** For mocking in tests, but also to allow someone to define a properly asynchronous S3 client. (The one in the AWS
@@ -15,10 +15,12 @@ trait S3Client {
 
 case class AmazonSdkS3Client(client: AmazonS3Client)(implicit executionContext: ExecutionContext) extends S3Client {
   def get(bucket: String, path: String): Future[FaciaResult] = Future {
-    Try(IOUtils.toByteArray(client.getObject(bucket, path).getObjectContent))
-      .map(FaciaSuccess.apply)
-      .recover(recoverFromAmazonSdkExceptions)
-      .get
+    blocking {
+      Try(IOUtils.toByteArray(client.getObject(bucket, path).getObjectContent))
+        .map(FaciaSuccess.apply)
+        .recover(recoverFromAmazonSdkExceptions)
+        .get
+    }
   }
 
   private def recoverFromAmazonSdkExceptions: PartialFunction[Throwable, FaciaResult] = {

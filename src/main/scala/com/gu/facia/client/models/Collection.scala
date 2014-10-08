@@ -1,95 +1,57 @@
 package com.gu.facia.client.models
 
+import play.api.libs.json._
 import org.joda.time.DateTime
-import play.api.libs.json.Json
+import play.api.libs.json.{JsValue, Json}
 
 sealed trait MetaDataCommonFields {
-  val headline: Option[String]
-  val href: Option[String]
-  val snapType: Option[String]
-  val snapCss: Option[String]
-  val snapUri: Option[String]
-  val trailText: Option[String]
-  val byline: Option[String]
-  val showByline: Option[Boolean]
-  val group: Option[String]
-  val imageHide: Option[Boolean]
-  val imageReplace: Option[Boolean]
-  val imageSrc: Option[String]
-  val imageSrcWidth: Option[String]
-  val imageSrcHeight: Option[String]
-  val imageCutoutReplace: Option[Boolean]
-  val imageCutoutSrc: Option[String]
-  val imageCutoutSrcWidth: Option[String]
-  val imageCutoutSrcHeight: Option[String]
-  val isBreaking: Option[Boolean]
-  val isBoosted: Option[Boolean]
-  val showMainVideo: Option[Boolean]
-  val showKickerTag: Option[Boolean]
-  val showKickerSection: Option[Boolean]
-  val showBoostedHeadline: Option[Boolean]
-  val showQuotedHeadline: Option[Boolean]
+  val json: Map[String, JsValue]
+
+  lazy val headline: Option[String] = json.get("headline").flatMap(_.asOpt[String])
+  lazy val href: Option[String] = json.get("href").flatMap(_.asOpt[String])
+  lazy val snapType: Option[String] = json.get("snapType").flatMap(_.asOpt[String])
+  lazy val snapCss: Option[String] = json.get("snapCss").flatMap(_.asOpt[String])
+  lazy val snapUri: Option[String] = json.get("snapUri").flatMap(_.asOpt[String])
+  lazy val trailText: Option[String] = json.get("trailText").flatMap(_.asOpt[String])
+  lazy val group: Option[String] = json.get("group").flatMap(_.asOpt[String])
+  lazy val imageAdjust: Option[String] = json.get("imageAdjust").flatMap(_.asOpt[String])
+  lazy val imageSrc: Option[String] = json.get("imageSrc").flatMap(_.asOpt[String])
+  lazy val imageSrcWidth: Option[String] = json.get("imageSrcWidth").flatMap(_.asOpt[String])
+  lazy val imageSrcHeight: Option[String] = json.get("imageSrcHeight").flatMap(_.asOpt[String])
+  lazy val isBreaking: Option[Boolean] = json.get("isBreaking").flatMap(_.asOpt[Boolean])
+  lazy val isBoosted: Option[Boolean] = json.get("isBoosted").flatMap(_.asOpt[Boolean])
+  lazy val imageHide: Option[Boolean] = json.get("imageHide").flatMap(_.asOpt[Boolean])
+  lazy val imageReplace: Option[Boolean] = json.get("imageReplace").flatMap(_.asOpt[Boolean])
+  lazy val showMainVideo: Option[Boolean] = json.get("showMainVideo").flatMap(_.asOpt[Boolean])
+  lazy val showKickerTag: Option[Boolean] = json.get("showKickerTag").flatMap(_.asOpt[Boolean])
+  lazy val showKickerSection: Option[Boolean] = json.get("showKickerSection").flatMap(_.asOpt[Boolean])
+  lazy val byline: Option[String] = json.get("byline").flatMap(_.asOpt[String])
+  lazy val showByline: Option[Boolean] = json.get("showByline").flatMap(_.asOpt[Boolean])
+  lazy val customKicker: Option[String] = json.get("customKicker").flatMap(_.asOpt[String])
+  lazy val showCustomKicker: Option[Boolean] = json.get("customKicker").flatMap(_.asOpt[Boolean])
+  lazy val imageCutoutReplace: Option[Boolean] = json.get("imageCutoutReplace").flatMap(_.asOpt[Boolean])
+  lazy val imageCutoutSrc: Option[String] = json.get("imageCutoutSrc").flatMap(_.asOpt[String])
+  lazy val imageCutoutSrcWidth: Option[String] = json.get("imageCutoutSrcWidth").flatMap(_.asOpt[String])
+  lazy val imageCutoutSrcHeight: Option[String] = json.get("imageCutoutSrcHeight").flatMap(_.asOpt[String])
+  lazy val showBoostedHeadline: Option[Boolean] = json.get("showBoostedHeadline").flatMap(_.asOpt[Boolean])
+  lazy val showQuotedHeadline: Option[Boolean] = json.get("showQuotedHeadline").flatMap(_.asOpt[Boolean])
 }
 
 object SupportingItemMetaData {
-  implicit val jsonFormat = Json.format[SupportingItemMetaData]
+  implicit val flatReads: Reads[SupportingItemMetaData] = new Reads[SupportingItemMetaData] {
+    override def reads(j: JsValue): JsResult[SupportingItemMetaData] = {
+      JsSuccess(SupportingItemMetaData(j.asOpt[Map[String, JsValue]].getOrElse(Map.empty)))
+    }
+  }
 
-  val empty = SupportingItemMetaData(
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None
-  )
+  implicit val flatWrites: Writes[SupportingItemMetaData] = new Writes[SupportingItemMetaData] {
+    override def writes(o: SupportingItemMetaData): JsValue = Json.toJson(o.json)
+  }
+
+  val empty = SupportingItemMetaData(Map.empty)
 }
 
-case class SupportingItemMetaData(
-  headline: Option[String],
-  href: Option[String],
-  snapType: Option[String],
-  snapCss: Option[String],
-  snapUri: Option[String],
-  trailText: Option[String],
-  byline: Option[String],
-  showByline: Option[Boolean],
-  group: Option[String],
-  imageHide: Option[Boolean],
-  imageReplace: Option[Boolean],
-  imageSrc: Option[String],
-  imageSrcWidth: Option[String],
-  imageSrcHeight: Option[String],
-  imageCutoutReplace: Option[Boolean],
-  imageCutoutSrc: Option[String],
-  imageCutoutSrcWidth: Option[String],
-  imageCutoutSrcHeight: Option[String],
-  isBreaking: Option[Boolean],
-  isBoosted: Option[Boolean],
-  showMainVideo: Option[Boolean],
-  showKickerTag: Option[Boolean],
-  showKickerSection: Option[Boolean],
-  showBoostedHeadline: Option[Boolean],
-  showQuotedHeadline: Option[Boolean]
-) extends MetaDataCommonFields
+case class SupportingItemMetaData(json: Map[String, JsValue]) extends MetaDataCommonFields
 
 object SupportingItem {
   implicit val jsonFormat = Json.format[SupportingItem]
@@ -104,64 +66,25 @@ case class SupportingItem(
 }
 
 object TrailMetaData {
-  implicit val jsonFormat = Json.format[TrailMetaData]
+  implicit val flatReads: Reads[TrailMetaData] = new Reads[TrailMetaData] {
+    override def reads(j: JsValue): JsResult[TrailMetaData] = {
+      JsSuccess(TrailMetaData(j.asOpt[Map[String, JsValue]].getOrElse(Map.empty)))
+    }
+  }
 
-  val empty = TrailMetaData(
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None
-  )
+  implicit val flatWrites: Writes[TrailMetaData] = new Writes[TrailMetaData] {
+    override def writes(o: TrailMetaData): JsValue = Json.toJson(o.json)
+  }
+
+  val empty = TrailMetaData(Map.empty)
+
+  def withDefaults(defaults: (String, JsValue)*): TrailMetaData =
+    TrailMetaData(defaults.foldLeft(Map.empty[String, JsValue]){case (m, kv) => m + kv})
 }
 
-case class TrailMetaData(
-  headline: Option[String],
-  href: Option[String],
-  snapType: Option[String],
-  snapCss: Option[String],
-  snapUri: Option[String],
-  trailText: Option[String],
-  byline: Option[String],
-  showByline: Option[Boolean],
-  group: Option[String],
-  imageHide: Option[Boolean],
-  imageReplace: Option[Boolean],
-  imageSrc: Option[String],
-  imageSrcWidth: Option[String],
-  imageSrcHeight: Option[String],
-  imageCutoutReplace: Option[Boolean],
-  imageCutoutSrc: Option[String],
-  imageCutoutSrcWidth: Option[String],
-  imageCutoutSrcHeight: Option[String],
-  isBreaking: Option[Boolean],
-  isBoosted: Option[Boolean],
-  showMainVideo: Option[Boolean],
-  showKickerTag: Option[Boolean],
-  showKickerSection: Option[Boolean],
-  showBoostedHeadline: Option[Boolean],
-  showQuotedHeadline: Option[Boolean]
-) extends MetaDataCommonFields
+case class TrailMetaData(json: Map[String, JsValue]) extends MetaDataCommonFields {
+  lazy val supporting: Option[List[SupportingItem]] = json.get("supporting").flatMap(_.asOpt[List[SupportingItem]])
+}
 
 object Trail {
   implicit val jsonFormat = Json.format[Trail]
