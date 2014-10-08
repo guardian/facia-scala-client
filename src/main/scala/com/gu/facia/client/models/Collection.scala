@@ -14,7 +14,6 @@ sealed trait MetaDataCommonFields {
   lazy val snapUri: Option[String] = json.get("snapUri").flatMap(_.asOpt[String])
   lazy val trailText: Option[String] = json.get("trailText").flatMap(_.asOpt[String])
   lazy val group: Option[String] = json.get("group").flatMap(_.asOpt[String])
-  lazy val imageAdjust: Option[String] = json.get("imageAdjust").flatMap(_.asOpt[String])
   lazy val imageSrc: Option[String] = json.get("imageSrc").flatMap(_.asOpt[String])
   lazy val imageSrcWidth: Option[String] = json.get("imageSrcWidth").flatMap(_.asOpt[String])
   lazy val imageSrcHeight: Option[String] = json.get("imageSrcHeight").flatMap(_.asOpt[String])
