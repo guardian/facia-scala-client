@@ -30,6 +30,9 @@ case class CollectionConfig(
   showLatestUpdate: Option[Boolean]
   ) {
   val collectionType = `type`
+  lazy val isPopular = apiQuery.exists { q =>
+    q.contains("show-most-viewed=true") && q.contains("hide-recent-content=true")
+  }
 }
 
 object Front {
