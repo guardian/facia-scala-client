@@ -13,9 +13,14 @@ crossScalaVersions := Seq("2.10.4", "2.11.4")
 libraryDependencies ++= Seq(
   awsSdk,
   commonsIo,
-  playJson,
   specs2
 )
+
+libraryDependencies += (if (scalaVersion.value.startsWith("2.10")) {
+  byVersion.scala2_10.playJson
+} else {
+  byVersion.scala2_11.playJson
+})
 
 releaseSettings
 
