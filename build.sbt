@@ -13,14 +13,13 @@ crossScalaVersions := Seq("2.10.4", "2.11.4")
 libraryDependencies ++= Seq(
   awsSdk,
   commonsIo,
-  specs2
+  specs2,
+  playJson
 )
 
-libraryDependencies += (if (scalaVersion.value.startsWith("2.10")) {
-  byVersion.scala2_10.playJson
-} else {
-  byVersion.scala2_11.playJson
-})
+resolvers ++= Seq(
+  "Typesafe Repository" at "http://repo.typesafe.com/typesafe/releases/"
+)
 
 releaseSettings
 
