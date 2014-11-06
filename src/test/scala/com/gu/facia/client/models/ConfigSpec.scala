@@ -23,6 +23,14 @@ class ConfigSpec extends Specification with ResourcesHelper {
           (front.description must beSome.which(_ == "Latest news, comment and advice on homes, interior design, " +
           "decorating and gardening from the Guardian, the world's leading liberal voice"))
       })
+
+      config.fronts.get("lifeandstyle") must beSome.which({ front =>
+        front.editorsPicksIndex must beSome.which (_ == List(0, 1))
+      })
+
+      config.fronts.get("football/germany") must beSome.which({ front =>
+        front.editorsPicksIndex must beSome.which (_ == List(0))
+      })
     }
   }
 }
