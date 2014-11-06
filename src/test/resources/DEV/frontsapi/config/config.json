@@ -26,10 +26,12 @@
     "lifeandstyle" : {
       "collections" : [ "5011-3940-8793-33a9", "7d2c-a2a3-f7a9-e361", "f09a-00ea-81c0-6a01", "9ff3-334c-b065-e792", "05d7-f9f9-c7f9-1a0b", "c671-9122-a336-f9ed" ],
       "title" : "Food, homes and lifestyle news, video and pictures",
-      "description" : "Food, homes and lifestyle news, video and pictures from the Guardian"
+      "description" : "Food, homes and lifestyle news, video and pictures from the Guardian",
+      "editorsPicksIndex": [0, 1]
     },
     "football/germany" : {
-      "collections" : [ "1faa-2704-ed58-6138", "edfa-ba2d-4867-33f0", "e756-9130-93b0-ee2b", "4ecb-4615-76ed-de57" ]
+      "collections" : [ "1faa-2704-ed58-6138", "edfa-ba2d-4867-33f0", "e756-9130-93b0-ee2b", "4ecb-4615-76ed-de57" ],
+        "editorsPicksIndex": [0]
     },
     "football/croatia" : {
       "collections" : [ "2bc1-6217-97ea-9103", "41ef-7d3d-717f-5d0a", "b1d0-502c-c640-f49a", "4ecb-4615-76ed-de57" ]
