@@ -32,11 +32,11 @@ case class CollectionConfig(
   val collectionType = `type`
 }
 
-object Front {
-  implicit val jsonFormat = Json.format[Front]
+object FrontJson {
+  implicit val jsonFormat = Json.format[FrontJson]
 }
 
-case class Front(
+case class FrontJson(
   collections: List[String],
   navSection: Option[String],
   webTitle: Option[String],
@@ -51,14 +51,13 @@ case class Front(
   isHidden: Option[Boolean]
 )
 
-object Config {
-  implicit val jsonFormat = Json.format[Config]
-
-  def empty = Config(Map.empty, Map.empty)
+object ConfigJson {
+  implicit val jsonFormat = Json.format[ConfigJson]
+  def empty = ConfigJson(Map.empty, Map.empty)
 }
 
-case class Config(
-  fronts: Map[String, Front],
+case class ConfigJson(
+  fronts: Map[String, FrontJson],
   collections: Map[String, CollectionConfig]
 )
 
