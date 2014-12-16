@@ -5,8 +5,9 @@ import com.gu.contentapi.client.model.{Content, SearchResponse}
 import com.gu.facia.api.config.FaciaConfig
 import com.gu.facia.api.contentapi.ContentApi
 import com.gu.facia.api.contentapi.ContentApi.{AdjustItemQuery, AdjustSearchQuery}
+import com.gu.facia.api.models.Front
 import com.gu.facia.client.ApiClient
-import com.gu.facia.client.models.{Collection, CollectionConfig, Front, Trail}
+import com.gu.facia.client.models.{Collection, CollectionConfig, Trail}
 
 import scala.concurrent.ExecutionContext
 
@@ -20,7 +21,7 @@ object FAPI {
     Response.Async.Right(
       for {
         config <- faciaClient.config
-      } yield config.fronts)
+      } yield config.fronts.mapValues(Front.fromFromJson))
   }
 
   def frontForPath(path: String)(implicit capiClient: GuardianContentClient, faciaClient: ApiClient, config: FaciaConfig, ec: ExecutionContext): Response[FrontWithId] = {
