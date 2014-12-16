@@ -16,7 +16,7 @@ case class ApiClient(
 )(implicit executionContext: ExecutionContext) {
   import ApiClient._
 
-  private def retrieve[A: Format](key: String) = s3Client.get(bucket, key) map {
+  private def retrieve[A: Format](key: String): Future[A] = s3Client.get(bucket, key) map {
     case FaciaSuccess(bytes) =>
         Json.fromJson[A](Json.parse(new String(bytes, Encoding))) getOrElse {
           throw new JsonDeserialisationError(s"Could not deserialize JSON in $bucket, $key")
