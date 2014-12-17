@@ -40,7 +40,7 @@ object Front {
       imageWidth <- frontJson.imageWidth
     } yield FrontImage(imageUrl, imageHeight, imageWidth)
 
-  def fromFromJson(frontJson: FrontJson): Front =
+  def fromFrontJson(frontJson: FrontJson): Front =
     Front(
       frontJson.collections.map(CollectionId),
       frontJson.navSection,

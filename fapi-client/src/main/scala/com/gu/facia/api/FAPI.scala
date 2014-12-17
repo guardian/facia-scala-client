@@ -21,7 +21,7 @@ object FAPI {
     Response.Async.Right(
       for {
         config <- faciaClient.config
-      } yield config.fronts.mapValues(Front.fromFromJson))
+      } yield config.fronts.mapValues(Front.fromFrontJson))
   }
 
   def frontForPath(path: String)(implicit capiClient: GuardianContentClient, faciaClient: ApiClient, config: FaciaConfig, ec: ExecutionContext): Response[FrontWithId] = {
