@@ -74,7 +74,7 @@ object CollectionType {
 }
 
 case class CollectionConfig(
-    displayName: String,
+    displayName: Option[String],
     apiQuery: Option[String],
     collectionType: CollectionType,
     href: Option[String],
@@ -89,7 +89,7 @@ case class CollectionConfig(
 object CollectionConfig {
   def fromCollectionJson(collectionJson: CollectionConfigJson): CollectionConfig =
     CollectionConfig(
-      collectionJson.displayName.get,
+      collectionJson.displayName,
       collectionJson.apiQuery,
       collectionJson.collectionType.map(CollectionType.fromCollectionType).getOrElse(CollectionType.default),
       collectionJson.href,
