@@ -30,7 +30,7 @@ object FixedLargeFastXV extends FixedContainerType
 object FixedThrasher extends FixedContainerType
 
 object FixedContainerType {
-  val all: Map[String, Container] = Map(
+  val all: Map[String, CollectionType] = Map(
     ("fixed/small/slow-I", Fixed(FixedSmallSlowI)),
     ("fixed/small/slow-II", Fixed(FixedSmallSlowII)),
     ("fixed/small/slow-III", Fixed(FixedSmallSlowIII)),
@@ -52,14 +52,14 @@ object FixedContainerType {
     ("fixed/thrasher", Fixed(FixedThrasher)))
 }
 
-sealed trait Container
-case class Dynamic(get: DynamicContainerType) extends Container
-case class Fixed(get: FixedContainerType) extends Container
-case object NavList extends Container
-case object NavMediaList extends Container
-case object MostPopular extends Container
+sealed trait CollectionType
+case class Dynamic(get: DynamicContainerType) extends CollectionType
+case class Fixed(get: FixedContainerType) extends CollectionType
+case object NavList extends CollectionType
+case object NavMediaList extends CollectionType
+case object MostPopular extends CollectionType
 
-object Container {
+object CollectionType {
   val all = Map(
     ("dynamic/fast", Dynamic(DynamicFast)),
     ("dynamic/slow", Dynamic(DynamicSlow)),
@@ -69,14 +69,14 @@ object Container {
 
   val default = Fixed(FixedSmallSlowVI)
 
-  def fromCollectionType(collectionType: String): Container =
+  def fromCollectionType(collectionType: String): CollectionType =
     all.getOrElse(collectionType, default)
 }
 
 case class CollectionConfig(
     displayName: String,
     apiQuery: Option[String],
-    collectionType: Container,
+    collectionType: CollectionType,
     href: Option[String],
     groups: Option[Groups],
     uneditable: Boolean,
@@ -91,7 +91,7 @@ object CollectionConfig {
     CollectionConfig(
       collectionJson.displayName.get,
       collectionJson.apiQuery,
-      collectionJson.collectionType.map(Container.fromCollectionType).getOrElse(Container.default),
+      collectionJson.collectionType.map(CollectionType.fromCollectionType).getOrElse(CollectionType.default),
       collectionJson.href,
       collectionJson.groups.map(Groups),
       collectionJson.uneditable.getOrElse(false),
