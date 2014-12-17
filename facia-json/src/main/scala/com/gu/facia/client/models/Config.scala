@@ -2,21 +2,21 @@ package com.gu.facia.client.models
 
 import play.api.libs.json.Json
 
-object CollectionConfig {
-  implicit val jsonFormat = Json.format[CollectionConfig]
+object CollectionConfigJson {
+  implicit val jsonFormat = Json.format[CollectionConfigJson]
 
-  val emptyConfig: CollectionConfig = withDefaults(None, None, None, None, None, None, None, None, None, None, None)
+  val emptyConfig: CollectionConfigJson = withDefaults(None, None, None, None, None, None, None, None, None, None, None)
 
   def withDefaults(displayName: Option[String] = None, apiQuery: Option[String] = None,
             `type`: Option[String] = None, href: Option[String] = None, groups: Option[List[String]] = None,
             uneditable: Option[Boolean] = None, showTags: Option[Boolean] = None,
             showSections: Option[Boolean] = None, hideKickers: Option[Boolean] = None,
-            showDateHeader: Option[Boolean] = None, showLatestUpdate: Option[Boolean] = None): CollectionConfig
-    = CollectionConfig(displayName, apiQuery, `type`, href, groups, uneditable,
+            showDateHeader: Option[Boolean] = None, showLatestUpdate: Option[Boolean] = None): CollectionConfigJson
+    = CollectionConfigJson(displayName, apiQuery, `type`, href, groups, uneditable,
                        showTags, showSections, hideKickers, showDateHeader, showLatestUpdate)
 }
 
-case class CollectionConfig(
+case class CollectionConfigJson(
   displayName: Option[String],
   apiQuery: Option[String],
   `type`: Option[String],
@@ -58,7 +58,7 @@ object ConfigJson {
 
 case class ConfigJson(
   fronts: Map[String, FrontJson],
-  collections: Map[String, CollectionConfig]
+  collections: Map[String, CollectionConfigJson]
 )
 
 

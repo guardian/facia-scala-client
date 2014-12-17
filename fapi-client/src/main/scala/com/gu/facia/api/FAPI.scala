@@ -7,11 +7,11 @@ import com.gu.facia.api.contentapi.ContentApi
 import com.gu.facia.api.contentapi.ContentApi.{AdjustItemQuery, AdjustSearchQuery}
 import com.gu.facia.api.models.Front
 import com.gu.facia.client.ApiClient
-import com.gu.facia.client.models.{Collection, CollectionConfig, Trail}
+import com.gu.facia.client.models.{CollectionConfigJson, Collection, Trail}
 
 import scala.concurrent.ExecutionContext
 
-case class FaciaContent(trail: Trail, content: Content, config: Option[CollectionConfig])
+case class FaciaContent(trail: Trail, content: Content, config: Option[CollectionConfigJson])
 
 case class FrontWithId(id: String, front: Front)
 
