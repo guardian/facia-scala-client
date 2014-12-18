@@ -66,7 +66,7 @@ object FaciaContent {
       trailMetaData.headline.orElse(contentFields.get("headline")).get,
       trailMetaData.href.orElse(contentFields.get("href")).get,
       trailMetaData.trailText.orElse(contentFields.get("trailText")).get,
-      trailMetaData.group.orElse(contentFields.get("group")).get,
+      trailMetaData.group.getOrElse("0"),
       Image.fromTrail(trail),
       trailMetaData.isBreaking.getOrElse(false),
       trailMetaData.isBoosted.getOrElse(false),
