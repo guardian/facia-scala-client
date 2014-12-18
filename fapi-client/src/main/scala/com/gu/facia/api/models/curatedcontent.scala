@@ -1,6 +1,7 @@
 package com.gu.facia.api.models
 
 import com.gu.contentapi.client.model.Content
+import com.gu.facia.api.utils.ItemKicker
 import com.gu.facia.client.models.{TrailMetaData, Trail}
 import play.api.libs.json.JsValue
 
@@ -15,9 +16,21 @@ object Image {
     } yield Image(imageSrc, imageSrcWidth, imageSrcHeight)
 }
 
-sealed trait Kicker
+case class ImageCutout(
+  imageCutoutReplace: Boolean,
+  imageCutoutSrc: String,
+  imageCutoutSrcWidth: String,
+  imageCutoutSrcHeight: String)
 
-sealed trait ImageCutout
+object ImageCutout {
+  def fromTrail(trail: Trail): Option[ImageCutout] =
+    for {
+      imageCutoutReplace <- trail.safeMeta.imageCutoutReplace.getOrElse(false)
+      imageCutoutSrc <- trail.safeMeta.imageCutoutSrc
+      imageCutoutSrcWidth <- trail.safeMeta.imageCutoutSrcWidth
+      imageCutoutSrcHeight <- trail.safeMeta.imageCutoutSrcHeight
+    } yield ImageCutout(imageCutoutReplace, imageCutoutSrc, imageCutoutSrcWidth, imageCutoutSrcHeight)
+}
 
 sealed trait FaciaContent
 object Snap extends FaciaContent
@@ -37,7 +50,7 @@ case class CuratedContent(
   showKickerTag: Boolean,
   byline: String,
   showByLine: Boolean,
-  kicker: Option[Kicker],
+  kicker: Option[ItemKicker],
   imageCutout: Option[ImageCutout],
   showBoostedHeadline: Boolean,
   showQuotedHeadline: Boolean) extends FaciaContent
@@ -63,8 +76,8 @@ object FaciaContent {
       trailMetaData.showKickerTag.getOrElse(false),
       trailMetaData.byline.orElse(contentFields.get("byline")).get,
       trailMetaData.showByline.getOrElse(false),
-      None,
-      None,
+      ItemKicker.fromContentAndTrail(content, trail, None),
+      ImageCutout.fromTrail(trail),
       trailMetaData.showBoostedHeadline.getOrElse(false),
       trailMetaData.showQuotedHeadline.getOrElse(false)
     )
