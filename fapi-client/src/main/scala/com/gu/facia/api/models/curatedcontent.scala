@@ -25,11 +25,11 @@ case class ImageCutout(
 object ImageCutout {
   def fromTrail(trail: Trail): Option[ImageCutout] =
     for {
-      imageCutoutReplace <- trail.safeMeta.imageCutoutReplace.getOrElse(false)
       imageCutoutSrc <- trail.safeMeta.imageCutoutSrc
       imageCutoutSrcWidth <- trail.safeMeta.imageCutoutSrcWidth
       imageCutoutSrcHeight <- trail.safeMeta.imageCutoutSrcHeight
-    } yield ImageCutout(imageCutoutReplace, imageCutoutSrc, imageCutoutSrcWidth, imageCutoutSrcHeight)
+    } yield ImageCutout(trail.safeMeta.imageCutoutReplace.getOrElse(false),
+      imageCutoutSrc, imageCutoutSrcWidth, imageCutoutSrcHeight)
 }
 
 sealed trait FaciaContent
