@@ -98,11 +98,11 @@ case class Trail(
   lazy val safeMeta = meta.getOrElse(TrailMetaData.empty)
 }
 
-object Collection {
-  implicit val jsonFormat = Json.format[Collection]
+object CollectionJson {
+  implicit val jsonFormat = Json.format[CollectionJson]
 }
 
-case class Collection(
+case class CollectionJson(
   name: Option[String],
   live: List[Trail],
   draft: Option[List[Trail]],
