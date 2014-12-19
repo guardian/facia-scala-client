@@ -6,7 +6,7 @@ import com.gu.facia.client.lib.ResourcesHelper
 import org.joda.time.{DateTimeZone, DateTime}
 
 class CollectionSpec extends Specification with ResourcesHelper {
-  def getCollectionFixture(path: String) = Json.fromJson[Collection](
+  def getCollectionFixture(path: String) = Json.fromJson[CollectionJson](
     Json.parse(slurpOrDie(path).get)
   ) match {
     case JsSuccess(a, _) => a

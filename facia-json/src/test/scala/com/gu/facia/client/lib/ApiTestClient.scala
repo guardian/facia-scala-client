@@ -2,7 +2,7 @@ package com.gu.facia.client.lib
 
 import com.amazonaws.auth.BasicAWSCredentials
 import com.amazonaws.services.s3.AmazonS3Client
-import com.gu.facia.client.models.{Collection, ConfigJson}
+import com.gu.facia.client.models.{CollectionJson, ConfigJson}
 import com.gu.facia.client.{AmazonSdkS3Client, ApiClient}
 import play.api.libs.json.{Format, Json}
 
@@ -21,6 +21,6 @@ class ApiTestClient extends ApiClient("bucket", "DEV", AmazonSdkS3Client(Amazon.
   override def config: Future[ConfigJson] =
     retrieve[ConfigJson](s"$environment/frontsapi/config/config.json")
 
-  override def collection(id: String): Future[Collection] =
-    retrieve[Collection](s"$environment/frontsapi/collection/$id/collection.json")
+  override def collection(id: String): Future[CollectionJson] =
+    retrieve[CollectionJson](s"$environment/frontsapi/collection/$id/collection.json")
 }

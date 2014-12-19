@@ -1,6 +1,6 @@
 package com.gu.facia.client
 
-import com.gu.facia.client.models.{ConfigJson, Collection}
+import com.gu.facia.client.models.{ConfigJson, CollectionJson}
 import play.api.libs.json.{Format, Json}
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -30,6 +30,6 @@ case class ApiClient(
   def config: Future[ConfigJson] =
     retrieve[ConfigJson](s"$environment/frontsapi/config/config.json")
 
-  def collection(id: String): Future[Collection] =
-    retrieve[Collection](s"$environment/frontsapi/collection/$id/collection.json")
+  def collection(id: String): Future[CollectionJson] =
+    retrieve[CollectionJson](s"$environment/frontsapi/collection/$id/collection.json")
 }

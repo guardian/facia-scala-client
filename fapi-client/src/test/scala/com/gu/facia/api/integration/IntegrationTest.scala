@@ -13,9 +13,6 @@ import org.scalatest.{Ignore, FreeSpec, ShouldMatchers}
 class IntegrationTest extends FreeSpec with ShouldMatchers with ScalaFutures with IntegrationTestConfig {
   implicit val patience = PatienceConfig(Span(500, Millis))
 
-  val amazonS3Client = new AmazonS3Client(new BasicAWSCredentials("key", "secret-key"))
-  implicit val apiClient: ApiClient = ApiClient("aws-frontend-store", "DEV", AmazonSdkS3Client(amazonS3Client))
-
   "getFronts" - {
     "should return a set of Front instances from the fronts JSON" in {
       FAPI.getFronts().asFuture.futureValue.fold(
