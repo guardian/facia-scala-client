@@ -1,8 +1,9 @@
 package com.gu.facia.client
 
-import scala.concurrent.{ExecutionContext, Future}
-import com.gu.facia.client.models.{Collection, Config}
+import com.gu.facia.client.models.{ConfigJson, Collection}
 import play.api.libs.json.{Format, Json}
+
+import scala.concurrent.{ExecutionContext, Future}
 
 object ApiClient {
   val Encoding = "utf-8"
@@ -14,7 +15,7 @@ case class ApiClient(
     environment: String,
     s3Client: S3Client
 )(implicit executionContext: ExecutionContext) {
-  import ApiClient._
+  import com.gu.facia.client.ApiClient._
 
   private def retrieve[A: Format](key: String) = s3Client.get(bucket, key) map {
     case FaciaSuccess(bytes) =>
@@ -26,8 +27,8 @@ case class ApiClient(
     case FaciaUnknownError(message)  => throw new BackendError(message)
   }
 
-  def config: Future[Config] =
-    retrieve[Config](s"$environment/frontsapi/config/config.json")
+  def config: Future[ConfigJson] =
+    retrieve[ConfigJson](s"$environment/frontsapi/config/config.json")
 
   def collection(id: String): Future[Collection] =
     retrieve[Collection](s"$environment/frontsapi/collection/$id/collection.json")

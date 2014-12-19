@@ -2,12 +2,12 @@ package com.gu.facia.api.utils
 
 import com.gu.contentapi.client.model.{Content, Tag}
 import com.gu.facia.api.FaciaContent
-import com.gu.facia.client.models.{CollectionConfig, Trail}
+import com.gu.facia.client.models.{CollectionConfigJson, Trail}
 
 object ItemKicker {
   private def firstTag(item: Content): Option[Tag] = item.tags.headOption
 
-  def fromContentAndTrail(content: Content, trail: Trail, config: Option[CollectionConfig]): Option[ItemKicker] = {
+  def fromContentAndTrail(content: Content, trail: Trail, config: Option[CollectionConfigJson]): Option[ItemKicker] = {
     lazy val maybeTag = firstTag(content)
 
     def tagKicker = maybeTag.map(TagKicker.fromTag)

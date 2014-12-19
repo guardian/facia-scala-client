@@ -1,13 +1,13 @@
 package com.gu.facia.client.models
 
+import com.gu.facia.client.lib.ResourcesHelper
 import org.specs2.mutable.Specification
 import play.api.libs.json.Json
-import com.gu.facia.client.lib.ResourcesHelper
 
 class ConfigSpec extends Specification with ResourcesHelper {
   "Config" should {
     "deserialize" in {
-      val config = Json.fromJson[Config](Json.parse(slurpOrDie("DEV/frontsapi/config/config.json").get)).get
+      val config = Json.fromJson[ConfigJson](Json.parse(slurpOrDie("DEV/frontsapi/config/config.json").get)).get
 
       config.collections.get("uk/commentisfree/most-viewed/regular-stories") must beSome.which({ collection =>
         (collection.displayName must beSome.which(_ == "Most popular")) and
