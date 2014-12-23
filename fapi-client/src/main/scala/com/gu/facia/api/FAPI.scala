@@ -5,7 +5,7 @@ import com.gu.contentapi.client.model.{Content, SearchResponse}
 import com.gu.facia.api.config.FaciaConfig
 import com.gu.facia.api.contentapi.ContentApi
 import com.gu.facia.api.contentapi.ContentApi.{AdjustItemQuery, AdjustSearchQuery}
-import com.gu.facia.api.models.Front
+import com.gu.facia.api.models.{Collection, Front}
 import com.gu.facia.client.ApiClient
 import com.gu.facia.client.models.{CollectionConfigJson, CollectionJson, Trail}
 
@@ -54,7 +54,7 @@ object FAPI {
    * requirements by providing adjustment functions. The results then have their facia metadata
    * resolved using the collection information.
    */
-  def backfill(backfillQuery: String, collection: CollectionJson,
+  def backfill(backfillQuery: String, collection: Collection,
                adjustSearchQuery: AdjustSearchQuery = identity, adjustItemQuery: AdjustItemQuery = identity)
               (implicit capiClient: GuardianContentClient, ec: ExecutionContext): Response[List[Trail]] = {
     val query = ContentApi.buildBackfillQuery(capiClient, backfillQuery)
@@ -69,7 +69,7 @@ object FAPI {
     }
   }
 
-  def groupTrailAndContent(collection: CollectionJson, searchResponse: SearchResponse): List[FaciaContent] = {
+  private[api] def groupTrailAndContent(collection: CollectionJson, searchResponse: SearchResponse): List[FaciaContent] = {
     val contentList: Map[String, Content] = searchResponse.results.map(c => c.id -> c).toMap
     for {
       trail <- collection.live

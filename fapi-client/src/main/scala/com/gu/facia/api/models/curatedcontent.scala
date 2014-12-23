@@ -2,8 +2,7 @@ package com.gu.facia.api.models
 
 import com.gu.contentapi.client.model.Content
 import com.gu.facia.api.utils.ItemKicker
-import com.gu.facia.client.models.{TrailMetaData, Trail}
-import play.api.libs.json.JsValue
+import com.gu.facia.client.models.{Trail, TrailMetaData}
 
 case class Image(imageSrc: String, imageSrcWidth: String, imageSrcHeight: String)
 
