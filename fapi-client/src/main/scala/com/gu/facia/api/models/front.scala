@@ -15,6 +15,7 @@ case class FrontImage(
 case class CollectionId(id: String) extends AnyVal
 
 case class Front(
+                  id: String,
                   collections: List[CollectionId],
                   navSection: Option[String],
                   webTitle: Option[String],
@@ -40,8 +41,9 @@ object Front {
       imageWidth <- frontJson.imageWidth
     } yield FrontImage(imageUrl, imageHeight, imageWidth)
 
-  def fromFrontJson(frontJson: FrontJson): Front =
+  def fromFrontJson(id: String, frontJson: FrontJson): Front =
     Front(
+      id,
       frontJson.collections.map(CollectionId),
       frontJson.navSection,
       frontJson.webTitle,

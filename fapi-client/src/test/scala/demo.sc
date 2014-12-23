@@ -1,20 +1,17 @@
+import com.amazonaws.auth.BasicAWSCredentials
+import com.amazonaws.services.s3.AmazonS3Client
 import com.gu.contentapi.client.GuardianContentClient
 import com.gu.facia.api.FAPI
-import com.gu.facia.api.config.FaciaConfig
+import com.gu.facia.client.{AmazonSdkS3Client, ApiClient}
 import concurrent.duration._
 
 import scala.concurrent.Await
 
 // demo config
 implicit val capiClient = new GuardianContentClient(apiKey = "test")
-implicit val dispatchClient = dispatch.Http
+private val amazonS3Client = new AmazonS3Client(new BasicAWSCredentials("key", "secret-key"))
+implicit val apiClient: ApiClient = ApiClient("aws-frontend-store", "DEV", AmazonSdkS3Client(amazonS3Client))
 implicit val executionContext = scala.concurrent.ExecutionContext.global
-implicit object FaciaConfig extends FaciaConfig {
-  override def stage: String = "PROD"
-  override def bucket: String = "aws-frontend-store"
-  override def accessKey: String = ""  // don't need these - the json is public at the moment
-  override def secretKey: String = ""
-}
 
 val frontResult = FAPI.frontForPath("uk/business").fold(
   { err => s"error: $err"},

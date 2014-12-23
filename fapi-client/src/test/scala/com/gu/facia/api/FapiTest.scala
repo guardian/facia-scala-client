@@ -1,6 +1,7 @@
 package com.gu.facia.api
 
 import com.gu.contentapi.client.model.{SearchResponse, Content}
+import com.gu.facia.api.models.CuratedContent
 import com.gu.facia.client.models.{Trail, CollectionJson}
 import org.joda.time.DateTime
 import org.scalatest.{FlatSpec, Matchers}
@@ -29,28 +30,22 @@ class FapiTest extends FlatSpec with Matchers {
   "Fapi Client" should "group things correctly" in {
     val searchResponse: SearchResponse = makeSearchResponse(List(contentOne, contentTwo, contentThree))
     val collection: CollectionJson = makeCollectionWithTrails(List(trailOne, trailTwo, trailThree))
-    val content: List[FaciaContent] = FAPI.groupTrailAndContent(collection, searchResponse)
-    content.length should be (3)
-    for (faciaContent <- content)
-      faciaContent.trail.id should be (faciaContent.content.id)
+    val contents: List[CuratedContent] = FAPI.groupTrailAndContent(collection, searchResponse)
+    contents.length should be (3)
   }
 
   it should "drop trails that don't exist" in {
     val searchResponse: SearchResponse = makeSearchResponse(List(contentOne, contentTwo, contentThree))
     val collection: CollectionJson = makeCollectionWithTrails(List(trailOne, trailThree))
-    val content: List[FaciaContent] = FAPI.groupTrailAndContent(collection, searchResponse)
+    val content: List[CuratedContent] = FAPI.groupTrailAndContent(collection, searchResponse)
     content.length should be (2)
-    for (faciaContent <- content)
-      faciaContent.trail.id should be (faciaContent.content.id)
   }
 
   it should "drop content that doesn't exist" in {
     val searchResponse: SearchResponse = makeSearchResponse(List(contentOne))
     val collection: CollectionJson = makeCollectionWithTrails(List(trailOne, trailTwo, trailThree))
-    val content: List[FaciaContent] = FAPI.groupTrailAndContent(collection, searchResponse)
+    val content: List[CuratedContent] = FAPI.groupTrailAndContent(collection, searchResponse)
     content.length should be (1)
-    for (faciaContent <- content)
-      faciaContent.trail.id should be (faciaContent.content.id)
   }
 
 

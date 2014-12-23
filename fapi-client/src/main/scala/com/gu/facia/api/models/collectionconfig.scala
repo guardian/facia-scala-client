@@ -102,4 +102,18 @@ object CollectionConfig {
       collectionJson.showLatestUpdate.getOrElse(false)
     )
 
+  def fromCollection(collection: Collection): CollectionConfig =
+    CollectionConfig(
+      Some(collection.displayName),
+      collection.apiQuery,
+      collection.collectionType,
+      collection.href,
+      collection.groups.map(Group.toGroups),
+      collection.uneditable,
+      collection.showTags,
+      collection.showSections,
+      collection.hideKickers,
+      collection.showDateHeader,
+      collection.showLatestUpdate
+    )
 }

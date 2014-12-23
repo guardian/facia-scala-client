@@ -2,7 +2,7 @@ package com.gu.facia.api.models
 
 import com.gu.contentapi.client.model.Content
 import com.gu.facia.api.utils.FreeHtmlKicker
-import com.gu.facia.client.models.{TrailMetaData, Trail, CollectionJson}
+import com.gu.facia.client.models.{CollectionConfigJson, TrailMetaData, Trail, CollectionJson}
 import org.joda.time.DateTime
 import org.scalatest.mock.MockitoSugar
 import org.scalatest.{path, OneInstancePerTest, ShouldMatchers}
@@ -57,9 +57,10 @@ class CollectionTest extends FreeSpec with ShouldMatchers with MockitoSugar {
       Nil, None, Nil, None
     )
     val contentMap = Map("content-id" -> content)
+    val collectionConfig = CollectionConfig.fromCollectionJson(CollectionConfigJson.withDefaults())
 
-    "creates a Facia collection from the collection JSON" in {
-      val collection = Collection.fromCollectionJsonAndContent(collectionJson, contentMap)
+    "creates a Facia collection from the collection JSON and provided config" in {
+      val collection = Collection.fromCollectionJsonConfigAndContent(collectionJson, collectionConfig, contentMap)
       collection should have (
         'name ("name"),
         'draft (None),
@@ -74,7 +75,7 @@ class CollectionTest extends FreeSpec with ShouldMatchers with MockitoSugar {
     }
 
     "Uses content fields when no facia override exists" in {
-      val collection = Collection.fromCollectionJsonAndContent(collectionJson, contentMap)
+      val collection = Collection.fromCollectionJsonConfigAndContent(collectionJson, collectionConfig, contentMap)
       collection.live.head should have (
         'headline ("Content headline"),
         'href ("Content href")
@@ -87,7 +88,7 @@ class CollectionTest extends FreeSpec with ShouldMatchers with MockitoSugar {
       when(trailMetadata.customKicker).thenReturn(Some("Custom kicker"))
       when(trailMetadata.showKickerCustom).thenReturn(Some(true))
 
-      val collection = Collection.fromCollectionJsonAndContent(collectionJson, contentMap)
+      val collection = Collection.fromCollectionJsonConfigAndContent(collectionJson, collectionConfig, contentMap)
       collection.live.head should have (
         'headline ("trail headline"),
         'href ("trail href"),

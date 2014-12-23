@@ -7,11 +7,11 @@ import com.gu.facia.client.models.{Trail, TrailMetaData}
 case class Image(imageSrc: String, imageSrcWidth: String, imageSrcHeight: String)
 
 object Image {
-  def fromTrail(trail: Trail): Option[Image] =
+  def fromTrail(trailMeta: TrailMetaData): Option[Image] =
     for {
-      imageSrc <- trail.safeMeta.imageSrc
-      imageSrcWidth <- trail.safeMeta.imageSrcWidth
-      imageSrcHeight <- trail.safeMeta.imageSrcHeight
+      imageSrc <- trailMeta.imageSrc
+      imageSrcWidth <- trailMeta.imageSrcWidth
+      imageSrcHeight <- trailMeta.imageSrcHeight
     } yield Image(imageSrc, imageSrcWidth, imageSrcHeight)
 }
 
@@ -22,12 +22,12 @@ case class ImageCutout(
   imageCutoutSrcHeight: String)
 
 object ImageCutout {
-  def fromTrail(trail: Trail): Option[ImageCutout] =
+  def fromTrail(trailMeta: TrailMetaData): Option[ImageCutout] =
     for {
-      imageCutoutSrc <- trail.safeMeta.imageCutoutSrc
-      imageCutoutSrcWidth <- trail.safeMeta.imageCutoutSrcWidth
-      imageCutoutSrcHeight <- trail.safeMeta.imageCutoutSrcHeight
-    } yield ImageCutout(trail.safeMeta.imageCutoutReplace.getOrElse(false),
+      imageCutoutSrc <- trailMeta.imageCutoutSrc
+      imageCutoutSrcWidth <- trailMeta.imageCutoutSrcWidth
+      imageCutoutSrcHeight <- trailMeta.imageCutoutSrcHeight
+    } yield ImageCutout(trailMeta.imageCutoutReplace.getOrElse(false),
       imageCutoutSrc, imageCutoutSrcWidth, imageCutoutSrcHeight)
 }
 
@@ -56,8 +56,7 @@ case class CuratedContent(
 
 object FaciaContent {
 
-  def fromTrailAndContent(trail: Trail, content: Content): CuratedContent = {
-    val trailMetaData: TrailMetaData = trail.safeMeta
+  def fromTrailAndContent(content: Content, trailMetaData: TrailMetaData, collectionConfig: CollectionConfig): CuratedContent = {
     val contentFields: Map[String, String] = content.safeFields
 
     CuratedContent(
@@ -66,7 +65,7 @@ object FaciaContent {
       trailMetaData.href.orElse(contentFields.get("href")).get,
       trailMetaData.trailText.orElse(contentFields.get("trailText")).get,
       trailMetaData.group.getOrElse("0"),
-      Image.fromTrail(trail),
+      Image.fromTrail(trailMetaData),
       trailMetaData.isBreaking.getOrElse(false),
       trailMetaData.isBoosted.getOrElse(false),
       trailMetaData.imageHide.getOrElse(false),
@@ -75,8 +74,8 @@ object FaciaContent {
       trailMetaData.showKickerTag.getOrElse(false),
       trailMetaData.byline.orElse(contentFields.get("byline")).get,
       trailMetaData.showByline.getOrElse(false),
-      ItemKicker.fromContentAndTrail(content, trail, None),
-      ImageCutout.fromTrail(trail),
+      ItemKicker.fromContentAndTrail(content, Some(trailMetaData), Some(collectionConfig)),
+      ImageCutout.fromTrail(trailMetaData),
       trailMetaData.showBoostedHeadline.getOrElse(false),
       trailMetaData.showQuotedHeadline.getOrElse(false)
     )
