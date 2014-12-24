@@ -72,8 +72,8 @@ object FAPI {
       backfillContent <- ContentApi.backfillContentFromResponse(fBackfillResponse)
       configJson <- Response.Async.Right(fConfigJson)
       collectionConfigJson <- Response.fromOption(configJson.collections.get(collectionId.id), NotFound(s"Collection config not found for ${collectionId.id}"))
-      collectionConfig = CollectionConfig.fromCollectionJson(collectionConfigJson)
     } yield {
+      val collectionConfig = CollectionConfig.fromCollectionJson(collectionConfigJson)
       backfillContent.map(FaciaContent.fromTrailAndContent(_, TrailMetaData.empty, collectionConfig))
     }
   }

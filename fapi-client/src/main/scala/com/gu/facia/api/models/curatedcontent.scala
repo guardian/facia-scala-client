@@ -74,7 +74,7 @@ object FaciaContent {
       trailMetaData.showKickerTag.getOrElse(false),
       trailMetaData.byline.orElse(contentFields.get("byline")).get,
       trailMetaData.showByline.getOrElse(false),
-      ItemKicker.fromContentAndTrail(content, Some(trailMetaData), Some(collectionConfig)),
+      ItemKicker.fromContentAndTrail(content, trailMetaData, Some(collectionConfig)),
       ImageCutout.fromTrail(trailMetaData),
       trailMetaData.showBoostedHeadline.getOrElse(false),
       trailMetaData.showQuotedHeadline.getOrElse(false)

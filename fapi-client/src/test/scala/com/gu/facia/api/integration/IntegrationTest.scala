@@ -1,15 +1,14 @@
 package com.gu.facia.api.integration
 
-import com.amazonaws.auth.BasicAWSCredentials
-import com.amazonaws.services.s3.AmazonS3Client
 import com.gu.facia.api.FAPI
-import com.gu.facia.client.{AmazonSdkS3Client, ApiClient}
+import com.gu.facia.api.contentapi.ContentApi.AdjustSearchQuery
+import com.gu.facia.api.models.{MostPopular, Collection}
 import lib.IntegrationTestConfig
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.time.{Millis, Span}
-import org.scalatest.{Ignore, FreeSpec, ShouldMatchers}
+import org.scalatest.{FreeSpec, Ignore, ShouldMatchers}
 
-@Ignore
+
 class IntegrationTest extends FreeSpec with ShouldMatchers with ScalaFutures with IntegrationTestConfig {
   implicit val patience = PatienceConfig(Span(500, Millis))
 
@@ -32,6 +31,32 @@ class IntegrationTest extends FreeSpec with ShouldMatchers with ScalaFutures wit
   }
 
   "getCollection" - {
-    "should return the collection at a given path" ignore {}
+    "should return the collection at a given path" in {
+      FAPI.getCollection("uk-alpha/news/regular-stories").fold(
+        err => fail(s"expected collection, got $err"),
+        collection => collection.live.size should be > 0
+      )
+    }
+
+    "will use the provided function to adjust the query used to hydrate content" in {
+      val adjust: AdjustSearchQuery = q => q.showTags("tone")
+      FAPI.getCollection("uk-alpha/news/regular-stories").fold(
+        err => fail(s"expected collection, got $err"),
+        collection => collection.live.head.content.tags.exists(_.`type` == "tone") should equal(true)
+      )
+    }
+  }
+
+  "backfill" - {
+    val collection = Collection("economy", Nil, None, "updatedBy", "updatedBy@example.com", None,
+      Some("business?edition=uk"), MostPopular, None, false, false, false, false, false, false)
+
+    "can get the backfill for a collection" ignore {}
+
+    "collection metadata is resolved on backfill content" ignore {}
+
+    "item query can be adjusted" ignore {}
+
+    "search query can be adjusted" ignore {}
   }
 }

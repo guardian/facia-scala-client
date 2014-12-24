@@ -7,7 +7,7 @@ import com.gu.facia.client.models.TrailMetaData
 object ItemKicker {
   private def firstTag(item: Content): Option[Tag] = item.tags.headOption
 
-  def fromContentAndTrail(content: Content, trailMeta: Option[TrailMetaData], config: Option[CollectionConfig]): Option[ItemKicker] = {
+  def fromContentAndTrail(content: Content, trailMeta: TrailMetaData, config: Option[CollectionConfig]): Option[ItemKicker] = {
     lazy val maybeTag = firstTag(content)
 
     def tagKicker = maybeTag.map(TagKicker.fromTag)
@@ -17,15 +17,15 @@ object ItemKicker {
       id <- content.sectionId
     } yield SectionKicker(name.capitalize, "/" + id)
 
-    trailMeta.flatMap(_.customKicker) match {
+    trailMeta.customKicker match {
       case Some(kicker)
-        if trailMeta.flatMap(_.snapType).contains("latest") &&
-          trailMeta.flatMap(_.showKickerCustom).exists(identity) &&
-          trailMeta.flatMap(_.snapUri).isDefined => Some(FreeHtmlKickerWithLink(kicker, s"/${trailMeta.flatMap(_.snapUri).get}"))
-      case Some(kicker) if trailMeta.flatMap(_.showKickerCustom).exists(identity) => Some(FreeHtmlKicker(kicker))
-      case _ => if (trailMeta.flatMap(_.showKickerTag).exists(identity) && maybeTag.isDefined) {
+        if trailMeta.snapType.contains("latest") &&
+          trailMeta.showKickerCustom.exists(identity) &&
+          trailMeta.snapUri.isDefined => Some(FreeHtmlKickerWithLink(kicker, s"/${trailMeta.snapUri.get}"))
+      case Some(kicker) if trailMeta.showKickerCustom.exists(identity) => Some(FreeHtmlKicker(kicker))
+      case _ => if (trailMeta.showKickerTag.exists(identity) && maybeTag.isDefined) {
         tagKicker
-      } else if (trailMeta.flatMap(_.showKickerSection).exists(identity)) {
+      } else if (trailMeta.showKickerSection.exists(identity)) {
         sectionKicker
       } else if (config.exists(_.showTags) && maybeTag.isDefined) {
         tagKicker
@@ -39,7 +39,7 @@ object ItemKicker {
     }
   }
 
-  private def tonalKicker(content: Content, trailMeta: Option[TrailMetaData]): Option[ItemKicker] = {
+  private def tonalKicker(content: Content, trailMeta: TrailMetaData): Option[ItemKicker] = {
     def tagsOfType(tagType: String): Seq[Tag] = content.tags.filter(_.`type` == tagType)
     val types: Seq[Tag] = tagsOfType("type")
     val tones: Seq[Tag] = tagsOfType("tone")
@@ -49,7 +49,7 @@ object ItemKicker {
     lazy val isPodcast = types.exists(_.id == Tags.Podcast) || content.tags.exists(_.podcast.isDefined)
     lazy val isCartoon = types.exists(_.id == Tags.Cartoon)
 
-    if (trailMeta.flatMap(_.isBreaking).exists(identity)) {
+    if (trailMeta.isBreaking.exists(identity)) {
       Some(BreakingNewsKicker)
     } else if (content.safeFields.get("liveBloggingNow").exists(_.toBoolean)) {
       Some(LiveKicker)

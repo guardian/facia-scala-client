@@ -103,7 +103,6 @@ object CollectionJson {
 }
 
 case class CollectionJson(
-  name: Option[String],
   live: List[Trail],
   draft: Option[List[Trail]],
   lastUpdated: DateTime,

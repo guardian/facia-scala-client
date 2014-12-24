@@ -42,7 +42,6 @@ class CollectionTest extends FreeSpec with ShouldMatchers with MockitoSugar {
     when(trailMetadata.showQuotedHeadline).thenReturn(None)
     val trail = Trail("content-id", 1L, Some(trailMetadata))
     val collectionJson = CollectionJson(
-      name = Some("name"),
       live = List(trail),
       draft = None,
       lastUpdated = new DateTime(1L),
@@ -56,17 +55,16 @@ class CollectionTest extends FreeSpec with ShouldMatchers with MockitoSugar {
       fields = Some(Map("headline" -> "Content headline", "href" -> "Content href", "trailText" -> "Content trailtext", "byline" -> "Content byline")),
       Nil, None, Nil, None
     )
-    val contentMap = Map("content-id" -> content)
+    val contentMap = Set(content)
     val collectionConfig = CollectionConfig.fromCollectionJson(CollectionConfigJson.withDefaults())
 
     "creates a Facia collection from the collection JSON and provided config" in {
       val collection = Collection.fromCollectionJsonConfigAndContent(collectionJson, collectionConfig, contentMap)
       collection should have (
-        'name ("name"),
         'draft (None),
         'updatedBy ("test"),
         'updatedEmail ("test@example.com"),
-        'displayName (Some("displayName")),
+        'displayName ("displayName"),
         'href (Some("href"))
       )
       collection.live.head should have (

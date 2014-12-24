@@ -24,29 +24,6 @@ class FapiTest extends FlatSpec with Matchers {
   val trailThree: Trail = makeTrailWithId("idthree")
 
   private def makeCollectionWithTrails(trails: List[Trail]): CollectionJson =
-    CollectionJson(None, trails, None, DateTime.now, "", "", None, None)
+    CollectionJson(trails, None, DateTime.now, "", "", None, None)
   val emptyCollection: CollectionJson = makeCollectionWithTrails(Nil)
-
-  "Fapi Client" should "group things correctly" in {
-    val searchResponse: SearchResponse = makeSearchResponse(List(contentOne, contentTwo, contentThree))
-    val collection: CollectionJson = makeCollectionWithTrails(List(trailOne, trailTwo, trailThree))
-    val contents: List[CuratedContent] = FAPI.groupTrailAndContent(collection, searchResponse)
-    contents.length should be (3)
-  }
-
-  it should "drop trails that don't exist" in {
-    val searchResponse: SearchResponse = makeSearchResponse(List(contentOne, contentTwo, contentThree))
-    val collection: CollectionJson = makeCollectionWithTrails(List(trailOne, trailThree))
-    val content: List[CuratedContent] = FAPI.groupTrailAndContent(collection, searchResponse)
-    content.length should be (2)
-  }
-
-  it should "drop content that doesn't exist" in {
-    val searchResponse: SearchResponse = makeSearchResponse(List(contentOne))
-    val collection: CollectionJson = makeCollectionWithTrails(List(trailOne, trailTwo, trailThree))
-    val content: List[CuratedContent] = FAPI.groupTrailAndContent(collection, searchResponse)
-    content.length should be (1)
-  }
-
-
 }
