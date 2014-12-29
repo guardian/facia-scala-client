@@ -12,12 +12,11 @@ import org.scalatest.mock.MockitoSugar
 class CollectionTest extends FreeSpec with ShouldMatchers with MockitoSugar with OneInstancePerTest {
   "fromCollectionJson" - {
     val trailMetadata = spy(TrailMetaData.empty)
-
-    val trail = Trail("content-id", 1L, Some(trailMetadata))
+    val trail = Trail("content-id", 1, Some(trailMetadata))
     val collectionJson = CollectionJson(
       live = List(trail),
       draft = None,
-      lastUpdated = new DateTime(1L),
+      lastUpdated = new DateTime(1),
       updatedBy = "test",
       updatedEmail = "test@example.com",
       displayName = Some("displayName"),
@@ -66,6 +65,21 @@ class CollectionTest extends FreeSpec with ShouldMatchers with MockitoSugar with
         'href ("trail href"),
         'kicker (Some(FreeHtmlKicker("Custom kicker")))
       )
+    }
+
+    "excludes trails where no corresponding content is found" in {
+      val trail2 = Trail("content-id-2", 2, Some(trailMetadata))
+      val collectionJson = CollectionJson(
+        live = List(trail, trail2),
+        draft = None,
+        lastUpdated = new DateTime(1),
+        updatedBy = "test",
+        updatedEmail = "test@example.com",
+        displayName = Some("displayName"),
+        href = Some("href")
+      )
+      val collection = Collection.fromCollectionJsonConfigAndContent(CollectionId("id"), collectionJson, collectionConfig, contentMap)
+      collection.live.map(_.content.id) should equal(List("content-id"))
     }
   }
 }

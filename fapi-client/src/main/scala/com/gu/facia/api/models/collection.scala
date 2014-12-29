@@ -24,17 +24,26 @@ case class Collection(
 
 object Collection {
 
-   // For now, just assumes an entry is in content for every trail in draft and live
   def fromCollectionJsonConfigAndContent(id: CollectionId, collectionJson: CollectionJson, collectionConfig: CollectionConfig, content: Set[Content]): Collection = {
+    // if content is not in the set it was most likely filtered out by the CAPI query, so exclude it
+    // note that this does not currently deal with e.g. snaps
+    val live = collectionJson.live.flatMap { trail =>
+      content.find(_.id == trail.id).map { content =>
+        FaciaContent.fromTrailAndContent(content, trail.safeMeta, collectionConfig)
+      }
+    }
+    val draft = collectionJson.draft.map {
+      _.flatMap { trail =>
+        content.find(_.id == trail.id).map { content =>
+          FaciaContent.fromTrailAndContent(content, trail.safeMeta, collectionConfig)
+        }
+      }
+    }
     Collection(
       id,
       collectionJson.displayName.orElse(collectionConfig.displayName).getOrElse("untitled"),
-      collectionJson.live.map { trail =>
-        FaciaContent.fromTrailAndContent(content.find(_.id == trail.id).get, trail.safeMeta, collectionConfig)
-      },
-      collectionJson.draft.map { _.map { trail =>
-        FaciaContent.fromTrailAndContent(content.find(_.id == trail.id).get, trail.safeMeta, collectionConfig)
-      }},
+      live,
+      draft,
       collectionJson.updatedBy,
       collectionJson.updatedEmail,
       collectionJson.href.orElse(collectionConfig.href),
