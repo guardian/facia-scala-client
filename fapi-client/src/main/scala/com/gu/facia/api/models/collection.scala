@@ -4,6 +4,7 @@ import com.gu.contentapi.client.model.Content
 import com.gu.facia.client.models.CollectionJson
 
 case class Collection(
+  id: CollectionId,
   displayName: String,
   live: List[CuratedContent],
   draft: Option[List[CuratedContent]],
@@ -24,8 +25,9 @@ case class Collection(
 object Collection {
 
    // For now, just assumes an entry is in content for every trail in draft and live
-  def fromCollectionJsonConfigAndContent(collectionJson: CollectionJson, collectionConfig: CollectionConfig, content: Set[Content]): Collection = {
+  def fromCollectionJsonConfigAndContent(id: CollectionId, collectionJson: CollectionJson, collectionConfig: CollectionConfig, content: Set[Content]): Collection = {
     Collection(
+      id,
       collectionJson.displayName.orElse(collectionConfig.displayName).getOrElse("untitled"),
       collectionJson.live.map { trail =>
         FaciaContent.fromTrailAndContent(content.find(_.id == trail.id).get, trail.safeMeta, collectionConfig)

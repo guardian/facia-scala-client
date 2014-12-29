@@ -2,44 +2,17 @@ package com.gu.facia.api.models
 
 import com.gu.contentapi.client.model.Content
 import com.gu.facia.api.utils.FreeHtmlKicker
-import com.gu.facia.client.models.{CollectionConfigJson, TrailMetaData, Trail, CollectionJson}
+import com.gu.facia.client.models.{CollectionConfigJson, CollectionJson, Trail, TrailMetaData}
 import org.joda.time.DateTime
-import org.scalatest.mock.MockitoSugar
-import org.scalatest.{path, OneInstancePerTest, ShouldMatchers}
-import org.scalatest.FreeSpec
 import org.mockito.Mockito._
+import org.scalatest.{OneInstancePerTest, FreeSpec, ShouldMatchers}
+import org.scalatest.mock.MockitoSugar
 
 
-class CollectionTest extends FreeSpec with ShouldMatchers with MockitoSugar {
+class CollectionTest extends FreeSpec with ShouldMatchers with MockitoSugar with OneInstancePerTest {
   "fromCollectionJson" - {
-    val trailMetadata = mock[TrailMetaData]
-    when(trailMetadata.headline).thenReturn(None)
-    when(trailMetadata.href).thenReturn(None)
-    when(trailMetadata.snapType).thenReturn(None)
-    when(trailMetadata.snapCss).thenReturn(None)
-    when(trailMetadata.snapUri).thenReturn(None)
-    when(trailMetadata.trailText).thenReturn(None)
-    when(trailMetadata.group).thenReturn(None)
-    when(trailMetadata.imageSrc).thenReturn(None)
-    when(trailMetadata.imageSrcWidth).thenReturn(None)
-    when(trailMetadata.imageSrcHeight).thenReturn(None)
-    when(trailMetadata.isBreaking).thenReturn(None)
-    when(trailMetadata.isBoosted).thenReturn(None)
-    when(trailMetadata.imageHide).thenReturn(None)
-    when(trailMetadata.imageReplace).thenReturn(None)
-    when(trailMetadata.showMainVideo).thenReturn(None)
-    when(trailMetadata.showKickerTag).thenReturn(None)
-    when(trailMetadata.showKickerSection).thenReturn(None)
-    when(trailMetadata.byline).thenReturn(None)
-    when(trailMetadata.showByline).thenReturn(None)
-    when(trailMetadata.customKicker).thenReturn(None)
-    when(trailMetadata.showKickerCustom).thenReturn(None)
-    when(trailMetadata.imageCutoutReplace).thenReturn(None)
-    when(trailMetadata.imageCutoutSrc).thenReturn(None)
-    when(trailMetadata.imageCutoutSrcWidth).thenReturn(None)
-    when(trailMetadata.imageCutoutSrcHeight).thenReturn(None)
-    when(trailMetadata.showBoostedHeadline).thenReturn(None)
-    when(trailMetadata.showQuotedHeadline).thenReturn(None)
+    val trailMetadata = spy(TrailMetaData.empty)
+
     val trail = Trail("content-id", 1L, Some(trailMetadata))
     val collectionJson = CollectionJson(
       live = List(trail),
@@ -59,8 +32,9 @@ class CollectionTest extends FreeSpec with ShouldMatchers with MockitoSugar {
     val collectionConfig = CollectionConfig.fromCollectionJson(CollectionConfigJson.withDefaults())
 
     "creates a Facia collection from the collection JSON and provided config" in {
-      val collection = Collection.fromCollectionJsonConfigAndContent(collectionJson, collectionConfig, contentMap)
+      val collection = Collection.fromCollectionJsonConfigAndContent(CollectionId("id"), collectionJson, collectionConfig, contentMap)
       collection should have (
+        'id ("id"),
         'draft (None),
         'updatedBy ("test"),
         'updatedEmail ("test@example.com"),
@@ -73,7 +47,7 @@ class CollectionTest extends FreeSpec with ShouldMatchers with MockitoSugar {
     }
 
     "Uses content fields when no facia override exists" in {
-      val collection = Collection.fromCollectionJsonConfigAndContent(collectionJson, collectionConfig, contentMap)
+      val collection = Collection.fromCollectionJsonConfigAndContent(CollectionId("id"), collectionJson, collectionConfig, contentMap)
       collection.live.head should have (
         'headline ("Content headline"),
         'href ("Content href")
@@ -86,7 +60,7 @@ class CollectionTest extends FreeSpec with ShouldMatchers with MockitoSugar {
       when(trailMetadata.customKicker).thenReturn(Some("Custom kicker"))
       when(trailMetadata.showKickerCustom).thenReturn(Some(true))
 
-      val collection = Collection.fromCollectionJsonConfigAndContent(collectionJson, collectionConfig, contentMap)
+      val collection = Collection.fromCollectionJsonConfigAndContent(CollectionId("id"), collectionJson, collectionConfig, contentMap)
       collection.live.head should have (
         'headline ("trail headline"),
         'href ("trail href"),

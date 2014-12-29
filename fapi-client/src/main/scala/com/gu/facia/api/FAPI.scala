@@ -32,9 +32,9 @@ object FAPI {
    * Fetches the collection information for the given id by resolving info out of the fronts config
    * and the collection's own config JSON.
    */
-  def getCollection(id: String, adjustSearchQuery: AdjustSearchQuery = identity)
+  def getCollection(id: CollectionId, adjustSearchQuery: AdjustSearchQuery = identity)
                    (implicit capiClient: GuardianContentClient, faciaClient: ApiClient, ec: ExecutionContext): Response[Collection] = {
-    val fCollectionJson = faciaClient.collection(id)
+    val fCollectionJson = faciaClient.collection(id.id)
     val fConfigJson = faciaClient.config
     for {
       // make Facia calls
@@ -42,7 +42,7 @@ object FAPI {
       configJson <- Response.Async.Right(fConfigJson)
 
       // get collection config
-      collectionConfigJson <- Response.fromOption(configJson.collections.get(id), NotFound(s"Collection config not found for $id"))
+      collectionConfigJson <- Response.fromOption(configJson.collections.get(id.id), NotFound(s"Collection config not found for $id"))
       collectionConfig = CollectionConfig.fromCollectionJson(collectionConfigJson)
 
       // ask CAPI for details on content
@@ -50,7 +50,7 @@ object FAPI {
       hydrateQuery = adjustSearchQuery(ContentApi.buildHydrateQuery(capiClient, itemIds))
       hydrateResponse <- ContentApi.getHydrateResponse(capiClient, hydrateQuery)
       content = ContentApi.itemsFromSearchResponse(hydrateResponse)
-    } yield Collection.fromCollectionJsonConfigAndContent(collectionJson, collectionConfig, content)
+    } yield Collection.fromCollectionJsonConfigAndContent(id, collectionJson, collectionConfig, content)
   }
 
   /**
@@ -58,7 +58,7 @@ object FAPI {
    * requirements by providing adjustment functions. The results then have their facia metadata
    * resolved using the collection information.
    */
-  def backfill(backfillQuery: String, collectionId: CollectionId, collection: Collection,
+  def backfill(backfillQuery: String, collection: Collection,
                adjustSearchQuery: AdjustSearchQuery = identity, adjustItemQuery: AdjustItemQuery = identity)
               (implicit capiClient: GuardianContentClient, faciaClient: ApiClient, ec: ExecutionContext): Response[List[CuratedContent]] = {
 
@@ -71,7 +71,7 @@ object FAPI {
     for {
       backfillContent <- ContentApi.backfillContentFromResponse(fBackfillResponse)
       configJson <- Response.Async.Right(fConfigJson)
-      collectionConfigJson <- Response.fromOption(configJson.collections.get(collectionId.id), NotFound(s"Collection config not found for ${collectionId.id}"))
+      collectionConfigJson <- Response.fromOption(configJson.collections.get(collection.id.id), NotFound(s"Collection config not found for ${collection.id}"))
     } yield {
       val collectionConfig = CollectionConfig.fromCollectionJson(collectionConfigJson)
       backfillContent.map(FaciaContent.fromTrailAndContent(_, TrailMetaData.empty, collectionConfig))
