@@ -8,8 +8,8 @@ import concurrent.duration._
 import scala.concurrent.Await
 
 // demo config
-implicit val capiClient = new GuardianContentClient(apiKey = "test")
-private val amazonS3Client = new AmazonS3Client(new BasicAWSCredentials("key", "secret-key"))
+implicit val capiClient = new GuardianContentClient(apiKey = "API_KEY")
+private val amazonS3Client = new AmazonS3Client(new BasicAWSCredentials("ACCESS_KEY", "SECRET_KEY"))
 implicit val apiClient: ApiClient = ApiClient("aws-frontend-store", "DEV", AmazonSdkS3Client(amazonS3Client))
 implicit val executionContext = scala.concurrent.ExecutionContext.global
 
