@@ -5,7 +5,7 @@ import com.gu.facia.api.contentapi.ContentApi
 import com.gu.facia.api.contentapi.ContentApi.{AdjustItemQuery, AdjustSearchQuery}
 import com.gu.facia.api.models._
 import com.gu.facia.client.ApiClient
-import com.gu.facia.client.models.TrailMetaData
+import com.gu.facia.client.models.{CollectionConfigJson, TrailMetaData}
 
 import scala.concurrent.ExecutionContext
 
@@ -50,7 +50,9 @@ object FAPI {
       hydrateQuery = adjustSearchQuery(ContentApi.buildHydrateQuery(capiClient, itemIds))
       hydrateResponse <- ContentApi.getHydrateResponse(capiClient, hydrateQuery)
       content = ContentApi.itemsFromSearchResponse(hydrateResponse)
-    } yield Collection.fromCollectionJsonConfigAndContent(id, collectionJson, collectionConfig, content)
+    } yield {
+      Collection.fromCollectionJsonConfigAndContent(id, collectionJson, collectionConfig, content)
+    }
   }
 
   /**
@@ -66,14 +68,10 @@ object FAPI {
       .right.map(adjustSearchQuery)
       .left.map(adjustItemQuery)
 
-    val fBackfillResponse = ContentApi.getBackfillResponse(capiClient, query)
-    val fConfigJson = faciaClient.config
     for {
-      backfillContent <- ContentApi.backfillContentFromResponse(fBackfillResponse)
-      configJson <- Response.Async.Right(fConfigJson)
-      collectionConfigJson <- Response.fromOption(configJson.collections.get(collection.id.id), NotFound(s"Collection config not found for ${collection.id}"))
+      backfillContent <- ContentApi.backfillContentFromResponse(ContentApi.getBackfillResponse(capiClient, query))
+      collectionConfig = CollectionConfig.fromCollection(collection)
     } yield {
-      val collectionConfig = CollectionConfig.fromCollectionJson(collectionConfigJson)
       backfillContent.map(FaciaContent.fromTrailAndContent(_, TrailMetaData.empty, collectionConfig))
     }
   }

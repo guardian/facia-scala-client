@@ -28,7 +28,8 @@ object Collection {
     // if content is not in the set it was most likely filtered out by the CAPI query, so exclude it
     // note that this does not currently deal with e.g. snaps
     val live = collectionJson.live.flatMap { trail =>
-      content.find(_.id == trail.id).map { content =>
+      val contentCodeUrl = trail.id
+      content.find(c => trail.id.endsWith("/" + c.safeFields.getOrElse("internalContentCode", throw new RuntimeException("No internal content code")))).map { content =>
         FaciaContent.fromTrailAndContent(content, trail.safeMeta, collectionConfig)
       }
     }

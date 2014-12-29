@@ -17,6 +17,10 @@ class ContentApiTest extends FreeSpec with ShouldMatchers with OptionValues with
     "should do a search query with the provided ids" in {
       ContentApi.buildHydrateQuery(testClient, List("1", "2")).parameters.get("ids").value should equal("1,2")
     }
+
+    "sets page size to the number of curated items" in {
+      ContentApi.buildHydrateQuery(testClient, List("1", "2")).parameters.get("page-size").value should equal("2")
+    }
   }
 
   "buildBackfillQuery" - {
@@ -32,6 +36,15 @@ class ContentApiTest extends FreeSpec with ShouldMatchers with OptionValues with
         tagParam should startWith("(")
         tagParam should endWith(")")
       }
+
+      "adds the internalContentCode field" in {
+        ContentApi.buildBackfillQuery(testClient, backfill).right.value.parameters.get("show-fields").value should equal ("internalContentCode")
+      }
+
+      "preserves existing show-fields when adding internalContentCode" in {
+        val backfillWithFields = s"$backfill&show-fields=headline"
+        ContentApi.buildBackfillQuery(testClient, backfillWithFields).right.value.parameters.get("show-fields").value should equal ("headline,internalContentCode")
+      }
     }
 
     "when given an item backfill" - {
@@ -43,6 +56,15 @@ class ContentApiTest extends FreeSpec with ShouldMatchers with OptionValues with
 
       "should use the given path for the itemQuery" in {
         ContentApi.buildBackfillQuery(testClient, backfill).left.value.id.value should equal("lifeandstyle/food-and-drink")
+      }
+
+      "adds the internalContentCode field" in {
+        ContentApi.buildBackfillQuery(testClient, backfill).left.value.parameters.get("show-fields").value should equal ("internalContentCode")
+      }
+
+      "preserves existing show-fields when adding internalContentCode" in {
+        val backfillWithFields = s"$backfill&show-fields=headline"
+        ContentApi.buildBackfillQuery(testClient, backfillWithFields).left.value.parameters.get("show-fields").value should equal ("headline,internalContentCode")
       }
     }
   }

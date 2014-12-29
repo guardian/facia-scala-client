@@ -16,6 +16,8 @@ object ContentApi {
   def buildHydrateQuery(client: GuardianContentClient, ids: List[String]): SearchQuery = {
     client.search
       .ids(ids mkString ",")
+      .pageSize(ids.size)
+      .showFields("internalContentCode")
   }
 
   def getHydrateResponse(client: GuardianContentClient, searchQuery: SearchQuery)(implicit ec: ExecutionContext): Response[SearchResponse] = {
@@ -31,12 +33,19 @@ object ContentApi {
   def buildBackfillQuery(client: GuardianContentClient, apiQuery: String): Either[ItemQuery, SearchQuery] = {
     val uri = new URI(apiQuery.replaceAllLiterally("|", "%7C").replaceAllLiterally(" ", "%20"))
     val path = uri.getPath
-    val params = Option(uri.getQuery).map(parseQueryString).getOrElse(Nil).map {
+    val rawParams = Option(uri.getQuery).map(parseQueryString).getOrElse(Nil).map {
       // wrap backfill tags in parentheses in case the editors wrote a raw OR query
       // makes it possible to safely append additional tags
       case (k, v) if k == "tag" => (k, s"($v)")
+      // ensure internalContentCode is present on queries
+      case (k, v) if k == "show-fields" => (k, s"$v,internalContentCode")
       case param => param
     }
+    val params =
+      if (rawParams.exists {
+        case ("show-fields", _) => true
+        case _ => false
+      }) rawParams else rawParams :+ ("show-fields" -> "internalContentCode")
 
     if (path.startsWith("search")) {
       val searchQuery = SearchQuery()
@@ -45,7 +54,7 @@ object ContentApi {
     } else {
       val itemQuery = ItemQuery(Some(path))
       val queryWithParams = itemQuery.withParameters(params.map { case (k, v) => k -> itemQuery.StringParameter(k, Some(v)) }.toMap)
-      Left(itemQuery)
+      Left(queryWithParams)
     }
   }
 

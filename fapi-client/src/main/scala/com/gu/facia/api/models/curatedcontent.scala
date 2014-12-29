@@ -36,9 +36,9 @@ object Snap extends FaciaContent
 object SnapLatest extends FaciaContent
 case class CuratedContent(
   content: Content,
-  headline: String,
-  href: String,
-  trailText: String,
+  headline: Option[String],
+  href: Option[String],
+  trailText: Option[String],
   group: String,
   image: Option[Image],
   isBreaking: Boolean,
@@ -47,7 +47,7 @@ case class CuratedContent(
   imageReplace: Boolean,
   showMainVideo: Boolean,
   showKickerTag: Boolean,
-  byline: String,
+  byline: Option[String],
   showByLine: Boolean,
   kicker: Option[ItemKicker],
   imageCutout: Option[ImageCutout],
@@ -61,9 +61,9 @@ object FaciaContent {
 
     CuratedContent(
       content,
-      trailMetaData.headline.orElse(contentFields.get("headline")).get,
-      trailMetaData.href.orElse(contentFields.get("href")).get,
-      trailMetaData.trailText.orElse(contentFields.get("trailText")).get,
+      trailMetaData.headline.orElse(contentFields.get("headline")),
+      trailMetaData.href.orElse(contentFields.get("href")),
+      trailMetaData.trailText.orElse(contentFields.get("trailText")),
       trailMetaData.group.getOrElse("0"),
       Image.fromTrail(trailMetaData),
       trailMetaData.isBreaking.getOrElse(false),
@@ -72,7 +72,7 @@ object FaciaContent {
       trailMetaData.imageReplace.getOrElse(false),
       trailMetaData.showMainVideo.getOrElse(false),
       trailMetaData.showKickerTag.getOrElse(false),
-      trailMetaData.byline.orElse(contentFields.get("byline")).get,
+      trailMetaData.byline.orElse(contentFields.get("byline")),
       trailMetaData.showByline.getOrElse(false),
       ItemKicker.fromContentAndTrail(content, trailMetaData, Some(collectionConfig)),
       ImageCutout.fromTrail(trailMetaData),
