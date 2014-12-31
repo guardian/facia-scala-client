@@ -53,13 +53,15 @@ ReleaseKeys.releaseProcess := Seq[ReleaseStep](
 )
 
 lazy val root = (project in file(".")).
-  aggregate(faciajson, fapiclient)
+  aggregate(faciaJson, fapiClient)
 
 
-lazy val faciajson = project.in(file("facia-json"))
+lazy val faciaJson = project.in(file("facia-json"))
   .settings(
     crossScalaVersions := Seq("2.10.4", "2.11.4"),
     scalaVersion := "2.11.4",
+    organization := "com.gu",
+    name := "facia-json",
     libraryDependencies ++= Seq(
       awsSdk,
       commonsIo,
@@ -68,18 +70,20 @@ lazy val faciajson = project.in(file("facia-json"))
     )
   )
 
-lazy val fapiclient = project.in(file("fapi-client"))
+lazy val fapiClient = project.in(file("fapi-client"))
   .settings(
     scalaVersion := "2.11.4",
     crossScalaVersions := Seq("2.10.4", "2.11.4"),
+    organization := "com.gu",
+    name := "fapi-client",
     resolvers ++= Seq(
       Resolver.file("Local", file( Path.userHome.absolutePath + "/.ivy2/local"))(Resolver.ivyStylePatterns),
       "Typesafe Repository" at "http://repo.typesafe.com/typesafe/releases/"
     ),
     libraryDependencies ++= Seq(
-      "com.gu" %% "content-api-client" % "3.8-SNAPSHOT",
+      "com.gu" %% "content-api-client" % "4.0-SNAPSHOT",
       "org.scalatest" % "scalatest_2.11" % "2.2.1" % "test",
       "org.mockito" % "mockito-all" % "1.10.8" % "test"
     )
   )
-  .dependsOn(faciajson)
+  .dependsOn(faciaJson)

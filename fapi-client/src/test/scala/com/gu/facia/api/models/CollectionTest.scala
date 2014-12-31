@@ -10,44 +10,46 @@ import org.scalatest.mock.MockitoSugar
 
 
 class CollectionTest extends FreeSpec with ShouldMatchers with MockitoSugar with OneInstancePerTest {
-  "fromCollectionJson" - {
-    val trailMetadata = spy(TrailMetaData.empty)
-    val trail = Trail("internal-code/content/CODE", 1, Some(trailMetadata))
-    val collectionJson = CollectionJson(
-      live = List(trail),
-      draft = None,
-      lastUpdated = new DateTime(1),
-      updatedBy = "test",
-      updatedEmail = "test@example.com",
-      displayName = Some("displayName"),
-      href = Some("href")
-    )
-    val content = Content(
-      "content-id", Some("section"), Some("Section Name"), None, "webTitle", "webUrl", "apiUrl",
-      fields = Some(Map("internalContentCode" -> "CODE", "headline" -> "Content headline", "href" -> "Content href", "trailText" -> "Content trailtext", "byline" -> "Content byline")),
-      Nil, None, Nil, None
-    )
-    val contentMap = Set(content)
-    val collectionConfig = CollectionConfig.fromCollectionJson(CollectionConfigJson.withDefaults())
+  val trailMetadata = spy(TrailMetaData.empty)
+  val trail = Trail("internal-code/content/CODE", 1, Some(trailMetadata))
+  val collectionJson = CollectionJson(
+    live = List(trail),
+    draft = None,
+    lastUpdated = new DateTime(1),
+    updatedBy = "test",
+    updatedEmail = "test@example.com",
+    displayName = Some("displayName"),
+    href = Some("href")
+  )
+  val content = Content(
+    "content-id", Some("section"), Some("Section Name"), None, "webTitle", "webUrl", "apiUrl",
+    fields = Some(Map("internalContentCode" -> "CODE", "headline" -> "Content headline", "href" -> "Content href", "trailText" -> "Content trailtext", "byline" -> "Content byline")),
+    Nil, None, Nil, None
+  )
+  val contents = Set(content)
+  val collectionConfig = CollectionConfig.fromCollectionJson(CollectionConfigJson.withDefaults())
 
+
+  "fromCollectionJson" - {
     "creates a Facia collection from the collection JSON and provided config" in {
-      val collection = Collection.fromCollectionJsonConfigAndContent(CollectionId("id"), collectionJson, collectionConfig, contentMap)
-      collection should have (
-        'id ("id"),
-        'draft (None),
-        'updatedBy ("test"),
-        'updatedEmail ("test@example.com"),
-        'displayName ("displayName"),
-        'href (Some("href"))
-      )
-      collection.live.head should have (
-        'content (content)
+      val collection = Collection.fromCollectionJsonConfigAndContent(CollectionId("id"), collectionJson, collectionConfig)
+      collection should have(
+        'id("id"),
+        'draft(None),
+        'updatedBy("test"),
+        'updatedEmail("test@example.com"),
+        'displayName("displayName"),
+        'href(Some("href"))
       )
     }
+  }
+
+  "liveContent" - {
+    val collection = Collection.fromCollectionJsonConfigAndContent(CollectionId("id"), collectionJson, collectionConfig)
 
     "Uses content fields when no facia override exists" in {
-      val collection = Collection.fromCollectionJsonConfigAndContent(CollectionId("id"), collectionJson, collectionConfig, contentMap)
-      collection.live.head should have (
+      val curatedContent = Collection.liveContent(collection, contents)
+      curatedContent.head should have (
         'headline (Some("Content headline")),
         'href (Some("Content href"))
       )
@@ -59,8 +61,8 @@ class CollectionTest extends FreeSpec with ShouldMatchers with MockitoSugar with
       when(trailMetadata.customKicker).thenReturn(Some("Custom kicker"))
       when(trailMetadata.showKickerCustom).thenReturn(Some(true))
 
-      val collection = Collection.fromCollectionJsonConfigAndContent(CollectionId("id"), collectionJson, collectionConfig, contentMap)
-      collection.live.head should have (
+      val curatedContent = Collection.liveContent(collection, contents)
+      curatedContent.head should have (
         'headline (Some("trail headline")),
         'href (Some("trail href")),
         'kicker (Some(FreeHtmlKicker("Custom kicker")))
@@ -78,8 +80,8 @@ class CollectionTest extends FreeSpec with ShouldMatchers with MockitoSugar with
         displayName = Some("displayName"),
         href = Some("href")
       )
-      val collection = Collection.fromCollectionJsonConfigAndContent(CollectionId("id"), collectionJson, collectionConfig, contentMap)
-      collection.live.map(_.content.id) should equal(List("content-id"))
+      val curatedContent = Collection.liveContent(collection, contents)
+      curatedContent.map(_.content.id) should equal(List("content-id"))
     }
   }
 }

@@ -15,7 +15,7 @@ object ItemKicker {
 
     trailMeta.customKicker match {
       case Some(kicker)
-        if trailMeta.snapType.contains("latest") &&
+        if trailMeta.snapType.exists(_.contains("latest")) &&
           trailMeta.showKickerCustom.exists(identity) &&
           trailMeta.snapUri.isDefined => Some(FreeHtmlKickerWithLink(kicker, s"/${trailMeta.snapUri.get}"))
       case Some(kicker) if trailMeta.showKickerCustom.exists(identity) => Some(FreeHtmlKicker(kicker))

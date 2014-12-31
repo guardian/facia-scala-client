@@ -38,19 +38,27 @@ class IntegrationTest extends FreeSpec with ShouldMatchers with ScalaFutures wit
         collection => collection should have ('id ("uk-alpha/news/regular-stories"))
       )
     }
+  }
+
+  "collectionContent" - {
+    // fetch collection to use in these tests
+    val collection = FAPI.getCollection(CollectionId("uk-alpha/news/regular-stories")).asFuture.futureValue.fold(
+      err => fail(s"expected collection, got $err", err.cause),
+      collection => collection
+    )
 
     "should return the curated content for the collection" in {
-      FAPI.getCollection(CollectionId("uk-alpha/news/regular-stories")).asFuture.futureValue.fold(
+      FAPI.collectionContent(collection).asFuture.futureValue.fold(
         err => fail(s"expected collection, got $err", err.cause),
-        collection => collection.live.size should be > 0
+        curatedContent => curatedContent.size should be > 0
       )
     }
 
     "will use the provided function to adjust the query used to hydrate content" in {
       val adjust: AdjustSearchQuery = q => q.showTags("tone")
-      FAPI.getCollection(CollectionId("uk-alpha/news/regular-stories"), adjust).asFuture.futureValue.fold(
+      FAPI.collectionContent(collection, adjust).asFuture.futureValue.fold(
         err => fail(s"expected collection, got $err", err.cause),
-        collection => collection.live.head.content.tags.exists(_.`type` == "tone") should equal(true)
+        curatedContent => curatedContent.head.content.tags.exists(_.`type` == "tone") should equal(true)
       )
     }
   }
