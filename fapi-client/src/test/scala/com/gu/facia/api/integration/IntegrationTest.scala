@@ -40,6 +40,15 @@ class IntegrationTest extends FreeSpec with ShouldMatchers with ScalaFutures wit
     }
   }
 
+  "frontCollections" - {
+    "should return collections for the given front" in {
+      FAPI.frontCollections("uk").asFuture.futureValue.fold(
+        err => fail(s"expected collection, got $err", err.cause),
+        collections => collections.size should be > 0
+      )
+    }
+  }
+
   "collectionContent" - {
     // fetch collection to use in these tests
     val collection = FAPI.getCollection(CollectionId("uk-alpha/news/regular-stories")).asFuture.futureValue.fold(

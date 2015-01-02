@@ -3,7 +3,7 @@ package com.gu.facia.api
 import scala.concurrent.{ExecutionContext, Future}
 
 
-case class Response[A] private (underlying: Future[Either[ApiError, A]]) {
+case class Response[A] protected (underlying: Future[Either[ApiError, A]]) {
   def map[B](f: A => B)(implicit ec: ExecutionContext): Response[B] =
     flatMap(a => Response.Right(f(a)))
 
@@ -45,6 +45,22 @@ object Response {
 
     def Left[A](ferr: Future[ApiError])(implicit ec: ExecutionContext): Response[A] =
       Response(ferr.map(scala.Left(_)))
+  }
+
+  /**
+   * Collects responses together, or fails with the first error encountered
+   */
+  def traverse[A](responses: List[Response[A]])(implicit ec: ExecutionContext): Response[List[A]] = Response {
+    Future.traverse(responses)(_.asFuture).flatMap { eithers =>
+      def loop(rs: List[Either[ApiError, A]], acc: List[A]): Response[List[A]] = {
+        if (rs.isEmpty) Response.Right(acc.reverse)
+        else rs.head match {
+          case Left(apiErr) => Response.Left(apiErr)
+          case Right(a) => loop(rs.tail, a :: acc)
+        }
+      }
+      loop(eithers, Nil).asFuture
+    }
   }
 }
 
