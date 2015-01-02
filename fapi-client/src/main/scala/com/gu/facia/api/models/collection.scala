@@ -1,6 +1,7 @@
 package com.gu.facia.api.models
 
 import com.gu.contentapi.client.model.Content
+import com.gu.facia.api.utils.IntegerString
 import com.gu.facia.client.models.{Trail, CollectionJson}
 
 case class Collection(
@@ -57,27 +58,16 @@ object Collection {
   }
 }
 
-sealed trait Group
-object Standard extends Group
-object Big extends Group
-object VeryBig extends Group
-object Huge extends Group
+case class Group(get: Int)
+
 object Group {
   def fromGroups(groups: Groups): List[Group] = {
-    groups.groups.map {
-      case "3" => Huge
-      case "2" => VeryBig
-      case "1" => Big
-      case _ => Standard
+    groups.groups.collect {
+      case IntegerString(n) => Group(n)
     }
   }
 
   def toGroups(groups: List[Group]): Groups = {
-    Groups(groups.map {
-      case Huge => "3"
-      case VeryBig => "2"
-      case Big => "1"
-      case Standard => "0"
-    })
+    Groups(groups.map(_.get.toString))
   }
 }
