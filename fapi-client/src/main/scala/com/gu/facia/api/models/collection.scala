@@ -24,15 +24,16 @@ case class Collection(
 )
 
 object Collection {
-  def fromCollectionJsonConfigAndContent(id: CollectionId, collectionJson: CollectionJson, collectionConfig: CollectionConfig): Collection = {
+  def fromCollectionJsonConfigAndContent(id: CollectionId, collectionJson: Option[CollectionJson], collectionConfig: CollectionConfig): Collection = {
     Collection(
       id,
-      collectionJson.displayName.orElse(collectionConfig.displayName).getOrElse("untitled"),
-      collectionJson.live,
-      collectionJson.draft,
-      collectionJson.updatedBy,
-      collectionJson.updatedEmail,
-      collectionJson.href.orElse(collectionConfig.href),
+      collectionJson.flatMap(_.displayName).orElse(collectionConfig.displayName).getOrElse("untitled"),
+      collectionJson.map(_.live).getOrElse(Nil),
+      collectionJson.flatMap(_.draft),
+      // TODO: These should both be Options really - if a collection is always just its backfill, they won't be set
+      collectionJson.map(_.updatedBy).getOrElse(""),
+      collectionJson.map(_.updatedEmail).getOrElse(""),
+      collectionJson.flatMap(_.href).orElse(collectionConfig.href),
       collectionConfig.apiQuery,
       collectionConfig.collectionType,
       collectionConfig.groups.map(Group.fromGroups),
