@@ -81,9 +81,9 @@ lazy val fapiClient = project.in(file("fapi-client"))
       "Typesafe Repository" at "http://repo.typesafe.com/typesafe/releases/"
     ),
     libraryDependencies ++= Seq(
-      "com.gu" %% "content-api-client" % "4.0-SNAPSHOT",
-      "org.scalatest" % "scalatest_2.11" % "2.2.1" % "test",
-      "org.mockito" % "mockito-all" % "1.10.8" % "test"
+      contentApi,
+      scalaTest,
+      mockito
     )
   )
   .dependsOn(faciaJson)

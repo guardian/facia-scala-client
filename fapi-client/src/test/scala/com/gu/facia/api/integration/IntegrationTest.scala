@@ -2,13 +2,12 @@ package com.gu.facia.api.integration
 
 import com.gu.facia.api.FAPI
 import com.gu.facia.api.contentapi.ContentApi.{AdjustItemQuery, AdjustSearchQuery}
-import com.gu.facia.api.models.{Collection, CollectionId, MostPopular}
+import com.gu.facia.api.models.{Collection, CollectionId}
 import com.gu.facia.api.utils.SectionKicker
 import lib.IntegrationTestConfig
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.time.{Millis, Seconds, Span}
 import org.scalatest.{OptionValues, FreeSpec, ShouldMatchers}
-
 
 class IntegrationTest extends FreeSpec with ShouldMatchers with ScalaFutures with OptionValues with IntegrationTestConfig {
   implicit val patience = PatienceConfig(Span(2, Seconds), Span(50, Millis))
@@ -73,8 +72,24 @@ class IntegrationTest extends FreeSpec with ShouldMatchers with ScalaFutures wit
   }
 
   "backfill" - {
-    val collection = Collection(CollectionId("uk/business/regular-stories"), "economy", Nil, None, "updatedBy", "updatedBy@example.com", None,
-      Some("business?edition=uk"), MostPopular, None, false, false, false, false, false, false)
+    val collection = Collection(
+      CollectionId("uk/business/regular-stories"),
+      "economy",
+      Nil,
+      None,
+      Some("updatedBy"),
+      Some("updatedBy@example.com"),
+      None,
+      Some("business?edition=uk"),
+      "news/most-popular",
+      None,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false
+    )
 
     "can get the backfill for a collection" in {
       val query = "business?edition=uk"

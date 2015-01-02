@@ -17,19 +17,21 @@ case class ApiClient(
 )(implicit executionContext: ExecutionContext) {
   import com.gu.facia.client.ApiClient._
 
-  private def retrieve[A: Format](key: String) = s3Client.get(bucket, key) map {
+  private def retrieve[A: Format](key: String): Future[Option[A]] = s3Client.get(bucket, key) map {
     case FaciaSuccess(bytes) =>
-        Json.fromJson[A](Json.parse(new String(bytes, Encoding))) getOrElse {
+        Some(Json.fromJson[A](Json.parse(new String(bytes, Encoding))) getOrElse {
           throw new JsonDeserialisationError(s"Could not deserialize JSON in $bucket, $key")
-        }
+        })
     case FaciaNotAuthorized(message) => throw new BackendError(message)
-    case FaciaNotFound(message)  => throw new BackendError(message)
+    case FaciaNotFound(_)  => None
     case FaciaUnknownError(message)  => throw new BackendError(message)
   }
 
   def config: Future[ConfigJson] =
-    retrieve[ConfigJson](s"$environment/frontsapi/config/config.json")
+    retrieve[ConfigJson](s"$environment/frontsapi/config/config.json").map(_ getOrElse {
+      throw new BackendError("Config was missing!! OH MY GOD")
+    })
 
-  def collection(id: String): Future[CollectionJson] =
+  def collection(id: String): Future[Option[CollectionJson]] =
     retrieve[CollectionJson](s"$environment/frontsapi/collection/$id/collection.json")
 }

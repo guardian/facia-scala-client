@@ -1,5 +1,6 @@
 package com.gu.facia.client
 
+import com.amazonaws.regions.{Region, Regions}
 import com.amazonaws.services.s3.AmazonS3Client
 import com.amazonaws.services.s3.model.AmazonS3Exception
 import org.apache.commons.io.IOUtils
@@ -24,10 +25,16 @@ case class AmazonSdkS3Client(client: AmazonS3Client)(implicit executionContext: 
   }
 
   private def recoverFromAmazonSdkExceptions: PartialFunction[Throwable, FaciaResult] = {
+    case ex: AmazonS3Exception if ex.getErrorCode == "AccessDenied" => FaciaNotAuthorized(ex.getMessage)
+    case ex: AmazonS3Exception if ex.getErrorCode == "NoSuchKey" => FaciaNotFound(ex.getMessage)
     case ex: AmazonS3Exception => FaciaUnknownError(ex.getMessage)
   }
 }
 
 object AmazonSdkS3Client {
-  def default(implicit executionContext: ExecutionContext) = AmazonSdkS3Client(new AmazonS3Client())
+  def default(implicit executionContext: ExecutionContext) = {
+    val client = new AmazonS3Client()
+    client.setRegion(Region.getRegion(Regions.EU_WEST_1))
+    AmazonSdkS3Client(client)
+  }
 }

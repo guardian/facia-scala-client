@@ -5,9 +5,10 @@ import com.gu.facia.api.contentapi.ContentApi
 import com.gu.facia.api.contentapi.ContentApi.{AdjustItemQuery, AdjustSearchQuery}
 import com.gu.facia.api.models._
 import com.gu.facia.client.ApiClient
-import com.gu.facia.client.models.{CollectionConfigJson, TrailMetaData}
+import com.gu.facia.client.models.TrailMetaData
 
-import scala.concurrent.{Future, ExecutionContext}
+import scala.concurrent.{ExecutionContext, Future}
+import scala.util.{Failure, Success}
 
 
 object FAPI {
@@ -70,12 +71,18 @@ object FAPI {
   def collectionContent(collection: Collection, adjustSearchQuery: AdjustSearchQuery = identity)
                        (implicit capiClient: GuardianContentClient, ec: ExecutionContext): Response[List[CuratedContent]] = {
     val itemIds = collection.live.map(_.id)
-    val hydrateQuery = adjustSearchQuery(ContentApi.buildHydrateQuery(capiClient, itemIds))
-    for {
-      hydrateResponse <- ContentApi.getHydrateResponse(capiClient, hydrateQuery)
-      content = ContentApi.itemsFromSearchResponse(hydrateResponse)
-    } yield {
-      Collection.liveContent(collection, content)
+
+    ContentApi.buildHydrateQueries(capiClient, itemIds, adjustSearchQuery) match {
+      case Success(hydrateQueries) =>
+        for {
+          hydrateResponses <- ContentApi.getHydrateResponse(capiClient, hydrateQueries)
+          content = ContentApi.itemsFromSearchResponses(hydrateResponses)
+        } yield {
+          Collection.liveContent(collection, content)
+        }
+
+      case Failure(error) =>
+        Response.Left(UrlConstructError(error.getMessage, Some(error)))
     }
   }
 
