@@ -1,5 +1,6 @@
 package com.gu.facia.api
 
+import scala.annotation.tailrec
 import scala.concurrent.{ExecutionContext, Future}
 
 
@@ -52,6 +53,7 @@ object Response {
    */
   def traverse[A](responses: List[Response[A]])(implicit ec: ExecutionContext): Response[List[A]] = Response {
     Future.traverse(responses)(_.asFuture).flatMap { eithers =>
+      @tailrec
       def loop(rs: List[Either[ApiError, A]], acc: List[A]): Response[List[A]] = {
         if (rs.isEmpty) Response.Right(acc.reverse)
         else rs.head match {
