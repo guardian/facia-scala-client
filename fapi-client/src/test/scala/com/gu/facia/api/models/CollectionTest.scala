@@ -32,12 +32,12 @@ class CollectionTest extends FreeSpec with ShouldMatchers with MockitoSugar with
 
   "fromCollectionJson" - {
     "creates a Facia collection from the collection JSON and provided config" in {
-      val collection = Collection.fromCollectionJsonConfigAndContent(CollectionId("id"), collectionJson, collectionConfig)
+      val collection = Collection.fromCollectionJsonConfigAndContent(CollectionId("id"), Some(collectionJson), collectionConfig)
       collection should have(
         'id("id"),
         'draft(None),
-        'updatedBy("test"),
-        'updatedEmail("test@example.com"),
+        'updatedBy(Some("test")),
+        'updatedEmail(Some("test@example.com")),
         'displayName("displayName"),
         'href(Some("href"))
       )
@@ -45,7 +45,7 @@ class CollectionTest extends FreeSpec with ShouldMatchers with MockitoSugar with
   }
 
   "liveContent" - {
-    val collection = Collection.fromCollectionJsonConfigAndContent(CollectionId("id"), collectionJson, collectionConfig)
+    val collection = Collection.fromCollectionJsonConfigAndContent(CollectionId("id"), Some(collectionJson), collectionConfig)
 
     "Uses content fields when no facia override exists" in {
       val curatedContent = Collection.liveContent(collection, contents)

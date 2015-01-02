@@ -63,8 +63,24 @@ class IntegrationTest extends FreeSpec with ShouldMatchers with ScalaFutures wit
   }
 
   "backfill" - {
-    val collection = Collection(CollectionId("uk/business/regular-stories"), "economy", Nil, None, "updatedBy", "updatedBy@example.com", None,
-      Some("business?edition=uk"), "news/most-popular", None, false, false, false, false, false, false)
+    val collection = Collection(
+      CollectionId("uk/business/regular-stories"),
+      "economy",
+      Nil,
+      None,
+      Some("updatedBy"),
+      Some("updatedBy@example.com"),
+      None,
+      Some("business?edition=uk"),
+      "news/most-popular",
+      None,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false
+    )
 
     "can get the backfill for a collection" in {
       val query = "business?edition=uk"

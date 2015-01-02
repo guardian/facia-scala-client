@@ -27,7 +27,7 @@ class ApiClientSpec extends Specification {
     "fetch a collection" in {
       val collection = Await.result(client.collection("2409-31b3-83df0-de5a"), Duration.Inf)
 
-      collection.live must haveLength(8)
+      collection must beSome.which(_.live must haveLength(8))
     }
   }
 }
