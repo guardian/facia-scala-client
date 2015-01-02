@@ -15,12 +15,12 @@ object Amazon {
 
 class ApiTestClient extends ApiClient("bucket", "DEV", AmazonSdkS3Client(Amazon.amazonS3Client)) with ResourcesHelper {
 
-  private def retrieve[A: Format](key: String): Future[A] =
-    Future.successful(slurp(key).map(Json.parse).flatMap(_.asOpt[A]).get)
+  private def retrieve[A: Format](key: String): Future[Option[A]] =
+    Future.successful(slurp(key).map(Json.parse).flatMap(_.asOpt[A]))
 
   override def config: Future[ConfigJson] =
-    retrieve[ConfigJson](s"$environment/frontsapi/config/config.json")
+    retrieve[ConfigJson](s"$environment/frontsapi/config/config.json").map(_.get)
 
-  override def collection(id: String): Future[CollectionJson] =
+  override def collection(id: String): Future[Option[CollectionJson]] =
     retrieve[CollectionJson](s"$environment/frontsapi/collection/$id/collection.json")
 }
