@@ -13,7 +13,7 @@ case class Collection(
   updatedEmail: String,
   href: Option[String],
   apiQuery: Option[String],
-  collectionType: CollectionType,
+  collectionType: String,
   groups: Option[List[Group]],
   uneditable: Boolean,
   showTags: Boolean,
