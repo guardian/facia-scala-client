@@ -2,7 +2,7 @@ package com.gu.facia.api.contentapi
 
 import java.net.URI
 
-import com.gu.contentapi.client.GuardianContentClient
+import com.gu.contentapi.client.ContentApiClientLogic
 import com.gu.contentapi.client.model._
 import com.gu.facia.api.{CapiError, Response}
 
@@ -13,14 +13,14 @@ object ContentApi {
   type AdjustSearchQuery = SearchQuery => SearchQuery
   type AdjustItemQuery = ItemQuery => ItemQuery
 
-  def buildHydrateQuery(client: GuardianContentClient, ids: List[String]): SearchQuery = {
+  def buildHydrateQuery(client: ContentApiClientLogic, ids: List[String]): SearchQuery = {
     client.search
       .ids(ids mkString ",")
       .pageSize(ids.size)
       .showFields("internalContentCode")
   }
 
-  def getHydrateResponse(client: GuardianContentClient, searchQuery: SearchQuery)(implicit ec: ExecutionContext): Response[SearchResponse] = {
+  def getHydrateResponse(client: ContentApiClientLogic, searchQuery: SearchQuery)(implicit ec: ExecutionContext): Response[SearchResponse] = {
     Response.Async.Right(client.getResponse(searchQuery)) recover { err =>
       CapiError(s"Failed to hydrate content ${err.message}", err.cause)
     }
@@ -30,7 +30,7 @@ object ContentApi {
     searchResponse.results.toSet
   }
 
-  def buildBackfillQuery(client: GuardianContentClient, apiQuery: String): Either[ItemQuery, SearchQuery] = {
+  def buildBackfillQuery(client: ContentApiClientLogic, apiQuery: String): Either[ItemQuery, SearchQuery] = {
     val uri = new URI(apiQuery.replaceAllLiterally("|", "%7C").replaceAllLiterally(" ", "%20"))
     val path = uri.getPath
     val rawParams = Option(uri.getQuery).map(parseQueryString).getOrElse(Nil).map {
@@ -58,7 +58,7 @@ object ContentApi {
     }
   }
 
-  def getBackfillResponse(client: GuardianContentClient, query: Either[ItemQuery, SearchQuery])
+  def getBackfillResponse(client: ContentApiClientLogic, query: Either[ItemQuery, SearchQuery])
                          (implicit ec: ExecutionContext): Either[Response[ItemResponse], Response[SearchResponse]] = {
     query.right.map { itemQuery =>
       Response.Async.Right(client.getResponse(itemQuery)) recover { err =>
