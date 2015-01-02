@@ -58,3 +58,4 @@ case class JsonError(message: String, cause: Option[Throwable] = None) extends A
 case class DataError(message: String, cause: Option[Throwable] = None) extends ApiError
 case class CapiError(message: String, cause: Option[Throwable] = None) extends ApiError
 case class HttpError(message: String, cause: Option[Throwable] = None) extends ApiError
+case class UrlConstructError(message: String, cause: Option[Throwable] = None) extends ApiError

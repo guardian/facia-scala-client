@@ -6,20 +6,27 @@ import com.gu.facia.api.Response
 import lib.ExecutionContext
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.mock.MockitoSugar
-import org.scalatest.{EitherValues, FreeSpec, OptionValues, ShouldMatchers}
+import org.scalatest._
 import org.mockito.Mockito._
 
 
-class ContentApiTest extends FreeSpec with ShouldMatchers with OptionValues with EitherValues with ScalaFutures with MockitoSugar with ExecutionContext {
+class ContentApiTest extends FreeSpec
+  with ShouldMatchers
+  with OptionValues
+  with EitherValues
+  with TryValues
+  with ScalaFutures
+  with MockitoSugar
+  with ExecutionContext {
   val testClient = new GuardianContentClient("test")
 
-  "buildHydrateQuery" - {
+  "buildHydrateQueries" - {
     "should do a search query with the provided ids" in {
-      ContentApi.buildHydrateQuery(testClient, List("1", "2")).parameters.get("ids").value should equal("1,2")
+      ContentApi.buildHydrateQueries(testClient, List("1", "2")).success.get.head.parameters.get("ids").value should equal("1,2")
     }
 
     "sets page size to the number of curated items" in {
-      ContentApi.buildHydrateQuery(testClient, List("1", "2")).parameters.get("page-size").value should equal("2")
+      ContentApi.buildHydrateQueries(testClient, List("1", "2")).success.get.head.parameters.get("page-size").value should equal("2")
     }
   }
 

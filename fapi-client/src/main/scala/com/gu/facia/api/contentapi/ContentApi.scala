@@ -6,29 +6,39 @@ import com.gu.contentapi.client.ContentApiClientLogic
 import com.gu.contentapi.client.model._
 import com.gu.facia.api.{CapiError, Response}
 
-import scala.concurrent.ExecutionContext
-
+import scala.concurrent.{Future, ExecutionContext}
+import scala.util.Try
 
 object ContentApi {
   type AdjustSearchQuery = SearchQuery => SearchQuery
   type AdjustItemQuery = ItemQuery => ItemQuery
 
-  def buildHydrateQuery(client: ContentApiClientLogic, ids: List[String]): SearchQuery = {
-    client.search
+  def buildHydrateQueries(client: ContentApiClientLogic, ids: List[String], adjustSearchQuery: AdjustSearchQuery = identity): Try[Seq[SearchQuery]] = {
+    def queryForIds(ids: Seq[String]) = adjustSearchQuery(client.search
       .ids(ids mkString ",")
       .pageSize(ids.size)
-      .showFields("internalContentCode")
+      .showFields("internalContentCode"))
+
+    Try {
+      IdsSearchQueries.makeBatches(ids)(ids => client.getUrl(queryForIds(ids)).get) match {
+        case Some(batches) =>
+          batches.map(queryForIds)
+
+        case None =>
+          throw new RuntimeException("Unable to construct url for ids search query (the constructed URL for a " +
+            s"single ID must be too long!): ${ids.mkString(", ")}")
+      }
+    }
   }
 
-  def getHydrateResponse(client: ContentApiClientLogic, searchQuery: SearchQuery)(implicit ec: ExecutionContext): Response[SearchResponse] = {
-    Response.Async.Right(client.getResponse(searchQuery)) recover { err =>
+  def getHydrateResponse(client: ContentApiClientLogic, searchQueries: Seq[SearchQuery])(implicit ec: ExecutionContext): Response[Seq[SearchResponse]] = {
+    Response.Async.Right(Future.traverse(searchQueries)(client.getResponse)) recover { err =>
       CapiError(s"Failed to hydrate content ${err.message}", err.cause)
     }
   }
 
-  def itemsFromSearchResponse(searchResponse: SearchResponse): Set[Content] = {
-    searchResponse.results.toSet
-  }
+  def itemsFromSearchResponses(searchResponses: Seq[SearchResponse]): Set[Content] =
+    searchResponses.flatMap(_.results).toSet
 
   def buildBackfillQuery(client: ContentApiClientLogic, apiQuery: String): Either[ItemQuery, SearchQuery] = {
     val uri = new URI(apiQuery.replaceAllLiterally("|", "%7C").replaceAllLiterally(" ", "%20"))
