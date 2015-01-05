@@ -50,7 +50,6 @@ object Collection {
     // note that this does not currently deal with e.g. snaps
     val collectionConfig = CollectionConfig.fromCollection(collection)
     collection.live.flatMap { trail =>
-      val contentCodeUrl = trail.id
       content.find(c => trail.id.endsWith("/" + c.safeFields.getOrElse("internalContentCode", throw new RuntimeException("No internal content code")))).map { content =>
         FaciaContent.fromTrailAndContent(content, trail.safeMeta, collectionConfig)
       }.orElse{ Snap.maybeFromTrail(trail) }
