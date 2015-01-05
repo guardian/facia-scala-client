@@ -45,7 +45,7 @@ object Collection {
     )
   }
 
-  def liveContent(collection: Collection, content: Set[Content]): List[CuratedContent] = {
+  def liveContent(collection: Collection, content: Set[Content]): List[FaciaContent] = {
     // if content is not in the set it was most likely filtered out by the CAPI query, so exclude it
     // note that this does not currently deal with e.g. snaps
     val collectionConfig = CollectionConfig.fromCollection(collection)
@@ -53,7 +53,7 @@ object Collection {
       val contentCodeUrl = trail.id
       content.find(c => trail.id.endsWith("/" + c.safeFields.getOrElse("internalContentCode", throw new RuntimeException("No internal content code")))).map { content =>
         FaciaContent.fromTrailAndContent(content, trail.safeMeta, collectionConfig)
-      }
+      }.orElse{ Snap.maybeFromTrail(trail) }
     }
   }
 }
