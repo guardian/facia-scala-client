@@ -5,9 +5,9 @@ import com.gu.facia.api.contentapi.ContentApi
 import com.gu.facia.api.contentapi.ContentApi.{AdjustItemQuery, AdjustSearchQuery}
 import com.gu.facia.api.models._
 import com.gu.facia.client.ApiClient
-import com.gu.facia.client.models.{CollectionConfigJson, TrailMetaData}
+import com.gu.facia.client.models.TrailMetaData
 
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 import scala.util.{Failure, Success}
 
 
@@ -44,6 +44,27 @@ object FAPI {
       collectionConfig = CollectionConfig.fromCollectionJson(collectionConfigJson)
     } yield {
       Collection.fromCollectionJsonConfigAndContent(id, collectionJson, collectionConfig)
+    }
+  }
+
+  /**
+   * Fetch all the collections for a front in one go
+   */
+  def frontCollections(frontId: String)
+                      (implicit capiClient: GuardianContentClient, faciaClient: ApiClient, ec: ExecutionContext): Response[List[Collection]] = {
+    for {
+      configJson <- Response.Async.Right(faciaClient.config)
+      frontJson <- Response.fromOption(configJson.fronts.get(frontId), NotFound(s"No front found for $frontId"))
+      collectionIds = frontJson.collections
+      collectionsJsons <- Response.Async.Right(Future.traverse(collectionIds)(faciaClient.collection))
+      collectionConfigJsons <- Response.traverse(
+        collectionIds.map(id => Response.fromOption(configJson.collections.get(id), NotFound(s"Collection config not found for $id")))
+      )
+      collectionConfigs = collectionConfigJsons.map(CollectionConfig.fromCollectionJson)
+    } yield {
+      (collectionIds, collectionsJsons, collectionConfigs).zipped.toList.map { case (collectionId, collectionJson, collectionConfig) =>
+        Collection.fromCollectionJsonConfigAndContent(CollectionId(collectionId), collectionJson, collectionConfig)
+      }
     }
   }
 
