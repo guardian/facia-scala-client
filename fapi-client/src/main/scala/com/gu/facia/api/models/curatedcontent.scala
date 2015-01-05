@@ -38,7 +38,8 @@ object Snap {
     case Some("link") =>
       Option(LinkSnap(
         trail.id,
-        trail.safeMeta.snapUri))
+        trail.safeMeta.snapUri,
+        trail.safeMeta.snapCss))
     case Some("latest") =>
       Option(LatestSnap)
     case _ => None
@@ -48,7 +49,8 @@ object Snap {
 sealed trait Snap extends FaciaContent
 case class LinkSnap(
   id: String,
-  snapUri: Option[String]) extends Snap
+  snapUri: Option[String],
+  snapCss: Option[String]) extends Snap
 
 object LatestSnap extends Snap
 
