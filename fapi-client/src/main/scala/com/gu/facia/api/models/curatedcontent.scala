@@ -32,8 +32,26 @@ object ImageCutout {
 }
 
 sealed trait FaciaContent
-object Snap extends FaciaContent
-object SnapLatest extends FaciaContent
+
+object Snap {
+  def maybeFromTrail(trail: Trail): Option[Snap] = trail.safeMeta.snapType match {
+    case Some("link") =>
+      Option(LinkSnap(
+        trail.id,
+        trail.safeMeta.snapUri))
+    case Some("latest") =>
+      Option(LatestSnap)
+    case _ => None
+  }
+}
+
+sealed trait Snap extends FaciaContent
+case class LinkSnap(
+  id: String,
+  snapUri: Option[String]) extends Snap
+
+object LatestSnap extends Snap
+
 case class CuratedContent(
   content: Content,
   headline: Option[String],
