@@ -66,9 +66,9 @@ object FAPI {
 
   def collectionContent(collection: Collection, adjustSearchQuery: AdjustSearchQuery = identity)
                        (implicit capiClient: GuardianContentClient, ec: ExecutionContext): Response[List[CuratedContent]] = {
-    val itemIds = collection.live.map(_.id)
+    val itemIdsForRequest = collection.live.filterNot(_.isSnap).map(_.id)
 
-    ContentApi.buildHydrateQueries(capiClient, itemIds, adjustSearchQuery) match {
+    ContentApi.buildHydrateQueries(capiClient, itemIdsForRequest, adjustSearchQuery) match {
       case Success(hydrateQueries) =>
         for {
           hydrateResponses <- ContentApi.getHydrateResponse(capiClient, hydrateQueries)
