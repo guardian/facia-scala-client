@@ -2,7 +2,7 @@ package com.gu.facia.api.integration
 
 import com.gu.facia.api.FAPI
 import com.gu.facia.api.contentapi.ContentApi.{AdjustItemQuery, AdjustSearchQuery}
-import com.gu.facia.api.models.{Collection, CollectionId}
+import com.gu.facia.api.models.{CuratedContent, Collection, CollectionId}
 import com.gu.facia.api.utils.SectionKicker
 import lib.IntegrationTestConfig
 import org.scalatest.concurrent.ScalaFutures
@@ -66,7 +66,10 @@ class IntegrationTest extends FreeSpec with ShouldMatchers with ScalaFutures wit
       val adjust: AdjustSearchQuery = q => q.showTags("tone")
       FAPI.collectionContent(collection, adjust).asFuture.futureValue.fold(
         err => fail(s"expected collection, got $err", err.cause),
-        curatedContent => curatedContent.head.content.tags.exists(_.`type` == "tone") should equal(true)
+        curatedContent => curatedContent.flatMap{
+          case c: CuratedContent => Some(c)
+          case _ => None
+        }.head.content.tags.exists(_.`type` == "tone") should equal(true)
       )
     }
   }

@@ -81,7 +81,10 @@ class CollectionTest extends FreeSpec with ShouldMatchers with MockitoSugar with
         href = Some("href")
       )
       val curatedContent = Collection.liveContent(collection, contents)
-      curatedContent.map(_.content.id) should equal(List("content-id"))
+      curatedContent.flatMap{
+        case c: CuratedContent => Some(c)
+        case _ => None
+      }.map(_.content.id) should equal(List("content-id"))
     }
   }
 }
