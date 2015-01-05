@@ -15,11 +15,7 @@ object FAPI {
   def getFronts()(implicit capiClient: GuardianContentClient, faciaClient: ApiClient, ec: ExecutionContext): Response[Set[Front]] = {
     for {
       config <- Response.Async.Right(faciaClient.config)
-    } yield {
-      config.fronts
-        .map { case (id, json) => Front.fromFrontJson(id, json)}
-        .toSet
-    }
+    } yield Front.frontsFromConfig(config)
   }
 
   def frontForPath(path: String)(implicit capiClient: GuardianContentClient, faciaClient: ApiClient, ec: ExecutionContext): Response[Front] = {

@@ -1,6 +1,6 @@
 package com.gu.facia.api.models
 
-import com.gu.facia.client.models.FrontJson
+import com.gu.facia.client.models.{ConfigJson, FrontJson}
 
 sealed trait FrontPriority
 object EditorialPriority extends FrontPriority
@@ -55,4 +55,10 @@ object Front {
       getFrontPriority(frontJson),
       frontJson.isHidden.getOrElse(false)
     )
+
+  def frontsFromConfig(configJson: ConfigJson): Set[Front] = {
+    configJson.fronts
+      .map { case (id, json) => Front.fromFrontJson(id, json)}
+      .toSet
+  }
 }
