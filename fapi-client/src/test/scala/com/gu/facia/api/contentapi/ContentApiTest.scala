@@ -62,7 +62,7 @@ class ContentApiTest extends FreeSpec
       }
 
       "should use the given path for the itemQuery" in {
-        ContentApi.buildBackfillQuery(testClient, backfill).left.value.id.value should equal("lifeandstyle/food-and-drink")
+        ContentApi.buildBackfillQuery(testClient, backfill).left.value.id should equal("lifeandstyle/food-and-drink")
       }
 
       "adds the internalContentCode field" in {
