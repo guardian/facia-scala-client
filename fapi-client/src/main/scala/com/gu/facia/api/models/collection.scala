@@ -59,6 +59,9 @@ object Collection {
       }
     }
   }
+
+  def liveIdsWithoutSnaps(collection: Collection): List[String] =
+    collection.live.filterNot(_.isSnap).map(_.id)
 }
 
 case class Group(get: Int)
