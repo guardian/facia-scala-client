@@ -50,7 +50,7 @@ class CollectionTest extends FreeSpec with ShouldMatchers with MockitoSugar with
     "Uses content fields when no facia override exists" in {
       val curatedContent = Collection.liveContent(collection, contents)
       curatedContent.head should have (
-        'headline (Some("Content headline")),
+        'headline ("webTitle"),
         'href (Some("Content href"))
       )
     }
@@ -63,7 +63,7 @@ class CollectionTest extends FreeSpec with ShouldMatchers with MockitoSugar with
 
       val curatedContent = Collection.liveContent(collection, contents)
       curatedContent.head should have (
-        'headline (Some("trail headline")),
+        'headline ("trail headline"),
         'href (Some("trail href")),
         'kicker (Some(FreeHtmlKicker("Custom kicker")))
       )
