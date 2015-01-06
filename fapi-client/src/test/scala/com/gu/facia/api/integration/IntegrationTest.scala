@@ -120,10 +120,10 @@ class IntegrationTest extends FreeSpec with ShouldMatchers with ScalaFutures wit
 
     "search query can be adjusted" in {
       val query = "search?tag=sustainable-business/series/finance&use-date=published"
-      val adjust: AdjustSearchQuery = q => q.showTags("tone")
+      val adjust: AdjustSearchQuery = q => q.showTags("type")
       FAPI.backfill(query, collection.copy(showSections = true), adjustSearchQuery = adjust).asFuture.futureValue.fold(
         err => fail(s"expected backfill results, got $err", err.cause),
-        backfillContents => backfillContents.head.content.tags.exists(_.`type` == "tone") should equal(true)
+        backfillContents => backfillContents.head.content.tags.exists(_.`type` == "type") should equal(true)
       )
     }
   }
