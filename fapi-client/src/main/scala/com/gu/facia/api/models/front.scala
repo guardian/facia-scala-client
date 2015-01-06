@@ -12,11 +12,9 @@ case class FrontImage(
                        imageHeight: Int,
                        imageWidth: Int)
 
-case class CollectionId(id: String) extends AnyVal
-
 case class Front(
                   id: String,
-                  collections: List[CollectionId],
+                  collections: List[String],
                   navSection: Option[String],
                   webTitle: Option[String],
                   title: Option[String],
@@ -44,7 +42,7 @@ object Front {
   def fromFrontJson(id: String, frontJson: FrontJson): Front =
     Front(
       id,
-      frontJson.collections.map(CollectionId),
+      frontJson.collections,
       frontJson.navSection,
       frontJson.webTitle,
       frontJson.title,

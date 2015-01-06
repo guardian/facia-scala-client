@@ -29,17 +29,17 @@ object FAPI {
    * Fetches the collection information for the given id by resolving info out of the fronts config
    * and the collection's own config JSON.
    */
-  def getCollection(id: CollectionId)
+  def getCollection(collectionId: String)
                    (implicit capiClient: GuardianContentClient, faciaClient: ApiClient, ec: ExecutionContext): Response[Collection] = {
-    val fCollectionJson = faciaClient.collection(id.id)
+    val fCollectionJson = faciaClient.collection(collectionId)
     val fConfigJson = faciaClient.config
     for {
       collectionJson <- Response.Async.Right(fCollectionJson)
       configJson <- Response.Async.Right(fConfigJson)
-      collectionConfigJson <- Response.fromOption(configJson.collections.get(id.id), NotFound(s"Collection config not found for $id"))
+      collectionConfigJson <- Response.fromOption(configJson.collections.get(collectionId), NotFound(s"Collection config not found for $collectionId"))
       collectionConfig = CollectionConfig.fromCollectionJson(collectionConfigJson)
     } yield {
-      Collection.fromCollectionJsonConfigAndContent(id, collectionJson, collectionConfig)
+      Collection.fromCollectionJsonConfigAndContent(collectionId, collectionJson, collectionConfig)
     }
   }
 
@@ -59,16 +59,16 @@ object FAPI {
       collectionConfigs = collectionConfigJsons.map(CollectionConfig.fromCollectionJson)
     } yield {
       (collectionIds, collectionsJsons, collectionConfigs).zipped.toList.map { case (collectionId, collectionJson, collectionConfig) =>
-        Collection.fromCollectionJsonConfigAndContent(CollectionId(collectionId), collectionJson, collectionConfig)
+        Collection.fromCollectionJsonConfigAndContent(collectionId, collectionJson, collectionConfig)
       }
     }
   }
 
   def collectionContent(collection: Collection, adjustSearchQuery: AdjustSearchQuery = identity)
                        (implicit capiClient: GuardianContentClient, ec: ExecutionContext): Response[List[CuratedContent]] = {
-    val itemIds = collection.live.map(_.id)
+    val itemIdsForRequest = Collection.liveIdsWithoutSnaps(collection)
 
-    ContentApi.buildHydrateQueries(capiClient, itemIds, adjustSearchQuery) match {
+    ContentApi.buildHydrateQueries(capiClient, itemIdsForRequest, adjustSearchQuery) match {
       case Success(hydrateQueries) =>
         for {
           hydrateResponses <- ContentApi.getHydrateResponse(capiClient, hydrateQueries)

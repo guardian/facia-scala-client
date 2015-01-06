@@ -36,7 +36,7 @@ object Snap extends FaciaContent
 object SnapLatest extends FaciaContent
 case class CuratedContent(
   content: Content,
-  headline: Option[String],
+  headline: String,
   href: Option[String],
   trailText: Option[String],
   group: String,
@@ -61,7 +61,7 @@ object FaciaContent {
 
     CuratedContent(
       content,
-      trailMetaData.headline.orElse(contentFields.get("headline")),
+      trailMetaData.headline.orElse(content.safeFields.get("headline")).getOrElse(content.webTitle),
       trailMetaData.href.orElse(contentFields.get("href")),
       trailMetaData.trailText.orElse(contentFields.get("trailText")),
       trailMetaData.group.getOrElse("0"),

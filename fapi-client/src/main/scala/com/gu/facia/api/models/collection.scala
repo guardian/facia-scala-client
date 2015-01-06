@@ -6,7 +6,7 @@ import com.gu.facia.client.models.{Trail, CollectionJson}
 import org.joda.time.DateTime
 
 case class Collection(
-  id: CollectionId,
+  id: String,
   displayName: String,
   live: List[Trail],
   draft: Option[List[Trail]],
@@ -26,9 +26,9 @@ case class Collection(
 )
 
 object Collection {
-  def fromCollectionJsonConfigAndContent(id: CollectionId, collectionJson: Option[CollectionJson], collectionConfig: CollectionConfig): Collection = {
+  def fromCollectionJsonConfigAndContent(collectionId: String, collectionJson: Option[CollectionJson], collectionConfig: CollectionConfig): Collection = {
     Collection(
-      id,
+      collectionId,
       collectionJson.flatMap(_.displayName).orElse(collectionConfig.displayName).getOrElse("untitled"),
       collectionJson.map(_.live).getOrElse(Nil),
       collectionJson.flatMap(_.draft),
@@ -59,6 +59,9 @@ object Collection {
       }
     }
   }
+
+  def liveIdsWithoutSnaps(collection: Collection): List[String] =
+    collection.live.filterNot(_.isSnap).map(_.id)
 }
 
 case class Group(get: Int)

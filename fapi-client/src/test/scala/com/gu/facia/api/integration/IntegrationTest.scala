@@ -2,13 +2,13 @@ package com.gu.facia.api.integration
 
 import com.gu.facia.api.FAPI
 import com.gu.facia.api.contentapi.ContentApi.{AdjustItemQuery, AdjustSearchQuery}
-import com.gu.facia.api.models.{Collection, CollectionId}
+import com.gu.facia.api.models.Collection
 import com.gu.facia.api.utils.SectionKicker
 import lib.IntegrationTestConfig
 import org.joda.time.DateTime
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.time.{Millis, Seconds, Span}
-import org.scalatest.{OptionValues, FreeSpec, ShouldMatchers}
+import org.scalatest.{FreeSpec, OptionValues, ShouldMatchers}
 
 class IntegrationTest extends FreeSpec with ShouldMatchers with ScalaFutures with OptionValues with IntegrationTestConfig {
   implicit val patience = PatienceConfig(Span(2, Seconds), Span(50, Millis))
@@ -33,7 +33,7 @@ class IntegrationTest extends FreeSpec with ShouldMatchers with ScalaFutures wit
 
   "getCollection" - {
     "should return the collection with a given id" in {
-      FAPI.getCollection(CollectionId("uk-alpha/news/regular-stories")).asFuture.futureValue.fold(
+      FAPI.getCollection("uk-alpha/news/regular-stories").asFuture.futureValue.fold(
         err => fail(s"expected collection, got $err", err.cause),
         collection => collection should have ('id ("uk-alpha/news/regular-stories"))
       )
@@ -51,7 +51,7 @@ class IntegrationTest extends FreeSpec with ShouldMatchers with ScalaFutures wit
 
   "collectionContent" - {
     // fetch collection to use in these tests
-    val collection = FAPI.getCollection(CollectionId("uk-alpha/news/regular-stories")).asFuture.futureValue.fold(
+    val collection = FAPI.getCollection("uk-alpha/news/regular-stories").asFuture.futureValue.fold(
       err => fail(s"expected collection, got $err", err.cause),
       collection => collection
     )
@@ -74,7 +74,7 @@ class IntegrationTest extends FreeSpec with ShouldMatchers with ScalaFutures wit
 
   "backfill" - {
     val collection = Collection(
-      CollectionId("uk/business/regular-stories"),
+      "uk/business/regular-stories",
       "economy",
       Nil,
       None,
