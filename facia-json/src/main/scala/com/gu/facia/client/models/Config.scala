@@ -7,13 +7,34 @@ object CollectionConfigJson {
 
   val emptyConfig: CollectionConfigJson = withDefaults(None, None, None, None, None, None, None, None, None, None, None)
 
-  def withDefaults(displayName: Option[String] = None, apiQuery: Option[String] = None,
-            `type`: Option[String] = None, href: Option[String] = None, groups: Option[List[String]] = None,
-            uneditable: Option[Boolean] = None, showTags: Option[Boolean] = None,
-            showSections: Option[Boolean] = None, hideKickers: Option[Boolean] = None,
-            showDateHeader: Option[Boolean] = None, showLatestUpdate: Option[Boolean] = None): CollectionConfigJson
-    = CollectionConfigJson(displayName, apiQuery, `type`, href, groups, uneditable,
-                       showTags, showSections, hideKickers, showDateHeader, showLatestUpdate)
+  def withDefaults(
+    displayName: Option[String] = None,
+    apiQuery: Option[String] = None,
+    `type`: Option[String] = None,
+    href: Option[String] = None,
+    groups: Option[List[String]] = None,
+    uneditable: Option[Boolean] = None,
+    showTags: Option[Boolean] = None,
+    showSections: Option[Boolean] = None,
+    hideKickers: Option[Boolean] = None,
+    showDateHeader: Option[Boolean] = None,
+    showLatestUpdate: Option[Boolean] = None,
+    excludeFromRss: Option[Boolean] = None
+  ): CollectionConfigJson
+    = CollectionConfigJson(
+    displayName,
+    apiQuery,
+    `type`,
+    href,
+    groups,
+    uneditable,
+    showTags,
+    showSections,
+    hideKickers,
+    showDateHeader,
+    showLatestUpdate,
+    excludeFromRss
+  )
 }
 
 case class CollectionConfigJson(
@@ -27,7 +48,8 @@ case class CollectionConfigJson(
   showSections: Option[Boolean],
   hideKickers: Option[Boolean],
   showDateHeader: Option[Boolean],
-  showLatestUpdate: Option[Boolean]
+  showLatestUpdate: Option[Boolean],
+  excludeFromRss: Option[Boolean]
   ) {
   val collectionType = `type`
 }
