@@ -20,7 +20,7 @@ object ContentApi {
       .showFields("internalContentCode"))
 
     Try {
-      IdsSearchQueries.makeBatches(ids)(ids => client.getUrl(queryForIds(ids)).get) match {
+      IdsSearchQueries.makeBatches(ids)(ids => client.getUrl(queryForIds(ids))) match {
         case Some(batches) =>
           batches.map(queryForIds)
 
@@ -62,7 +62,7 @@ object ContentApi {
       val queryWithParams = searchQuery.withParameters(params.map { case (k, v) => k -> searchQuery.StringParameter(k, Some(v)) }.toMap)
       Right(queryWithParams)
     } else {
-      val itemQuery = ItemQuery(Some(path))
+      val itemQuery = ItemQuery(path)
       val queryWithParams = itemQuery.withParameters(params.map { case (k, v) => k -> itemQuery.StringParameter(k, Some(v)) }.toMap)
       Left(queryWithParams)
     }
