@@ -114,6 +114,5 @@ class CollectionTest extends FreeSpec with ShouldMatchers with MockitoSugar with
 
       Collection.liveIdsWithoutSnaps(collectionAllSnaps) should be (List.empty)
     }
-
   }
 }
