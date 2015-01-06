@@ -10,9 +10,9 @@ case class Collection(
   displayName: String,
   live: List[Trail],
   draft: Option[List[Trail]],
-  lastUpdated: DateTime,
-  updatedBy: String,
-  updatedEmail: String,
+  lastUpdated: Option[DateTime],
+  updatedBy: Option[String],
+  updatedEmail: Option[String],
   href: Option[String],
   apiQuery: Option[String],
   collectionType: String,
@@ -26,16 +26,16 @@ case class Collection(
 )
 
 object Collection {
-  def fromCollectionJsonConfigAndContent(collectionId: String, collectionJson: CollectionJson, collectionConfig: CollectionConfig): Collection = {
+  def fromCollectionJsonConfigAndContent(collectionId: String, collectionJson: Option[CollectionJson], collectionConfig: CollectionConfig): Collection = {
     Collection(
       collectionId,
-      collectionJson.displayName.orElse(collectionConfig.displayName).getOrElse("untitled"),
-      collectionJson.live,
-      collectionJson.draft,
-      collectionJson.lastUpdated,
-      collectionJson.updatedBy,
-      collectionJson.updatedEmail,
-      collectionJson.href.orElse(collectionConfig.href),
+      collectionJson.flatMap(_.displayName).orElse(collectionConfig.displayName).getOrElse("untitled"),
+      collectionJson.map(_.live).getOrElse(Nil),
+      collectionJson.flatMap(_.draft),
+      collectionJson.map(_.lastUpdated),
+      collectionJson.map(_.updatedBy),
+      collectionJson.map(_.updatedEmail),
+      collectionJson.flatMap(_.href).orElse(collectionConfig.href),
       collectionConfig.apiQuery,
       collectionConfig.collectionType,
       collectionConfig.groups.map(Group.fromGroups),
