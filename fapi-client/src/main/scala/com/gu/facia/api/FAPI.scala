@@ -29,18 +29,18 @@ object FAPI {
    * Fetches the collection information for the given id by resolving info out of the fronts config
    * and the collection's own config JSON.
    */
-  def getCollection(id: CollectionId)
+  def getCollection(collectionId: String)
                    (implicit capiClient: GuardianContentClient, faciaClient: ApiClient, ec: ExecutionContext): Response[Collection] = {
-    val fCollectionJson = faciaClient.collection(id.id)
+    val fCollectionJson = faciaClient.collection(collectionId)
     val fConfigJson = faciaClient.config
     for {
       collectionJsonOption <- Response.Async.Right(fCollectionJson)
-      collectionJson <- Response.fromOption(collectionJsonOption, NotFound(s"Collection JSON not found for $id"))
+      collectionJson <- Response.fromOption(collectionJsonOption, NotFound(s"Collection JSON not found for $collectionId"))
       configJson <- Response.Async.Right(fConfigJson)
-      collectionConfigJson <- Response.fromOption(configJson.collections.get(id.id), NotFound(s"Collection config not found for $id"))
+      collectionConfigJson <- Response.fromOption(configJson.collections.get(collectionId), NotFound(s"Collection config not found for $collectionId"))
       collectionConfig = CollectionConfig.fromCollectionJson(collectionConfigJson)
     } yield {
-      Collection.fromCollectionJsonConfigAndContent(id, collectionJson, collectionConfig)
+      Collection.fromCollectionJsonConfigAndContent(collectionId, collectionJson, collectionConfig)
     }
   }
 
@@ -61,7 +61,7 @@ object FAPI {
       collectionConfigs = collectionConfigJsons.map(CollectionConfig.fromCollectionJson)
     } yield {
       (collectionIds, collectionsJsons, collectionConfigs).zipped.toList.map { case (collectionId, collectionJson, collectionConfig) =>
-        Collection.fromCollectionJsonConfigAndContent(CollectionId(collectionId), collectionJson, collectionConfig)
+        Collection.fromCollectionJsonConfigAndContent(collectionId, collectionJson, collectionConfig)
       }
     }
   }

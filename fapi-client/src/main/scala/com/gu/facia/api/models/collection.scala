@@ -6,7 +6,7 @@ import com.gu.facia.client.models.{Trail, CollectionJson}
 import org.joda.time.DateTime
 
 case class Collection(
-  id: CollectionId,
+  id: String,
   displayName: String,
   live: List[Trail],
   draft: Option[List[Trail]],
@@ -26,9 +26,9 @@ case class Collection(
 )
 
 object Collection {
-  def fromCollectionJsonConfigAndContent(id: CollectionId, collectionJson: CollectionJson, collectionConfig: CollectionConfig): Collection = {
+  def fromCollectionJsonConfigAndContent(collectionId: String, collectionJson: CollectionJson, collectionConfig: CollectionConfig): Collection = {
     Collection(
-      id,
+      collectionId,
       collectionJson.displayName.orElse(collectionConfig.displayName).getOrElse("untitled"),
       collectionJson.live,
       collectionJson.draft,
