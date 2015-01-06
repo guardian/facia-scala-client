@@ -2,7 +2,7 @@ package com.gu.facia.api.contentapi
 
 import java.net.URI
 
-import com.gu.contentapi.client.ContentApiClientLogic
+import com.gu.contentapi.client.{GuardianContentClient, ContentApiClientLogic}
 import com.gu.contentapi.client.model._
 import com.gu.facia.api.{CapiError, Response}
 
@@ -95,5 +95,17 @@ object ContentApi {
     queryString split "&" collect {
       case KeyValuePair(key, value) => (key, value)
     }
+  }
+
+  def latestContentFromLatestSnaps(capiClient: GuardianContentClient, latestSnaps: Map[String, String])
+                                  (implicit ec: ExecutionContext): Response[Set[Content]] = {
+    def itemQueryFromSnapUri(uri: String): ItemQuery =
+      capiClient.item.itemId(uri).pageSize(1)
+
+    Response.Async.Right(
+      Future.traverse(latestSnaps) { case (id, uri) =>
+        capiClient.getResponse(itemQueryFromSnapUri(uri))
+          .map(_.results.headOption)
+      }.map(_.toList.flatten.toSet))
   }
 }

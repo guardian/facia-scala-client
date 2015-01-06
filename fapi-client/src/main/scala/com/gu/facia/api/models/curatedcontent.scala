@@ -41,7 +41,12 @@ object Snap {
         trail.safeMeta.snapUri,
         trail.safeMeta.snapCss))
     case Some("latest") =>
-      Option(LatestSnap)
+      Option(LatestSnap(
+        trail.id,
+        trail.safeMeta.snapUri,
+        trail.safeMeta.snapCss,
+        None
+      ))
     case _ => None
   }
 }
@@ -52,7 +57,16 @@ case class LinkSnap(
   snapUri: Option[String],
   snapCss: Option[String]) extends Snap
 
-object LatestSnap extends Snap
+object LatestSnap {
+  //def contentFromSnapUri(uri: String): Content =
+
+}
+
+case class LatestSnap(
+  id: String,
+  snapUri: Option[String],
+  snapCss: Option[String],
+  latestContent: Option[Content]) extends Snap
 
 case class CuratedContent(
   content: Content,

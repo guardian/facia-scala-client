@@ -68,11 +68,18 @@ object FAPI {
                        (implicit capiClient: GuardianContentClient, ec: ExecutionContext): Response[List[FaciaContent]] = {
     val itemIdsForRequest = collection.live.filterNot(_.isSnap).map(_.id)
 
+    val latestSnapsForRequest: Map[String, String] =
+      collection.live
+        .filter(_.isSnap)
+        .filter(_.safeMeta.snapType == Some("latest"))
+        .flatMap(snap => snap.safeMeta.snapUri.map(uri => snap.id -> uri)).toMap
+
     ContentApi.buildHydrateQueries(capiClient, itemIdsForRequest, adjustSearchQuery) match {
       case Success(hydrateQueries) =>
         for {
           hydrateResponses <- ContentApi.getHydrateResponse(capiClient, hydrateQueries)
-          content = ContentApi.itemsFromSearchResponses(hydrateResponses)
+          snapResponses <- ContentApi.latestContentFromLatestSnaps(capiClient, latestSnapsForRequest)
+          content = ContentApi.itemsFromSearchResponses(hydrateResponses) ++ snapResponses
         } yield {
           Collection.liveContent(collection, content)
         }
