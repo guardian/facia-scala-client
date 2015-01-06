@@ -5,6 +5,7 @@ import com.gu.facia.api.contentapi.ContentApi.{AdjustItemQuery, AdjustSearchQuer
 import com.gu.facia.api.models.{Collection, CollectionId}
 import com.gu.facia.api.utils.SectionKicker
 import lib.IntegrationTestConfig
+import org.joda.time.DateTime
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.time.{Millis, Seconds, Span}
 import org.scalatest.{OptionValues, FreeSpec, ShouldMatchers}
@@ -77,6 +78,7 @@ class IntegrationTest extends FreeSpec with ShouldMatchers with ScalaFutures wit
       "economy",
       Nil,
       None,
+      Some(new DateTime(1)),
       Some("updatedBy"),
       Some("updatedBy@example.com"),
       None,

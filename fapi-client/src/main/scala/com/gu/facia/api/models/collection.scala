@@ -3,12 +3,14 @@ package com.gu.facia.api.models
 import com.gu.contentapi.client.model.Content
 import com.gu.facia.api.utils.IntegerString
 import com.gu.facia.client.models.{Trail, CollectionJson}
+import org.joda.time.DateTime
 
 case class Collection(
   id: CollectionId,
   displayName: String,
   live: List[Trail],
   draft: Option[List[Trail]],
+  lastUpdated: Option[DateTime],
   updatedBy: Option[String],
   updatedEmail: Option[String],
   href: Option[String],
@@ -30,6 +32,7 @@ object Collection {
       collectionJson.flatMap(_.displayName).orElse(collectionConfig.displayName).getOrElse("untitled"),
       collectionJson.map(_.live).getOrElse(Nil),
       collectionJson.flatMap(_.draft),
+      collectionJson.map(_.lastUpdated),
       collectionJson.map(_.updatedBy),
       collectionJson.map(_.updatedEmail),
       collectionJson.flatMap(_.href).orElse(collectionConfig.href),
