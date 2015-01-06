@@ -34,6 +34,7 @@ sealed trait MetaDataCommonFields {
   lazy val imageCutoutSrcHeight: Option[String] = json.get("imageCutoutSrcHeight").flatMap(_.asOpt[String])
   lazy val showBoostedHeadline: Option[Boolean] = json.get("showBoostedHeadline").flatMap(_.asOpt[Boolean])
   lazy val showQuotedHeadline: Option[Boolean] = json.get("showQuotedHeadline").flatMap(_.asOpt[Boolean])
+  lazy val excludeFromRss: Option[Boolean] = json.get("excludeFromRss").flatMap(_.asOpt[Boolean])
 }
 
 object SupportingItemMetaData {
