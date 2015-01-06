@@ -49,7 +49,6 @@ val sonatypeReleaseSettings = releaseSettings ++ sonatypeSettings ++ Seq(
       action = { state =>
         val extracted = Project.extract(state)
         val ref = extracted.get(Keys.thisProjectRef)
-
         extracted.runAggregated(PgpKeys.publishSigned in Global in ref, state)
       },
       enableCrossBuild = true
