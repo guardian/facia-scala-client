@@ -32,7 +32,7 @@ object ContentApi {
   }
 
   def getHydrateResponse(client: ContentApiClientLogic, searchQueries: Seq[SearchQuery])(implicit ec: ExecutionContext): Response[Seq[SearchResponse]] = {
-    Response.Async.Right(Future.traverse(searchQueries)(client.getResponse)) recover { err =>
+    Response.Async.Right(Future.traverse(searchQueries)(client.getResponse)) mapError { err =>
       CapiError(s"Failed to hydrate content ${err.message}", err.cause)
     }
   }
@@ -71,11 +71,11 @@ object ContentApi {
   def getBackfillResponse(client: ContentApiClientLogic, query: Either[ItemQuery, SearchQuery])
                          (implicit ec: ExecutionContext): Either[Response[ItemResponse], Response[SearchResponse]] = {
     query.right.map { itemQuery =>
-      Response.Async.Right(client.getResponse(itemQuery)) recover { err =>
+      Response.Async.Right(client.getResponse(itemQuery)) mapError { err =>
         CapiError(s"Failed to get backfill response ${err.message}", err.cause)
       }
     }.left.map { searchQuery =>
-      Response.Async.Right(client.getResponse(searchQuery)) recover { err =>
+      Response.Async.Right(client.getResponse(searchQuery)) mapError { err =>
         CapiError(s"Failed to get backfill response ${err.message}", err.cause)
       }
     }
