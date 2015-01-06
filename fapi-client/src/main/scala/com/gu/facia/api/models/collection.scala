@@ -3,14 +3,16 @@ package com.gu.facia.api.models
 import com.gu.contentapi.client.model.Content
 import com.gu.facia.api.utils.IntegerString
 import com.gu.facia.client.models.{Trail, CollectionJson}
+import org.joda.time.DateTime
 
 case class Collection(
   id: CollectionId,
   displayName: String,
   live: List[Trail],
   draft: Option[List[Trail]],
-  updatedBy: Option[String],
-  updatedEmail: Option[String],
+  lastUpdated: DateTime,
+  updatedBy: String,
+  updatedEmail: String,
   href: Option[String],
   apiQuery: Option[String],
   collectionType: String,
@@ -24,15 +26,16 @@ case class Collection(
 )
 
 object Collection {
-  def fromCollectionJsonConfigAndContent(id: CollectionId, collectionJson: Option[CollectionJson], collectionConfig: CollectionConfig): Collection = {
+  def fromCollectionJsonConfigAndContent(id: CollectionId, collectionJson: CollectionJson, collectionConfig: CollectionConfig): Collection = {
     Collection(
       id,
-      collectionJson.flatMap(_.displayName).orElse(collectionConfig.displayName).getOrElse("untitled"),
-      collectionJson.map(_.live).getOrElse(Nil),
-      collectionJson.flatMap(_.draft),
-      collectionJson.map(_.updatedBy),
-      collectionJson.map(_.updatedEmail),
-      collectionJson.flatMap(_.href).orElse(collectionConfig.href),
+      collectionJson.displayName.orElse(collectionConfig.displayName).getOrElse("untitled"),
+      collectionJson.live,
+      collectionJson.draft,
+      collectionJson.lastUpdated,
+      collectionJson.updatedBy,
+      collectionJson.updatedEmail,
+      collectionJson.href.orElse(collectionConfig.href),
       collectionConfig.apiQuery,
       collectionConfig.collectionType,
       collectionConfig.groups.map(Group.fromGroups),
