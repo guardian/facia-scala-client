@@ -61,7 +61,7 @@ object FaciaContent {
 
     CuratedContent(
       content,
-      trailMetaData.headline.getOrElse(content.webTitle),
+      trailMetaData.headline.orElse(content.safeFields.get("headline")).getOrElse(content.webTitle),
       trailMetaData.href.orElse(contentFields.get("href")),
       trailMetaData.trailText.orElse(contentFields.get("trailText")),
       trailMetaData.group.getOrElse("0"),
