@@ -19,8 +19,12 @@ case class Response[A] protected (underlying: Future[Either[ApiError, A]]) {
     asFuture.map(_.fold(failure, success))
   }
 
-  def recover(pf: ApiError => ApiError)(implicit ec: ExecutionContext): Response[A] = Response {
+  def mapError(pf: ApiError => ApiError)(implicit ec: ExecutionContext): Response[A] = Response {
     fold(err => Left(pf(err)), Right(_))
+  }
+
+  def recover(pf: ApiError => A)(implicit ec: ExecutionContext): Response[A] = Response {
+    fold(err => Right(pf(err)), Right(_))
   }
 
   def asFuture(implicit ec: ExecutionContext) = {

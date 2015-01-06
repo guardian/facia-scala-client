@@ -20,7 +20,7 @@ object ContentApi {
       .showFields("internalContentCode"))
 
     Try {
-      IdsSearchQueries.makeBatches(ids)(ids => client.getUrl(queryForIds(ids)).get) match {
+      IdsSearchQueries.makeBatches(ids)(ids => client.getUrl(queryForIds(ids))) match {
         case Some(batches) =>
           batches.map(queryForIds)
 
@@ -32,7 +32,7 @@ object ContentApi {
   }
 
   def getHydrateResponse(client: ContentApiClientLogic, searchQueries: Seq[SearchQuery])(implicit ec: ExecutionContext): Response[Seq[SearchResponse]] = {
-    Response.Async.Right(Future.traverse(searchQueries)(client.getResponse)) recover { err =>
+    Response.Async.Right(Future.traverse(searchQueries)(client.getResponse)) mapError { err =>
       CapiError(s"Failed to hydrate content ${err.message}", err.cause)
     }
   }
@@ -62,7 +62,7 @@ object ContentApi {
       val queryWithParams = searchQuery.withParameters(params.map { case (k, v) => k -> searchQuery.StringParameter(k, Some(v)) }.toMap)
       Right(queryWithParams)
     } else {
-      val itemQuery = ItemQuery(Some(path))
+      val itemQuery = ItemQuery(path)
       val queryWithParams = itemQuery.withParameters(params.map { case (k, v) => k -> itemQuery.StringParameter(k, Some(v)) }.toMap)
       Left(queryWithParams)
     }
@@ -71,11 +71,11 @@ object ContentApi {
   def getBackfillResponse(client: ContentApiClientLogic, query: Either[ItemQuery, SearchQuery])
                          (implicit ec: ExecutionContext): Either[Response[ItemResponse], Response[SearchResponse]] = {
     query.right.map { itemQuery =>
-      Response.Async.Right(client.getResponse(itemQuery)) recover { err =>
+      Response.Async.Right(client.getResponse(itemQuery)) mapError { err =>
         CapiError(s"Failed to get backfill response ${err.message}", err.cause)
       }
     }.left.map { searchQuery =>
-      Response.Async.Right(client.getResponse(searchQuery)) recover { err =>
+      Response.Async.Right(client.getResponse(searchQuery)) mapError { err =>
         CapiError(s"Failed to get backfill response ${err.message}", err.cause)
       }
     }
@@ -100,7 +100,7 @@ object ContentApi {
   def latestContentFromLatestSnaps(capiClient: GuardianContentClient, latestSnaps: Map[String, String])
                                   (implicit ec: ExecutionContext): Response[Set[Content]] = {
     def itemQueryFromSnapUri(uri: String): ItemQuery =
-      capiClient.item.itemId(uri).pageSize(1)
+      capiClient.item(uri).pageSize(1)
 
     Response.Async.Right(
       Future.traverse(latestSnaps) { case (id, uri) =>
