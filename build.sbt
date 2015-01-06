@@ -8,53 +8,65 @@ name := "facia-api-client"
 
 scalaVersion := "2.10.4"
 
-releaseSettings
-
-sonatypeSettings
-
 description := "Scala client for The Guardian's Facia JSON API"
 
-scmInfo := Some(ScmInfo(
-  url("https://github.com/guardian/facia-scala-client"),
-  "scm:git:git@github.com:guardian/facia-scala-client.git"
-))
+val sonatypeReleaseSettings = releaseSettings ++ sonatypeSettings ++ Seq(
+  licenses := Seq("Apache V2" -> url("http://www.apache.org/licenses/LICENSE-2.0.html")),
+  scmInfo := Some(ScmInfo(
+    url("https://github.com/guardian/facia-scala-client"),
+    "scm:git:git@github.com:guardian/facia-scala-client.git"
+  )),
+  pomExtra := (
+    <url>https://github.com/guardian/facia-scala-client</url>
+      <developers>
+        <developer>
+          <id>robertberry</id>
+          <name>Robert Berry</name>
+          <url>https://github.com/robertberry</url>
+        </developer>
+        <developer>
+          <id>janua</id>
+          <name>Francis Carr</name>
+          <url>https://github.com/janua</url>
+        </developer>
+        <developer>
+          <id>adamnfish</id>
+          <name>Adam Fisher</name>
+          <url>https://github.com/adamnfish</url>
+        </developer>
+      </developers>
+    ),
+  ReleaseKeys.crossBuild := true,
+  ReleaseKeys.releaseProcess := Seq[ReleaseStep](
+    checkSnapshotDependencies,
+    inquireVersions,
+    runClean,
+    runTest,
+    setReleaseVersion,
+    commitReleaseVersion,
+    tagRelease,
+    ReleaseStep(
+      action = { state =>
+        val extracted = Project.extract(state)
+        val ref = extracted.get(Keys.thisProjectRef)
 
-pomExtra := (
-  <url>https://github.com/guardian/facia-scala-client</url>
-    <developers>
-      <developer>
-        <id>robertberry</id>
-        <name>Robert Berry</name>
-        <url>https://github.com/robertberry</url>
-      </developer>
-    </developers>
+        extracted.runAggregated(PgpKeys.publishSigned in Global in ref, state)
+      },
+      enableCrossBuild = true
+    ),
+    setNextVersion,
+    commitNextVersion,
+    ReleaseStep(
+      action = state => Project.extract(state).runTask(SonatypeKeys.sonatypeReleaseAll, state)._1,
+      enableCrossBuild = false
+    ),
+    pushChanges
+  )
 )
 
-licenses := Seq("Apache V2" -> url("http://www.apache.org/licenses/LICENSE-2.0.html"))
-
-ReleaseKeys.crossBuild := true
-
-ReleaseKeys.releaseProcess := Seq[ReleaseStep](
-  checkSnapshotDependencies,
-  inquireVersions,
-  runClean,
-  runTest,
-  setReleaseVersion,
-  commitReleaseVersion,
-  tagRelease,
-  ReleaseStep(
-    action = state => Project.extract(state).runTask(PgpKeys.publishSigned, state)._1,
-    enableCrossBuild = true
-  ),
-  setNextVersion,
-  commitNextVersion,
-  ReleaseStep(state => Project.extract(state).runTask(SonatypeKeys.sonatypeReleaseAll, state)._1),
-  pushChanges
-)
-
-lazy val root = (project in file(".")).
-  aggregate(faciaJson, fapiClient)
-
+lazy val root = (project in file("."))
+  .aggregate(faciaJson, fapiClient)
+  .settings(publishArtifact := false)
 
 lazy val faciaJson = project.in(file("facia-json"))
   .settings(
@@ -67,8 +79,10 @@ lazy val faciaJson = project.in(file("facia-json"))
       commonsIo,
       specs2,
       playJson
-    )
+    ),
+    publishArtifact := true
   )
+  .settings(sonatypeReleaseSettings: _*)
 
 lazy val fapiClient = project.in(file("fapi-client"))
   .settings(
@@ -84,6 +98,8 @@ lazy val fapiClient = project.in(file("fapi-client"))
       contentApi,
       scalaTest,
       mockito
-    )
+    ),
+    publishArtifact := true
   )
   .dependsOn(faciaJson)
+  .settings(sonatypeReleaseSettings: _*)
