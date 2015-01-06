@@ -34,8 +34,7 @@ object FAPI {
     val fCollectionJson = faciaClient.collection(collectionId)
     val fConfigJson = faciaClient.config
     for {
-      collectionJsonOption <- Response.Async.Right(fCollectionJson)
-      collectionJson <- Response.fromOption(collectionJsonOption, NotFound(s"Collection JSON not found for $collectionId"))
+      collectionJson <- Response.Async.Right(fCollectionJson)
       configJson <- Response.Async.Right(fConfigJson)
       collectionConfigJson <- Response.fromOption(configJson.collections.get(collectionId), NotFound(s"Collection config not found for $collectionId"))
       collectionConfig = CollectionConfig.fromCollectionJson(collectionConfigJson)
@@ -53,8 +52,7 @@ object FAPI {
       configJson <- Response.Async.Right(faciaClient.config)
       frontJson <- Response.fromOption(configJson.fronts.get(frontId), NotFound(s"No front found for $frontId"))
       collectionIds = frontJson.collections
-      collectionsJsonOptions <- Response.Async.Right(Future.traverse(collectionIds)(faciaClient.collection))
-      collectionsJsons = collectionsJsonOptions.flatten
+      collectionsJsons <- Response.Async.Right(Future.traverse(collectionIds)(faciaClient.collection))
       collectionConfigJsons <- Response.traverse(
         collectionIds.map(id => Response.fromOption(configJson.collections.get(id), NotFound(s"Collection config not found for $id")))
       )
