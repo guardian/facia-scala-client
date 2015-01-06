@@ -35,22 +35,22 @@ class ContentApiTest extends FreeSpec
       val backfill = "search?tag=tone/analysis&section=world|us-news|australia-news"
 
       "should produce a searchQuery instance" in {
-        ContentApi.buildBackfillQuery(testClient, backfill).isRight should equal(true)
+        ContentApi.buildBackfillQuery(backfill).isRight should equal(true)
       }
 
       "should wrap the tag parameter in brackets" in {
-        val tagParam = ContentApi.buildBackfillQuery(testClient, backfill).right.value.parameters.get("tag").value
+        val tagParam = ContentApi.buildBackfillQuery(backfill).right.value.parameters.get("tag").value
         tagParam should startWith("(")
         tagParam should endWith(")")
       }
 
       "adds the internalContentCode field" in {
-        ContentApi.buildBackfillQuery(testClient, backfill).right.value.parameters.get("show-fields").value should equal ("internalContentCode")
+        ContentApi.buildBackfillQuery(backfill).right.value.parameters.get("show-fields").value should equal ("internalContentCode")
       }
 
       "preserves existing show-fields when adding internalContentCode" in {
         val backfillWithFields = s"$backfill&show-fields=headline"
-        ContentApi.buildBackfillQuery(testClient, backfillWithFields).right.value.parameters.get("show-fields").value should equal ("headline,internalContentCode")
+        ContentApi.buildBackfillQuery(backfillWithFields).right.value.parameters.get("show-fields").value should equal ("headline,internalContentCode")
       }
     }
 
@@ -58,20 +58,30 @@ class ContentApiTest extends FreeSpec
       val backfill = "lifeandstyle/food-and-drink?show-most-viewed=true&show-editors-picks=false&hide-recent-content=true"
 
       "should produce an itemQuery instance" in {
-        ContentApi.buildBackfillQuery(testClient, backfill).isLeft should equal(true)
+        ContentApi.buildBackfillQuery(backfill).isLeft should equal(true)
       }
 
       "should use the given path for the itemQuery" in {
-        ContentApi.buildBackfillQuery(testClient, backfill).left.value.id should equal("lifeandstyle/food-and-drink")
+        ContentApi.buildBackfillQuery(backfill).left.value.id should equal("lifeandstyle/food-and-drink")
       }
 
       "adds the internalContentCode field" in {
-        ContentApi.buildBackfillQuery(testClient, backfill).left.value.parameters.get("show-fields").value should equal ("internalContentCode")
+        ContentApi.buildBackfillQuery(backfill).left.value.parameters.get("show-fields").value should equal ("internalContentCode")
       }
 
       "preserves existing show-fields when adding internalContentCode" in {
         val backfillWithFields = s"$backfill&show-fields=headline"
-        ContentApi.buildBackfillQuery(testClient, backfillWithFields).left.value.parameters.get("show-fields").value should equal ("headline,internalContentCode")
+        ContentApi.buildBackfillQuery(backfillWithFields).left.value.parameters.get("show-fields").value should equal ("headline,internalContentCode")
+      }
+
+      "will add editors picks if they aren't explicitly on the query" in {
+        val backfill = "lifeandstyle/food-and-drink?show-most-viewed=true&hide-recent-content=true"
+        ContentApi.buildBackfillQuery(backfill).left.value.parameters.get("show-editors-picks").value should equal ("true")
+      }
+
+      "will not force editors picks to true if they are explicitly exluded on the query" in {
+        val backfill = "lifeandstyle/food-and-drink?show-most-viewed=true&show-editors-picks=false&hide-recent-content=true"
+        ContentApi.buildBackfillQuery(backfill).left.value.parameters.get("show-editors-picks").value should equal ("false")
       }
     }
   }

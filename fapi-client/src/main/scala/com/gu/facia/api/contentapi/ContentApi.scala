@@ -40,7 +40,7 @@ object ContentApi {
   def itemsFromSearchResponses(searchResponses: Seq[SearchResponse]): Set[Content] =
     searchResponses.flatMap(_.results).toSet
 
-  def buildBackfillQuery(client: ContentApiClientLogic, apiQuery: String): Either[ItemQuery, SearchQuery] = {
+  def buildBackfillQuery(apiQuery: String): Either[ItemQuery, SearchQuery] = {
     val uri = new URI(apiQuery.replaceAllLiterally("|", "%7C").replaceAllLiterally(" ", "%20"))
     val path = uri.getPath
     val rawParams = Option(uri.getQuery).map(parseQueryString).getOrElse(Nil).map {
@@ -51,19 +51,24 @@ object ContentApi {
       case (k, v) if k == "show-fields" => (k, s"$v,internalContentCode")
       case param => param
     }
-    val params =
+    val paramsWithFields =
       if (rawParams.exists {
         case ("show-fields", _) => true
         case _ => false
       }) rawParams else rawParams :+ ("show-fields" -> "internalContentCode")
+    val paramsWithEditorsPicks =
+      if (paramsWithFields.exists {
+        case ("show-editors-picks", _) => true
+        case _ => false
+      }) paramsWithFields else paramsWithFields :+ ("show-editors-picks" -> "true")
 
     if (path.startsWith("search")) {
       val searchQuery = SearchQuery()
-      val queryWithParams = searchQuery.withParameters(params.map { case (k, v) => k -> searchQuery.StringParameter(k, Some(v)) }.toMap)
+      val queryWithParams = searchQuery.withParameters(paramsWithEditorsPicks.map { case (k, v) => k -> searchQuery.StringParameter(k, Some(v)) }.toMap)
       Right(queryWithParams)
     } else {
       val itemQuery = ItemQuery(path)
-      val queryWithParams = itemQuery.withParameters(params.map { case (k, v) => k -> itemQuery.StringParameter(k, Some(v)) }.toMap)
+      val queryWithParams = itemQuery.withParameters(paramsWithEditorsPicks.map { case (k, v) => k -> itemQuery.StringParameter(k, Some(v)) }.toMap)
       Left(queryWithParams)
     }
   }
@@ -84,7 +89,7 @@ object ContentApi {
   def backfillContentFromResponse(response: Either[Response[ItemResponse], Response[SearchResponse]])
                                  (implicit ec: ExecutionContext): Response[List[Content]] = {
     response.fold(
-      _.map(_.results),
+      _.map(itemResponse => itemResponse.editorsPicks ++ itemResponse.results),
       _.map(_.results)
     )
   }
