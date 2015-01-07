@@ -1,7 +1,7 @@
 package com.gu.facia.api
 
 import com.gu.contentapi.client.GuardianContentClient
-import com.gu.facia.api.contentapi.ContentApi
+import com.gu.facia.api.contentapi.{LatestSnapsRequest, ContentApi}
 import com.gu.facia.api.contentapi.ContentApi.{AdjustItemQuery, AdjustSearchQuery}
 import com.gu.facia.api.models._
 import com.gu.facia.client.ApiClient
@@ -68,17 +68,13 @@ object FAPI {
                        (implicit capiClient: GuardianContentClient, ec: ExecutionContext): Response[List[FaciaContent]] = {
     val itemIdsForRequest = Collection.liveIdsWithoutSnaps(collection)
 
-    val latestSnapsForRequest: Map[String, String] =
-      collection.live
-        .filter(_.isSnap)
-        .filter(_.safeMeta.snapType == Some("latest"))
-        .flatMap(snap => snap.safeMeta.snapUri.map(uri => snap.id -> uri)).toMap
+    val latestSnapsRequest: LatestSnapsRequest = Collection.latestSnapsRequestFor(collection)
 
     ContentApi.buildHydrateQueries(capiClient, itemIdsForRequest, adjustSearchQuery) match {
       case Success(hydrateQueries) =>
         for {
           hydrateResponses <- ContentApi.getHydrateResponse(capiClient, hydrateQueries)
-          snapContent <- ContentApi.latestContentFromLatestSnaps(capiClient, latestSnapsForRequest)
+          snapContent <- ContentApi.latestContentFromLatestSnaps(capiClient, latestSnapsRequest)
           content = ContentApi.itemsFromSearchResponses(hydrateResponses)
         } yield {
           Collection.liveContent(collection, content, snapContent)

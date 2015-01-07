@@ -1,6 +1,7 @@
 package com.gu.facia.api.models
 
 import com.gu.contentapi.client.model.Content
+import com.gu.facia.api.contentapi.LatestSnapsRequest
 import com.gu.facia.api.utils.IntegerString
 import com.gu.facia.client.models.{Trail, CollectionJson}
 import org.joda.time.DateTime
@@ -64,6 +65,13 @@ object Collection {
 
   def liveIdsWithoutSnaps(collection: Collection): List[String] =
     collection.live.filterNot(_.isSnap).map(_.id)
+
+  def latestSnapsRequestFor(collection: Collection): LatestSnapsRequest =
+    LatestSnapsRequest(
+      collection.live
+      .filter(_.isSnap)
+      .filter(_.safeMeta.snapType == Some("latest"))
+      .flatMap(snap => snap.safeMeta.snapUri.map(uri => snap.id -> uri)).toMap)
 }
 
 case class Group(get: Int)

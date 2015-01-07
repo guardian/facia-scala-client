@@ -9,6 +9,8 @@ import com.gu.facia.api.{CapiError, Response}
 import scala.concurrent.{Future, ExecutionContext}
 import scala.util.Try
 
+case class LatestSnapsRequest(snaps: Map[String, String])
+
 object ContentApi {
   type AdjustSearchQuery = SearchQuery => SearchQuery
   type AdjustItemQuery = ItemQuery => ItemQuery
@@ -97,13 +99,13 @@ object ContentApi {
     }
   }
 
-  def latestContentFromLatestSnaps(capiClient: GuardianContentClient, latestSnaps: Map[String, String])
+  def latestContentFromLatestSnaps(capiClient: GuardianContentClient, latestSnapsRequest: LatestSnapsRequest)
                                   (implicit ec: ExecutionContext): Response[Map[String, Option[Content]]] = {
     def itemQueryFromSnapUri(uri: String): ItemQuery =
       capiClient.item(uri).pageSize(1).showFields("internalContentCode")
 
     Response.Async.Right(
-      Future.traverse(latestSnaps) { case (id, uri) =>
+      Future.traverse(latestSnapsRequest.snaps) { case (id, uri) =>
         capiClient.getResponse(itemQueryFromSnapUri(uri))
           .map(_.results.headOption).map(id -> _)
       }.map(_.toMap))
