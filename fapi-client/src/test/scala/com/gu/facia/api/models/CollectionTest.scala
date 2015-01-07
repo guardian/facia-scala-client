@@ -7,6 +7,7 @@ import org.joda.time.DateTime
 import org.mockito.Mockito._
 import org.scalatest.{OneInstancePerTest, FreeSpec, ShouldMatchers}
 import org.scalatest.mock.MockitoSugar
+import play.api.libs.json.JsString
 
 
 class CollectionTest extends FreeSpec with ShouldMatchers with MockitoSugar with OneInstancePerTest {
@@ -86,6 +87,36 @@ class CollectionTest extends FreeSpec with ShouldMatchers with MockitoSugar with
         case c: CuratedContent => Some(c)
         case _ => None
       }.map(_.content.id) should equal(List("content-id"))
+    }
+
+    "Successfully retrieve snaps from snapContent for latest snaps" in {
+      val snapOne = Trail("snap/1415985080061", 1, Some(TrailMetaData(Map("snapType" -> JsString("link"), "snapUri" -> JsString("abc")))))
+      val snapTwo = Trail("snap/5345345215342", 1, Some(TrailMetaData(Map("snapType" -> JsString("link"), "snapCss" -> JsString("css")))))
+      val snapLatestOne = Trail("snap/8474745745660", 1, Some(TrailMetaData(Map("snapType" -> JsString("latest"), "href" -> JsString("uk")))))
+      val snapLatestTwo = Trail("snap/4324234234234", 1, Some(TrailMetaData(Map("snapType" -> JsString("latest"), "href" -> JsString("culture")))))
+
+      val snapContentOne = Content(
+        "content-id-one", Some("section"), Some("Section Name"), None, "webTitle", "webUrl", "apiUrl",
+        fields = Some(Map("internalContentCode" -> "CODE", "headline" -> "Content headline", "href" -> "Content href", "trailText" -> "Content trailtext", "byline" -> "Content byline")),
+        Nil, None, Nil, None)
+      val snapContentTwo = Content(
+        "content-id-two", Some("section"), Some("Section Name"), None, "webTitle", "webUrl", "apiUrl",
+        fields = Some(Map("internalContentCode" -> "CODE", "headline" -> "Content headline", "href" -> "Content href", "trailText" -> "Content trailtext", "byline" -> "Content byline")),
+        Nil, None, Nil, None)
+
+      val snapContent = Map("snap/8474745745660" -> Some(snapContentOne), "snap/4324234234234" -> Some(snapContentTwo))
+
+      val collectionJsonTwo = collectionJson.copy(live = List(snapOne, snapTwo, snapLatestOne, snapLatestTwo))
+
+      val collection = Collection.fromCollectionJsonConfigAndContent("id", Some(collectionJsonTwo), collectionConfig)
+
+      val faciaContent = Collection.liveContent(collection, Set.empty, snapContent)
+
+      faciaContent.length should be (4)
+      faciaContent(0) should be (LinkSnap("snap/1415985080061", Some("abc"), None))
+      faciaContent(1) should be (LinkSnap("snap/5345345215342", None, Some("css")))
+      faciaContent(2) should be (LatestSnap("snap/8474745745660", None, None, Some(snapContentOne)))
+      faciaContent(3) should be (LatestSnap("snap/4324234234234", None, None, Some(snapContentTwo)))
     }
   }
 
