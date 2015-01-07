@@ -98,14 +98,14 @@ object ContentApi {
   }
 
   def latestContentFromLatestSnaps(capiClient: GuardianContentClient, latestSnaps: Map[String, String])
-                                  (implicit ec: ExecutionContext): Response[Set[Content]] = {
+                                  (implicit ec: ExecutionContext): Response[Map[String, Option[Content]]] = {
     def itemQueryFromSnapUri(uri: String): ItemQuery =
-      capiClient.item(uri).pageSize(1)
+      capiClient.item(uri).pageSize(1).showFields("internalContentCode")
 
     Response.Async.Right(
       Future.traverse(latestSnaps) { case (id, uri) =>
         capiClient.getResponse(itemQueryFromSnapUri(uri))
-          .map(_.results.headOption)
-      }.map(_.toList.flatten.toSet))
+          .map(_.results.headOption).map(id -> _)
+      }.map(_.toMap))
   }
 }

@@ -78,10 +78,10 @@ object FAPI {
       case Success(hydrateQueries) =>
         for {
           hydrateResponses <- ContentApi.getHydrateResponse(capiClient, hydrateQueries)
-          snapResponses <- ContentApi.latestContentFromLatestSnaps(capiClient, latestSnapsForRequest)
-          content = ContentApi.itemsFromSearchResponses(hydrateResponses) ++ snapResponses
+          snapContent <- ContentApi.latestContentFromLatestSnaps(capiClient, latestSnapsForRequest)
+          content = ContentApi.itemsFromSearchResponses(hydrateResponses)
         } yield {
-          Collection.liveContent(collection, content)
+          Collection.liveContent(collection, content, snapContent)
         }
 
       case Failure(error) =>
