@@ -2,7 +2,7 @@ package com.gu.facia.api.integration
 
 import com.gu.facia.api.FAPI
 import com.gu.facia.api.contentapi.ContentApi.{AdjustItemQuery, AdjustSearchQuery}
-import com.gu.facia.api.models.{LatestSnap, CollectionConfig, CuratedContent, Collection}
+import com.gu.facia.api.models._
 import com.gu.facia.api.utils.SectionKicker
 import com.gu.facia.client.models.{CollectionConfigJson, CollectionJson, TrailMetaData, Trail}
 import lib.IntegrationTestConfig
@@ -59,7 +59,7 @@ class IntegrationTest extends FreeSpec with ShouldMatchers with ScalaFutures wit
     )
 
     "should return the curated content for the collection" in {
-      FAPI.collectionContent(collection).asFuture.futureValue.fold(
+      FAPI.collectionContentWithSnaps(collection).asFuture.futureValue.fold(
         err => fail(s"expected collection, got $err", err.cause),
         curatedContent => curatedContent.size should be > 0
       )
@@ -67,7 +67,7 @@ class IntegrationTest extends FreeSpec with ShouldMatchers with ScalaFutures wit
 
     "will use the provided function to adjust the query used to hydrate content" in {
       val adjust: AdjustSearchQuery = q => q.showTags("tone")
-      FAPI.collectionContent(collection, adjust).asFuture.futureValue.fold(
+      FAPI.collectionContentWithSnaps(collection, adjust).asFuture.futureValue.fold(
         err => fail(s"expected collection, got $err", err.cause),
         curatedContent => curatedContent.flatMap{
           case c: CuratedContent => Some(c)
@@ -77,10 +77,14 @@ class IntegrationTest extends FreeSpec with ShouldMatchers with ScalaFutures wit
     }
 
     "for snaps" - {
-      def makeLatestTrailFor(id: String, href: String) =
-        Trail(id, 0, Some(TrailMetaData(Map("snapUri" -> JsString(href), "snapType" -> JsString("latest")))))
+      def makeLatestTrailFor(id: String, uri: String) =
+        Trail(id, 0, Some(TrailMetaData(Map("snapUri" -> JsString(uri), "snapType" -> JsString("latest")))))
+      def makeLinkSnapFor(id: String, uri: String) =
+        Trail(id, 0, Some(TrailMetaData(Map("snapUri" -> JsString(uri), "snapType" -> JsString("link")))))
       val dreamSnapOne = makeLatestTrailFor("snap/1281727", "uk/culture")
       val dreamSnapTwo = makeLatestTrailFor("snap/2372382", "technology")
+
+      val plainSnapOne = makeLinkSnapFor("snap/347234723", "doesnotmatter")
 
       val normalTrail = Trail("internal-code/content/445034105", 0, None)
 
@@ -97,7 +101,7 @@ class IntegrationTest extends FreeSpec with ShouldMatchers with ScalaFutures wit
       "should turn dream snaps into content" in {
         val collectionJson = makeCollectionJson(dreamSnapOne, dreamSnapTwo)
         val collection = Collection.fromCollectionJsonConfigAndContent("id", Some(collectionJson), collectionConfig)
-        val faciaContent = FAPI.collectionContent(collection)
+        val faciaContent = FAPI.collectionContentWithSnaps(collection)
 
         faciaContent.asFuture.futureValue.fold(
           err => fail(s"expected to get two dream snaps, got $err", err.cause),
@@ -114,23 +118,51 @@ class IntegrationTest extends FreeSpec with ShouldMatchers with ScalaFutures wit
         )
       }
 
-      "work with normal content" in {
-        val collectionJson = makeCollectionJson(dreamSnapOne, normalTrail, dreamSnapTwo)
+      "work with normal content and link snaps" in {
+        val collectionJson = makeCollectionJson(dreamSnapOne, normalTrail, plainSnapOne, dreamSnapTwo)
         val collection = Collection.fromCollectionJsonConfigAndContent("id", Some(collectionJson), collectionConfig)
-        val faciaContent = FAPI.collectionContent(collection)
+        val faciaContent = FAPI.collectionContentWithSnaps(collection)
 
         faciaContent.asFuture.futureValue.fold(
           err => fail(s"expected to get three items, got $err", err.cause),
           { listOfFaciaContent =>
-            listOfFaciaContent.length should be (3)
+            listOfFaciaContent.length should be (4)
 
             val normalContent = listOfFaciaContent.collect{ case cc: CuratedContent => cc}
             normalContent.length should be (1)
             normalContent.apply(0).headline should be ("PM returns from holiday after video shows US reporter beheaded by Briton")
 
+            val latestSnapContent = listOfFaciaContent.collect{ case ls: LatestSnap => ls}
+            latestSnapContent.length should be (2)
+            latestSnapContent.forall(_.latestContent == None) should be (false)
+
+            val linkSnaps = listOfFaciaContent.collect{ case ls: LinkSnap => ls}
+            linkSnaps.length should be (1)
+            linkSnaps(0).id should be ("snap/347234723")
+            linkSnaps(0).snapUri should be (Some("doesnotmatter"))
+
           }
         )
       }
+      "not request dream snaps in" in {
+        val collectionJson = makeCollectionJson(dreamSnapOne, normalTrail, dreamSnapTwo)
+        val collection = Collection.fromCollectionJsonConfigAndContent("id", Some(collectionJson), collectionConfig)
+        val faciaContent = FAPI.collectionContentWithoutSnaps(collection)
+
+        faciaContent.asFuture.futureValue.fold(
+        err => fail(s"expected to get three items, got $err", err.cause),
+        { listOfFaciaContent =>
+          listOfFaciaContent.length should be (3)
+
+          val normalContent = listOfFaciaContent.collect{ case cc: CuratedContent => cc}
+          normalContent.apply(0).headline should be ("PM returns from holiday after video shows US reporter beheaded by Briton")
+
+          val latestSnapContent = listOfFaciaContent.collect{ case ls: LatestSnap => ls}
+          latestSnapContent.length should be (2)
+          latestSnapContent.forall(_.latestContent == None) should be (true)
+        })
+      }
+
 
     }
   }
