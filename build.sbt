@@ -62,6 +62,10 @@ lazy val faciaJson = project.in(file("facia-json"))
     scalaVersion := "2.11.4",
     organization := "com.gu",
     name := "facia-json",
+    resolvers ++= Seq(
+      Resolver.file("Local", file( Path.userHome.absolutePath + "/.ivy2/local"))(Resolver.ivyStylePatterns),
+      "Typesafe Repository" at "http://repo.typesafe.com/typesafe/releases/"
+    ),
     libraryDependencies ++= Seq(
       awsSdk,
       commonsIo,
