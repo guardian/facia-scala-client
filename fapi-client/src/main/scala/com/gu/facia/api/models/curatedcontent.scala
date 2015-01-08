@@ -57,32 +57,6 @@ case class LinkSnap(
   snapUri: Option[String],
   snapCss: Option[String]) extends Snap
 
-object LinkSnap {
-  def unapply(trail: Trail): Option[LinkSnap] =
-    trail.safeMeta.snapType match {
-      case Some("link") =>
-        Option(LinkSnap(
-          trail.id,
-          trail.safeMeta.snapUri,
-          trail.safeMeta.snapCss))
-      case _ => None
-    }
-}
-
-object LatestSnap {
-  //def contentFromSnapUri(uri: String): Content =
-
-  def unapply(trail: Trail): Option[LinkSnap] =
-    trail.safeMeta.snapType match {
-      case Some("link") =>
-        Option(LinkSnap(
-          trail.id,
-          trail.safeMeta.snapUri,
-          trail.safeMeta.snapCss))
-      case _ => None
-    }
-}
-
 case class LatestSnap(
   id: String,
   snapUri: Option[String],
