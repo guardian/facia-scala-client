@@ -77,10 +77,10 @@ object FAPI {
       case Failure(error) =>
         Response.Left(UrlConstructError(error.getMessage, Some(error)))}}
 
-  private def getLatestSnapContentForCollection(collection: Collection)
+  private def getLatestSnapContentForCollection(collection: Collection, adjustItemQuery: AdjustItemQuery)
                       (implicit capiClient: GuardianContentClient, ec: ExecutionContext) = {
     val latestSnapsRequest: LatestSnapsRequest = Collection.latestSnapsRequestFor(collection)
-    for(snapContent <- ContentApi.latestContentFromLatestSnaps(capiClient, latestSnapsRequest))
+    for(snapContent <- ContentApi.latestContentFromLatestSnaps(capiClient, latestSnapsRequest, adjustItemQuery))
       yield snapContent}
 
   def collectionContentWithoutSnaps(collection: Collection, adjustSearchQuery: AdjustSearchQuery = identity)
@@ -89,11 +89,11 @@ object FAPI {
       yield Collection.liveContent(collection, setOfContent)
   }
 
-  def collectionContentWithSnaps(collection: Collection, adjustSearchQuery: AdjustSearchQuery = identity)
+  def collectionContentWithSnaps(collection: Collection, adjustSearchQuery: AdjustSearchQuery = identity, adjustSnapItemQuery: AdjustItemQuery = identity)
                                    (implicit capiClient: GuardianContentClient, ec: ExecutionContext): Response[List[FaciaContent]] = {
     for {
       setOfContent <- getContentForCollection(collection, adjustSearchQuery)
-      snapContent <- getLatestSnapContentForCollection(collection)}
+      snapContent <- getLatestSnapContentForCollection(collection, adjustSnapItemQuery)}
     yield Collection.liveContent(collection, setOfContent, snapContent)}
 
   /**
