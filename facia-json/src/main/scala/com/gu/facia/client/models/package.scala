@@ -17,7 +17,10 @@ package object models {
         case Success(dateTime) => JsSuccess(dateTime)
         case Failure(error) => JsError(error.getMessage)
       }
-
+      case JsNumber(dateTimeLong) => Try { new DateTime(dateTimeLong.toLong)} match {
+        case Success(dateTime) => JsSuccess(dateTime)
+        case Failure(error) => JsError(error.getMessage)
+      }
       case _ => JsError(s"$json is not a date time string")
     }
   }
