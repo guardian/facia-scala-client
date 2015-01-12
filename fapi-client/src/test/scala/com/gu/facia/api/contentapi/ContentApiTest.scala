@@ -102,6 +102,7 @@ class ContentApiTest extends FreeSpec
     "will extract backfill items from item response" in {
       val itemResponse = mock[ItemResponse]
       when(itemResponse.results) thenReturn contents
+      when(itemResponse.editorsPicks) thenReturn Nil
       val response: Either[Response[ItemResponse], Response[SearchResponse]] = Left(Response.Right(itemResponse))
       ContentApi.backfillContentFromResponse(response).asFuture.futureValue.fold(
         err => fail(s"expected contents result, got error $err"),
