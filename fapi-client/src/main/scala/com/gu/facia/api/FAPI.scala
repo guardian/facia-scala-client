@@ -91,11 +91,12 @@ object FAPI {
                adjustSearchQuery: AdjustSearchQuery = identity, adjustItemQuery: AdjustItemQuery = identity)
               (implicit capiClient: GuardianContentClient, faciaClient: ApiClient, ec: ExecutionContext): Response[List[CuratedContent]] = {
 
-    val query = ContentApi.buildBackfillQuery(capiClient, backfillQuery)
+    val query = ContentApi.buildBackfillQuery(backfillQuery)
       .right.map(adjustSearchQuery)
       .left.map(adjustItemQuery)
+    val backfillResponse = ContentApi.getBackfillResponse(capiClient, query)
     for {
-      backfillContent <- ContentApi.backfillContentFromResponse(ContentApi.getBackfillResponse(capiClient, query))
+      backfillContent <- ContentApi.backfillContentFromResponse(backfillResponse)
       collectionConfig = CollectionConfig.fromCollection(collection)
     } yield {
       backfillContent.map(FaciaContent.fromTrailAndContent(_, TrailMetaData.empty, collectionConfig))
