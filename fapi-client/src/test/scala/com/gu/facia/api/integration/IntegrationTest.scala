@@ -11,7 +11,7 @@ import org.scalatest.time.{Millis, Seconds, Span}
 import org.scalatest.{FreeSpec, OptionValues, ShouldMatchers}
 
 class IntegrationTest extends FreeSpec with ShouldMatchers with ScalaFutures with OptionValues with IntegrationTestConfig {
-  implicit val patience = PatienceConfig(Span(2, Seconds), Span(50, Millis))
+  implicit val patience = PatienceConfig(Span(5, Seconds), Span(50, Millis))
 
   "getFronts" - {
     "should return a set of Front instances from the fronts JSON" in {
