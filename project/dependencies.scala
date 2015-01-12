@@ -6,6 +6,6 @@ object Dependencies {
   val contentApi = "com.gu" %% "content-api-client" % "5.0"
   val mockito = "org.mockito" % "mockito-all" % "1.10.8" % "test"
   val playJson = "com.typesafe.play" %% "play-json" % "2.3.6"
-  val scalaTest = "org.scalatest" % "scalatest_2.11" % "2.2.1" % "test"
+  val scalaTest = "org.scalatest" %% "scalatest" % "2.2.1" % "test"
   val specs2 = "org.specs2" %% "specs2" % "2.3.12" % "test"
 }
