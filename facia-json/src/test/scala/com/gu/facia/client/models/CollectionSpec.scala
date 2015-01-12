@@ -69,6 +69,23 @@ class CollectionSpec extends Specification with ResourcesHelper {
           })
         })
       })
+
+      "be able to serialize and deserialize the same object" in {
+        val collectionJson = CollectionJson(
+          live = List(Trail("id-123", DateTime.now.getMillis, None)),
+          draft = None,
+          lastUpdated = DateTime.now(),
+          updatedBy = "A test",
+          updatedEmail = "a test email",
+          displayName = None,
+          href = None)
+
+        val collectionJsonAsString = Json.stringify(Json.toJson(collectionJson))
+        val newCollectionJson = Json.parse(collectionJsonAsString).as[CollectionJson]
+
+        newCollectionJson.lastUpdated should beEqualTo (collectionJson.lastUpdated)
+        newCollectionJson should beEqualTo (collectionJson)
+      }
     }
   }
 }
