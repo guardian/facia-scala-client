@@ -66,6 +66,7 @@ val sonatypeReleaseSettings = releaseSettings ++ sonatypeSettings ++ Seq(
 lazy val root = (project in file("."))
   .aggregate(faciaJson, fapiClient)
   .settings(publishArtifact := false)
+  .settings(sonatypeReleaseSettings: _*)
 
 lazy val faciaJson = project.in(file("facia-json"))
   .settings(
@@ -85,7 +86,6 @@ lazy val faciaJson = project.in(file("facia-json"))
     ),
     publishArtifact := true
   )
-  .settings(sonatypeReleaseSettings: _*)
 
 lazy val fapiClient = project.in(file("fapi-client"))
   .settings(
@@ -105,4 +105,3 @@ lazy val fapiClient = project.in(file("fapi-client"))
     publishArtifact := true
   )
   .dependsOn(faciaJson)
-  .settings(sonatypeReleaseSettings: _*)
