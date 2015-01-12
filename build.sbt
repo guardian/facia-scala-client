@@ -8,6 +8,8 @@ name := "facia-api-client"
 
 scalaVersion := "2.11.4"
 
+scalaVersion in ThisBuild := "2.11.4"
+
 description := "Scala client for The Guardian's Facia JSON API"
 
 val sonatypeReleaseSettings = releaseSettings ++ sonatypeSettings ++ Seq(
@@ -66,12 +68,11 @@ val sonatypeReleaseSettings = releaseSettings ++ sonatypeSettings ++ Seq(
 lazy val root = (project in file("."))
   .aggregate(faciaJson, fapiClient)
   .settings(publishArtifact := false)
+  .settings(crossScalaVersions := Seq("2.10.4", "2.11.4"))
   .settings(sonatypeReleaseSettings: _*)
 
 lazy val faciaJson = project.in(file("facia-json"))
   .settings(
-    crossScalaVersions := Seq("2.10.4", "2.11.4"),
-    scalaVersion := "2.11.4",
     organization := "com.gu",
     name := "facia-json",
     resolvers ++= Seq(
@@ -89,8 +90,6 @@ lazy val faciaJson = project.in(file("facia-json"))
 
 lazy val fapiClient = project.in(file("fapi-client"))
   .settings(
-    scalaVersion := "2.11.4",
-    crossScalaVersions := Seq("2.10.4", "2.11.4"),
     organization := "com.gu",
     name := "fapi-client",
     resolvers ++= Seq(
