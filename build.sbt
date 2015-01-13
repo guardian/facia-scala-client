@@ -72,6 +72,7 @@ lazy val root = (project in file("."))
   .settings(sonatypeReleaseSettings: _*)
 
 lazy val faciaJson = project.in(file("facia-json"))
+  .settings(sonatypeReleaseSettings: _*)
   .settings(
     organization := "com.gu",
     name := "facia-json",
@@ -87,8 +88,10 @@ lazy val faciaJson = project.in(file("facia-json"))
     ),
     publishArtifact := true
   )
+  .settings(sonatypeReleaseSettings: _*)
 
 lazy val fapiClient = project.in(file("fapi-client"))
+  .settings(sonatypeReleaseSettings: _*)
   .settings(
     organization := "com.gu",
     name := "fapi-client",
