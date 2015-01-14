@@ -103,31 +103,7 @@ case class Trail(
 }
 
 object CollectionJson {
-  implicit val jsonFormatWrites = Json.writes[CollectionJson]
-
-  implicit val jsonFormatReads: Reads[CollectionJson] = (
-    (__ \ 'live).read[List[Trail]] and
-    (__ \ 'draft).readNullable[List[Trail]] and
-    (__ \ 'lastUpdated).read[DateTime](jodaDateTimeFormats) and
-    (__ \ 'updatedBy).read[String] and
-    (__ \ 'updatedEmail).read[String] and
-    (__ \ 'displayName).readNullable[String] and
-    (__ \ 'href).readNullable[String] and
-    Reads.pure[Option[JsValue]](None) and
-    Reads.pure[Option[List[Trail]]](None)
-    )(CollectionJson.apply _)
-
-  val jsonFormatReadsWithDiff: Reads[CollectionJson] = (
-    (__ \ 'live).read[List[Trail]] and
-    (__ \ 'draft).readNullable[List[Trail]] and
-    (__ \ 'lastUpdated).read[DateTime](jodaDateTimeFormats) and
-    (__ \ 'updatedBy).read[String] and
-    (__ \ 'updatedEmail).read[String] and
-    (__ \ 'displayName).readNullable[String] and
-    (__ \ 'href).readNullable[String] and
-    (__ \ 'diff).readNullable[JsValue] and
-    (__ \ 'previously).readNullable[List[Trail]]
-    )(CollectionJson.apply _)
+  implicit val jsonFormatFormat = Json.format[CollectionJson]
 }
 
 case class CollectionJson(
@@ -138,6 +114,5 @@ case class CollectionJson(
   updatedEmail: String,
   displayName: Option[String],
   href: Option[String],
-  diff: Option[JsValue],
   previously: Option[List[Trail]]
 )
