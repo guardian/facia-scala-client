@@ -19,7 +19,9 @@ class CollectionTest extends FreeSpec with ShouldMatchers with MockitoSugar with
     updatedBy = "test",
     updatedEmail = "test@example.com",
     displayName = Some("displayName"),
-    href = Some("href")
+    href = Some("href"),
+    None,
+    None
   )
   val content = Content(
     "content-id", Some("section"), Some("Section Name"), None, "webTitle", "webUrl", "apiUrl",
@@ -79,7 +81,9 @@ class CollectionTest extends FreeSpec with ShouldMatchers with MockitoSugar with
         updatedBy = "test",
         updatedEmail = "test@example.com",
         displayName = Some("displayName"),
-        href = Some("href")
+        href = Some("href"),
+        None,
+        None
       )
       val curatedContent = Collection.liveContent(collection, contents)
       curatedContent.map(_.content.id) should equal(List("content-id"))

@@ -3,6 +3,9 @@ package com.gu.facia.client.models
 import play.api.libs.json._
 import org.joda.time.DateTime
 import play.api.libs.json.{JsValue, Json}
+import play.api.libs.json._
+import play.api.libs.json.Reads._
+import play.api.libs.functional.syntax._
 
 sealed trait MetaDataCommonFields {
   val json: Map[String, JsValue]
@@ -100,7 +103,31 @@ case class Trail(
 }
 
 object CollectionJson {
-  implicit val jsonFormat = Json.format[CollectionJson]
+  implicit val jsonFormatWrites = Json.writes[CollectionJson]
+
+  implicit val jsonFormatReads: Reads[CollectionJson] = (
+    (__ \ 'live).read[List[Trail]] and
+    (__ \ 'draft).readNullable[List[Trail]] and
+    (__ \ 'lastUpdated).read[DateTime](jodaDateTimeFormats) and
+    (__ \ 'updatedBy).read[String] and
+    (__ \ 'updatedEmail).read[String] and
+    (__ \ 'displayName).readNullable[String] and
+    (__ \ 'href).readNullable[String] and
+    Reads.pure[Option[JsValue]](None) and
+    Reads.pure[Option[List[Trail]]](None)
+    )(CollectionJson.apply _)
+
+  val jsonFormatReadsWithDiff: Reads[CollectionJson] = (
+    (__ \ 'live).read[List[Trail]] and
+    (__ \ 'draft).readNullable[List[Trail]] and
+    (__ \ 'lastUpdated).read[DateTime](jodaDateTimeFormats) and
+    (__ \ 'updatedBy).read[String] and
+    (__ \ 'updatedEmail).read[String] and
+    (__ \ 'displayName).readNullable[String] and
+    (__ \ 'href).readNullable[String] and
+    (__ \ 'diff).readNullable[JsValue] and
+    (__ \ 'previously).readNullable[List[Trail]]
+    )(CollectionJson.apply _)
 }
 
 case class CollectionJson(
@@ -110,5 +137,7 @@ case class CollectionJson(
   updatedBy: String,
   updatedEmail: String,
   displayName: Option[String],
-  href: Option[String]
+  href: Option[String],
+  diff: Option[JsValue],
+  previously: Option[List[Trail]]
 )
