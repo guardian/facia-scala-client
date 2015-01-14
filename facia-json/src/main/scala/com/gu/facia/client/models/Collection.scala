@@ -3,9 +3,6 @@ package com.gu.facia.client.models
 import play.api.libs.json._
 import org.joda.time.DateTime
 import play.api.libs.json.{JsValue, Json}
-import play.api.libs.json._
-import play.api.libs.json.Reads._
-import play.api.libs.functional.syntax._
 
 sealed trait MetaDataCommonFields {
   val json: Map[String, JsValue]
@@ -103,7 +100,7 @@ case class Trail(
 }
 
 object CollectionJson {
-  implicit val jsonFormatFormat = Json.format[CollectionJson]
+  implicit val jsonFormat = Json.format[CollectionJson]
 }
 
 case class CollectionJson(
