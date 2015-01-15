@@ -78,7 +78,7 @@ class CollectionSpec extends Specification with ResourcesHelper {
           updatedBy = "A test",
           updatedEmail = "a test email",
           displayName = None,
-          href = None)
+          href = None, None)
 
         val collectionJsonAsString = Json.stringify(Json.toJson(collectionJson))
         val newCollectionJson = Json.parse(collectionJsonAsString).as[CollectionJson]
