@@ -15,6 +15,7 @@ class CollectionTest extends FreeSpec with ShouldMatchers with MockitoSugar with
   val collectionJson = CollectionJson(
     live = List(trail),
     draft = None,
+    treats = None,
     lastUpdated = new DateTime(1),
     updatedBy = "test",
     updatedEmail = "test@example.com",
@@ -75,6 +76,7 @@ class CollectionTest extends FreeSpec with ShouldMatchers with MockitoSugar with
       val collectionJson = CollectionJson(
         live = List(trail, trail2),
         draft = None,
+        treats = None,
         lastUpdated = new DateTime(1),
         updatedBy = "test",
         updatedEmail = "test@example.com",
