@@ -1,8 +1,9 @@
 package com.gu.facia.api
 
 import com.gu.contentapi.client.GuardianContentClient
-import com.gu.facia.api.contentapi.ContentApi
+import com.gu.contentapi.client.model.Content
 import com.gu.facia.api.contentapi.ContentApi.{AdjustItemQuery, AdjustSearchQuery}
+import com.gu.facia.api.contentapi.{ContentApi, LatestSnapsRequest}
 import com.gu.facia.api.models._
 import com.gu.facia.client.ApiClient
 import com.gu.facia.client.models.TrailMetaData
@@ -64,23 +65,36 @@ object FAPI {
     }
   }
 
-  def collectionContent(collection: Collection, adjustSearchQuery: AdjustSearchQuery = identity)
-                       (implicit capiClient: GuardianContentClient, ec: ExecutionContext): Response[List[CuratedContent]] = {
+  private def getContentForCollection(collection: Collection, adjustSearchQuery: AdjustSearchQuery = identity)
+                                   (implicit capiClient: GuardianContentClient, ec: ExecutionContext): Response[Set[Content]] = {
     val itemIdsForRequest = Collection.liveIdsWithoutSnaps(collection)
-
     ContentApi.buildHydrateQueries(capiClient, itemIdsForRequest, adjustSearchQuery) match {
       case Success(hydrateQueries) =>
         for {
           hydrateResponses <- ContentApi.getHydrateResponse(capiClient, hydrateQueries)
-          content = ContentApi.itemsFromSearchResponses(hydrateResponses)
-        } yield {
-          Collection.liveContent(collection, content)
-        }
-
+          content = ContentApi.itemsFromSearchResponses(hydrateResponses)}
+        yield content
       case Failure(error) =>
-        Response.Left(UrlConstructError(error.getMessage, Some(error)))
-    }
+        Response.Left(UrlConstructError(error.getMessage, Some(error)))}}
+
+  private def getLatestSnapContentForCollection(collection: Collection, adjustItemQuery: AdjustItemQuery)
+                      (implicit capiClient: GuardianContentClient, ec: ExecutionContext) = {
+    val latestSnapsRequest: LatestSnapsRequest = Collection.latestSnapsRequestFor(collection)
+    for(snapContent <- ContentApi.latestContentFromLatestSnaps(capiClient, latestSnapsRequest, adjustItemQuery))
+      yield snapContent}
+
+  def collectionContentWithoutSnaps(collection: Collection, adjustSearchQuery: AdjustSearchQuery = identity)
+                                (implicit capiClient: GuardianContentClient, ec: ExecutionContext): Response[List[FaciaContent]] = {
+    for(setOfContent <- getContentForCollection(collection, adjustSearchQuery))
+      yield Collection.liveContent(collection, setOfContent)
   }
+
+  def collectionContentWithSnaps(collection: Collection, adjustSearchQuery: AdjustSearchQuery = identity, adjustSnapItemQuery: AdjustItemQuery = identity)
+                                   (implicit capiClient: GuardianContentClient, ec: ExecutionContext): Response[List[FaciaContent]] = {
+    for {
+      setOfContent <- getContentForCollection(collection, adjustSearchQuery)
+      snapContent <- getLatestSnapContentForCollection(collection, adjustSnapItemQuery)}
+    yield Collection.liveContent(collection, setOfContent, snapContent)}
 
   /**
    * Fetches content for the given backfill query. The query can be manipulated for different
