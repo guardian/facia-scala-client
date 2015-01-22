@@ -91,11 +91,13 @@ class IntegrationTest extends FreeSpec with ShouldMatchers with ScalaFutures wit
       def makeCollectionJson(trails: Trail*) = CollectionJson(
         live = trails.toList,
         draft = None,
+        treats = None,
         lastUpdated = new DateTime(1),
         updatedBy = "test",
         updatedEmail = "test@example.com",
         displayName = Some("displayName"),
-        href = Some("href"))
+        href = Some("href"),
+        previously = None)
       val collectionConfig = CollectionConfig.fromCollectionJson(CollectionConfigJson.withDefaults())
 
       "should turn dream snaps into content" in {
