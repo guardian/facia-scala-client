@@ -276,6 +276,11 @@ class IntegrationTest extends FreeSpec with ShouldMatchers with ScalaFutures wit
         listOfFaciaContent.apply(0) match {
           case c: CuratedContent =>
             c.supportingContent.length should be (5)
+            c.supportingContent.collect{case s: SupportingCuratedContent => s}.length should be (2)
+            val latestSnaps = c.supportingContent.collect{case l: LatestSnap => l}
+            latestSnaps.length should be (2)
+            latestSnaps.forall(_.latestContent.isDefined == false) should be (true)
+            c.supportingContent.collect{case l: LinkSnap => l}.length should be (1)
           case somethingElse => fail(s"expected only CuratedContent, got ${somethingElse.getClass.getName}")
         }
       })
@@ -283,7 +288,7 @@ class IntegrationTest extends FreeSpec with ShouldMatchers with ScalaFutures wit
 
     "should fill in dream snaps in sublinks" in {
       val collection = Collection.fromCollectionJsonConfigAndContent("id", Option(collectionJsonSupportingWithDreamSnaps), collectionConfig)
-      val faciaContent = FAPI.collectionContentWithoutSnaps(collection)
+      val faciaContent = FAPI.collectionContentWithSnaps(collection)
 
       faciaContent.asFuture.futureValue.fold(
       err => fail(s"expected to get one item with supporting and dream snaps, got $err", err.cause),
@@ -293,6 +298,11 @@ class IntegrationTest extends FreeSpec with ShouldMatchers with ScalaFutures wit
         listOfFaciaContent.apply(0) match {
           case c: CuratedContent =>
             c.supportingContent.length should be (5)
+            c.supportingContent.collect{case s: SupportingCuratedContent => s}.length should be (2)
+            val latestSnaps = c.supportingContent.collect{case l: LatestSnap => l}
+            latestSnaps.length should be (2)
+            latestSnaps.forall(_.latestContent.isDefined) should be (true)
+            c.supportingContent.collect{case l: LinkSnap => l}.length should be (1)
           case somethingElse => fail(s"expected only CuratedContent, got ${somethingElse.getClass.getName}")
         }
       })
