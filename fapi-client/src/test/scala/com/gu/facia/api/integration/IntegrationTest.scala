@@ -231,7 +231,7 @@ class IntegrationTest extends FreeSpec with ShouldMatchers with ScalaFutures wit
     def makeTrail(id: String) =
       Trail(id, 0, None)
     def makeTrailWithSupporting(id: String, supporting: Trail*) =
-      Trail(id, 0, Some(TrailMetaData(Map("supporting" -> JsArray(Seq(Json.toJson(supporting)))))))
+      Trail(id, 0, Some(TrailMetaData(Map("supporting" -> JsArray(supporting.map(Json.toJson(_)))))))
 
     val supportingTrailOne = makeTrail("internal-code/content/445034105")
     val supportingTrailTwo = makeTrail("internal-code/content/445529464")
