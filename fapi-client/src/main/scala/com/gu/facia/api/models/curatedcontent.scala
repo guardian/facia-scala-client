@@ -49,6 +49,22 @@ object Snap {
       ))
     case _ => None
   }
+
+  def maybeFromSupportingItem(supportingItem: SupportingItem): Option[Snap] = supportingItem.safeMeta.snapType match {
+    case Some("link") =>
+      Option(LinkSnap(
+        supportingItem.id,
+        supportingItem.safeMeta.snapUri,
+        supportingItem.safeMeta.snapCss))
+    case Some("latest") =>
+      Option(LatestSnap(
+        supportingItem.id,
+        supportingItem.safeMeta.snapUri,
+        supportingItem.safeMeta.snapCss,
+        None
+      ))
+    case _ => None
+  }
 }
 
 sealed trait Snap extends FaciaContent
@@ -65,7 +81,7 @@ case class LatestSnap(
 
 case class CuratedContent(
   content: Content,
-  supportingContent: List[SupportingCuratedContent],
+  supportingContent: List[FaciaContent],
   headline: String,
   href: Option[String],
   trailText: Option[String],
@@ -107,7 +123,7 @@ case class SupportingCuratedContent(
 object CuratedContent {
 
   def fromTrailAndContentWithSupporting(content: Content, trailMetaData: TrailMetaData,
-                                        supportingContent: List[SupportingCuratedContent],
+                                        supportingContent: List[FaciaContent],
                                         collectionConfig: CollectionConfig) = {
     val contentFields: Map[String, String] = content.safeFields
 
