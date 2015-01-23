@@ -63,6 +63,7 @@ case class SupportingItem(
   meta: Option[SupportingItemMetaData]
 ) {
   val isSnap: Boolean = id.startsWith("snap/")
+  lazy val safeMeta = meta.getOrElse(TrailMetaData.empty)
 }
 
 object TrailMetaData {
