@@ -55,25 +55,27 @@ object Collection {
     val collectionConfig = CollectionConfig.fromCollection(collection)
 
     def resolveTrail(trail: Trail): Option[FaciaContent] = {
-      content.find(c => trail.id.endsWith("/" + c.safeFields.getOrElse("internalContentCode", throw new RuntimeException("No internal content code")))).map { content =>
+      content.find(c => trail.id.endsWith("/" + c.safeFields.getOrElse("internalContentCode", throw new RuntimeException("No internal content code"))))
+        .map { content =>
         trail.safeMeta.supporting
           .map(_.flatMap(resolveSupportingContent))
           .map(supportingItems => CuratedContent.fromTrailAndContentWithSupporting(content, trail.safeMeta, supportingItems, collectionConfig))
-          .getOrElse(CuratedContent.fromTrailAndContent(content, trail.safeMeta, collectionConfig))
-      }.orElse{
-        snapContent.find{case (id, _) => trail.id == id}
-          .map(c => LatestSnap(trail.id, trail.safeMeta.snapUri, trail.safeMeta.snapCss, c._2))
-      }.orElse{ Snap.maybeFromTrail(trail) }
-    }
+          .getOrElse(CuratedContent.fromTrailAndContent(content, trail.safeMeta, collectionConfig))}
+        .orElse {
+          snapContent
+            .find{case (id, _) => trail.id == id}
+            .map(c => LatestSnap(trail.id, trail.safeMeta.snapUri, trail.safeMeta.snapCss, c._2))}
+        .orElse{ Snap.maybeFromTrail(trail)}}
 
     def resolveSupportingContent(supportingItem: SupportingItem): Option[FaciaContent] = {
-      content.find(c => supportingItem.id.endsWith("/" + c.safeFields.getOrElse("internalContentCode", throw new RuntimeException("No internal content code")))).map { content =>
-        SupportingCuratedContent.fromTrailAndContent(content, supportingItem.safeMeta, collectionConfig)
-      }.orElse{
-        snapContent.find{case (id, _) => supportingItem.id == id}
-          .map(c => LatestSnap(supportingItem.id, supportingItem.safeMeta.snapUri, supportingItem.safeMeta.snapCss, c._2))
-      }.orElse{ Snap.maybeFromSupportingItem(supportingItem) }
-    }
+      content
+        .find(c => supportingItem.id.endsWith("/" + c.safeFields.getOrElse("internalContentCode", throw new RuntimeException("No internal content code"))))
+        .map { content => SupportingCuratedContent.fromTrailAndContent(content, supportingItem.safeMeta, collectionConfig)}
+        .orElse {
+          snapContent
+            .find{case (id, _) => supportingItem.id == id}
+            .map(c => LatestSnap(supportingItem.id, supportingItem.safeMeta.snapUri, supportingItem.safeMeta.snapCss, c._2))}
+        .orElse{ Snap.maybeFromSupportingItem(supportingItem)}}
 
     collection.live.flatMap(resolveTrail)
   }
