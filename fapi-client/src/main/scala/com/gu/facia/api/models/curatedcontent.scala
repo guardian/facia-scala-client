@@ -2,12 +2,12 @@ package com.gu.facia.api.models
 
 import com.gu.contentapi.client.model.Content
 import com.gu.facia.api.utils.ItemKicker
-import com.gu.facia.client.models.{Trail, TrailMetaData}
+import com.gu.facia.client.models.{SupportingItem, MetaDataCommonFields, Trail, TrailMetaData}
 
 case class Image(imageSrc: String, imageSrcWidth: String, imageSrcHeight: String)
 
 object Image {
-  def fromTrail(trailMeta: TrailMetaData): Option[Image] =
+  def fromTrail(trailMeta: MetaDataCommonFields): Option[Image] =
     for {
       imageSrc <- trailMeta.imageSrc
       imageSrcWidth <- trailMeta.imageSrcWidth
@@ -22,7 +22,7 @@ case class ImageCutout(
   imageCutoutSrcHeight: String)
 
 object ImageCutout {
-  def fromTrail(trailMeta: TrailMetaData): Option[ImageCutout] =
+  def fromTrail(trailMeta: MetaDataCommonFields): Option[ImageCutout] =
     for {
       imageCutoutSrc <- trailMeta.imageCutoutSrc
       imageCutoutSrcWidth <- trailMeta.imageCutoutSrcWidth
@@ -132,7 +132,7 @@ object CuratedContent {
       trailMetaData.showBoostedHeadline.getOrElse(false),
       trailMetaData.showQuotedHeadline.getOrElse(false))}
 
-  def fromTrailAndContent(content: Content, trailMetaData: TrailMetaData, collectionConfig: CollectionConfig): CuratedContent = {
+  def fromTrailAndContent(content: Content, trailMetaData: MetaDataCommonFields, collectionConfig: CollectionConfig): CuratedContent = {
     val contentFields: Map[String, String] = content.safeFields
 
     CuratedContent(
@@ -159,7 +159,7 @@ object CuratedContent {
 }
 
 object SupportingCuratedContent {
-  def fromTrailAndContent(content: Content, trailMetaData: TrailMetaData, collectionConfig: CollectionConfig): SupportingCuratedContent = {
+  def fromTrailAndContent(content: Content, trailMetaData: MetaDataCommonFields, collectionConfig: CollectionConfig): SupportingCuratedContent = {
     val contentFields: Map[String, String] = content.safeFields
 
     SupportingCuratedContent(
