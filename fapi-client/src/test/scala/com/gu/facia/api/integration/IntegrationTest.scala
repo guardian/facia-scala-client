@@ -10,10 +10,21 @@ import org.joda.time.DateTime
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.time.{Millis, Seconds, Span}
 import org.scalatest.{FreeSpec, OptionValues, ShouldMatchers}
-import play.api.libs.json.JsString
+import play.api.libs.json.{Json, JsArray, JsString}
 
 class IntegrationTest extends FreeSpec with ShouldMatchers with ScalaFutures with OptionValues with IntegrationTestConfig {
   implicit val patience = PatienceConfig(Span(5, Seconds), Span(50, Millis))
+
+  def makeCollectionJson(trails: Trail*) = CollectionJson(
+    live = trails.toList,
+    draft = None,
+    treats = None,
+    lastUpdated = new DateTime(1),
+    updatedBy = "test",
+    updatedEmail = "test@example.com",
+    displayName = Some("displayName"),
+    href = Some("href"),
+    previously = None)
 
   "getFronts" - {
     "should return a set of Front instances from the fronts JSON" in {
@@ -88,16 +99,6 @@ class IntegrationTest extends FreeSpec with ShouldMatchers with ScalaFutures wit
 
       val normalTrail = Trail("internal-code/content/445034105", 0, None)
 
-      def makeCollectionJson(trails: Trail*) = CollectionJson(
-        live = trails.toList,
-        draft = None,
-        treats = None,
-        lastUpdated = new DateTime(1),
-        updatedBy = "test",
-        updatedEmail = "test@example.com",
-        displayName = Some("displayName"),
-        href = Some("href"),
-        previously = None)
       val collectionConfig = CollectionConfig.fromCollectionJson(CollectionConfigJson.withDefaults())
 
       "should turn dream snaps into content" in {
@@ -222,6 +223,38 @@ class IntegrationTest extends FreeSpec with ShouldMatchers with ScalaFutures wit
         err => fail(s"expected backfill results, got $err", err.cause),
         backfillContents => backfillContents.head.content.tags.exists(_.id.contains("sustainable-business/series/finance")) should equal(true)
       )
+    }
+  }
+
+  "SupportingContent" - {
+    def makeTrail(id: String) =
+      Trail(id, 0, None)
+    def makeTrailWithSupporting(id: String, supporting: Trail*) =
+      Trail(id, 0, Some(TrailMetaData(Map("supporting" -> JsArray(Seq(Json.toJson(supporting)))))))
+
+    "should be filled correctly" in {
+      val supportingTrailOne = makeTrail("internal-code/content/445034105")
+      val supportingTrailTwo = makeTrail("internal-code/content/445529464")
+
+      val trailWithSupporting = makeTrailWithSupporting("internal-code/content/454695023", supportingTrailOne, supportingTrailTwo)
+
+      val collectionConfig = CollectionConfig.fromCollectionJson(CollectionConfigJson.withDefaults())
+      val collectionJson = makeCollectionJson(trailWithSupporting)
+      val collection = Collection.fromCollectionJsonConfigAndContent("id", Option(collectionJson), collectionConfig)
+
+      val faciaContent = FAPI.collectionContentWithoutSnaps(collection)
+
+      faciaContent.asFuture.futureValue.fold(
+      err => fail(s"expected to get one item with supporting, got $err", err.cause),
+      { listOfFaciaContent =>
+        listOfFaciaContent.length should be (1)
+
+        listOfFaciaContent.apply(0) match {
+          case c: CuratedContent =>
+            c.supportingContent should be (2)
+          case somethingElse => fail(s"expected only CuratedContent, got ${somethingElse.getClass.getName}")
+        }
+      })
     }
   }
 
