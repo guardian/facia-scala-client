@@ -53,14 +53,29 @@ object Collection {
     // if content is not in the set it was most likely filtered out by the CAPI query, so exclude it
     // note that this does not currently deal with e.g. snaps
     val collectionConfig = CollectionConfig.fromCollection(collection)
-    collection.live.flatMap { trail =>
+
+    def resolveTrail(trail: Trail): Option[FaciaContent] = {
       content.find(c => trail.id.endsWith("/" + c.safeFields.getOrElse("internalContentCode", throw new RuntimeException("No internal content code")))).map { content =>
-        CuratedContent.fromTrailAndContent(content, trail.safeMeta, collectionConfig)
+        trail.safeMeta.supporting
+          .map(_.flatMap(resolveSupportingContent))
+          .map(supportingItems => CuratedContent.fromTrailAndContentWithSupporting(content, trail.safeMeta, supportingItems, collectionConfig))
+          .getOrElse(CuratedContent.fromTrailAndContent(content, trail.safeMeta, collectionConfig))
       }.orElse{
         snapContent.find{case (id, _) => trail.id == id}
-        .map(c => LatestSnap(trail.id, trail.safeMeta.snapUri, trail.safeMeta.snapCss, c._2))
+          .map(c => LatestSnap(trail.id, trail.safeMeta.snapUri, trail.safeMeta.snapCss, c._2))
       }.orElse{ Snap.maybeFromTrail(trail) }
     }
+
+    def resolveSupportingContent(supportingItem: SupportingItem): Option[FaciaContent] = {
+      content.find(c => supportingItem.id.endsWith("/" + c.safeFields.getOrElse("internalContentCode", throw new RuntimeException("No internal content code")))).map { content =>
+        SupportingCuratedContent.fromTrailAndContent(content, supportingItem.safeMeta, collectionConfig)
+      }.orElse{
+        snapContent.find{case (id, _) => supportingItem.id == id}
+          .map(c => LatestSnap(supportingItem.id, supportingItem.safeMeta.snapUri, supportingItem.safeMeta.snapCss, c._2))
+      }.orElse{ Snap.maybeFromSupportingItem(supportingItem) }
+    }
+
+    collection.live.flatMap(resolveTrail)
   }
 
   def liveIdsWithoutSnaps(collection: Collection): List[String] =
