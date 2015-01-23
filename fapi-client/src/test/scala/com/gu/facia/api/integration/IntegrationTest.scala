@@ -258,7 +258,7 @@ class IntegrationTest extends FreeSpec with ShouldMatchers with ScalaFutures wit
 
         listOfFaciaContent.apply(0) match {
           case c: CuratedContent =>
-            c.supportingContent should be (2)
+            c.supportingContent.length should be (2)
           case somethingElse => fail(s"expected only CuratedContent, got ${somethingElse.getClass.getName}")
         }
       })
@@ -275,7 +275,7 @@ class IntegrationTest extends FreeSpec with ShouldMatchers with ScalaFutures wit
 
         listOfFaciaContent.apply(0) match {
           case c: CuratedContent =>
-            c.supportingContent should be (2)
+            c.supportingContent.length should be (5)
           case somethingElse => fail(s"expected only CuratedContent, got ${somethingElse.getClass.getName}")
         }
       })
@@ -292,7 +292,7 @@ class IntegrationTest extends FreeSpec with ShouldMatchers with ScalaFutures wit
 
         listOfFaciaContent.apply(0) match {
           case c: CuratedContent =>
-            c.supportingContent should be (5)
+            c.supportingContent.length should be (5)
           case somethingElse => fail(s"expected only CuratedContent, got ${somethingElse.getClass.getName}")
         }
       })
