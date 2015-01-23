@@ -298,11 +298,20 @@ class IntegrationTest extends FreeSpec with ShouldMatchers with ScalaFutures wit
         listOfFaciaContent.apply(0) match {
           case c: CuratedContent =>
             c.supportingContent.length should be (5)
-            c.supportingContent.collect{case s: SupportingCuratedContent => s}.length should be (2)
+            val supportingContent = c.supportingContent.collect{case s: SupportingCuratedContent => s}
+            supportingContent.length should be (2)
             val latestSnaps = c.supportingContent.collect{case l: LatestSnap => l}
             latestSnaps.length should be (2)
             latestSnaps.forall(_.latestContent.isDefined) should be (true)
-            c.supportingContent.collect{case l: LinkSnap => l}.length should be (1)
+            val linkSnaps = c.supportingContent.collect{case l: LinkSnap => l}
+            linkSnaps.length should be (1)
+
+            c.supportingContent(0).asInstanceOf[SupportingCuratedContent].headline should be ("PM returns from holiday after video shows US reporter beheaded by Briton")
+            c.supportingContent(1).asInstanceOf[LatestSnap].latestContent.get.sectionId should be (Some("culture"))
+            c.supportingContent(2).asInstanceOf[LatestSnap].latestContent.get.sectionId should be (Some("technology"))
+            c.supportingContent(3).asInstanceOf[SupportingCuratedContent].headline should be ("Inside the 29 August edition")
+            c.supportingContent(4).asInstanceOf[LinkSnap].id should be ("snap/347234723")
+
           case somethingElse => fail(s"expected only CuratedContent, got ${somethingElse.getClass.getName}")
         }
       })
