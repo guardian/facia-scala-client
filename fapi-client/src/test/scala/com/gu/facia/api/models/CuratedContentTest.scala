@@ -24,16 +24,16 @@ class CuratedContentTest extends FreeSpec with Matchers {
     val trailMetaDataWithoutHeadline = TrailMetaData(Map.empty)
 
     "should resolve the headline from TrailMetaData" in {
-      val curatedContent = FaciaContent.fromTrailAndContent(contentWithFieldHeadline, trailMetaDataWithHeadline, collectionConfig)
+      val curatedContent = CuratedContent.fromTrailAndContent(contentWithFieldHeadline, trailMetaDataWithHeadline, collectionConfig)
       curatedContent.headline should be ("trailMetaDataHeadline")
     }
 
     "should resolve the headline from Content fields.headline" in {
-      val curatedContent = FaciaContent.fromTrailAndContent(contentWithFieldHeadline, trailMetaDataWithoutHeadline, collectionConfig)
+      val curatedContent = CuratedContent.fromTrailAndContent(contentWithFieldHeadline, trailMetaDataWithoutHeadline, collectionConfig)
       curatedContent.headline should be ("Content headline")
     }
     "should resolve the headline from Content webTitle" in {
-      val curatedContent = FaciaContent.fromTrailAndContent(contentWithoutFieldHeadline, trailMetaDataWithoutHeadline, collectionConfig)
+      val curatedContent = CuratedContent.fromTrailAndContent(contentWithoutFieldHeadline, trailMetaDataWithoutHeadline, collectionConfig)
       curatedContent.headline should be ("contentWithoutFieldHeadlineHeadline")
     }
   }

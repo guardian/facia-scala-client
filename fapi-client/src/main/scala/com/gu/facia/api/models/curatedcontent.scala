@@ -65,6 +65,7 @@ case class LatestSnap(
 
 case class CuratedContent(
   content: Content,
+  supportingContent: List[SupportingCuratedContent],
   headline: String,
   href: Option[String],
   trailText: Option[String],
@@ -83,13 +84,60 @@ case class CuratedContent(
   showBoostedHeadline: Boolean,
   showQuotedHeadline: Boolean) extends FaciaContent
 
-object FaciaContent {
+case class SupportingCuratedContent(
+  content: Content,
+  headline: String,
+  href: Option[String],
+  trailText: Option[String],
+  group: String,
+  image: Option[Image],
+  isBreaking: Boolean,
+  isBoosted: Boolean,
+  imageHide: Boolean,
+  imageReplace: Boolean,
+  showMainVideo: Boolean,
+  showKickerTag: Boolean,
+  byline: Option[String],
+  showByLine: Boolean,
+  kicker: Option[ItemKicker],
+  imageCutout: Option[ImageCutout],
+  showBoostedHeadline: Boolean,
+  showQuotedHeadline: Boolean) extends FaciaContent
+
+object CuratedContent {
+
+  def fromTrailAndContentWithSupporting(content: Content, trailMetaData: TrailMetaData,
+                                        supportingContent: List[SupportingCuratedContent],
+                                        collectionConfig: CollectionConfig) = {
+    val contentFields: Map[String, String] = content.safeFields
+
+    CuratedContent(
+      content,
+      supportingContent,
+      trailMetaData.headline.orElse(content.safeFields.get("headline")).getOrElse(content.webTitle),
+      trailMetaData.href.orElse(contentFields.get("href")),
+      trailMetaData.trailText.orElse(contentFields.get("trailText")),
+      trailMetaData.group.getOrElse("0"),
+      Image.fromTrail(trailMetaData),
+      trailMetaData.isBreaking.getOrElse(false),
+      trailMetaData.isBoosted.getOrElse(false),
+      trailMetaData.imageHide.getOrElse(false),
+      trailMetaData.imageReplace.getOrElse(false),
+      trailMetaData.showMainVideo.getOrElse(false),
+      trailMetaData.showKickerTag.getOrElse(false),
+      trailMetaData.byline.orElse(contentFields.get("byline")),
+      trailMetaData.showByline.getOrElse(false),
+      ItemKicker.fromContentAndTrail(content, trailMetaData, Some(collectionConfig)),
+      ImageCutout.fromTrail(trailMetaData),
+      trailMetaData.showBoostedHeadline.getOrElse(false),
+      trailMetaData.showQuotedHeadline.getOrElse(false))}
 
   def fromTrailAndContent(content: Content, trailMetaData: TrailMetaData, collectionConfig: CollectionConfig): CuratedContent = {
     val contentFields: Map[String, String] = content.safeFields
 
     CuratedContent(
       content,
+      supportingContent = Nil,
       trailMetaData.headline.orElse(content.safeFields.get("headline")).getOrElse(content.webTitle),
       trailMetaData.href.orElse(contentFields.get("href")),
       trailMetaData.trailText.orElse(contentFields.get("trailText")),
@@ -107,6 +155,30 @@ object FaciaContent {
       ImageCutout.fromTrail(trailMetaData),
       trailMetaData.showBoostedHeadline.getOrElse(false),
       trailMetaData.showQuotedHeadline.getOrElse(false)
-    )
-  }
+    )}
+}
+
+object SupportingCuratedContent {
+  def fromTrailAndContent(content: Content, trailMetaData: TrailMetaData, collectionConfig: CollectionConfig): SupportingCuratedContent = {
+    val contentFields: Map[String, String] = content.safeFields
+
+    SupportingCuratedContent(
+      content,
+      trailMetaData.headline.orElse(content.safeFields.get("headline")).getOrElse(content.webTitle),
+      trailMetaData.href.orElse(contentFields.get("href")),
+      trailMetaData.trailText.orElse(contentFields.get("trailText")),
+      trailMetaData.group.getOrElse("0"),
+      Image.fromTrail(trailMetaData),
+      trailMetaData.isBreaking.getOrElse(false),
+      trailMetaData.isBoosted.getOrElse(false),
+      trailMetaData.imageHide.getOrElse(false),
+      trailMetaData.imageReplace.getOrElse(false),
+      trailMetaData.showMainVideo.getOrElse(false),
+      trailMetaData.showKickerTag.getOrElse(false),
+      trailMetaData.byline.orElse(contentFields.get("byline")),
+      trailMetaData.showByline.getOrElse(false),
+      ItemKicker.fromContentAndTrail(content, trailMetaData, Some(collectionConfig)),
+      ImageCutout.fromTrail(trailMetaData),
+      trailMetaData.showBoostedHeadline.getOrElse(false),
+      trailMetaData.showQuotedHeadline.getOrElse(false))}
 }
