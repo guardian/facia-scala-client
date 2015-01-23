@@ -55,7 +55,7 @@ object Collection {
     val collectionConfig = CollectionConfig.fromCollection(collection)
     collection.live.flatMap { trail =>
       content.find(c => trail.id.endsWith("/" + c.safeFields.getOrElse("internalContentCode", throw new RuntimeException("No internal content code")))).map { content =>
-        FaciaContent.fromTrailAndContent(content, trail.safeMeta, collectionConfig)
+        CuratedContent.fromTrailAndContent(content, trail.safeMeta, collectionConfig)
       }.orElse{
         snapContent.find{case (id, _) => trail.id == id}
         .map(c => LatestSnap(trail.id, trail.safeMeta.snapUri, trail.safeMeta.snapCss, c._2))
