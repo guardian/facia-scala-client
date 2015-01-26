@@ -9,7 +9,9 @@ import com.gu.facia.api.{CapiError, Response}
 import scala.concurrent.{Future, ExecutionContext}
 import scala.util.Try
 
-case class LatestSnapsRequest(snaps: Map[String, String])
+case class LatestSnapsRequest(snaps: Map[String, String]) {
+  def join(other: LatestSnapsRequest): LatestSnapsRequest = this.copy(snaps = this.snaps ++ other.snaps)
+}
 
 object ContentApi {
   type AdjustSearchQuery = SearchQuery => SearchQuery
