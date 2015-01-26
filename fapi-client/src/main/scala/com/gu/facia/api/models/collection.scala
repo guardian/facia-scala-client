@@ -83,15 +83,15 @@ object Collection {
   def liveIdsWithoutSnaps(collection: Collection): List[String] =
     collection.live.filterNot(_.isSnap).map(_.id)
 
-  private def allSublinks(collection: Collection): List[SupportingItem] =
+  private def allSupportingItems(collection: Collection): List[SupportingItem] =
     collection.live.flatMap(_.meta).flatMap(_.supporting).flatten
 
-  def liveSublinkIdsWithoutSnaps(collection: Collection): List[String] =
-    allSublinks(collection).filterNot(_.isSnap).map(_.id)
+  def liveSupportingIdsWithoutSnaps(collection: Collection): List[String] =
+    allSupportingItems(collection).filterNot(_.isSnap).map(_.id)
 
-  def liveSublinkSnaps(collection: Collection): LatestSnapsRequest =
+  def liveSupportingSnaps(collection: Collection): LatestSnapsRequest =
     LatestSnapsRequest(
-      allSublinks(collection)
+      allSupportingItems(collection)
       .filter(_.isSnap)
       .filter(_.safeMeta.snapType == Some("latest"))
       .flatMap(snap => snap.meta.flatMap(_.snapUri).map(uri => snap.id ->uri))

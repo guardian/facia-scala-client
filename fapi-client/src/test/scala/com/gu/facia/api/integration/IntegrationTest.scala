@@ -227,7 +227,7 @@ class IntegrationTest extends FreeSpec with ShouldMatchers with ScalaFutures wit
     }
   }
 
-  "SupportingContent" - {
+  "Supporting Items" - {
     def makeTrail(id: String) =
       Trail(id, 0, None)
     def makeTrailWithSupporting(id: String, supporting: Trail*) =
@@ -264,7 +264,7 @@ class IntegrationTest extends FreeSpec with ShouldMatchers with ScalaFutures wit
       })
     }
 
-    "should not fill in dream snaps in sublinks" in {
+    "should not fill in dream snaps in supporting items" in {
       val collection = Collection.fromCollectionJsonConfigAndContent("id", Option(collectionJsonSupportingWithDreamSnaps), collectionConfig)
       val faciaContent = FAPI.collectionContentWithoutSnaps(collection)
 
@@ -286,7 +286,7 @@ class IntegrationTest extends FreeSpec with ShouldMatchers with ScalaFutures wit
       })
     }
 
-    "should fill in dream snaps in sublinks" in {
+    "should fill in dream snaps in supporting items" in {
       val collection = Collection.fromCollectionJsonConfigAndContent("id", Option(collectionJsonSupportingWithDreamSnaps), collectionConfig)
       val faciaContent = FAPI.collectionContentWithSnaps(collection)
 

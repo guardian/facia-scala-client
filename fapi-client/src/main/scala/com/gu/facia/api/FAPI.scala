@@ -68,7 +68,7 @@ object FAPI {
   private def getContentForCollection(collection: Collection, adjustSearchQuery: AdjustSearchQuery = identity)
                                    (implicit capiClient: GuardianContentClient, ec: ExecutionContext): Response[Set[Content]] = {
     val itemIdsForRequest = Collection.liveIdsWithoutSnaps(collection)
-    val supportingIdsForRequest = Collection.liveSublinkIdsWithoutSnaps(collection)
+    val supportingIdsForRequest = Collection.liveSupportingIdsWithoutSnaps(collection)
     val allItemIdsForRequest = itemIdsForRequest ::: supportingIdsForRequest
     ContentApi.buildHydrateQueries(capiClient, allItemIdsForRequest, adjustSearchQuery) match {
       case Success(hydrateQueries) =>
@@ -82,8 +82,8 @@ object FAPI {
   private def getLatestSnapContentForCollection(collection: Collection, adjustItemQuery: AdjustItemQuery)
                       (implicit capiClient: GuardianContentClient, ec: ExecutionContext) = {
     val latestSnapsRequest: LatestSnapsRequest = Collection.latestSnapsRequestFor(collection)
-    val latestSublinkSnaps: LatestSnapsRequest = Collection.liveSublinkSnaps(collection)
-    val allSnaps = latestSnapsRequest.join(latestSublinkSnaps)
+    val latestSupportingSnaps: LatestSnapsRequest = Collection.liveSupportingSnaps(collection)
+    val allSnaps = latestSnapsRequest.join(latestSupportingSnaps)
     for(snapContent <- ContentApi.latestContentFromLatestSnaps(capiClient, allSnaps, adjustItemQuery))
       yield snapContent}
 
