@@ -19,7 +19,8 @@ object CollectionConfigJson {
     hideKickers: Option[Boolean] = None,
     showDateHeader: Option[Boolean] = None,
     showLatestUpdate: Option[Boolean] = None,
-    excludeFromRss: Option[Boolean] = None
+    excludeFromRss: Option[Boolean] = None,
+    showTimestamps: Option[Boolean] = None
   ): CollectionConfigJson
     = CollectionConfigJson(
     displayName,
@@ -33,7 +34,8 @@ object CollectionConfigJson {
     hideKickers,
     showDateHeader,
     showLatestUpdate,
-    excludeFromRss
+    excludeFromRss,
+    showTimestamps
   )
 }
 
@@ -49,7 +51,8 @@ case class CollectionConfigJson(
   hideKickers: Option[Boolean],
   showDateHeader: Option[Boolean],
   showLatestUpdate: Option[Boolean],
-  excludeFromRss: Option[Boolean]
+  excludeFromRss: Option[Boolean],
+  showTimestamps: Option[Boolean]
   ) {
   val collectionType = `type`
 }
