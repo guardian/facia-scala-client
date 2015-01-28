@@ -15,7 +15,7 @@ case class Response[A] protected (underlying: Future[Either[ApiError, A]]) {
     }
   }
 
-  def filter(f: A => Boolean, orLeft: ApiError = FilteredOut)(implicit ex: ExecutionContext): Response[A] = flatMap { a =>
+  def filter(f: A => Boolean, orLeft: ApiError = FilteredOut())(implicit ex: ExecutionContext): Response[A] = flatMap { a =>
     if(f(a))
       Response.Right(a)
     else
