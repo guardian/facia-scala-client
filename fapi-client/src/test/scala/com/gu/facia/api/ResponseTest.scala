@@ -1,11 +1,7 @@
 package com.gu.facia.api
 
-import com.gu.facia.api.Response
-import lib.ExecutionContext
 import org.scalatest.concurrent.ScalaFutures
-import org.scalatest.mock.MockitoSugar
 import org.scalatest._
-import org.mockito.Mockito._
 import scala.concurrent.ExecutionContext.Implicits.global
 
 class ResponseTest extends FreeSpec with ShouldMatchers with ScalaFutures {
