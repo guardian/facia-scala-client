@@ -15,7 +15,7 @@ case class Response[A] protected (underlying: Future[Either[ApiError, A]]) {
     }
   }
 
-  def filter(f: A => Boolean, orLeft: ApiError = FilteredOut())(implicit ex: ExecutionContext): Response[A] = flatMap { a =>
+  def filter(f: A => Boolean, orLeft: ApiError = FilteredOut)(implicit ex: ExecutionContext): Response[A] = flatMap { a =>
     if(f(a))
       Response.Right(a)
     else
@@ -88,4 +88,7 @@ case class DataError(message: String, cause: Option[Throwable] = None) extends A
 case class CapiError(message: String, cause: Option[Throwable] = None) extends ApiError
 case class HttpError(message: String, cause: Option[Throwable] = None) extends ApiError
 case class UrlConstructError(message: String, cause: Option[Throwable] = None) extends ApiError
-case class FilteredOut(message: String = "Filtered out", cause: Option[Throwable] = None) extends ApiError
+case object FilteredOut extends ApiError {
+  def message = "Filtered out"
+  def cause = None
+}
