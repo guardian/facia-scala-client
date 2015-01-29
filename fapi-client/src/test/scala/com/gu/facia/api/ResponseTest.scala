@@ -14,5 +14,10 @@ class ResponseTest extends FreeSpec with ShouldMatchers with ScalaFutures {
     "should return a Left(FilteredOut) if the filter function returns false" in {
       Response.Right[Int](4).filter(_ == 3).asFuture.futureValue should equal(Left(FilteredOut))
     }
+
+    "should play nicely with for comprehensions" in {
+      for(r <- Response.Right[Int](4)  if r == 4) yield r should equal(Right(4))
+      for(r <- Response.Right[Int](4)  if r == 3) yield r should equal(Left(FilteredOut))
+    }
   }
 }

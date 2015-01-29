@@ -15,12 +15,13 @@ case class Response[A] protected (underlying: Future[Either[ApiError, A]]) {
     }
   }
 
-  def filter(f: A => Boolean, orLeft: ApiError = FilteredOut)(implicit ex: ExecutionContext): Response[A] = flatMap { a =>
+  def withFilter(f: A => Boolean, orLeft: ApiError = FilteredOut)(implicit ex: ExecutionContext): Response[A] = flatMap { a =>
     if(f(a))
       Response.Right(a)
     else
       Response.Left(orLeft)
   }
+  def filter(f: A => Boolean, orLeft: ApiError = FilteredOut)(implicit ex: ExecutionContext): Response[A] = withFilter(f, orLeft)
 
   def fold[B](failure: ApiError => B, success: A => B)(implicit ec: ExecutionContext): Future[B] = {
     asFuture.map(_.fold(failure, success))
