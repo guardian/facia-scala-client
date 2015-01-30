@@ -4,7 +4,7 @@ import scala.annotation.tailrec
 import scala.concurrent.{ExecutionContext, Future}
 
 
-case class Response[A] protected (underlying: Future[Either[ApiError, A]]) {
+case class Response[+A] protected (underlying: Future[Either[ApiError, A]]) {
   def map[B](f: A => B)(implicit ec: ExecutionContext): Response[B] =
     flatMap(a => Response.Right(f(a)))
 
@@ -31,7 +31,7 @@ case class Response[A] protected (underlying: Future[Either[ApiError, A]]) {
     fold(err => Left(pf(err)), Right(_))
   }
 
-  def recover(pf: ApiError => A)(implicit ec: ExecutionContext): Response[A] = Response {
+  def recover[A1 >: A](pf: ApiError => A1)(implicit ec: ExecutionContext): Response[A1] = Response {
     fold(err => Right(pf(err)), Right(_))
   }
 
