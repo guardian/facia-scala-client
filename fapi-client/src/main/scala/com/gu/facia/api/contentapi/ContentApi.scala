@@ -91,7 +91,9 @@ object ContentApi {
   def backfillContentFromResponse(response: Either[Response[ItemResponse], Response[SearchResponse]])
                                  (implicit ec: ExecutionContext): Response[List[Content]] = {
     response.fold(
-      _.map(itemResponse => itemResponse.editorsPicks ++ itemResponse.results),
+      _.map { itemResponse =>
+          itemResponse.editorsPicks ++ itemResponse.mostViewed ++ itemResponse.results
+        },
       _.map(_.results)
     )
   }
