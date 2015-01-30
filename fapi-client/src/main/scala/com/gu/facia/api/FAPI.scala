@@ -68,7 +68,9 @@ object FAPI {
   private def getContentForCollection(collection: Collection, adjustSearchQuery: AdjustSearchQuery = identity)
                                    (implicit capiClient: GuardianContentClient, ec: ExecutionContext): Response[Set[Content]] = {
     val itemIdsForRequest = Collection.liveIdsWithoutSnaps(collection)
-    ContentApi.buildHydrateQueries(capiClient, itemIdsForRequest, adjustSearchQuery) match {
+    val supportingIdsForRequest = Collection.liveSupportingIdsWithoutSnaps(collection)
+    val allItemIdsForRequest = itemIdsForRequest ::: supportingIdsForRequest
+    ContentApi.buildHydrateQueries(capiClient, allItemIdsForRequest, adjustSearchQuery) match {
       case Success(hydrateQueries) =>
         for {
           hydrateResponses <- ContentApi.getHydrateResponse(capiClient, hydrateQueries)
@@ -80,7 +82,9 @@ object FAPI {
   private def getLatestSnapContentForCollection(collection: Collection, adjustItemQuery: AdjustItemQuery)
                       (implicit capiClient: GuardianContentClient, ec: ExecutionContext) = {
     val latestSnapsRequest: LatestSnapsRequest = Collection.latestSnapsRequestFor(collection)
-    for(snapContent <- ContentApi.latestContentFromLatestSnaps(capiClient, latestSnapsRequest, adjustItemQuery))
+    val latestSupportingSnaps: LatestSnapsRequest = Collection.liveSupportingSnaps(collection)
+    val allSnaps = latestSnapsRequest.join(latestSupportingSnaps)
+    for(snapContent <- ContentApi.latestContentFromLatestSnaps(capiClient, allSnaps, adjustItemQuery))
       yield snapContent}
 
   def collectionContentWithoutSnaps(collection: Collection, adjustSearchQuery: AdjustSearchQuery = identity)
@@ -113,7 +117,7 @@ object FAPI {
       backfillContent <- ContentApi.backfillContentFromResponse(backfillResponse)
       collectionConfig = CollectionConfig.fromCollection(collection)
     } yield {
-      backfillContent.map(FaciaContent.fromTrailAndContent(_, TrailMetaData.empty, collectionConfig))
+      backfillContent.map(CuratedContent.fromTrailAndContent(_, TrailMetaData.empty, collectionConfig))
     }
   }
 }

@@ -10,10 +10,26 @@ import org.joda.time.DateTime
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.time.{Millis, Seconds, Span}
 import org.scalatest.{FreeSpec, OptionValues, ShouldMatchers}
-import play.api.libs.json.JsString
+import play.api.libs.json.{Json, JsArray, JsString}
 
 class IntegrationTest extends FreeSpec with ShouldMatchers with ScalaFutures with OptionValues with IntegrationTestConfig {
   implicit val patience = PatienceConfig(Span(5, Seconds), Span(50, Millis))
+
+  def makeCollectionJson(trails: Trail*) = CollectionJson(
+    live = trails.toList,
+    draft = None,
+    treats = None,
+    lastUpdated = new DateTime(1),
+    updatedBy = "test",
+    updatedEmail = "test@example.com",
+    displayName = Some("displayName"),
+    href = Some("href"),
+    previously = None)
+
+  def makeLatestTrailFor(id: String, uri: String) =
+    Trail(id, 0, Some(TrailMetaData(Map("snapUri" -> JsString(uri), "snapType" -> JsString("latest")))))
+  def makeLinkSnapFor(id: String, uri: String) =
+    Trail(id, 0, Some(TrailMetaData(Map("snapUri" -> JsString(uri), "snapType" -> JsString("link")))))
 
   "getFronts" - {
     "should return a set of Front instances from the fronts JSON" in {
@@ -77,10 +93,6 @@ class IntegrationTest extends FreeSpec with ShouldMatchers with ScalaFutures wit
     }
 
     "for snaps" - {
-      def makeLatestTrailFor(id: String, uri: String) =
-        Trail(id, 0, Some(TrailMetaData(Map("snapUri" -> JsString(uri), "snapType" -> JsString("latest")))))
-      def makeLinkSnapFor(id: String, uri: String) =
-        Trail(id, 0, Some(TrailMetaData(Map("snapUri" -> JsString(uri), "snapType" -> JsString("link")))))
       val dreamSnapOne = makeLatestTrailFor("snap/1281727", "uk/culture")
       val dreamSnapTwo = makeLatestTrailFor("snap/2372382", "technology")
 
@@ -88,16 +100,6 @@ class IntegrationTest extends FreeSpec with ShouldMatchers with ScalaFutures wit
 
       val normalTrail = Trail("internal-code/content/445034105", 0, None)
 
-      def makeCollectionJson(trails: Trail*) = CollectionJson(
-        live = trails.toList,
-        draft = None,
-        treats = None,
-        lastUpdated = new DateTime(1),
-        updatedBy = "test",
-        updatedEmail = "test@example.com",
-        displayName = Some("displayName"),
-        href = Some("href"),
-        previously = None)
       val collectionConfig = CollectionConfig.fromCollectionJson(CollectionConfigJson.withDefaults())
 
       "should turn dream snaps into content" in {
@@ -222,6 +224,97 @@ class IntegrationTest extends FreeSpec with ShouldMatchers with ScalaFutures wit
         err => fail(s"expected backfill results, got $err", err.cause),
         backfillContents => backfillContents.head.content.tags.exists(_.id.contains("sustainable-business/series/finance")) should equal(true)
       )
+    }
+  }
+
+  "Supporting Items" - {
+    def makeTrail(id: String) =
+      Trail(id, 0, None)
+    def makeTrailWithSupporting(id: String, supporting: Trail*) =
+      Trail(id, 0, Some(TrailMetaData(Map("supporting" -> JsArray(supporting.map(Json.toJson(_)))))))
+
+    val supportingTrailOne = makeTrail("internal-code/content/445034105")
+    val supportingTrailTwo = makeTrail("internal-code/content/445529464")
+
+    val trailWithSupporting = makeTrailWithSupporting("internal-code/content/454695023", supportingTrailOne, supportingTrailTwo)
+
+    val collectionConfig = CollectionConfig.fromCollectionJson(CollectionConfigJson.withDefaults())
+    val collectionJson = makeCollectionJson(trailWithSupporting)
+
+    val dreamSnapOne = makeLatestTrailFor("snap/1281727", "uk/culture")
+    val dreamSnapTwo = makeLatestTrailFor("snap/2372382", "technology")
+    val plainSnapOne = makeLinkSnapFor("snap/347234723", "doesnotmatter")
+    val trailWithSupportingAndDreamSnaps = makeTrailWithSupporting("internal-code/content/454695023", supportingTrailOne, dreamSnapOne, dreamSnapTwo, supportingTrailTwo, plainSnapOne)
+    val collectionJsonSupportingWithDreamSnaps = makeCollectionJson(trailWithSupportingAndDreamSnaps)
+
+    "should be filled correctly" in {
+      val collection = Collection.fromCollectionJsonConfigAndContent("id", Option(collectionJson), collectionConfig)
+      val faciaContent = FAPI.collectionContentWithoutSnaps(collection)
+
+      faciaContent.asFuture.futureValue.fold(
+      err => fail(s"expected to get one item with supporting, got $err", err.cause),
+      { listOfFaciaContent =>
+        listOfFaciaContent.length should be (1)
+
+        listOfFaciaContent.apply(0) match {
+          case c: CuratedContent =>
+            c.supportingContent.length should be (2)
+          case somethingElse => fail(s"expected only CuratedContent, got ${somethingElse.getClass.getName}")
+        }
+      })
+    }
+
+    "should not fill in dream snaps in supporting items" in {
+      val collection = Collection.fromCollectionJsonConfigAndContent("id", Option(collectionJsonSupportingWithDreamSnaps), collectionConfig)
+      val faciaContent = FAPI.collectionContentWithoutSnaps(collection)
+
+      faciaContent.asFuture.futureValue.fold(
+      err => fail(s"expected to get one item with supporting and dream snaps, got $err", err.cause),
+      { listOfFaciaContent =>
+        listOfFaciaContent.length should be (1)
+
+        listOfFaciaContent.apply(0) match {
+          case c: CuratedContent =>
+            c.supportingContent.length should be (5)
+            c.supportingContent.collect{case s: SupportingCuratedContent => s}.length should be (2)
+            val latestSnaps = c.supportingContent.collect{case l: LatestSnap => l}
+            latestSnaps.length should be (2)
+            latestSnaps.forall(_.latestContent.isDefined == false) should be (true)
+            c.supportingContent.collect{case l: LinkSnap => l}.length should be (1)
+          case somethingElse => fail(s"expected only CuratedContent, got ${somethingElse.getClass.getName}")
+        }
+      })
+    }
+
+    "should fill in dream snaps in supporting items" in {
+      val collection = Collection.fromCollectionJsonConfigAndContent("id", Option(collectionJsonSupportingWithDreamSnaps), collectionConfig)
+      val faciaContent = FAPI.collectionContentWithSnaps(collection)
+
+      faciaContent.asFuture.futureValue.fold(
+      err => fail(s"expected to get one item with supporting and dream snaps, got $err", err.cause),
+      { listOfFaciaContent =>
+        listOfFaciaContent.length should be (1)
+
+        listOfFaciaContent.apply(0) match {
+          case c: CuratedContent =>
+            c.supportingContent.length should be (5)
+            val supportingContent = c.supportingContent.collect{case s: SupportingCuratedContent => s}
+            supportingContent.length should be (2)
+            val latestSnaps = c.supportingContent.collect{case l: LatestSnap => l}
+            latestSnaps.length should be (2)
+            latestSnaps.forall(_.latestContent.isDefined) should be (true)
+            val linkSnaps = c.supportingContent.collect{case l: LinkSnap => l}
+            linkSnaps.length should be (1)
+
+            c.supportingContent(0).asInstanceOf[SupportingCuratedContent].headline should be ("PM returns from holiday after video shows US reporter beheaded by Briton")
+            c.supportingContent(1).asInstanceOf[LatestSnap].latestContent.get.sectionId should be (Some("culture"))
+            c.supportingContent(2).asInstanceOf[LatestSnap].latestContent.get.sectionId should be (Some("technology"))
+            c.supportingContent(3).asInstanceOf[SupportingCuratedContent].headline should be ("Inside the 29 August edition")
+            c.supportingContent(4).asInstanceOf[LinkSnap].id should be ("snap/347234723")
+
+          case somethingElse => fail(s"expected only CuratedContent, got ${somethingElse.getClass.getName}")
+        }
+      })
     }
   }
 

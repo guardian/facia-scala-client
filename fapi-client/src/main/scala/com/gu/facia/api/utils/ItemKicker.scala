@@ -2,10 +2,10 @@ package com.gu.facia.api.utils
 
 import com.gu.contentapi.client.model.{Content, Tag}
 import com.gu.facia.api.models.CollectionConfig
-import com.gu.facia.client.models.TrailMetaData
+import com.gu.facia.client.models.{MetaDataCommonFields, TrailMetaData}
 
 object ItemKicker {
-  def fromContentAndTrail(content: Content, trailMeta: TrailMetaData, config: Option[CollectionConfig]): Option[ItemKicker] = {
+  def fromContentAndTrail(content: Content, trailMeta: MetaDataCommonFields, config: Option[CollectionConfig]): Option[ItemKicker] = {
     lazy val maybeTag = content.tags.headOption
     lazy val tagKicker = maybeTag.map(TagKicker.fromTag)
     lazy val sectionKicker = for {
@@ -35,7 +35,7 @@ object ItemKicker {
     }
   }
 
-  private[utils] def tonalKicker(content: Content, trailMeta: TrailMetaData): Option[ItemKicker] = {
+  private[utils] def tonalKicker(content: Content, trailMeta: MetaDataCommonFields): Option[ItemKicker] = {
     def tagsOfType(tagType: String): Seq[Tag] = content.tags.filter(_.`type` == tagType)
     val types: Seq[Tag] = tagsOfType("type")
     val tones: Seq[Tag] = tagsOfType("tone")

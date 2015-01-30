@@ -3,7 +3,7 @@ package com.gu.facia.api.models
 import com.gu.contentapi.client.model.Content
 import com.gu.facia.api.contentapi.LatestSnapsRequest
 import com.gu.facia.api.utils.IntegerString
-import com.gu.facia.client.models.{Trail, CollectionJson}
+import com.gu.facia.client.models.{SupportingItem, Trail, CollectionJson}
 import org.joda.time.DateTime
 
 case class Collection(
@@ -53,18 +53,49 @@ object Collection {
     // if content is not in the set it was most likely filtered out by the CAPI query, so exclude it
     // note that this does not currently deal with e.g. snaps
     val collectionConfig = CollectionConfig.fromCollection(collection)
-    collection.live.flatMap { trail =>
-      content.find(c => trail.id.endsWith("/" + c.safeFields.getOrElse("internalContentCode", throw new RuntimeException("No internal content code")))).map { content =>
-        FaciaContent.fromTrailAndContent(content, trail.safeMeta, collectionConfig)
-      }.orElse{
-        snapContent.find{case (id, _) => trail.id == id}
-        .map(c => LatestSnap(trail.id, trail.safeMeta.snapUri, trail.safeMeta.snapCss, c._2))
-      }.orElse{ Snap.maybeFromTrail(trail) }
-    }
+
+    def resolveTrail(trail: Trail): Option[FaciaContent] = {
+      content.find(c => trail.id.endsWith("/" + c.safeFields.getOrElse("internalContentCode", throw new RuntimeException("No internal content code"))))
+        .map { content =>
+        trail.safeMeta.supporting
+          .map(_.flatMap(resolveSupportingContent))
+          .map(supportingItems => CuratedContent.fromTrailAndContentWithSupporting(content, trail.safeMeta, supportingItems, collectionConfig))
+          .getOrElse(CuratedContent.fromTrailAndContent(content, trail.safeMeta, collectionConfig))}
+        .orElse {
+          snapContent
+            .find{case (id, _) => trail.id == id}
+            .map(c => LatestSnap(trail.id, trail.safeMeta.snapUri, trail.safeMeta.snapCss, c._2))}
+        .orElse{ Snap.maybeFromTrail(trail)}}
+
+    def resolveSupportingContent(supportingItem: SupportingItem): Option[FaciaContent] = {
+      content
+        .find(c => supportingItem.id.endsWith("/" + c.safeFields.getOrElse("internalContentCode", throw new RuntimeException("No internal content code"))))
+        .map { content => SupportingCuratedContent.fromTrailAndContent(content, supportingItem.safeMeta, collectionConfig)}
+        .orElse {
+          snapContent
+            .find{case (id, _) => supportingItem.id == id}
+            .map(c => LatestSnap(supportingItem.id, supportingItem.safeMeta.snapUri, supportingItem.safeMeta.snapCss, c._2))}
+        .orElse{ Snap.maybeFromSupportingItem(supportingItem)}}
+
+    collection.live.flatMap(resolveTrail)
   }
 
   def liveIdsWithoutSnaps(collection: Collection): List[String] =
     collection.live.filterNot(_.isSnap).map(_.id)
+
+  private def allSupportingItems(collection: Collection): List[SupportingItem] =
+    collection.live.flatMap(_.meta).flatMap(_.supporting).flatten
+
+  def liveSupportingIdsWithoutSnaps(collection: Collection): List[String] =
+    allSupportingItems(collection).filterNot(_.isSnap).map(_.id)
+
+  def liveSupportingSnaps(collection: Collection): LatestSnapsRequest =
+    LatestSnapsRequest(
+      allSupportingItems(collection)
+      .filter(_.isSnap)
+      .filter(_.safeMeta.snapType == Some("latest"))
+      .flatMap(snap => snap.meta.flatMap(_.snapUri).map(uri => snap.id ->uri))
+      .toMap)
 
   def latestSnapsRequestFor(collection: Collection): LatestSnapsRequest =
     LatestSnapsRequest(
