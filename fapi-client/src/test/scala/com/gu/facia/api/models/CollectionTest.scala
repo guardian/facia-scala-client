@@ -153,4 +153,14 @@ class CollectionTest extends FreeSpec with ShouldMatchers with MockitoSugar with
       Collection.liveIdsWithoutSnaps(collectionAllSnaps) should be (List.empty)
     }
   }
+
+  "importance" - {
+    "Resolve critical correctly" in {
+      val collectionConfigWithImportance = CollectionConfig.fromCollectionJson(CollectionConfigJson.withDefaults(importance = Option("critical")))
+
+      val collection = Collection.fromCollectionJsonConfigAndContent("id", Some(collectionJson), collectionConfigWithImportance)
+
+      collection.importance should be (Critical)
+    }
+  }
 }
