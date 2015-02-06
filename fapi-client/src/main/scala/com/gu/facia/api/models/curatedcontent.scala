@@ -39,13 +39,47 @@ object Snap {
       Option(LinkSnap(
         trail.id,
         trail.safeMeta.snapUri,
-        trail.safeMeta.snapCss))
+        trail.safeMeta.snapCss,
+        trail.safeMeta.headline.getOrElse("Snap Title"),
+        trail.safeMeta.href,
+        trail.safeMeta.trailText,
+        trail.safeMeta.group.getOrElse("0"),
+        Image.fromTrail(trail.safeMeta),
+        trail.safeMeta.isBreaking.exists(identity),
+        trail.safeMeta.isBoosted.exists(identity),
+        trail.safeMeta.imageHide.exists(identity),
+        trail.safeMeta.imageReplace.exists(identity),
+        trail.safeMeta.showMainVideo.exists(identity),
+        trail.safeMeta.showKickerTag.exists(identity),
+        trail.safeMeta.byline,
+        trail.safeMeta.showByline.exists(identity),
+        ItemKicker.fromTrailMetaData(trail.safeMeta),
+        ImageCutout.fromTrail(trail.safeMeta),
+        trail.safeMeta.showBoostedHeadline.exists(identity),
+        trail.safeMeta.showQuotedHeadline.exists(identity)))
     case Some("latest") =>
       Option(LatestSnap(
         trail.id,
         trail.safeMeta.snapUri,
         trail.safeMeta.snapCss,
-        None
+        None,
+        trail.safeMeta.headline.getOrElse("Snap Title"),
+        trail.safeMeta.href,
+        trail.safeMeta.trailText,
+        trail.safeMeta.group.getOrElse("0"),
+        Image.fromTrail(trail.safeMeta),
+        trail.safeMeta.isBreaking.exists(identity),
+        trail.safeMeta.isBoosted.exists(identity),
+        trail.safeMeta.imageHide.exists(identity),
+        trail.safeMeta.imageReplace.exists(identity),
+        trail.safeMeta.showMainVideo.exists(identity),
+        trail.safeMeta.showKickerTag.exists(identity),
+        trail.safeMeta.byline,
+        trail.safeMeta.showByline.exists(identity),
+        ItemKicker.fromTrailMetaData(trail.safeMeta),
+        ImageCutout.fromTrail(trail.safeMeta),
+        trail.safeMeta.showBoostedHeadline.exists(identity),
+        trail.safeMeta.showQuotedHeadline.exists(identity)
       ))
     case _ => None
   }
@@ -55,13 +89,48 @@ object Snap {
       Option(LinkSnap(
         supportingItem.id,
         supportingItem.safeMeta.snapUri,
-        supportingItem.safeMeta.snapCss))
+        supportingItem.safeMeta.snapCss,
+        supportingItem.safeMeta.headline.getOrElse("Snap Title"),
+        supportingItem.safeMeta.href,
+        supportingItem.safeMeta.trailText,
+        supportingItem.safeMeta.group.getOrElse("0"),
+        Image.fromTrail(supportingItem.safeMeta),
+        supportingItem.safeMeta.isBreaking.exists(identity),
+        supportingItem.safeMeta.isBoosted.exists(identity),
+        supportingItem.safeMeta.imageHide.exists(identity),
+        supportingItem.safeMeta.imageReplace.exists(identity),
+        supportingItem.safeMeta.showMainVideo.exists(identity),
+        supportingItem.safeMeta.showKickerTag.exists(identity),
+        supportingItem.safeMeta.byline,
+        supportingItem.safeMeta.showByline.exists(identity),
+        ItemKicker.fromTrailMetaData(supportingItem.safeMeta),
+        ImageCutout.fromTrail(supportingItem.safeMeta),
+        supportingItem.safeMeta.showBoostedHeadline.exists(identity),
+        supportingItem.safeMeta.showQuotedHeadline.exists(identity)
+      ))
     case Some("latest") =>
       Option(LatestSnap(
         supportingItem.id,
         supportingItem.safeMeta.snapUri,
         supportingItem.safeMeta.snapCss,
-        None
+        None,
+        supportingItem.safeMeta.headline.getOrElse("Snap Title"),
+        supportingItem.safeMeta.href,
+        supportingItem.safeMeta.trailText,
+        supportingItem.safeMeta.group.getOrElse("0"),
+        Image.fromTrail(supportingItem.safeMeta),
+        supportingItem.safeMeta.isBreaking.exists(identity),
+        supportingItem.safeMeta.isBoosted.exists(identity),
+        supportingItem.safeMeta.imageHide.exists(identity),
+        supportingItem.safeMeta.imageReplace.exists(identity),
+        supportingItem.safeMeta.showMainVideo.exists(identity),
+        supportingItem.safeMeta.showKickerTag.exists(identity),
+        supportingItem.safeMeta.byline,
+        supportingItem.safeMeta.showByline.exists(identity),
+        ItemKicker.fromTrailMetaData(supportingItem.safeMeta),
+        ImageCutout.fromTrail(supportingItem.safeMeta),
+        supportingItem.safeMeta.showBoostedHeadline.exists(identity),
+        supportingItem.safeMeta.showQuotedHeadline.exists(identity)
       ))
     case _ => None
   }
@@ -71,13 +140,47 @@ sealed trait Snap extends FaciaContent
 case class LinkSnap(
   id: String,
   snapUri: Option[String],
-  snapCss: Option[String]) extends Snap
+  snapCss: Option[String],
+  headline: String,
+  href: Option[String],
+  trailText: Option[String],
+  group: String,
+  image: Option[Image],
+  isBreaking: Boolean,
+  isBoosted: Boolean,
+  imageHide: Boolean,
+  imageReplace: Boolean,
+  showMainVideo: Boolean,
+  showKickerTag: Boolean,
+  byline: Option[String],
+  showByLine: Boolean,
+  kicker: Option[ItemKicker],
+  imageCutout: Option[ImageCutout],
+  showBoostedHeadline: Boolean,
+  showQuotedHeadline: Boolean) extends Snap
 
 case class LatestSnap(
   id: String,
   snapUri: Option[String],
   snapCss: Option[String],
-  latestContent: Option[Content]) extends Snap
+  latestContent: Option[Content],
+  headline: String,
+  href: Option[String],
+  trailText: Option[String],
+  group: String,
+  image: Option[Image],
+  isBreaking: Boolean,
+  isBoosted: Boolean,
+  imageHide: Boolean,
+  imageReplace: Boolean,
+  showMainVideo: Boolean,
+  showKickerTag: Boolean,
+  byline: Option[String],
+  showByLine: Boolean,
+  kicker: Option[ItemKicker],
+  imageCutout: Option[ImageCutout],
+  showBoostedHeadline: Boolean,
+  showQuotedHeadline: Boolean) extends Snap
 
 case class CuratedContent(
   content: Content,
