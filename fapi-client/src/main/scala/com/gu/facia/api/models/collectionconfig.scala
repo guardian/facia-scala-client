@@ -15,7 +15,8 @@ case class CollectionConfig(
     showSections: Boolean,
     hideKickers: Boolean,
     showDateHeader: Boolean,
-    showLatestUpdate: Boolean)
+    showLatestUpdate: Boolean,
+    importance: Importance)
 
 object CollectionConfig {
   val DefaultCollectionType = "fixed/small/slow-VI"
@@ -32,7 +33,8 @@ object CollectionConfig {
       collectionJson.showSections.getOrElse(false),
       collectionJson.hideKickers.getOrElse(false),
       collectionJson.showDateHeader.getOrElse(false),
-      collectionJson.showLatestUpdate.getOrElse(false)
+      collectionJson.showLatestUpdate.getOrElse(false),
+      Importance.fromCollectionConfigJson(collectionJson)
     )
 
   def fromCollection(collection: Collection): CollectionConfig =
@@ -47,6 +49,7 @@ object CollectionConfig {
       collection.showSections,
       collection.hideKickers,
       collection.showDateHeader,
-      collection.showLatestUpdate
+      collection.showLatestUpdate,
+      collection.importance
     )
 }

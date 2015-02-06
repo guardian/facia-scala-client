@@ -23,7 +23,8 @@ case class Collection(
   showSections: Boolean,
   hideKickers: Boolean,
   showDateHeader: Boolean,
-  showLatestUpdate: Boolean
+  showLatestUpdate: Boolean,
+  importance: Importance
 )
 
 object Collection {
@@ -45,7 +46,8 @@ object Collection {
       collectionConfig.showSections,
       collectionConfig.hideKickers,
       collectionConfig.showDateHeader,
-      collectionConfig.showLatestUpdate
+      collectionConfig.showLatestUpdate,
+      collectionConfig.importance
     )
   }
 

@@ -189,7 +189,8 @@ class IntegrationTest extends FreeSpec with ShouldMatchers with ScalaFutures wit
       false,
       false,
       false,
-      false
+      false,
+      DefaultImportance
     )
 
     "can get the backfill for a collection" in {
