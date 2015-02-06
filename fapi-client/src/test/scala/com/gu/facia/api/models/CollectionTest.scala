@@ -205,10 +205,10 @@ class CollectionTest extends FreeSpec with ShouldMatchers with MockitoSugar with
       val faciaContent = Collection.liveContent(collection, Set.empty, snapContent)
 
       faciaContent.length should be (4)
-      faciaContent(0) should be (makeLinkSnap(id = "snap/1415985080061", snapUri = Some("abc"), snapCss = None))
-      faciaContent(1) should be (makeLinkSnap(id = "snap/5345345215342", snapUri = None, snapCss = Some("css")))
+      faciaContent(0) should be (makeLinkSnap(id = "snap/1415985080061", snapUri = Some("abc")))
+      faciaContent(1) should be (makeLinkSnap(id = "snap/5345345215342", snapCss = Some("css")))
       faciaContent(2) should be (makeLatestSnap(id = "snap/8474745745660", href = Some("uk"), latestContent = Some(snapContentOne)))
-      faciaContent(3) should be (makeLatestSnap(id = "snap/4324234234234",href = Some("culture"), latestContent = Some(snapContentTwo)))
+      faciaContent(3) should be (makeLatestSnap(id = "snap/4324234234234", href = Some("culture"), latestContent = Some(snapContentTwo)))
     }
   }
 
