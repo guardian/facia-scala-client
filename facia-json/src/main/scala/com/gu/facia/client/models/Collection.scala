@@ -35,7 +35,6 @@ sealed trait MetaDataCommonFields {
   lazy val showBoostedHeadline: Option[Boolean] = json.get("showBoostedHeadline").flatMap(_.asOpt[Boolean])
   lazy val showQuotedHeadline: Option[Boolean] = json.get("showQuotedHeadline").flatMap(_.asOpt[Boolean])
   lazy val excludeFromRss: Option[Boolean] = json.get("excludeFromRss").flatMap(_.asOpt[Boolean])
-  lazy val importance: Option[String] = json.get("importance").flatMap(_.asOpt[String])
 }
 
 object SupportingItemMetaData {

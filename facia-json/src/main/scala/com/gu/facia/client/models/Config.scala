@@ -20,7 +20,8 @@ object CollectionConfigJson {
     showDateHeader: Option[Boolean] = None,
     showLatestUpdate: Option[Boolean] = None,
     excludeFromRss: Option[Boolean] = None,
-    showTimestamps: Option[Boolean] = None
+    showTimestamps: Option[Boolean] = None,
+    importance: Option[String] = None
   ): CollectionConfigJson
     = CollectionConfigJson(
     displayName,
@@ -35,7 +36,8 @@ object CollectionConfigJson {
     showDateHeader,
     showLatestUpdate,
     excludeFromRss,
-    showTimestamps
+    showTimestamps,
+    importance
   )
 }
 
@@ -52,7 +54,8 @@ case class CollectionConfigJson(
   showDateHeader: Option[Boolean],
   showLatestUpdate: Option[Boolean],
   excludeFromRss: Option[Boolean],
-  showTimestamps: Option[Boolean]
+  showTimestamps: Option[Boolean],
+  importance: Option[String]
   ) {
   val collectionType = `type`
 }
