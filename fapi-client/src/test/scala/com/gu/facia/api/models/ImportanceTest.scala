@@ -5,13 +5,10 @@ import org.scalatest.{Matchers, FlatSpec}
 
 class ImportanceTest extends FlatSpec with Matchers {
 
-  def collectionConfigJsonWithImportance(importance: Option[String]) =
-    CollectionConfigJson.withDefaults(importance = importance)
-
-  val criticalImportance = collectionConfigJsonWithImportance(Option("critical"))
-  val importanceImportance = collectionConfigJsonWithImportance(Option("important"))
-  val nonsenseImportance = collectionConfigJsonWithImportance(Option("nonsense"))
-  val nonexistantImportance = collectionConfigJsonWithImportance(None)
+  val criticalImportance = CollectionConfigJson.withDefaults(importance = Option("critical"))
+  val importanceImportance = CollectionConfigJson.withDefaults(importance = Option("important"))
+  val nonsenseImportance = CollectionConfigJson.withDefaults(importance = Option("nonsense"))
+  val nonexistantImportance = CollectionConfigJson.withDefaults(importance = None)
 
   "Importance object" should "resolve critically correctly" in {
     Importance.fromCollectionConfigJson(criticalImportance) should be (Critical)
