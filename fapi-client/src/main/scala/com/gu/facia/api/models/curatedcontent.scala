@@ -58,29 +58,7 @@ object Snap {
         trail.safeMeta.showBoostedHeadline.exists(identity),
         trail.safeMeta.showQuotedHeadline.exists(identity)))
     case Some("latest") =>
-      Option(LatestSnap(
-        trail.id,
-        trail.safeMeta.snapUri,
-        trail.safeMeta.snapCss,
-        None,
-        trail.safeMeta.headline.getOrElse("Snap Title"),
-        trail.safeMeta.href,
-        trail.safeMeta.trailText,
-        trail.safeMeta.group.getOrElse("0"),
-        Image.fromTrail(trail.safeMeta),
-        trail.safeMeta.isBreaking.exists(identity),
-        trail.safeMeta.isBoosted.exists(identity),
-        trail.safeMeta.imageHide.exists(identity),
-        trail.safeMeta.imageReplace.exists(identity),
-        trail.safeMeta.showMainVideo.exists(identity),
-        trail.safeMeta.showKickerTag.exists(identity),
-        trail.safeMeta.byline,
-        trail.safeMeta.showByline.exists(identity),
-        ItemKicker.fromTrailMetaData(trail.safeMeta),
-        ImageCutout.fromTrail(trail.safeMeta),
-        trail.safeMeta.showBoostedHeadline.exists(identity),
-        trail.safeMeta.showQuotedHeadline.exists(identity)
-      ))
+      Option(LatestSnap.fromTrailAndContent(trail, None))
     case _ => None
   }
 
@@ -109,29 +87,7 @@ object Snap {
         supportingItem.safeMeta.showQuotedHeadline.exists(identity)
       ))
     case Some("latest") =>
-      Option(LatestSnap(
-        supportingItem.id,
-        supportingItem.safeMeta.snapUri,
-        supportingItem.safeMeta.snapCss,
-        None,
-        supportingItem.safeMeta.headline.getOrElse("Snap Title"),
-        supportingItem.safeMeta.href,
-        supportingItem.safeMeta.trailText,
-        supportingItem.safeMeta.group.getOrElse("0"),
-        Image.fromTrail(supportingItem.safeMeta),
-        supportingItem.safeMeta.isBreaking.exists(identity),
-        supportingItem.safeMeta.isBoosted.exists(identity),
-        supportingItem.safeMeta.imageHide.exists(identity),
-        supportingItem.safeMeta.imageReplace.exists(identity),
-        supportingItem.safeMeta.showMainVideo.exists(identity),
-        supportingItem.safeMeta.showKickerTag.exists(identity),
-        supportingItem.safeMeta.byline,
-        supportingItem.safeMeta.showByline.exists(identity),
-        ItemKicker.fromTrailMetaData(supportingItem.safeMeta),
-        ImageCutout.fromTrail(supportingItem.safeMeta),
-        supportingItem.safeMeta.showBoostedHeadline.exists(identity),
-        supportingItem.safeMeta.showQuotedHeadline.exists(identity)
-      ))
+      Option(LatestSnap.fromSupportingItemAndContent(supportingItem, None))
     case _ => None
   }
 }
@@ -181,6 +137,58 @@ case class LatestSnap(
   imageCutout: Option[ImageCutout],
   showBoostedHeadline: Boolean,
   showQuotedHeadline: Boolean) extends Snap
+
+object LatestSnap {
+  def fromTrailAndContent(trail: Trail, maybeContent: Option[Content]): LatestSnap =
+    LatestSnap(
+      trail.id,
+      trail.safeMeta.snapUri,
+      trail.safeMeta.snapCss,
+      maybeContent,
+      trail.safeMeta.headline.getOrElse("Snap Title"),
+      trail.safeMeta.href,
+      trail.safeMeta.trailText,
+      trail.safeMeta.group.getOrElse("0"),
+      Image.fromTrail(trail.safeMeta),
+      trail.safeMeta.isBreaking.exists(identity),
+      trail.safeMeta.isBoosted.exists(identity),
+      trail.safeMeta.imageHide.exists(identity),
+      trail.safeMeta.imageReplace.exists(identity),
+      trail.safeMeta.showMainVideo.exists(identity),
+      trail.safeMeta.showKickerTag.exists(identity),
+      trail.safeMeta.byline,
+      trail.safeMeta.showByline.exists(identity),
+      ItemKicker.fromTrailMetaData(trail.safeMeta),
+      ImageCutout.fromTrail(trail.safeMeta),
+      trail.safeMeta.showBoostedHeadline.exists(identity),
+      trail.safeMeta.showQuotedHeadline.exists(identity)
+    )
+
+  def fromSupportingItemAndContent(supportingItem: SupportingItem, maybeContent: Option[Content]): LatestSnap =
+    LatestSnap(
+      supportingItem.id,
+      supportingItem.safeMeta.snapUri,
+      supportingItem.safeMeta.snapCss,
+      maybeContent,
+      supportingItem.safeMeta.headline.getOrElse("Snap Title"),
+      supportingItem.safeMeta.href,
+      supportingItem.safeMeta.trailText,
+      supportingItem.safeMeta.group.getOrElse("0"),
+      Image.fromTrail(supportingItem.safeMeta),
+      supportingItem.safeMeta.isBreaking.exists(identity),
+      supportingItem.safeMeta.isBoosted.exists(identity),
+      supportingItem.safeMeta.imageHide.exists(identity),
+      supportingItem.safeMeta.imageReplace.exists(identity),
+      supportingItem.safeMeta.showMainVideo.exists(identity),
+      supportingItem.safeMeta.showKickerTag.exists(identity),
+      supportingItem.safeMeta.byline,
+      supportingItem.safeMeta.showByline.exists(identity),
+      ItemKicker.fromTrailMetaData(supportingItem.safeMeta),
+      ImageCutout.fromTrail(supportingItem.safeMeta),
+      supportingItem.safeMeta.showBoostedHeadline.exists(identity),
+      supportingItem.safeMeta.showQuotedHeadline.exists(identity)
+    )
+}
 
 case class CuratedContent(
   content: Content,
