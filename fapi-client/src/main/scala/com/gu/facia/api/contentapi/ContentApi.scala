@@ -96,7 +96,9 @@ object ContentApi {
       _.map { itemResponse =>
           itemResponse.editorsPicks ++ itemResponse.mostViewed ++ itemResponse.results
         },
-      _.map(_.results)
+      _.map { searchResponse =>
+          searchResponse.results
+        }
     )
   }
 
