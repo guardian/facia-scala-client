@@ -16,6 +16,8 @@ case class CollectionConfig(
     hideKickers: Boolean,
     showDateHeader: Boolean,
     showLatestUpdate: Boolean,
+    excludeFromRss: Boolean,
+    showTimestamps: Boolean,
     importance: Importance)
 
 object CollectionConfig {
@@ -34,6 +36,8 @@ object CollectionConfig {
       collectionJson.hideKickers.getOrElse(false),
       collectionJson.showDateHeader.getOrElse(false),
       collectionJson.showLatestUpdate.getOrElse(false),
+      collectionJson.excludeFromRss.exists(identity),
+      collectionJson.showTimestamps.exists(identity),
       Importance.fromCollectionConfigJson(collectionJson)
     )
 
