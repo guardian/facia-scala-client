@@ -23,6 +23,22 @@ case class CollectionConfig(
 object CollectionConfig {
   val DefaultCollectionType = "fixed/small/slow-VI"
 
+  val empty = CollectionConfig(
+    displayName = None,
+    apiQuery = None,
+    collectionType = DefaultCollectionType,
+    href = None,
+    groups = None,
+    uneditable = false,
+    showTags = false,
+    showSections = false,
+    hideKickers = false,
+    showDateHeader = false,
+    showLatestUpdate = false,
+    excludeFromRss = false,
+    showTimestamps = false,
+    importance = DefaultImportance)
+
   def fromCollectionJson(collectionJson: CollectionConfigJson): CollectionConfig =
     CollectionConfig(
       collectionJson.displayName,
@@ -38,6 +54,5 @@ object CollectionConfig {
       collectionJson.showLatestUpdate.getOrElse(false),
       collectionJson.excludeFromRss.exists(identity),
       collectionJson.showTimestamps.exists(identity),
-      Importance.fromCollectionConfigJson(collectionJson)
-    )
+      Importance.fromCollectionConfigJson(collectionJson))
 }

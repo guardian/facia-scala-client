@@ -14,17 +14,7 @@ case class Collection(
   lastUpdated: Option[DateTime],
   updatedBy: Option[String],
   updatedEmail: Option[String],
-  href: Option[String],
-  apiQuery: Option[String],
-  collectionType: String,
-  groups: Option[List[Group]],
-  uneditable: Boolean,
-  showTags: Boolean,
-  showSections: Boolean,
-  hideKickers: Boolean,
-  showDateHeader: Boolean,
-  showLatestUpdate: Boolean,
-  importance: Importance
+  collectionConfig: CollectionConfig
 )
 
 object Collection {
@@ -37,32 +27,19 @@ object Collection {
       collectionJson.map(_.lastUpdated),
       collectionJson.map(_.updatedBy),
       collectionJson.map(_.updatedEmail),
-      collectionJson.flatMap(_.href).orElse(collectionConfig.href),
-      collectionConfig.apiQuery,
-      collectionConfig.collectionType,
-      collectionConfig.groups.map(Group.fromGroups),
-      collectionConfig.uneditable,
-      collectionConfig.showTags,
-      collectionConfig.showSections,
-      collectionConfig.hideKickers,
-      collectionConfig.showDateHeader,
-      collectionConfig.showLatestUpdate,
-      collectionConfig.importance
-    )
+      collectionConfig)
   }
 
   def liveContent(collection: Collection, content: Set[Content], snapContent: Map[String, Option[Content]] = Map.empty): List[FaciaContent] = {
     // if content is not in the set it was most likely filtered out by the CAPI query, so exclude it
     // note that this does not currently deal with e.g. snaps
-    val collectionConfig = CollectionConfig.fromCollection(collection)
-
     def resolveTrail(trail: Trail): Option[FaciaContent] = {
       content.find(c => trail.id.endsWith("/" + c.safeFields.getOrElse("internalContentCode", throw new RuntimeException("No internal content code"))))
         .map { content =>
         trail.safeMeta.supporting
           .map(_.flatMap(resolveSupportingContent))
-          .map(supportingItems => CuratedContent.fromTrailAndContentWithSupporting(content, trail.safeMeta, supportingItems, collectionConfig))
-          .getOrElse(CuratedContent.fromTrailAndContent(content, trail.safeMeta, collectionConfig))}
+          .map(supportingItems => CuratedContent.fromTrailAndContentWithSupporting(content, trail.safeMeta, supportingItems, collection.collectionConfig))
+          .getOrElse(CuratedContent.fromTrailAndContent(content, trail.safeMeta, collection.collectionConfig))}
         .orElse {
           snapContent
             .find{case (id, _) => trail.id == id}
@@ -72,7 +49,7 @@ object Collection {
     def resolveSupportingContent(supportingItem: SupportingItem): Option[FaciaContent] = {
       content
         .find(c => supportingItem.id.endsWith("/" + c.safeFields.getOrElse("internalContentCode", throw new RuntimeException("No internal content code"))))
-        .map { content => SupportingCuratedContent.fromTrailAndContent(content, supportingItem.safeMeta, collectionConfig)}
+        .map { content => SupportingCuratedContent.fromTrailAndContent(content, supportingItem.safeMeta, collection.collectionConfig)}
         .orElse {
           snapContent
             .find{case (id, _) => supportingItem.id == id}
