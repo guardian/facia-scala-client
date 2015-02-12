@@ -175,6 +175,7 @@ class IntegrationTest extends FreeSpec with ShouldMatchers with ScalaFutures wit
     val collection = Collection(
       "uk/business/regular-stories",
       "economy",
+      None,
       Nil,
       None,
       Some(new DateTime(1)),

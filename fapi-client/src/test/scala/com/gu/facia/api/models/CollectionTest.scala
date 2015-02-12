@@ -39,6 +39,7 @@ class CollectionTest extends FreeSpec with ShouldMatchers with MockitoSugar with
       collection should have(
         'id("id"),
         'draft(None),
+        'href(Some("collectionHref")),
         'lastUpdated(Some(new DateTime(1))),
         'updatedBy(Some("test")),
         'updatedEmail(Some("test@example.com")),

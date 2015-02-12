@@ -9,6 +9,7 @@ import org.joda.time.DateTime
 case class Collection(
   id: String,
   displayName: String,
+  href: Option[String],
   live: List[Trail],
   draft: Option[List[Trail]],
   lastUpdated: Option[DateTime],
@@ -22,6 +23,7 @@ object Collection {
     Collection(
       collectionId,
       collectionJson.flatMap(_.displayName).orElse(collectionConfig.displayName).getOrElse("untitled"),
+      collectionJson.flatMap(_.href).orElse(collectionConfig.href),
       collectionJson.map(_.live).getOrElse(Nil),
       collectionJson.flatMap(_.draft),
       collectionJson.map(_.lastUpdated),
