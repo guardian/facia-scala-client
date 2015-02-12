@@ -40,20 +40,4 @@ object CollectionConfig {
       collectionJson.showTimestamps.exists(identity),
       Importance.fromCollectionConfigJson(collectionJson)
     )
-
-  def fromCollection(collection: Collection): CollectionConfig =
-    CollectionConfig(
-      Some(collection.displayName),
-      collection.apiQuery,
-      collection.collectionType,
-      collection.href,
-      collection.groups.map(Group.toGroups),
-      collection.uneditable,
-      collection.showTags,
-      collection.showSections,
-      collection.hideKickers,
-      collection.showDateHeader,
-      collection.showLatestUpdate,
-      collection.importance
-    )
 }
