@@ -115,9 +115,8 @@ object FAPI {
     val backfillResponse = ContentApi.getBackfillResponse(capiClient, query)
     for {
       backfillContent <- ContentApi.backfillContentFromResponse(backfillResponse)
-      collectionConfig = CollectionConfig.fromCollection(collection)
     } yield {
-      backfillContent.map(CuratedContent.fromTrailAndContent(_, TrailMetaData.empty, collectionConfig))
+      backfillContent.map(CuratedContent.fromTrailAndContent(_, TrailMetaData.empty, collection.collectionConfig))
     }
   }
 }

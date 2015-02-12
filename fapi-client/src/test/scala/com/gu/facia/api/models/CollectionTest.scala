@@ -21,7 +21,7 @@ class CollectionTest extends FreeSpec with ShouldMatchers with MockitoSugar with
     updatedBy = "test",
     updatedEmail = "test@example.com",
     displayName = Some("displayName"),
-    href = Some("href"),
+    href = Some("collectionHref"),
     None
   )
   val content = Content(
@@ -30,7 +30,7 @@ class CollectionTest extends FreeSpec with ShouldMatchers with MockitoSugar with
     Nil, None, Nil, None
   )
   val contents = Set(content)
-  val collectionConfig = CollectionConfig.fromCollectionJson(CollectionConfigJson.withDefaults())
+  val collectionConfig = CollectionConfig.fromCollectionJson(CollectionConfigJson.withDefaults(href = Some("collectionConfigHref")))
 
 
   "fromCollectionJson" - {
@@ -39,11 +39,15 @@ class CollectionTest extends FreeSpec with ShouldMatchers with MockitoSugar with
       collection should have(
         'id("id"),
         'draft(None),
+        'href(Some("collectionHref")),
         'lastUpdated(Some(new DateTime(1))),
         'updatedBy(Some("test")),
         'updatedEmail(Some("test@example.com")),
-        'displayName("displayName"),
-        'href(Some("href"))
+        'displayName("displayName")
+      )
+
+      collection.collectionConfig should have (
+        'href(Some("collectionConfigHref"))
       )
     }
   }
@@ -160,7 +164,7 @@ class CollectionTest extends FreeSpec with ShouldMatchers with MockitoSugar with
 
       val collection = Collection.fromCollectionJsonConfigAndContent("id", Some(collectionJson), collectionConfigWithImportance)
 
-      collection.importance should be (Critical)
+      collection.collectionConfig.importance should be (Critical)
     }
   }
 }

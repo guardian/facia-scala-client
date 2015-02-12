@@ -175,22 +175,13 @@ class IntegrationTest extends FreeSpec with ShouldMatchers with ScalaFutures wit
     val collection = Collection(
       "uk/business/regular-stories",
       "economy",
+      None,
       Nil,
       None,
       Some(new DateTime(1)),
       Some("updatedBy"),
       Some("updatedBy@example.com"),
-      None,
-      Some("business?edition=uk"),
-      "news/most-popular",
-      None,
-      false,
-      false,
-      false,
-      false,
-      false,
-      false,
-      DefaultImportance
+      CollectionConfig.empty
     )
 
     "can get the backfill for a collection" in {
@@ -203,7 +194,7 @@ class IntegrationTest extends FreeSpec with ShouldMatchers with ScalaFutures wit
 
     "collection metadata is resolved on backfill content" in {
       val query = "business?edition=uk"
-      FAPI.backfill(query, collection.copy(showSections = true)).asFuture.futureValue.fold(
+      FAPI.backfill(query, collection.copy(collectionConfig = collection.collectionConfig.copy(showSections = true))).asFuture.futureValue.fold(
         err => fail(s"expected backfill results, got $err", err.cause),
         backfillContents => backfillContents.head.kicker.value shouldBe a [SectionKicker]
       )
@@ -212,7 +203,7 @@ class IntegrationTest extends FreeSpec with ShouldMatchers with ScalaFutures wit
     "item query can be adjusted" in {
       val query = "business?edition=uk"
       val adjust: AdjustItemQuery = q => q.showTags("all")
-      FAPI.backfill(query, collection.copy(showSections = true), adjustItemQuery = adjust).asFuture.futureValue.fold(
+      FAPI.backfill(query, collection.copy(collectionConfig = collection.collectionConfig.copy(showSections = true)), adjustItemQuery = adjust).asFuture.futureValue.fold(
         err => fail(s"expected backfill results, got $err", err.cause),
         backfillContents => backfillContents.head.content.tags.exists(_.id.contains("business")) should equal(true)
       )
@@ -221,7 +212,7 @@ class IntegrationTest extends FreeSpec with ShouldMatchers with ScalaFutures wit
     "search query can be adjusted" in {
       val query = "search?tag=sustainable-business/series/finance&use-date=published"
       val adjust: AdjustSearchQuery = q => q.showTags("series")
-      FAPI.backfill(query, collection.copy(showSections = true), adjustSearchQuery = adjust).asFuture.futureValue.fold(
+      FAPI.backfill(query, collection.copy(collectionConfig = collection.collectionConfig.copy(showSections = true)), adjustSearchQuery = adjust).asFuture.futureValue.fold(
         err => fail(s"expected backfill results, got $err", err.cause),
         backfillContents => backfillContents.head.content.tags.exists(_.id.contains("sustainable-business/series/finance")) should equal(true)
       )
