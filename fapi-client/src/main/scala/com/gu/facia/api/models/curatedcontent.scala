@@ -17,18 +17,17 @@ object Image {
 
 case class ImageCutout(
   imageCutoutReplace: Boolean,
-  imageCutoutSrc: String,
-  imageCutoutSrcWidth: String,
-  imageCutoutSrcHeight: String)
+  imageCutoutSrc: Option[String],
+  imageCutoutSrcWidth: Option[String],
+  imageCutoutSrcHeight: Option[String])
 
 object ImageCutout {
-  def fromTrail(trailMeta: MetaDataCommonFields): Option[ImageCutout] =
-    for {
-      imageCutoutSrc <- trailMeta.imageCutoutSrc
-      imageCutoutSrcWidth <- trailMeta.imageCutoutSrcWidth
-      imageCutoutSrcHeight <- trailMeta.imageCutoutSrcHeight
-    } yield ImageCutout(trailMeta.imageCutoutReplace.getOrElse(false),
-      imageCutoutSrc, imageCutoutSrcWidth, imageCutoutSrcHeight)
+  def fromTrail(trailMeta: MetaDataCommonFields): ImageCutout =
+    ImageCutout(
+      trailMeta.imageCutoutReplace.getOrElse(false),
+      trailMeta.imageCutoutSrc,
+      trailMeta.imageCutoutSrcWidth,
+      trailMeta.imageCutoutSrcHeight)
 }
 
 sealed trait FaciaContent
@@ -96,7 +95,7 @@ case class CuratedContent(
   byline: Option[String],
   showByLine: Boolean,
   kicker: Option[ItemKicker],
-  imageCutout: Option[ImageCutout],
+  imageCutout: ImageCutout,
   showBoostedHeadline: Boolean,
   showQuotedHeadline: Boolean) extends FaciaContent
 
@@ -116,7 +115,7 @@ case class SupportingCuratedContent(
   byline: Option[String],
   showByLine: Boolean,
   kicker: Option[ItemKicker],
-  imageCutout: Option[ImageCutout],
+  imageCutout: ImageCutout,
   showBoostedHeadline: Boolean,
   showQuotedHeadline: Boolean) extends FaciaContent
 
