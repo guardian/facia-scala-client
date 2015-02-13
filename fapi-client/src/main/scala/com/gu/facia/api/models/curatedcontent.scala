@@ -22,6 +22,8 @@ case class ImageCutout(
   imageCutoutSrcHeight: Option[String])
 
 object ImageCutout {
+  val empty = ImageCutout(imageCutoutReplace = false, None, None, None)
+
   def fromTrail(trailMeta: MetaDataCommonFields): ImageCutout =
     ImageCutout(
       trailMeta.imageCutoutReplace.getOrElse(false),
