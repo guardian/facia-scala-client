@@ -29,7 +29,8 @@ class ImageCutoutTest extends FreeSpec with Matchers {
       "webUrl", "apiUrl", Nil, None, None, bylineImageUrl = None,
       Option(bylineLargeImageUrl), None, None, None, None)))
 
-  val contentWithContributor = contentWithContributorTag("http://static.guim.co.uk/sys-images/Guardian/Pix/pictures/2014/3/13/1394733744420/MichaelWhite.png")
+  val bylineImageUrl = "http://static.guim.co.uk/sys-images/Guardian/Pix/pictures/2014/3/13/1394733744420/MichaelWhite.png"
+  val contentWithContributor = contentWithContributorTag(bylineImageUrl)
 
   "ImageCutout" - {
 
@@ -71,6 +72,24 @@ class ImageCutoutTest extends FreeSpec with Matchers {
       val trailMeta = trailMetaDataWithImageCutout(true, src, widthNone, height)
       val imageCutout = ImageCutout.fromContentAndTrailMeta(emptyContent, trailMeta)
       imageCutout.imageCutoutReplace should be (true)
+      imageCutout.imageCutoutSrc should be (None)
+      imageCutout.imageCutoutSrcWidth should be (None)
+      imageCutout.imageCutoutSrcHeight should be (None)
+    }
+
+    "should return an ImageCutout from content tags" in {
+      val trailMeta = trailMetaDataWithImageCutout(true, None, None, None)
+      val imageCutout = ImageCutout.fromContentAndTrailMeta(contentWithContributor, trailMeta)
+      imageCutout.imageCutoutReplace should be (true)
+      imageCutout.imageCutoutSrc should be (Some(bylineImageUrl))
+      imageCutout.imageCutoutSrcWidth should be (None)
+      imageCutout.imageCutoutSrcHeight should be (None)
+    }
+
+    "should not return an ImageCutout from content tags if imageCutoutReplace is false" in {
+      val trailMeta = trailMetaDataWithImageCutout(false, None, None, None)
+      val imageCutout = ImageCutout.fromContentAndTrailMeta(contentWithContributor, trailMeta)
+      imageCutout.imageCutoutReplace should be (false)
       imageCutout.imageCutoutSrc should be (None)
       imageCutout.imageCutoutSrcWidth should be (None)
       imageCutout.imageCutoutSrcHeight should be (None)

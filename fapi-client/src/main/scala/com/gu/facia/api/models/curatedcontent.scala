@@ -37,7 +37,6 @@ object ImageCutout {
 
   def fromContentTags(content: Content, trailMeta: MetaDataCommonFields): Option[ImageCutout] = {
     val contributorTags = content.tags.filter(_.`type` == "contributor")
-    if (contributorTags.length == 1)
       for {
         tag <- contributorTags.find(_.bylineLargeImageUrl.isDefined)
         path <- tag.bylineLargeImageUrl
@@ -46,13 +45,11 @@ object ImageCutout {
         Option(path),
         None,
         None)
-    else
-      None
   }
 
   def fromContentAndTrailMeta(content: Content, trailMeta: MetaDataCommonFields): ImageCutout =
     fromTrail(trailMeta)
-      .orElse(fromContentTags(content, trailMeta))
+      .orElse(if (trailMeta.imageCutoutReplace.exists(identity)) fromContentTags(content, trailMeta) else None)
       .getOrElse(ImageCutout.empty.copy(imageCutoutReplace = trailMeta.imageCutoutReplace.exists(identity)))
 }
 
