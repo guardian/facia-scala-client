@@ -25,11 +25,16 @@ object ImageCutout {
   val empty = ImageCutout(imageCutoutReplace = false, None, None, None)
 
   def fromTrail(trailMeta: MetaDataCommonFields): ImageCutout =
-    ImageCutout(
-      trailMeta.imageCutoutReplace.getOrElse(false),
-      trailMeta.imageCutoutSrc,
-      trailMeta.imageCutoutSrcWidth,
-      trailMeta.imageCutoutSrcHeight)
+    (for {
+      src <- trailMeta.imageCutoutSrc
+      width <- trailMeta.imageCutoutSrcWidth
+      height <- trailMeta.imageCutoutSrcHeight
+    } yield ImageCutout(
+              trailMeta.imageCutoutReplace.getOrElse(false),
+              Option(src),
+              Option(width),
+              Option(height)))
+    .getOrElse(ImageCutout.empty.copy(imageCutoutReplace = trailMeta.imageCutoutReplace.exists(identity)))
 }
 
 sealed trait FaciaContent
