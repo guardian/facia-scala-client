@@ -24,8 +24,8 @@ case class ImageCutout(
 object ImageCutout {
   val empty = ImageCutout(imageCutoutReplace = false, None, None, None)
 
-  def fromTrail(trailMeta: MetaDataCommonFields): ImageCutout =
-    (for {
+  def fromTrail(trailMeta: MetaDataCommonFields): Option[ImageCutout] =
+    for {
       src <- trailMeta.imageCutoutSrc
       width <- trailMeta.imageCutoutSrcWidth
       height <- trailMeta.imageCutoutSrcHeight
@@ -33,8 +33,27 @@ object ImageCutout {
               trailMeta.imageCutoutReplace.getOrElse(false),
               Option(src),
               Option(width),
-              Option(height)))
-    .getOrElse(ImageCutout.empty.copy(imageCutoutReplace = trailMeta.imageCutoutReplace.exists(identity)))
+              Option(height))
+
+  def fromContentTags(content: Content, trailMeta: MetaDataCommonFields): Option[ImageCutout] = {
+    val contributorTags = content.tags.filter(_.`type` == "contributor")
+    if (contributorTags.length == 1)
+      for {
+        tag <- contributorTags.find(_.bylineLargeImageUrl.isDefined)
+        path <- tag.bylineLargeImageUrl
+      } yield ImageCutout(
+        trailMeta.imageCutoutReplace.exists(identity),
+        Option(path),
+        None,
+        None)
+    else
+      None
+  }
+
+  def fromContentAndTrailMeta(content: Content, trailMeta: MetaDataCommonFields): ImageCutout =
+    fromTrail(trailMeta)
+      .orElse(fromContentTags(content, trailMeta))
+      .getOrElse(ImageCutout.empty.copy(imageCutoutReplace = trailMeta.imageCutoutReplace.exists(identity)))
 }
 
 sealed trait FaciaContent
@@ -150,7 +169,7 @@ object CuratedContent {
       trailMetaData.byline.orElse(contentFields.get("byline")),
       trailMetaData.showByline.getOrElse(false),
       ItemKicker.fromContentAndTrail(content, trailMetaData, Some(collectionConfig)),
-      ImageCutout.fromTrail(trailMetaData),
+      ImageCutout.fromContentAndTrailMeta(content, trailMetaData),
       trailMetaData.showBoostedHeadline.getOrElse(false),
       trailMetaData.showQuotedHeadline.getOrElse(false))}
 
@@ -174,7 +193,7 @@ object CuratedContent {
       trailMetaData.byline.orElse(contentFields.get("byline")),
       trailMetaData.showByline.getOrElse(false),
       ItemKicker.fromContentAndTrail(content, trailMetaData, Some(collectionConfig)),
-      ImageCutout.fromTrail(trailMetaData),
+      ImageCutout.fromContentAndTrailMeta(content, trailMetaData),
       trailMetaData.showBoostedHeadline.getOrElse(false),
       trailMetaData.showQuotedHeadline.getOrElse(false)
     )}
@@ -200,7 +219,7 @@ object SupportingCuratedContent {
       trailMetaData.byline.orElse(contentFields.get("byline")),
       trailMetaData.showByline.getOrElse(false),
       ItemKicker.fromContentAndTrail(content, trailMetaData, Some(collectionConfig)),
-      ImageCutout.fromTrail(trailMetaData),
+      ImageCutout.fromContentAndTrailMeta(content, trailMetaData),
       trailMetaData.showBoostedHeadline.getOrElse(false),
       trailMetaData.showQuotedHeadline.getOrElse(false))}
 }

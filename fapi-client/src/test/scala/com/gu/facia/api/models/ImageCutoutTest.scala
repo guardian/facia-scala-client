@@ -1,5 +1,6 @@
 package com.gu.facia.api.models
 
+import com.gu.contentapi.client.model.{Tag, Content}
 import com.gu.facia.client.models.TrailMetaData
 import org.scalatest.{Matchers, FreeSpec}
 import play.api.libs.json.{JsString, JsBoolean}
@@ -16,6 +17,20 @@ class ImageCutoutTest extends FreeSpec with Matchers {
     ++ imageCutoutSrcWidth.map("imageCutoutSrcWidth" -> JsString(_))
     ++ imageCutoutSrcHeight.map("imageCutoutSrcHeight" -> JsString(_)))
 
+  val emptyContent =
+    Content(
+      "id", None, None, None,
+      "webTitle", "webUrl", "apiUrl", None,
+      Nil, None, Nil, None)
+
+  def contentWithContributorTag(bylineLargeImageUrl: String): Content =
+    emptyContent.copy(tags = List(Tag(
+      "tagid", "contributor", None, None, "webTitle",
+      "webUrl", "apiUrl", Nil, None, None, bylineImageUrl = None,
+      Option(bylineLargeImageUrl), None, None, None, None)))
+
+  val contentWithContributor = contentWithContributorTag("http://static.guim.co.uk/sys-images/Guardian/Pix/pictures/2014/3/13/1394733744420/MichaelWhite.png")
+
   "ImageCutout" - {
 
     "should return empty ImageCutout" in {
@@ -24,7 +39,7 @@ class ImageCutoutTest extends FreeSpec with Matchers {
 
     "should return true for standalone true" in {
       val trailMeta = trailMetaDataWithImageCutout(true)
-      val imageCutout = ImageCutout.fromTrail(trailMeta)
+      val imageCutout = ImageCutout.fromContentAndTrailMeta(emptyContent, trailMeta)
       imageCutout.imageCutoutReplace should be (true)
     }
 
@@ -34,14 +49,14 @@ class ImageCutoutTest extends FreeSpec with Matchers {
       val height = Option("height")
 
       val trailMetaTrue = trailMetaDataWithImageCutout(true, src, width, height)
-      val imageCutoutTrue = ImageCutout.fromTrail(trailMetaTrue)
+      val imageCutoutTrue = ImageCutout.fromContentAndTrailMeta(emptyContent, trailMetaTrue)
       imageCutoutTrue.imageCutoutReplace should be (true)
       imageCutoutTrue.imageCutoutSrc should be (src)
       imageCutoutTrue.imageCutoutSrcWidth should be (width)
       imageCutoutTrue.imageCutoutSrcHeight should be (height)
 
       val trailMetaFalse = trailMetaDataWithImageCutout(false, src, width, height)
-      val imageCutoutFalse = ImageCutout.fromTrail(trailMetaFalse)
+      val imageCutoutFalse = ImageCutout.fromContentAndTrailMeta(emptyContent, trailMetaFalse)
       imageCutoutFalse.imageCutoutReplace should be (false)
       imageCutoutFalse.imageCutoutSrc should be (src)
       imageCutoutFalse.imageCutoutSrcWidth should be (width)
@@ -54,7 +69,7 @@ class ImageCutoutTest extends FreeSpec with Matchers {
       val height = Option("height")
 
       val trailMeta = trailMetaDataWithImageCutout(true, src, widthNone, height)
-      val imageCutout = ImageCutout.fromTrail(trailMeta)
+      val imageCutout = ImageCutout.fromContentAndTrailMeta(emptyContent, trailMeta)
       imageCutout.imageCutoutReplace should be (true)
       imageCutout.imageCutoutSrc should be (None)
       imageCutout.imageCutoutSrcWidth should be (None)
