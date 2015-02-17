@@ -16,22 +16,18 @@ object Image {
 }
 
 case class ImageCutout(
-  imageCutoutReplace: Boolean,
-  imageCutoutSrc: Option[String],
+  imageCutoutSrc: String,
   imageCutoutSrcWidth: Option[String],
   imageCutoutSrcHeight: Option[String])
 
 object ImageCutout {
-  val empty = ImageCutout(imageCutoutReplace = false, None, None, None)
-
   def fromTrail(trailMeta: MetaDataCommonFields): Option[ImageCutout] =
     for {
       src <- trailMeta.imageCutoutSrc
       width <- trailMeta.imageCutoutSrcWidth
       height <- trailMeta.imageCutoutSrcHeight
     } yield ImageCutout(
-              trailMeta.imageCutoutReplace.getOrElse(false),
-              Option(src),
+              src,
               Option(width),
               Option(height))
 
@@ -41,16 +37,17 @@ object ImageCutout {
         tag <- contributorTags.find(_.bylineLargeImageUrl.isDefined)
         path <- tag.bylineLargeImageUrl
       } yield ImageCutout(
-        trailMeta.imageCutoutReplace.exists(identity),
-        Option(path),
+        path,
         None,
         None)
   }
 
-  def fromContentAndTrailMeta(content: Content, trailMeta: MetaDataCommonFields): ImageCutout =
-    fromTrail(trailMeta)
-      .orElse(if (trailMeta.imageCutoutReplace.exists(identity)) fromContentTags(content, trailMeta) else None)
-      .getOrElse(ImageCutout.empty.copy(imageCutoutReplace = trailMeta.imageCutoutReplace.exists(identity)))
+  def fromContentAndTrailMeta(content: Content, trailMeta: MetaDataCommonFields): Option[ImageCutout] =
+    if (trailMeta.imageCutoutReplace.exists(identity))
+      fromTrail(trailMeta)
+        .orElse(fromContentTags(content, trailMeta))
+    else
+      None
 }
 
 sealed trait FaciaContent
@@ -118,7 +115,7 @@ case class CuratedContent(
   byline: Option[String],
   showByLine: Boolean,
   kicker: Option[ItemKicker],
-  imageCutout: ImageCutout,
+  imageCutout: Option[ImageCutout],
   showBoostedHeadline: Boolean,
   showQuotedHeadline: Boolean) extends FaciaContent
 
@@ -138,7 +135,7 @@ case class SupportingCuratedContent(
   byline: Option[String],
   showByLine: Boolean,
   kicker: Option[ItemKicker],
-  imageCutout: ImageCutout,
+  imageCutout: Option[ImageCutout],
   showBoostedHeadline: Boolean,
   showQuotedHeadline: Boolean) extends FaciaContent
 
