@@ -89,6 +89,15 @@ object ItemKicker {
     case FreeHtmlKickerWithLink(body, _) => Some(body)
     case _ => None
   }
+
+  /** Return the canonical display text for a kicker */
+  def kickerDisplayText(itemKicker: ItemKicker): Option[String] = itemKicker match {
+    case BreakingNewsKicker => Some("Breaking")
+    case AnalysisKicker => Some("Analysis")
+    case ReviewKicker => Some("Review")
+    case CartoonKicker => Some("Cartoon")
+    case _ => kickerText(itemKicker)
+  }
 }
 
 case class Series(name: String, url: String)
