@@ -96,6 +96,8 @@ object ItemKicker {
     case AnalysisKicker => Some("Analysis")
     case ReviewKicker => Some("Review")
     case CartoonKicker => Some("Cartoon")
+    case FreeHtmlKicker(_) => None
+    case FreeHtmlKickerWithLink(_, _) => None
     case _ => kickerText(itemKicker)
   }
 }
