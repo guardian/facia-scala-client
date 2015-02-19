@@ -1,7 +1,7 @@
 package com.gu.facia.api.models
 
 import com.gu.contentapi.client.model.Content
-import com.gu.facia.api.utils.FreeHtmlKicker
+import com.gu.facia.api.utils.{ItemKicker, FreeHtmlKicker}
 import com.gu.facia.client.models.{CollectionConfigJson, CollectionJson, Trail, TrailMetaData}
 import org.joda.time.DateTime
 import org.mockito.Mockito._
@@ -31,6 +31,94 @@ class CollectionTest extends FreeSpec with ShouldMatchers with MockitoSugar with
   )
   val contents = Set(content)
   val collectionConfig = CollectionConfig.fromCollectionJson(CollectionConfigJson.withDefaults(href = Some("collectionConfigHref")))
+
+  def makeLatestSnap(
+    id: String = "id",
+    snapUri: Option[String] = None,
+    snapCss: Option[String] = None,
+    latestContent: Option[Content] = None,
+    headline: Option[String] = None,
+    href: Option[String] = None,
+    trailText: Option[String] = None,
+    group: String = "0",
+    image: Option[Image] = None,
+    isBreaking: Boolean = false,
+    isBoosted: Boolean = false,
+    imageHide: Boolean = false,
+    imageReplace: Boolean = false,
+    showMainVideo: Boolean = false,
+    showKickerTag: Boolean = false,
+    byline: Option[String] = None,
+    showByLine: Boolean = false,
+    kicker: Option[ItemKicker] = None,
+    imageCutout: Option[ImageCutout] = None,
+    showBoostedHeadline: Boolean = false,
+    showQuotedHeadline: Boolean = false): LatestSnap =
+    LatestSnap(
+      id,
+      snapUri,
+      snapCss,
+      latestContent,
+      headline,
+      href,
+      trailText,
+      group,
+      image,
+      isBreaking,
+      isBoosted,
+      imageHide,
+      imageReplace,
+      showMainVideo,
+      showKickerTag,
+      byline,
+      showByLine,
+      kicker,
+      imageCutout,
+      showBoostedHeadline,
+      showQuotedHeadline)
+
+  def makeLinkSnap(
+    id: String = "id",
+    snapUri: Option[String] = None,
+    snapCss: Option[String] = None,
+    headline: Option[String] = None,
+    href: Option[String] = None,
+    trailText: Option[String] = None,
+    group: String = "0",
+    image: Option[Image] = None,
+    isBreaking: Boolean = false,
+    isBoosted: Boolean = false,
+    imageHide: Boolean = false,
+    imageReplace: Boolean = false,
+    showMainVideo: Boolean = false,
+    showKickerTag: Boolean = false,
+    byline: Option[String] = None,
+    showByLine: Boolean = false,
+    kicker: Option[ItemKicker] = None,
+    imageCutout: Option[ImageCutout] = None,
+    showBoostedHeadline: Boolean = false,
+    showQuotedHeadline: Boolean = false): LinkSnap =
+    LinkSnap(
+      id,
+      snapUri,
+      snapCss,
+      headline,
+      href,
+      trailText,
+      group,
+      image,
+      isBreaking,
+      isBoosted,
+      imageHide,
+      imageReplace,
+      showMainVideo,
+      showKickerTag,
+      byline,
+      showByLine,
+      kicker,
+      imageCutout,
+      showBoostedHeadline,
+      showQuotedHeadline)
 
 
   "fromCollectionJson" - {
@@ -121,10 +209,10 @@ class CollectionTest extends FreeSpec with ShouldMatchers with MockitoSugar with
       val faciaContent = Collection.liveContent(collection, Set.empty, snapContent)
 
       faciaContent.length should be (4)
-      faciaContent(0) should be (LinkSnap("snap/1415985080061", Some("abc"), None))
-      faciaContent(1) should be (LinkSnap("snap/5345345215342", None, Some("css")))
-      faciaContent(2) should be (LatestSnap("snap/8474745745660", None, None, Some(snapContentOne)))
-      faciaContent(3) should be (LatestSnap("snap/4324234234234", None, None, Some(snapContentTwo)))
+      faciaContent(0) should be (makeLinkSnap(id = "snap/1415985080061", snapUri = Some("abc")))
+      faciaContent(1) should be (makeLinkSnap(id = "snap/5345345215342", snapCss = Some("css")))
+      faciaContent(2) should be (makeLatestSnap(id = "snap/8474745745660", href = Some("uk"), latestContent = Some(snapContentOne)))
+      faciaContent(3) should be (makeLatestSnap(id = "snap/4324234234234", href = Some("culture"), latestContent = Some(snapContentTwo)))
     }
   }
 

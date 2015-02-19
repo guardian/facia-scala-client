@@ -45,7 +45,7 @@ object Collection {
         .orElse {
           snapContent
             .find{case (id, _) => trail.id == id}
-            .map(c => LatestSnap(trail.id, trail.safeMeta.snapUri, trail.safeMeta.snapCss, c._2))}
+            .map(c => LatestSnap.fromTrailAndContent(trail, c._2))}
         .orElse{ Snap.maybeFromTrail(trail)}}
 
     def resolveSupportingContent(supportingItem: SupportingItem): Option[FaciaContent] = {
@@ -55,7 +55,7 @@ object Collection {
         .orElse {
           snapContent
             .find{case (id, _) => supportingItem.id == id}
-            .map(c => LatestSnap(supportingItem.id, supportingItem.safeMeta.snapUri, supportingItem.safeMeta.snapCss, c._2))}
+            .map(c => LatestSnap.fromSupportingItemAndContent(supportingItem, c._2))}
         .orElse{ Snap.maybeFromSupportingItem(supportingItem)}}
 
     collection.live.flatMap(resolveTrail)
