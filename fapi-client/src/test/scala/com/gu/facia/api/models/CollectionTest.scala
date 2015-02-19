@@ -79,6 +79,7 @@ class CollectionTest extends FreeSpec with ShouldMatchers with MockitoSugar with
 
   def makeLinkSnap(
     id: String = "id",
+    snapType: String = Snap.DefaultType,
     snapUri: Option[String] = None,
     snapCss: Option[String] = None,
     headline: Option[String] = None,
@@ -100,6 +101,7 @@ class CollectionTest extends FreeSpec with ShouldMatchers with MockitoSugar with
     showQuotedHeadline: Boolean = false): LinkSnap =
     LinkSnap(
       id,
+      snapType,
       snapUri,
       snapCss,
       headline,

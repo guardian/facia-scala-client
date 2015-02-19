@@ -34,60 +34,66 @@ object ImageCutout {
 sealed trait FaciaContent
 
 object Snap {
+  val LatestType = "latest"
+  val LinkType = "link"
+  val DefaultType = LinkType
+
   def maybeFromTrail(trail: Trail): Option[Snap] = trail.safeMeta.snapType match {
-    case Some("link") =>
-      Option(LinkSnap(
-        trail.id,
-        trail.safeMeta.snapUri,
-        trail.safeMeta.snapCss,
-        trail.safeMeta.headline,
-        trail.safeMeta.href,
-        trail.safeMeta.trailText,
-        trail.safeMeta.group.getOrElse("0"),
-        Image.fromTrail(trail.safeMeta),
-        trail.safeMeta.isBreaking.exists(identity),
-        trail.safeMeta.isBoosted.exists(identity),
-        trail.safeMeta.imageHide.exists(identity),
-        trail.safeMeta.imageReplace.exists(identity),
-        trail.safeMeta.showMainVideo.exists(identity),
-        trail.safeMeta.showKickerTag.exists(identity),
-        trail.safeMeta.byline,
-        trail.safeMeta.showByline.exists(identity),
-        ItemKicker.fromTrailMetaData(trail.safeMeta),
-        ImageCutout.fromTrail(trail.safeMeta),
-        trail.safeMeta.showBoostedHeadline.exists(identity),
-        trail.safeMeta.showQuotedHeadline.exists(identity)))
     case Some("latest") =>
       Option(LatestSnap.fromTrailAndContent(trail, None))
+    case Some(snapType) =>
+      Option(LinkSnap(
+      trail.id,
+      snapType,
+      trail.safeMeta.snapUri,
+      trail.safeMeta.snapCss,
+      trail.safeMeta.headline,
+      trail.safeMeta.href,
+      trail.safeMeta.trailText,
+      trail.safeMeta.group.getOrElse("0"),
+      Image.fromTrail(trail.safeMeta),
+      trail.safeMeta.isBreaking.exists(identity),
+      trail.safeMeta.isBoosted.exists(identity),
+      trail.safeMeta.imageHide.exists(identity),
+      trail.safeMeta.imageReplace.exists(identity),
+      trail.safeMeta.showMainVideo.exists(identity),
+      trail.safeMeta.showKickerTag.exists(identity),
+      trail.safeMeta.byline,
+      trail.safeMeta.showByline.exists(identity),
+      ItemKicker.fromTrailMetaData(trail.safeMeta),
+      ImageCutout.fromTrail(trail.safeMeta),
+      trail.safeMeta.showBoostedHeadline.exists(identity),
+      trail.safeMeta.showQuotedHeadline.exists(identity)))
     case _ => None
   }
 
   def maybeFromSupportingItem(supportingItem: SupportingItem): Option[Snap] = supportingItem.safeMeta.snapType match {
-    case Some("link") =>
-      Option(LinkSnap(
-        supportingItem.id,
-        supportingItem.safeMeta.snapUri,
-        supportingItem.safeMeta.snapCss,
-        supportingItem.safeMeta.headline,
-        supportingItem.safeMeta.href,
-        supportingItem.safeMeta.trailText,
-        supportingItem.safeMeta.group.getOrElse("0"),
-        Image.fromTrail(supportingItem.safeMeta),
-        supportingItem.safeMeta.isBreaking.exists(identity),
-        supportingItem.safeMeta.isBoosted.exists(identity),
-        supportingItem.safeMeta.imageHide.exists(identity),
-        supportingItem.safeMeta.imageReplace.exists(identity),
-        supportingItem.safeMeta.showMainVideo.exists(identity),
-        supportingItem.safeMeta.showKickerTag.exists(identity),
-        supportingItem.safeMeta.byline,
-        supportingItem.safeMeta.showByline.exists(identity),
-        ItemKicker.fromTrailMetaData(supportingItem.safeMeta),
-        ImageCutout.fromTrail(supportingItem.safeMeta),
-        supportingItem.safeMeta.showBoostedHeadline.exists(identity),
-        supportingItem.safeMeta.showQuotedHeadline.exists(identity)
-      ))
     case Some("latest") =>
       Option(LatestSnap.fromSupportingItemAndContent(supportingItem, None))
+    case Some(snapType) =>
+      Option(LinkSnap(
+      supportingItem.id,
+      snapType,
+      supportingItem.safeMeta.snapUri,
+      supportingItem.safeMeta.snapCss,
+      supportingItem.safeMeta.headline,
+      supportingItem.safeMeta.href,
+      supportingItem.safeMeta.trailText,
+      supportingItem.safeMeta.group.getOrElse("0"),
+      Image.fromTrail(supportingItem.safeMeta),
+      supportingItem.safeMeta.isBreaking.exists(identity),
+      supportingItem.safeMeta.isBoosted.exists(identity),
+      supportingItem.safeMeta.imageHide.exists(identity),
+      supportingItem.safeMeta.imageReplace.exists(identity),
+      supportingItem.safeMeta.showMainVideo.exists(identity),
+      supportingItem.safeMeta.showKickerTag.exists(identity),
+      supportingItem.safeMeta.byline,
+      supportingItem.safeMeta.showByline.exists(identity),
+      ItemKicker.fromTrailMetaData(supportingItem.safeMeta),
+      ImageCutout.fromTrail(supportingItem.safeMeta),
+      supportingItem.safeMeta.showBoostedHeadline.exists(identity),
+      supportingItem.safeMeta.showQuotedHeadline.exists(identity)
+  ))
     case _ => None
   }
 }
@@ -95,6 +101,7 @@ object Snap {
 sealed trait Snap extends FaciaContent
 case class LinkSnap(
   id: String,
+  snapType: String,
   snapUri: Option[String],
   snapCss: Option[String],
   headline: Option[String],
