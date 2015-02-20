@@ -81,7 +81,7 @@ object ItemKicker {
     }).map(TagKicker.fromTag)
 
   /** Used for de-duping bylines */
-  def kickerText(itemKicker: ItemKicker): Option[String] = itemKicker match {
+  def kickerContents(itemKicker: ItemKicker): Option[String] = itemKicker match {
     case PodcastKicker(Some(series)) => Some(series.name)
     case TagKicker(name, _, _) => Some(name)
     case SectionKicker(name, _) => Some(name)
@@ -90,15 +90,15 @@ object ItemKicker {
     case _ => None
   }
 
-  /** Return the canonical display text for a kicker */
-  def kickerDisplayText(itemKicker: ItemKicker): Option[String] = itemKicker match {
+  /** Return a plain-text representation of a kicker */
+  def kickerText(itemKicker: ItemKicker): Option[String] = itemKicker match {
     case BreakingNewsKicker => Some("Breaking")
     case AnalysisKicker => Some("Analysis")
     case ReviewKicker => Some("Review")
     case CartoonKicker => Some("Cartoon")
     case FreeHtmlKicker(_) => None
     case FreeHtmlKickerWithLink(_, _) => None
-    case _ => kickerText(itemKicker)
+    case _ => kickerContents(itemKicker)
   }
 }
 
