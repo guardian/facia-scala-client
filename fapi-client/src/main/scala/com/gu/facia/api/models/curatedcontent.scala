@@ -7,7 +7,7 @@ import com.gu.facia.client.models.{SupportingItem, MetaDataCommonFields, Trail, 
 case class Image(imageSrc: String, imageSrcWidth: String, imageSrcHeight: String)
 
 object Image {
-  def fromTrail(trailMeta: MetaDataCommonFields): Option[Image] =
+  def fromTrailMeta(trailMeta: MetaDataCommonFields): Option[Image] =
     for {
       imageSrc <- trailMeta.imageSrc
       imageSrcWidth <- trailMeta.imageSrcWidth
@@ -21,7 +21,7 @@ case class ImageCutout(
   imageCutoutSrcHeight: Option[String])
 
 object ImageCutout {
-  def fromTrail(trailMeta: MetaDataCommonFields): Option[ImageCutout] =
+  def fromTrailMeta(trailMeta: MetaDataCommonFields): Option[ImageCutout] =
     for {
       src <- trailMeta.imageCutoutSrc
       width <- trailMeta.imageCutoutSrcWidth
@@ -44,7 +44,7 @@ object ImageCutout {
 
   def fromContentAndTrailMeta(content: Content, trailMeta: MetaDataCommonFields): Option[ImageCutout] =
     if (trailMeta.imageCutoutReplace.exists(identity))
-      fromTrail(trailMeta)
+      fromTrailMeta(trailMeta)
         .orElse(fromContentTags(content, trailMeta))
     else
       None
@@ -153,7 +153,7 @@ object CuratedContent {
       trailMetaData.href.orElse(contentFields.get("href")),
       trailMetaData.trailText.orElse(contentFields.get("trailText")),
       trailMetaData.group.getOrElse("0"),
-      Image.fromTrail(trailMetaData),
+      Image.fromTrailMeta(trailMetaData),
       trailMetaData.isBreaking.getOrElse(false),
       trailMetaData.isBoosted.getOrElse(false),
       trailMetaData.imageHide.getOrElse(false),
@@ -177,7 +177,7 @@ object CuratedContent {
       trailMetaData.href.orElse(contentFields.get("href")),
       trailMetaData.trailText.orElse(contentFields.get("trailText")),
       trailMetaData.group.getOrElse("0"),
-      Image.fromTrail(trailMetaData),
+      Image.fromTrailMeta(trailMetaData),
       trailMetaData.isBreaking.getOrElse(false),
       trailMetaData.isBoosted.getOrElse(false),
       trailMetaData.imageHide.getOrElse(false),
@@ -203,7 +203,7 @@ object SupportingCuratedContent {
       trailMetaData.href.orElse(contentFields.get("href")),
       trailMetaData.trailText.orElse(contentFields.get("trailText")),
       trailMetaData.group.getOrElse("0"),
-      Image.fromTrail(trailMetaData),
+      Image.fromTrailMeta(trailMetaData),
       trailMetaData.isBreaking.getOrElse(false),
       trailMetaData.isBoosted.getOrElse(false),
       trailMetaData.imageHide.getOrElse(false),
