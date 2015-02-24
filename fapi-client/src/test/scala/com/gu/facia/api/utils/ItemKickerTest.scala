@@ -33,6 +33,25 @@ class ItemKickerTest extends FreeSpec with ShouldMatchers with MockitoSugar with
     }
   }
 
+  "kickerContents" - {
+    "should return the contents of podcast kickers" in {
+      ItemKicker.kickerContents(PodcastKicker(Some(Series("Name Goes Here", "")))) shouldBe Some("Name Goes Here")
+    }
+
+    "should return the contents of tag kickers" in {
+      ItemKicker.kickerContents(TagKicker("Aberdeen-Grampian", "", "aberdeen-grampian/aberdeen-grampian")) shouldBe Some("Aberdeen-Grampian")
+    }
+
+    "should return the contents of free HTML kickers (without links)" in {
+      ItemKicker.kickerContents(FreeHtmlKicker("<b>Something</b>")) shouldBe Some("<b>Something</b>")
+    }
+
+    "should return the contents of free HTML kickers (with links)" in {
+      ItemKicker.kickerContents(FreeHtmlKickerWithLink("<b>Something</b>", "http://www.theguardian.com/football")) shouldBe Some("<b>Something</b>")
+    }
+
+  }
+
   "kickerText" - {
     "should return a textual description for Breaking News kickers" in {
       ItemKicker.kickerText(BreakingNewsKicker) shouldBe Some("Breaking")
