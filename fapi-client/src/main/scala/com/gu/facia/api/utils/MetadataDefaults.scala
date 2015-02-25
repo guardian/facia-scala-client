@@ -63,7 +63,7 @@ object MetadataDefaults {
     imageCutoutReplace = false,
     showQuotedHeadline = false)
 
-  def apply(content: Content): MetadataDefaults = {
+  def fromContent(content: Content): MetadataDefaults = {
     if (isCartoonForContent(content))
       Default.copy(showByline = true)
     else if (isCommentForContent(content))
