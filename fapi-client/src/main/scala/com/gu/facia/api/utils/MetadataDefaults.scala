@@ -92,7 +92,7 @@ object MetadataDefaults {
     else
       mutatingMetaDataDefaults}
 
-  def fromContentAndTrailMetaData(content: Content, trailMeta: TrailMetaData): MetadataDefaults = {
+  def fromContentAndTrailMetaData(content: Content, trailMeta: MetaDataCommonFields): MetadataDefaults = {
     val metaDataDefaultsForTrailMeta = fromTrailMetaData(trailMeta)
     fromContent(content, metaDataDefaultsForTrailMeta)}
 }
