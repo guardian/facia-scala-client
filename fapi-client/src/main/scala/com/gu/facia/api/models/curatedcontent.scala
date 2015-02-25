@@ -244,6 +244,7 @@ object CuratedContent {
                                         supportingContent: List[FaciaContent],
                                         collectionConfig: CollectionConfig) = {
     val contentFields: Map[String, String] = content.safeFields
+    val metaDataDefaults = MetadataDefaults.fromContentAndTrailMetaData(content, trailMetaData)
 
     CuratedContent(
       content,
@@ -261,7 +262,7 @@ object CuratedContent {
       trailMetaData.showKickerTag.getOrElse(false),
       trailMetaData.byline.orElse(contentFields.get("byline")),
       trailMetaData.showByline.getOrElse(false),
-      ItemKicker.fromContentAndTrail(content, trailMetaData, Some(collectionConfig)),
+      ItemKicker.fromContentAndTrail(content, trailMetaData, metaDataDefaults, Some(collectionConfig)),
       ImageCutout.fromTrail(trailMetaData),
       trailMetaData.showBoostedHeadline.getOrElse(false),
       trailMetaData.showQuotedHeadline.getOrElse(false))}
@@ -286,7 +287,7 @@ object CuratedContent {
       trailMetaData.showKickerTag.getOrElse(metaDataDefaults.showKickerTag),
       trailMetaData.byline.orElse(contentFields.get("byline")),
       trailMetaData.showByline.getOrElse(metaDataDefaults.showByline),
-      ItemKicker.fromContentAndTrail(content, trailMetaData, Some(collectionConfig)),
+      ItemKicker.fromContentAndTrail(content, trailMetaData, metaDataDefaults, Some(collectionConfig)),
       ImageCutout.fromTrail(trailMetaData),
       trailMetaData.showBoostedHeadline.getOrElse(metaDataDefaults.showBoostedHeadline),
       trailMetaData.showQuotedHeadline.getOrElse(metaDataDefaults.showQuotedHeadline)
@@ -313,7 +314,7 @@ object SupportingCuratedContent {
       trailMetaData.showKickerTag.getOrElse(metaDataDefaults.showKickerTag),
       trailMetaData.byline.orElse(contentFields.get("byline")),
       trailMetaData.showByline.getOrElse(metaDataDefaults.showByline),
-      ItemKicker.fromContentAndTrail(content, trailMetaData, Some(collectionConfig)),
+      ItemKicker.fromContentAndTrail(content, trailMetaData, metaDataDefaults, Some(collectionConfig)),
       ImageCutout.fromTrail(trailMetaData),
       trailMetaData.showBoostedHeadline.getOrElse(metaDataDefaults.showBoostedHeadline),
       trailMetaData.showQuotedHeadline.getOrElse(metaDataDefaults.showQuotedHeadline))}
