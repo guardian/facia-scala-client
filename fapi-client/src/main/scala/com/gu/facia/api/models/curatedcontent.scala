@@ -272,7 +272,7 @@ object CuratedContent {
     CuratedContent(
       content,
       supportingContent = Nil,
-        trailMetaData.headline.orElse(content.safeFields.get("headline")).getOrElse(content.webTitle),
+      trailMetaData.headline.orElse(content.safeFields.get("headline")).getOrElse(content.webTitle),
       trailMetaData.href.orElse(contentFields.get("href")),
       trailMetaData.trailText.orElse(contentFields.get("trailText")),
       trailMetaData.group.getOrElse("0"),
