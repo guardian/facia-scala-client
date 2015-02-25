@@ -296,6 +296,7 @@ object CuratedContent {
 object SupportingCuratedContent {
   def fromTrailAndContent(content: Content, trailMetaData: MetaDataCommonFields, collectionConfig: CollectionConfig): SupportingCuratedContent = {
     val contentFields: Map[String, String] = content.safeFields
+    val metaDataDefaults = MetadataDefaults.fromContent(content)
 
     SupportingCuratedContent(
       content,
@@ -304,16 +305,16 @@ object SupportingCuratedContent {
       trailMetaData.trailText.orElse(contentFields.get("trailText")),
       trailMetaData.group.getOrElse("0"),
       Image.fromTrail(trailMetaData),
-      trailMetaData.isBreaking.getOrElse(false),
-      trailMetaData.isBoosted.getOrElse(false),
-      trailMetaData.imageHide.getOrElse(false),
-      trailMetaData.imageReplace.getOrElse(false),
-      trailMetaData.showMainVideo.getOrElse(false),
-      trailMetaData.showKickerTag.getOrElse(false),
+      trailMetaData.isBreaking.getOrElse(metaDataDefaults.isBreaking),
+      trailMetaData.isBoosted.getOrElse(metaDataDefaults.isBoosted),
+      trailMetaData.imageHide.getOrElse(metaDataDefaults.imageHide),
+      trailMetaData.imageReplace.getOrElse(metaDataDefaults.imageReplace),
+      trailMetaData.showMainVideo.getOrElse(metaDataDefaults.showMainVideo),
+      trailMetaData.showKickerTag.getOrElse(metaDataDefaults.showKickerTag),
       trailMetaData.byline.orElse(contentFields.get("byline")),
-      trailMetaData.showByline.getOrElse(false),
+      trailMetaData.showByline.getOrElse(metaDataDefaults.showByline),
       ItemKicker.fromContentAndTrail(content, trailMetaData, Some(collectionConfig)),
       ImageCutout.fromTrail(trailMetaData),
-      trailMetaData.showBoostedHeadline.getOrElse(false),
-      trailMetaData.showQuotedHeadline.getOrElse(false))}
+      trailMetaData.showBoostedHeadline.getOrElse(metaDataDefaults.showBoostedHeadline),
+      trailMetaData.showQuotedHeadline.getOrElse(metaDataDefaults.showQuotedHeadline))}
 }
