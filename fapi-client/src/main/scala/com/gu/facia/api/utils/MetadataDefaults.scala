@@ -2,6 +2,7 @@ package com.gu.facia.api.utils
 
 import com.gu.contentapi.client.model.Content
 import com.gu.facia.api.models._
+import com.gu.facia.client.models.{MetaDataCommonFields, TrailMetaData}
 
 
 object MetadataDefaults {
@@ -63,18 +64,37 @@ object MetadataDefaults {
     imageCutoutReplace = false,
     showQuotedHeadline = false)
 
-  def fromContent(content: Content): MetadataDefaults = {
+  def fromTrailMetaData(trailMeta: MetaDataCommonFields): MetadataDefaults =
+    MetadataDefaults(
+      isBreaking = trailMeta.isBreaking.exists(identity),
+      isBoosted = trailMeta.isBoosted.exists(identity),
+      imageHide = trailMeta.imageHide.exists(identity),
+      imageReplace = trailMeta.imageReplace.exists(identity),
+      showKickerSection = trailMeta.showKickerSection.exists(identity),
+      showKickerCustom = trailMeta.showKickerCustom.exists(identity),
+      showBoostedHeadline = trailMeta.showBoostedHeadline.exists(identity),
+      showMainVideo = trailMeta.showMainVideo.exists(identity),
+      showKickerTag = trailMeta.showKickerTag.exists(identity),
+      showByline = trailMeta.showByline.exists(identity),
+      imageCutoutReplace = trailMeta.imageCutoutReplace.exists(identity),
+      showQuotedHeadline = trailMeta.showQuotedHeadline.exists(identity))
+
+  def fromContent(content: Content, mutatingMetaDataDefaults: MetadataDefaults = Default): MetadataDefaults = {
     if (isCartoonForContent(content))
-      Default.copy(showByline = true)
+      mutatingMetaDataDefaults.copy(showByline = true)
     else if (isCommentForContent(content))
-      Default.copy(
+      mutatingMetaDataDefaults.copy(
         showByline = true,
         showQuotedHeadline = true,
         imageCutoutReplace = true)
     else if (isVideoForContent(content))
-      Default.copy(showMainVideo = true)
+      mutatingMetaDataDefaults.copy(showMainVideo = true)
     else
-      Default}
+      mutatingMetaDataDefaults}
+
+  def fromContentAndTrailMetaData(content: Content, trailMeta: TrailMetaData): MetadataDefaults = {
+    val metaDataDefaultsForTrailMeta = fromTrailMetaData(trailMeta)
+    fromContent(content, metaDataDefaultsForTrailMeta)}
 }
 
 case class MetadataDefaults(
