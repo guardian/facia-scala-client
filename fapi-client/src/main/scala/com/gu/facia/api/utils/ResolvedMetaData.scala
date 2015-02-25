@@ -64,7 +64,7 @@ object ResolvedMetaData {
     imageCutoutReplace = false,
     showQuotedHeadline = false)
 
-  def fromTrailMetaData(trailMeta: MetaDataCommonFields): ResolvedMetaData =
+  private[utils] def fromTrailMetaData(trailMeta: MetaDataCommonFields): ResolvedMetaData =
     ResolvedMetaData(
       isBreaking = trailMeta.isBreaking.exists(identity),
       isBoosted = trailMeta.isBoosted.exists(identity),
@@ -79,7 +79,7 @@ object ResolvedMetaData {
       imageCutoutReplace = trailMeta.imageCutoutReplace.exists(identity),
       showQuotedHeadline = trailMeta.showQuotedHeadline.exists(identity))
 
-  def fromContent(content: Content, mutatingMetaDataDefaults: ResolvedMetaData = Default): ResolvedMetaData = {
+  private[utils] def fromContent(content: Content, mutatingMetaDataDefaults: ResolvedMetaData = Default): ResolvedMetaData = {
     if (isCartoonForContent(content))
       mutatingMetaDataDefaults.copy(showByline = true)
     else if (isCommentForContent(content))
