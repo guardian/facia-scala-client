@@ -8,7 +8,7 @@ object ItemKicker {
   def fromContentAndTrail(
       maybeContent: Option[Content],
       trailMeta: MetaDataCommonFields,
-      metaDefaults: MetadataDefaults,
+      metaDefaults: ResolvedMetaData,
       config: Option[CollectionConfig]): Option[ItemKicker] = {
 
     lazy val maybeTag = maybeContent.flatMap(_.tags.headOption)
@@ -41,9 +41,9 @@ object ItemKicker {
     }
   }
 
-  def fromTrailMetaData(trailMeta: MetaDataCommonFields): Option[ItemKicker] = fromContentAndTrail(None, trailMeta, MetadataDefaults.Default, None)
+  def fromTrailMetaData(trailMeta: MetaDataCommonFields): Option[ItemKicker] = fromContentAndTrail(None, trailMeta, ResolvedMetaData.Default, None)
 
-  def fromContentAndTrail(content: Content, trailMeta: MetaDataCommonFields, metaDataDefaults: MetadataDefaults, config: Option[CollectionConfig]): Option[ItemKicker]
+  def fromContentAndTrail(content: Content, trailMeta: MetaDataCommonFields, metaDataDefaults: ResolvedMetaData, config: Option[CollectionConfig]): Option[ItemKicker]
     = fromContentAndTrail(Option(content), trailMeta, metaDataDefaults, config)
 
   private[utils] def tonalKicker(content: Content, trailMeta: MetaDataCommonFields): Option[ItemKicker] = {

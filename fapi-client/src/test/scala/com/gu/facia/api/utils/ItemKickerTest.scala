@@ -14,7 +14,7 @@ class ItemKickerTest extends FreeSpec with ShouldMatchers with MockitoSugar with
     val trailMetadata = Mockito.spy(TrailMetaData.empty)
     val content = mock[Content]
     val collectionConfig = Mockito.spy(CollectionConfig.fromCollectionJson(CollectionConfigJson.withDefaults()))
-    val metaDataDefaults = MetadataDefaults.Default
+    val metaDataDefaults = ResolvedMetaData.Default
 
     "should prefer item level custom kicker to collection level section kicker" in {
       when(trailMetadata.customKicker).thenReturn(Some("custom kicker"))

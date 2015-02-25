@@ -2,10 +2,10 @@ package com.gu.facia.api.utils
 
 import com.gu.contentapi.client.model.Content
 import com.gu.facia.api.models._
-import com.gu.facia.client.models.{MetaDataCommonFields, TrailMetaData}
+import com.gu.facia.client.models.MetaDataCommonFields
 
 
-object MetadataDefaults {
+object ResolvedMetaData {
   val Cartoon = "type/cartoon"
   val Video = "type/video"
   val Comment = "tone/comment"
@@ -50,7 +50,7 @@ object MetadataDefaults {
       latestSnap => latestSnap.latestContent.exists(isVideoForContent))
   }
 
-  val Default = MetadataDefaults(
+  val Default = ResolvedMetaData(
     isBreaking = false,
     isBoosted = false,
     imageHide = false,
@@ -64,8 +64,8 @@ object MetadataDefaults {
     imageCutoutReplace = false,
     showQuotedHeadline = false)
 
-  def fromTrailMetaData(trailMeta: MetaDataCommonFields): MetadataDefaults =
-    MetadataDefaults(
+  def fromTrailMetaData(trailMeta: MetaDataCommonFields): ResolvedMetaData =
+    ResolvedMetaData(
       isBreaking = trailMeta.isBreaking.exists(identity),
       isBoosted = trailMeta.isBoosted.exists(identity),
       imageHide = trailMeta.imageHide.exists(identity),
@@ -79,7 +79,7 @@ object MetadataDefaults {
       imageCutoutReplace = trailMeta.imageCutoutReplace.exists(identity),
       showQuotedHeadline = trailMeta.showQuotedHeadline.exists(identity))
 
-  def fromContent(content: Content, mutatingMetaDataDefaults: MetadataDefaults = Default): MetadataDefaults = {
+  def fromContent(content: Content, mutatingMetaDataDefaults: ResolvedMetaData = Default): ResolvedMetaData = {
     if (isCartoonForContent(content))
       mutatingMetaDataDefaults.copy(showByline = true)
     else if (isCommentForContent(content))
@@ -92,12 +92,12 @@ object MetadataDefaults {
     else
       mutatingMetaDataDefaults}
 
-  def fromContentAndTrailMetaData(content: Content, trailMeta: MetaDataCommonFields): MetadataDefaults = {
+  def fromContentAndTrailMetaData(content: Content, trailMeta: MetaDataCommonFields): ResolvedMetaData = {
     val metaDataDefaultsForTrailMeta = fromTrailMetaData(trailMeta)
     fromContent(content, metaDataDefaultsForTrailMeta)}
 }
 
-case class MetadataDefaults(
+case class ResolvedMetaData(
     isBreaking: Boolean,
     isBoosted: Boolean,
     imageHide: Boolean,
