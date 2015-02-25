@@ -1,7 +1,7 @@
 package com.gu.facia.api.models
 
 import com.gu.contentapi.client.model.Content
-import com.gu.facia.api.utils.ItemKicker
+import com.gu.facia.api.utils.{MetadataDefaults, ItemKicker}
 import com.gu.facia.client.models.{SupportingItem, MetaDataCommonFields, Trail, TrailMetaData}
 
 case class Image(imageSrc: String, imageSrcWidth: String, imageSrcHeight: String)
@@ -268,6 +268,7 @@ object CuratedContent {
 
   def fromTrailAndContent(content: Content, trailMetaData: MetaDataCommonFields, collectionConfig: CollectionConfig): CuratedContent = {
     val contentFields: Map[String, String] = content.safeFields
+    val metaDataDefaults = MetadataDefaults.fromContent(content)
 
     CuratedContent(
       content,
@@ -277,18 +278,18 @@ object CuratedContent {
       trailMetaData.trailText.orElse(contentFields.get("trailText")),
       trailMetaData.group.getOrElse("0"),
       Image.fromTrail(trailMetaData),
-      trailMetaData.isBreaking.getOrElse(false),
-      trailMetaData.isBoosted.getOrElse(false),
-      trailMetaData.imageHide.getOrElse(false),
-      trailMetaData.imageReplace.getOrElse(false),
-      trailMetaData.showMainVideo.getOrElse(false),
-      trailMetaData.showKickerTag.getOrElse(false),
+      trailMetaData.isBreaking.getOrElse(metaDataDefaults.isBreaking),
+      trailMetaData.isBoosted.getOrElse(metaDataDefaults.isBoosted),
+      trailMetaData.imageHide.getOrElse(metaDataDefaults.imageHide),
+      trailMetaData.imageReplace.getOrElse(metaDataDefaults.imageReplace),
+      trailMetaData.showMainVideo.getOrElse(metaDataDefaults.showMainVideo),
+      trailMetaData.showKickerTag.getOrElse(metaDataDefaults.showKickerTag),
       trailMetaData.byline.orElse(contentFields.get("byline")),
-      trailMetaData.showByline.getOrElse(false),
+      trailMetaData.showByline.getOrElse(metaDataDefaults.showByline),
       ItemKicker.fromContentAndTrail(content, trailMetaData, Some(collectionConfig)),
       ImageCutout.fromTrail(trailMetaData),
-      trailMetaData.showBoostedHeadline.getOrElse(false),
-      trailMetaData.showQuotedHeadline.getOrElse(false)
+      trailMetaData.showBoostedHeadline.getOrElse(metaDataDefaults.showBoostedHeadline),
+      trailMetaData.showQuotedHeadline.getOrElse(metaDataDefaults.showQuotedHeadline)
     )}
 }
 
