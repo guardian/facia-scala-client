@@ -268,7 +268,7 @@ object CuratedContent {
 
   def fromTrailAndContent(content: Content, trailMetaData: MetaDataCommonFields, collectionConfig: CollectionConfig): CuratedContent = {
     val contentFields: Map[String, String] = content.safeFields
-    val metaDataDefaults = MetadataDefaults.fromContent(content)
+    val metaDataDefaults = MetadataDefaults.fromContentAndTrailMetaData(content, trailMetaData)
 
     CuratedContent(
       content,
@@ -296,7 +296,7 @@ object CuratedContent {
 object SupportingCuratedContent {
   def fromTrailAndContent(content: Content, trailMetaData: MetaDataCommonFields, collectionConfig: CollectionConfig): SupportingCuratedContent = {
     val contentFields: Map[String, String] = content.safeFields
-    val metaDataDefaults = MetadataDefaults.fromContent(content)
+    val metaDataDefaults = MetadataDefaults.fromContentAndTrailMetaData(content, trailMetaData)
 
     SupportingCuratedContent(
       content,
