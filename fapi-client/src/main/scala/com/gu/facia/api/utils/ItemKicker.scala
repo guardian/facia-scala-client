@@ -5,7 +5,12 @@ import com.gu.facia.api.models.CollectionConfig
 import com.gu.facia.client.models.{MetaDataCommonFields, TrailMetaData}
 
 object ItemKicker {
-  def fromContentAndTrail(maybeContent: Option[Content], trailMeta: MetaDataCommonFields, config: Option[CollectionConfig]): Option[ItemKicker] = {
+  def fromContentAndTrail(
+      maybeContent: Option[Content],
+      trailMeta: MetaDataCommonFields,
+      metaDefaults: MetadataDefaults,
+      config: Option[CollectionConfig]): Option[ItemKicker] = {
+
     lazy val maybeTag = maybeContent.flatMap(_.tags.headOption)
     lazy val tagKicker = maybeTag.map(TagKicker.fromTag)
     lazy val sectionKicker = for {
@@ -17,12 +22,12 @@ object ItemKicker {
     trailMeta.customKicker match {
       case Some(kicker)
         if trailMeta.snapType.exists(_.contains("latest")) &&
-          trailMeta.showKickerCustom.exists(identity) &&
+          metaDefaults.showKickerCustom &&
           trailMeta.snapUri.isDefined => Some(FreeHtmlKickerWithLink(kicker, s"/${trailMeta.snapUri.get}"))
-      case Some(kicker) if trailMeta.showKickerCustom.exists(identity) => Some(FreeHtmlKicker(kicker))
-      case _ => if (trailMeta.showKickerTag.exists(identity) && maybeTag.isDefined) {
+      case Some(kicker) if metaDefaults.showKickerCustom => Some(FreeHtmlKicker(kicker))
+      case _ => if (metaDefaults.showKickerTag && maybeTag.isDefined) {
         tagKicker
-      } else if (trailMeta.showKickerSection.exists(identity)) {
+      } else if (metaDefaults.showKickerSection) {
         sectionKicker
       } else if (config.exists(_.showTags) && maybeTag.isDefined) {
         tagKicker
@@ -36,10 +41,10 @@ object ItemKicker {
     }
   }
 
-  def fromTrailMetaData(trailMeta: MetaDataCommonFields): Option[ItemKicker] = fromContentAndTrail(None, trailMeta, None)
+  def fromTrailMetaData(trailMeta: MetaDataCommonFields): Option[ItemKicker] = fromContentAndTrail(None, trailMeta, MetadataDefaults.Default, None)
 
-  def fromContentAndTrail(content: Content, trailMeta: MetaDataCommonFields, config: Option[CollectionConfig]): Option[ItemKicker]
-    = fromContentAndTrail(Option(content), trailMeta, config)
+  def fromContentAndTrail(content: Content, trailMeta: MetaDataCommonFields, metaDataDefaults: MetadataDefaults, config: Option[CollectionConfig]): Option[ItemKicker]
+    = fromContentAndTrail(Option(content), trailMeta, metaDataDefaults, config)
 
   private[utils] def tonalKicker(content: Content, trailMeta: MetaDataCommonFields): Option[ItemKicker] = {
     def tagsOfType(tagType: String): Seq[Tag] = content.tags.filter(_.`type` == tagType)
