@@ -79,7 +79,8 @@ object ResolvedMetaData {
       imageCutoutReplace = trailMeta.imageCutoutReplace.exists(identity),
       showQuotedHeadline = trailMeta.showQuotedHeadline.exists(identity))
 
-  private[utils] def fromContent(content: Content, mutatingMetaDataDefaults: ResolvedMetaData = Default): ResolvedMetaData = {
+  private[utils] def fromContent(content: Content): ResolvedMetaData = {
+    val mutatingMetaDataDefaults = Default
     if (isCartoonForContent(content))
       mutatingMetaDataDefaults.copy(showByline = true)
     else if (isCommentForContent(content))
@@ -109,8 +110,9 @@ object ResolvedMetaData {
     )
 
   def fromContentAndTrailMetaData(content: Content, trailMeta: MetaDataCommonFields): ResolvedMetaData = {
-    val metaDataDefaultsForTrailMeta = fromTrailMetaData(trailMeta)
-    fromContent(content, metaDataDefaultsForTrailMeta)}
+    val metaDataFromContent = fromContent(content)
+    joinResolvedMetaDataAndTrailMetaData(metaDataFromContent, trailMeta)
+  }
 }
 
 case class ResolvedMetaData(
