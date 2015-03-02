@@ -2,7 +2,7 @@ package com.gu.facia.api.utils
 
 import com.gu.contentapi.client.model.Content
 import com.gu.facia.api.models._
-import com.gu.facia.client.models.MetaDataCommonFields
+import com.gu.facia.client.models.{TrailMetaData, MetaDataCommonFields}
 
 
 object ResolvedMetaData {
@@ -91,6 +91,22 @@ object ResolvedMetaData {
       mutatingMetaDataDefaults.copy(showMainVideo = true)
     else
       mutatingMetaDataDefaults}
+
+  private [utils] def joinResolvedMetaDataAndTrailMetaData(first: ResolvedMetaData, second: MetaDataCommonFields): ResolvedMetaData =
+    first.copy(
+      isBreaking = second.isBreaking.getOrElse(first.isBreaking),
+      isBoosted = second.isBoosted.getOrElse(first.isBoosted),
+      imageHide = second.imageHide.getOrElse(first.imageHide),
+      imageReplace = second.imageReplace.getOrElse(first.imageReplace),
+      showKickerSection = second.showKickerSection.getOrElse(first.showKickerSection),
+      showKickerCustom = second.showKickerCustom.getOrElse(first.showKickerCustom),
+      showBoostedHeadline = second.showBoostedHeadline.getOrElse(first.showBoostedHeadline),
+      showMainVideo = second.showMainVideo.getOrElse(first.showMainVideo),
+      showKickerTag = second.showKickerTag.getOrElse(first.showKickerTag),
+      showByline = second.showByline.getOrElse(first.showByline),
+      imageCutoutReplace = second.imageCutoutReplace.getOrElse(first.imageCutoutReplace),
+      showQuotedHeadline = second.showQuotedHeadline.getOrElse(first.showQuotedHeadline)
+    )
 
   def fromContentAndTrailMetaData(content: Content, trailMeta: MetaDataCommonFields): ResolvedMetaData = {
     val metaDataDefaultsForTrailMeta = fromTrailMetaData(trailMeta)
