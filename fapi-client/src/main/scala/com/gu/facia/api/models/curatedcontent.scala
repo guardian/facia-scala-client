@@ -4,15 +4,16 @@ import com.gu.contentapi.client.model.Content
 import com.gu.facia.api.utils.ItemKicker
 import com.gu.facia.client.models.{SupportingItem, MetaDataCommonFields, Trail, TrailMetaData}
 
-case class Image(imageSrc: String, imageSrcWidth: String, imageSrcHeight: String)
+case class ImageReplace(imageSrc: String, imageSrcWidth: String, imageSrcHeight: String)
 
-object Image {
-  def fromTrailMeta(trailMeta: MetaDataCommonFields): Option[Image] =
+object ImageReplace {
+  def fromTrailMeta(trailMeta: MetaDataCommonFields): Option[ImageReplace] =
     for {
+      imageReplace <- trailMeta.imageReplace.filter(identity)
       imageSrc <- trailMeta.imageSrc
       imageSrcWidth <- trailMeta.imageSrcWidth
       imageSrcHeight <- trailMeta.imageSrcHeight
-    } yield Image(imageSrc, imageSrcWidth, imageSrcHeight)
+    } yield ImageReplace(imageSrc, imageSrcWidth, imageSrcHeight)
 }
 
 case class ImageCutout(
@@ -70,7 +71,7 @@ object Snap {
       trail.safeMeta.href,
       trail.safeMeta.trailText,
       trail.safeMeta.group.getOrElse("0"),
-      Image.fromTrail(trail.safeMeta),
+      ImageReplace.fromTrailMeta(trail.safeMeta),
       trail.safeMeta.isBreaking.exists(identity),
       trail.safeMeta.isBoosted.exists(identity),
       trail.safeMeta.imageHide.exists(identity),
@@ -80,7 +81,7 @@ object Snap {
       trail.safeMeta.byline,
       trail.safeMeta.showByline.exists(identity),
       ItemKicker.fromTrailMetaData(trail.safeMeta),
-      ImageCutout.fromTrail(trail.safeMeta),
+      ImageCutout.fromTrailMeta(trail.safeMeta),
       trail.safeMeta.showBoostedHeadline.exists(identity),
       trail.safeMeta.showQuotedHeadline.exists(identity)))
     case _ => None
@@ -99,7 +100,7 @@ object Snap {
       supportingItem.safeMeta.href,
       supportingItem.safeMeta.trailText,
       supportingItem.safeMeta.group.getOrElse("0"),
-      Image.fromTrail(supportingItem.safeMeta),
+      ImageReplace.fromTrailMeta(supportingItem.safeMeta),
       supportingItem.safeMeta.isBreaking.exists(identity),
       supportingItem.safeMeta.isBoosted.exists(identity),
       supportingItem.safeMeta.imageHide.exists(identity),
@@ -109,7 +110,7 @@ object Snap {
       supportingItem.safeMeta.byline,
       supportingItem.safeMeta.showByline.exists(identity),
       ItemKicker.fromTrailMetaData(supportingItem.safeMeta),
-      ImageCutout.fromTrail(supportingItem.safeMeta),
+      ImageCutout.fromTrailMeta(supportingItem.safeMeta),
       supportingItem.safeMeta.showBoostedHeadline.exists(identity),
       supportingItem.safeMeta.showQuotedHeadline.exists(identity)
   ))
@@ -127,7 +128,7 @@ case class LinkSnap(
   href: Option[String],
   trailText: Option[String],
   group: String,
-  image: Option[Image],
+  image: Option[ImageReplace],
   isBreaking: Boolean,
   isBoosted: Boolean,
   imageHide: Boolean,
@@ -150,7 +151,7 @@ case class LatestSnap(
   href: Option[String],
   trailText: Option[String],
   group: String,
-  image: Option[Image],
+  image: Option[ImageReplace],
   isBreaking: Boolean,
   isBoosted: Boolean,
   imageHide: Boolean,
@@ -175,7 +176,7 @@ object LatestSnap {
       trail.safeMeta.href,
       trail.safeMeta.trailText,
       trail.safeMeta.group.getOrElse("0"),
-      Image.fromTrail(trail.safeMeta),
+      ImageReplace.fromTrailMeta(trail.safeMeta),
       trail.safeMeta.isBreaking.exists(identity),
       trail.safeMeta.isBoosted.exists(identity),
       trail.safeMeta.imageHide.exists(identity),
@@ -185,7 +186,7 @@ object LatestSnap {
       trail.safeMeta.byline,
       trail.safeMeta.showByline.exists(identity),
       ItemKicker.fromTrailMetaData(trail.safeMeta),
-      ImageCutout.fromTrail(trail.safeMeta),
+      ImageCutout.fromTrailMeta(trail.safeMeta),
       trail.safeMeta.showBoostedHeadline.exists(identity),
       trail.safeMeta.showQuotedHeadline.exists(identity)
     )
@@ -200,7 +201,7 @@ object LatestSnap {
       supportingItem.safeMeta.href,
       supportingItem.safeMeta.trailText,
       supportingItem.safeMeta.group.getOrElse("0"),
-      Image.fromTrail(supportingItem.safeMeta),
+      ImageReplace.fromTrailMeta(supportingItem.safeMeta),
       supportingItem.safeMeta.isBreaking.exists(identity),
       supportingItem.safeMeta.isBoosted.exists(identity),
       supportingItem.safeMeta.imageHide.exists(identity),
@@ -210,7 +211,7 @@ object LatestSnap {
       supportingItem.safeMeta.byline,
       supportingItem.safeMeta.showByline.exists(identity),
       ItemKicker.fromTrailMetaData(supportingItem.safeMeta),
-      ImageCutout.fromTrail(supportingItem.safeMeta),
+      ImageCutout.fromTrailMeta(supportingItem.safeMeta),
       supportingItem.safeMeta.showBoostedHeadline.exists(identity),
       supportingItem.safeMeta.showQuotedHeadline.exists(identity)
     )
@@ -223,11 +224,10 @@ case class CuratedContent(
   href: Option[String],
   trailText: Option[String],
   group: String,
-  image: Option[Image],
+  imageReplace: Option[ImageReplace],
   isBreaking: Boolean,
   isBoosted: Boolean,
   imageHide: Boolean,
-  imageReplace: Boolean,
   showMainVideo: Boolean,
   showKickerTag: Boolean,
   byline: Option[String],
@@ -243,11 +243,10 @@ case class SupportingCuratedContent(
   href: Option[String],
   trailText: Option[String],
   group: String,
-  image: Option[Image],
+  imageReplace: Option[ImageReplace],
   isBreaking: Boolean,
   isBoosted: Boolean,
   imageHide: Boolean,
-  imageReplace: Boolean,
   showMainVideo: Boolean,
   showKickerTag: Boolean,
   byline: Option[String],
@@ -271,11 +270,10 @@ object CuratedContent {
       trailMetaData.href.orElse(contentFields.get("href")),
       trailMetaData.trailText.orElse(contentFields.get("trailText")),
       trailMetaData.group.getOrElse("0"),
-      Image.fromTrailMeta(trailMetaData),
+      ImageReplace.fromTrailMeta(trailMetaData),
       trailMetaData.isBreaking.getOrElse(false),
       trailMetaData.isBoosted.getOrElse(false),
       trailMetaData.imageHide.getOrElse(false),
-      trailMetaData.imageReplace.getOrElse(false),
       trailMetaData.showMainVideo.getOrElse(false),
       trailMetaData.showKickerTag.getOrElse(false),
       trailMetaData.byline.orElse(contentFields.get("byline")),
@@ -295,11 +293,10 @@ object CuratedContent {
       trailMetaData.href.orElse(contentFields.get("href")),
       trailMetaData.trailText.orElse(contentFields.get("trailText")),
       trailMetaData.group.getOrElse("0"),
-      Image.fromTrailMeta(trailMetaData),
+      ImageReplace.fromTrailMeta(trailMetaData),
       trailMetaData.isBreaking.getOrElse(false),
       trailMetaData.isBoosted.getOrElse(false),
       trailMetaData.imageHide.getOrElse(false),
-      trailMetaData.imageReplace.getOrElse(false),
       trailMetaData.showMainVideo.getOrElse(false),
       trailMetaData.showKickerTag.getOrElse(false),
       trailMetaData.byline.orElse(contentFields.get("byline")),
@@ -321,11 +318,10 @@ object SupportingCuratedContent {
       trailMetaData.href.orElse(contentFields.get("href")),
       trailMetaData.trailText.orElse(contentFields.get("trailText")),
       trailMetaData.group.getOrElse("0"),
-      Image.fromTrailMeta(trailMetaData),
+      ImageReplace.fromTrailMeta(trailMetaData),
       trailMetaData.isBreaking.getOrElse(false),
       trailMetaData.isBoosted.getOrElse(false),
       trailMetaData.imageHide.getOrElse(false),
-      trailMetaData.imageReplace.getOrElse(false),
       trailMetaData.showMainVideo.getOrElse(false),
       trailMetaData.showKickerTag.getOrElse(false),
       trailMetaData.byline.orElse(contentFields.get("byline")),
