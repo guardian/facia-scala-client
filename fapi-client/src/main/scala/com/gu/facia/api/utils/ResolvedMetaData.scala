@@ -10,45 +10,14 @@ object ResolvedMetaData {
   val Video = "type/video"
   val Comment = "tone/comment"
 
-  private def fold[T](faciaContent: FaciaContent)(c: (CuratedContent) => T, scc: (SupportingCuratedContent) => T,
-    ls: (LinkSnap) => T, las: (LatestSnap) => T): T = faciaContent match {
-    case curatedContent: CuratedContent => c(curatedContent)
-    case supportingCuratedContent: SupportingCuratedContent => scc(supportingCuratedContent)
-    case linkSnap: LinkSnap => ls(linkSnap)
-    case latestSnap: LatestSnap => las(latestSnap)}
-
   def isCartoonForContent(content: Content): Boolean =
     content.tags.exists(_.id == Cartoon)
-
-  def isCartoon(faciaContent: FaciaContent): Boolean = {
-
-    fold(faciaContent)(
-      curatedContent => isCartoonForContent(curatedContent.content),
-      supportingCuratedContent => isCartoonForContent(supportingCuratedContent.content),
-      _ => false,
-      latestSnap => latestSnap.latestContent.exists(isCartoonForContent))}
 
   def isCommentForContent(content: Content): Boolean =
     content.tags.exists(_.id == Comment)
 
-  def isComment(faciaContent: FaciaContent): Boolean = {
-    fold(faciaContent)(
-      curatedContent => isCommentForContent(curatedContent.content),
-      supportingCuratedContent => isCommentForContent(supportingCuratedContent.content),
-      _ => false,
-      latestSnap => latestSnap.latestContent.exists(isCommentForContent))}
-
   def isVideoForContent(content: Content): Boolean =
     content.tags.exists(_.id == Video)
-
-  def isVideo(faciaContent: FaciaContent): Boolean = {
-
-    fold(faciaContent)(
-      curatedContent => isVideoForContent(curatedContent.content),
-      supportingCuratedContent => isVideoForContent(supportingCuratedContent.content),
-      _ => false,
-      latestSnap => latestSnap.latestContent.exists(isVideoForContent))
-  }
 
   val Default = ResolvedMetaData(
     isBreaking = false,
