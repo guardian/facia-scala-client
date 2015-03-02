@@ -114,30 +114,44 @@ class ResolvedMetaDataTest extends FreeSpec with Matchers {
 
   "Resolving Metadata using fromContentAndTrailMetaData" - {
 
-    "should resolve correct for cartoon, comment and video when trailMetaData is not set" in {
+    "should resolve correct for cartoon when trailMetaData is not set" in {
       val resolvedCartoon = ResolvedMetaData.fromContentAndTrailMetaData(contentWithCartoon, emptyTrailMetaData)
-      resolvedCartoon.showByline should be(true)
-
-      val resolvedComment = ResolvedMetaData.fromContentAndTrailMetaData(contentWithComment, emptyTrailMetaData)
-      resolvedComment.showByline should be(true)
-      resolvedComment.showQuotedHeadline should be(true)
-      resolvedComment.imageCutoutReplace should be(true)
-
-      val resolvedVideo = ResolvedMetaData.fromContentAndTrailMetaData(contentWithVideo, emptyTrailMetaData)
-      resolvedVideo.showMainVideo should be(true)
+      resolvedCartoon should have (
+        'showByline (true))
     }
 
-    "should resolve correct for cartoon, comment and video when trailMetaData IS set" in {
+    "should resolve correct for comment when trailMetaData is not set" in {
+      val resolvedComment = ResolvedMetaData.fromContentAndTrailMetaData(contentWithComment, emptyTrailMetaData)
+      resolvedComment should have (
+        'showByline (true),
+        'showQuotedHeadline (true),
+        'imageCutoutReplace (true))
+    }
+
+    "should resolve correct for video when trailMetaData is not set" in {
+      val resolvedVideo = ResolvedMetaData.fromContentAndTrailMetaData(contentWithVideo, emptyTrailMetaData)
+      resolvedVideo should have (
+        'showMainVideo (true))
+    }
+
+    "should resolve correct for cartoon when trailMetaData IS set" in {
       val resolvedCartoon = ResolvedMetaData.fromContentAndTrailMetaData(contentWithCartoon, trailMetaDataWithFieldsSetFalse)
-      resolvedCartoon.showByline should be(false)
+      resolvedCartoon should have (
+        'showByline (false))
+    }
 
+    "should resolve correct for comment when trailMetaData IS set" in {
       val resolvedComment = ResolvedMetaData.fromContentAndTrailMetaData(contentWithComment, trailMetaDataWithFieldsSetFalse)
-      resolvedComment.showByline should be(false)
-      resolvedComment.showQuotedHeadline should be(false)
-      resolvedComment.imageCutoutReplace should be(false)
+      resolvedComment should have (
+        'showByline (false),
+        'showQuotedHeadline (false),
+        'imageCutoutReplace (false))
+    }
 
+    "should resolve correct for video when trailMetaData IS set" in {
       val resolvedVideo = ResolvedMetaData.fromContentAndTrailMetaData(contentWithVideo, trailMetaDataWithFieldsSetFalse)
-      resolvedVideo.showMainVideo should be(false)
+      resolvedVideo should have (
+        'showMainVideo (false))
     }
   }
 
