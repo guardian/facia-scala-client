@@ -39,33 +39,40 @@ class ResolvedMetaDataTest extends FreeSpec with Matchers {
   "Resolving Metadata using fromContent" - {
 
     "Content with type cartoon should showByline" in {
-      ResolvedMetaData.fromContent(contentWithCartoon).showByline should be (true)
+      val resolvedMetaData = ResolvedMetaData.fromContent(contentWithCartoon)
+      resolvedMetaData should have (
+        'showByline (true))
     }
 
     "Content with type comment should showByline, showQuotedHeadline and imageCutoutReplace" in {
-      ResolvedMetaData.fromContent(contentWithComment).showByline should be (true)
-      ResolvedMetaData.fromContent(contentWithComment).showQuotedHeadline should be (true)
-      ResolvedMetaData.fromContent(contentWithComment).imageCutoutReplace should be (true)
+      val resolvedMetaData = ResolvedMetaData.fromContent(contentWithComment)
+      resolvedMetaData should have (
+        'showByline (true),
+        'showQuotedHeadline (true),
+        'imageCutoutReplace (true))
     }
 
     "Content with type video should showMainVideo" in {
-      ResolvedMetaData.fromContent(contentWithVideo).showMainVideo should be (true)
+      val resolvedMetaData = ResolvedMetaData.fromContent(contentWithVideo)
+      resolvedMetaData should have (
+        'showMainVideo (true))
     }
 
     "Content with silly type should all false" in {
       val contentWithVideo = contentWithTags(tagWithId("sillyid"))
       val resolvedMetaData = ResolvedMetaData.fromContent(contentWithVideo)
-     resolvedMetaData.showByline should be (false)
-     resolvedMetaData.showQuotedHeadline should be (false)
-     resolvedMetaData.imageCutoutReplace should be (false)
-     resolvedMetaData.showMainVideo should be (false)
-     resolvedMetaData.isBoosted should be (false)
-     resolvedMetaData.isBreaking should be (false)
-     resolvedMetaData.imageHide should be (false)
-     resolvedMetaData.imageReplace should be (false)
-     resolvedMetaData.showKickerCustom should be (false)
-     resolvedMetaData.showKickerSection should be (false)
-     resolvedMetaData.showKickerTag should be (false)
+      resolvedMetaData should have (
+        'showByline (false),
+        'showQuotedHeadline (false),
+        'imageCutoutReplace (false),
+        'showMainVideo (false),
+        'isBoosted (false),
+        'isBreaking (false),
+        'imageHide (false),
+        'imageReplace (false),
+        'showKickerCustom (false),
+        'showKickerSection (false),
+        'showKickerTag (false))
     }
   }
 
@@ -73,32 +80,35 @@ class ResolvedMetaDataTest extends FreeSpec with Matchers {
 
     "Resolve all to false for empty TrailMetaData" in {
       val resolvedMetaData = ResolvedMetaData.fromTrailMetaData(emptyTrailMetaData)
-      resolvedMetaData.showByline should be (false)
-      resolvedMetaData.showQuotedHeadline should be (false)
-      resolvedMetaData.imageCutoutReplace should be (false)
-      resolvedMetaData.showMainVideo should be (false)
-      resolvedMetaData.isBoosted should be (false)
-      resolvedMetaData.isBreaking should be (false)
-      resolvedMetaData.imageHide should be (false)
-      resolvedMetaData.imageReplace should be (false)
-      resolvedMetaData.showKickerCustom should be (false)
-      resolvedMetaData.showKickerSection should be (false)
-      resolvedMetaData.showKickerTag should be (false)
+      resolvedMetaData should have (
+        'showByline (false),
+        'showQuotedHeadline (false),
+        'imageCutoutReplace (false),
+        'showMainVideo (false),
+        'isBoosted (false),
+        'isBreaking (false),
+        'imageHide (false),
+        'imageReplace (false),
+        'showKickerCustom (false),
+        'showKickerSection (false),
+        'showKickerTag (false))
     }
 
     "Resolve all to true for empty TrailMetaData" in {
       val resolvedMetaData = ResolvedMetaData.fromTrailMetaData(trailMetaDataWithFieldsSetTrue)
-      resolvedMetaData.showByline should be (true)
-      resolvedMetaData.showQuotedHeadline should be (true)
-      resolvedMetaData.imageCutoutReplace should be (true)
-      resolvedMetaData.showMainVideo should be (true)
-      resolvedMetaData.isBoosted should be (false)
-      resolvedMetaData.isBreaking should be (false)
-      resolvedMetaData.imageHide should be (false)
-      resolvedMetaData.imageReplace should be (false)
-      resolvedMetaData.showKickerCustom should be (false)
-      resolvedMetaData.showKickerSection should be (false)
-      resolvedMetaData.showKickerTag should be (false)
+      resolvedMetaData should have (
+        'showByline (true),
+        'showQuotedHeadline (true),
+        'imageCutoutReplace (true),
+        'showMainVideo (true),
+        'isBoosted (false),
+        'isBreaking (false),
+        'imageHide (false),
+        'imageReplace (false),
+        'showKickerCustom (false),
+        'showKickerSection (false),
+        'showKickerTag (false)
+      )
     }
   }
 
