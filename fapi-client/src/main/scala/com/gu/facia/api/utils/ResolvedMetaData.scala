@@ -49,39 +49,33 @@ object ResolvedMetaData {
       showQuotedHeadline = trailMeta.showQuotedHeadline.exists(identity))
 
   private[utils] def fromContent(content: Content): ResolvedMetaData = {
-    val mutatingMetaDataDefaults = Default
     if (isCartoonForContent(content))
-      mutatingMetaDataDefaults.copy(showByline = true)
+      Default.copy(showByline = true)
     else if (isCommentForContent(content))
-      mutatingMetaDataDefaults.copy(
+      Default.copy(
         showByline = true,
         showQuotedHeadline = true,
         imageCutoutReplace = true)
     else if (isVideoForContent(content))
-      mutatingMetaDataDefaults.copy(showMainVideo = true)
+      Default.copy(showMainVideo = true)
     else
-      mutatingMetaDataDefaults}
-
-  private [utils] def joinResolvedMetaDataAndTrailMetaData(first: ResolvedMetaData, second: MetaDataCommonFields): ResolvedMetaData =
-    first.copy(
-      isBreaking = second.isBreaking.getOrElse(first.isBreaking),
-      isBoosted = second.isBoosted.getOrElse(first.isBoosted),
-      imageHide = second.imageHide.getOrElse(first.imageHide),
-      imageReplace = second.imageReplace.getOrElse(first.imageReplace),
-      showKickerSection = second.showKickerSection.getOrElse(first.showKickerSection),
-      showKickerCustom = second.showKickerCustom.getOrElse(first.showKickerCustom),
-      showBoostedHeadline = second.showBoostedHeadline.getOrElse(first.showBoostedHeadline),
-      showMainVideo = second.showMainVideo.getOrElse(first.showMainVideo),
-      showKickerTag = second.showKickerTag.getOrElse(first.showKickerTag),
-      showByline = second.showByline.getOrElse(first.showByline),
-      imageCutoutReplace = second.imageCutoutReplace.getOrElse(first.imageCutoutReplace),
-      showQuotedHeadline = second.showQuotedHeadline.getOrElse(first.showQuotedHeadline)
-    )
+      Default}
 
   def fromContentAndTrailMetaData(content: Content, trailMeta: MetaDataCommonFields): ResolvedMetaData = {
     val metaDataFromContent = fromContent(content)
-    joinResolvedMetaDataAndTrailMetaData(metaDataFromContent, trailMeta)
-  }
+    metaDataFromContent.copy(
+      isBreaking = trailMeta.isBreaking.getOrElse(metaDataFromContent.isBreaking),
+      isBoosted = trailMeta.isBoosted.getOrElse(metaDataFromContent.isBoosted),
+      imageHide = trailMeta.imageHide.getOrElse(metaDataFromContent.imageHide),
+      imageReplace = trailMeta.imageReplace.getOrElse(metaDataFromContent.imageReplace),
+      showKickerSection = trailMeta.showKickerSection.getOrElse(metaDataFromContent.showKickerSection),
+      showKickerCustom = trailMeta.showKickerCustom.getOrElse(metaDataFromContent.showKickerCustom),
+      showBoostedHeadline = trailMeta.showBoostedHeadline.getOrElse(metaDataFromContent.showBoostedHeadline),
+      showMainVideo = trailMeta.showMainVideo.getOrElse(metaDataFromContent.showMainVideo),
+      showKickerTag = trailMeta.showKickerTag.getOrElse(metaDataFromContent.showKickerTag),
+      showByline = trailMeta.showByline.getOrElse(metaDataFromContent.showByline),
+      imageCutoutReplace = trailMeta.imageCutoutReplace.getOrElse(metaDataFromContent.imageCutoutReplace),
+      showQuotedHeadline = trailMeta.showQuotedHeadline.getOrElse(metaDataFromContent.showQuotedHeadline))}
 }
 
 case class ResolvedMetaData(
