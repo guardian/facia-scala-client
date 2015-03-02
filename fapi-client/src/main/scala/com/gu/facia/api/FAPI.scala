@@ -89,8 +89,9 @@ object FAPI {
 
   def collectionContentWithoutSnaps(collection: Collection, adjustSearchQuery: AdjustSearchQuery = identity)
                                 (implicit capiClient: GuardianContentClient, ec: ExecutionContext): Response[List[FaciaContent]] = {
+    val collectionWithoutSnaps = Collection.withoutSnaps(collection)
     for(setOfContent <- getContentForCollection(collection, adjustSearchQuery))
-      yield Collection.liveContent(collection, setOfContent)
+      yield Collection.liveContent(collectionWithoutSnaps, setOfContent)
   }
 
   def collectionContentWithSnaps(collection: Collection, adjustSearchQuery: AdjustSearchQuery = identity, adjustSnapItemQuery: AdjustItemQuery = identity)

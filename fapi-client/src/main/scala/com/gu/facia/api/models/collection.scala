@@ -84,6 +84,11 @@ object Collection {
       .filter(_.isSnap)
       .filter(_.safeMeta.snapType == Some("latest"))
       .flatMap(snap => snap.safeMeta.snapUri.map(uri => snap.id -> uri)).toMap)
+
+  def withoutSnaps(collection: Collection): Collection = {
+    collection.copy(
+      live = collection.live.filterNot(_.isSnap),
+      draft = collection.draft.map(_.filterNot(_.isSnap)))}
 }
 
 case class Group(get: Int)

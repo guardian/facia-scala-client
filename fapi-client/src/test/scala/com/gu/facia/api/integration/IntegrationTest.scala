@@ -156,14 +156,10 @@ class IntegrationTest extends FreeSpec with ShouldMatchers with ScalaFutures wit
         faciaContent.asFuture.futureValue.fold(
         err => fail(s"expected to get three items, got $err", err.cause),
         { listOfFaciaContent =>
-          listOfFaciaContent.length should be (3)
+          listOfFaciaContent.length should be (1)
 
           val normalContent = listOfFaciaContent.collect{ case cc: CuratedContent => cc}
           normalContent.apply(0).headline should be ("PM returns from holiday after video shows US reporter beheaded by Briton")
-
-          val latestSnapContent = listOfFaciaContent.collect{ case ls: LatestSnap => ls}
-          latestSnapContent.length should be (2)
-          latestSnapContent.forall(_.latestContent == None) should be (true)
         })
       }
 

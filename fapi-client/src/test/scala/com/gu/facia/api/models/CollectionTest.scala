@@ -41,7 +41,7 @@ class CollectionTest extends FreeSpec with ShouldMatchers with MockitoSugar with
     href: Option[String] = None,
     trailText: Option[String] = None,
     group: String = "0",
-    image: Option[Image] = None,
+    image: Option[ImageReplace] = None,
     isBreaking: Boolean = false,
     isBoosted: Boolean = false,
     imageHide: Boolean = false,
@@ -86,7 +86,7 @@ class CollectionTest extends FreeSpec with ShouldMatchers with MockitoSugar with
     href: Option[String] = None,
     trailText: Option[String] = None,
     group: String = "0",
-    image: Option[Image] = None,
+    image: Option[ImageReplace] = None,
     isBreaking: Boolean = false,
     isBoosted: Boolean = false,
     imageHide: Boolean = false,
@@ -257,4 +257,66 @@ class CollectionTest extends FreeSpec with ShouldMatchers with MockitoSugar with
       collection.collectionConfig.importance should be (Critical)
     }
   }
+
+  "Collection" - {
+    "filter out the snaps in live" in {
+        val trailOne = Trail("internal-code/content/1", 1, Some(trailMetadata))
+        val trailTwo = Trail("internal-code/content/2", 1, Some(trailMetadata))
+        val snapOne = Trail("snap/1415985080061", 1, Some(TrailMetaData(Map("snapType" -> JsString("link"), "snapUri" -> JsString("abc")))))
+        val snapTwo = Trail("snap/5345345215342", 1, Some(TrailMetaData(Map("snapType" -> JsString("link"), "snapCss" -> JsString("css")))))
+        val snapLatestOne = Trail("snap/8474745745660", 1, Some(TrailMetaData(Map("snapType" -> JsString("latest"), "href" -> JsString("uk")))))
+        val snapLatestTwo = Trail("snap/4324234234234", 1, Some(TrailMetaData(Map("snapType" -> JsString("latest"), "href" -> JsString("culture")))))
+
+        val snapContentOne = Content(
+          "content-id-one", Some("section"), Some("Section Name"), None, "webTitle", "webUrl", "apiUrl",
+          fields = Some(Map("internalContentCode" -> "CODE", "headline" -> "Content headline", "href" -> "Content href", "trailText" -> "Content trailtext", "byline" -> "Content byline")),
+          Nil, None, Nil, None)
+        val snapContentTwo = Content(
+          "content-id-two", Some("section"), Some("Section Name"), None, "webTitle", "webUrl", "apiUrl",
+          fields = Some(Map("internalContentCode" -> "CODE", "headline" -> "Content headline", "href" -> "Content href", "trailText" -> "Content trailtext", "byline" -> "Content byline")),
+          Nil, None, Nil, None)
+
+        val snapContent = Map("snap/8474745745660" -> Some(snapContentOne), "snap/4324234234234" -> Some(snapContentTwo))
+
+        val collectionJsonTwo = collectionJson.copy(live = List(snapOne, snapTwo, trailOne, snapLatestOne, snapLatestTwo, trailTwo))
+
+        val collection = Collection.fromCollectionJsonConfigAndContent("id", Some(collectionJsonTwo), collectionConfig)
+
+        val collectionWithoutSnaps = Collection.withoutSnaps(collection)
+
+        collectionWithoutSnaps.live.length should be (2)
+        collectionWithoutSnaps.live(0).id should be ("internal-code/content/1")
+        collectionWithoutSnaps.live(1).id should be ("internal-code/content/2")
+      }
+
+    "filter out the snaps in draft" in {
+      val trailOne = Trail("internal-code/content/1", 1, Some(trailMetadata))
+      val trailTwo = Trail("internal-code/content/2", 1, Some(trailMetadata))
+      val snapOne = Trail("snap/1415985080061", 1, Some(TrailMetaData(Map("snapType" -> JsString("link"), "snapUri" -> JsString("abc")))))
+      val snapTwo = Trail("snap/5345345215342", 1, Some(TrailMetaData(Map("snapType" -> JsString("link"), "snapCss" -> JsString("css")))))
+      val snapLatestOne = Trail("snap/8474745745660", 1, Some(TrailMetaData(Map("snapType" -> JsString("latest"), "href" -> JsString("uk")))))
+      val snapLatestTwo = Trail("snap/4324234234234", 1, Some(TrailMetaData(Map("snapType" -> JsString("latest"), "href" -> JsString("culture")))))
+
+      val snapContentOne = Content(
+        "content-id-one", Some("section"), Some("Section Name"), None, "webTitle", "webUrl", "apiUrl",
+        fields = Some(Map("internalContentCode" -> "CODE", "headline" -> "Content headline", "href" -> "Content href", "trailText" -> "Content trailtext", "byline" -> "Content byline")),
+        Nil, None, Nil, None)
+      val snapContentTwo = Content(
+        "content-id-two", Some("section"), Some("Section Name"), None, "webTitle", "webUrl", "apiUrl",
+        fields = Some(Map("internalContentCode" -> "CODE", "headline" -> "Content headline", "href" -> "Content href", "trailText" -> "Content trailtext", "byline" -> "Content byline")),
+        Nil, None, Nil, None)
+
+      val snapContent = Map("snap/8474745745660" -> Some(snapContentOne), "snap/4324234234234" -> Some(snapContentTwo))
+
+      val collectionJsonTwo = collectionJson.copy(draft = Option(List(snapOne, snapTwo, trailTwo, snapLatestOne, snapLatestTwo, trailOne)))
+
+      val collection = Collection.fromCollectionJsonConfigAndContent("id", Some(collectionJsonTwo), collectionConfig)
+
+      val collectionWithoutSnaps = Collection.withoutSnaps(collection)
+
+      collectionWithoutSnaps.draft.map(_.length) should be (Some(2))
+      collectionWithoutSnaps.draft.map(_.apply(0).id) should be (Some("internal-code/content/2"))
+      collectionWithoutSnaps.draft.map(_.apply(1).id) should be (Some("internal-code/content/1"))
+    }
+    }
 }
