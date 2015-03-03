@@ -49,7 +49,6 @@ class ItemKickerTest extends FreeSpec with ShouldMatchers with MockitoSugar with
     "should return the contents of free HTML kickers (with links)" in {
       ItemKicker.kickerContents(FreeHtmlKickerWithLink("<b>Something</b>", "http://www.theguardian.com/football")) shouldBe Some("<b>Something</b>")
     }
-
   }
 
   "kickerText" - {
@@ -77,9 +76,14 @@ class ItemKickerTest extends FreeSpec with ShouldMatchers with MockitoSugar with
       ItemKicker.kickerText(SectionKicker("Football", "")) shouldBe Some("Football")
     }
 
-    "should return nothing for free HTML kickers" in {
+    "should return nothing for free HTML kickers containing HTML" in {
       ItemKicker.kickerText(FreeHtmlKicker("<b>Something</b>")) shouldBe None
       ItemKicker.kickerText(FreeHtmlKickerWithLink("<b>Something</b>", "http://www.theguardian.com/football")) shouldBe None
+    }
+
+    "should return the text of free HTML kickers not actually containing HTML" in {
+      ItemKicker.kickerText(FreeHtmlKicker("Something")) shouldBe Some("Something")
+      ItemKicker.kickerText(FreeHtmlKickerWithLink("Something", "http://www.theguardian.com/football")) shouldBe Some("Something")
     }
   }
 }
