@@ -91,7 +91,7 @@ object ItemKicker {
   }
 
   def stringIfPlainText(string: String) : Option[String] = {
-    val StringWithHtml = "<\\w+>".r.unanchored
+    val StringWithHtml = "<\\w+.*>".r.unanchored
     string match {
       case StringWithHtml() => None
       case _ => Some(string)
