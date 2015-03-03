@@ -272,17 +272,17 @@ object CuratedContent {
       trailMetaData.trailText.orElse(contentFields.get("trailText")),
       trailMetaData.group.getOrElse("0"),
       ImageReplace.fromTrailMeta(trailMetaData),
-      trailMetaData.isBreaking.getOrElse(false),
-      trailMetaData.isBoosted.getOrElse(false),
-      trailMetaData.imageHide.getOrElse(false),
-      trailMetaData.showMainVideo.getOrElse(false),
-      trailMetaData.showKickerTag.getOrElse(false),
+      resolvedMetaData.isBreaking,
+      resolvedMetaData.isBoosted,
+      resolvedMetaData.imageHide,
+      resolvedMetaData.showMainVideo,
+      resolvedMetaData.showKickerTag,
       trailMetaData.byline.orElse(contentFields.get("byline")),
       trailMetaData.showByline.getOrElse(false),
       ItemKicker.fromContentAndTrail(content, trailMetaData, resolvedMetaData, Some(collectionConfig)),
       ImageCutout.fromContentAndTrailMeta(content, trailMetaData),
-      trailMetaData.showBoostedHeadline.getOrElse(false),
-      trailMetaData.showQuotedHeadline.getOrElse(false))}
+      resolvedMetaData.showBoostedHeadline,
+      resolvedMetaData.showQuotedHeadline)}
 
   def fromTrailAndContent(content: Content, trailMetaData: MetaDataCommonFields, collectionConfig: CollectionConfig): CuratedContent = {
     val contentFields: Map[String, String] = content.safeFields
@@ -296,17 +296,17 @@ object CuratedContent {
       trailMetaData.trailText.orElse(contentFields.get("trailText")),
       trailMetaData.group.getOrElse("0"),
       ImageReplace.fromTrailMeta(trailMetaData),
-      trailMetaData.isBreaking.getOrElse(resolvedMetaData.isBreaking),
-      trailMetaData.isBoosted.getOrElse(resolvedMetaData.isBoosted),
-      trailMetaData.imageHide.getOrElse(resolvedMetaData.imageHide),
-      trailMetaData.showMainVideo.getOrElse(resolvedMetaData.showMainVideo),
-      trailMetaData.showKickerTag.getOrElse(resolvedMetaData.showKickerTag),
+      resolvedMetaData.isBreaking,
+      resolvedMetaData.isBoosted,
+      resolvedMetaData.imageHide,
+      resolvedMetaData.showMainVideo,
+      resolvedMetaData.showKickerTag,
       trailMetaData.byline.orElse(contentFields.get("byline")),
-      trailMetaData.showByline.getOrElse(resolvedMetaData.showByline),
+      resolvedMetaData.showByline,
       ItemKicker.fromContentAndTrail(content, trailMetaData, resolvedMetaData, Some(collectionConfig)),
       ImageCutout.fromContentAndTrailMeta(content, trailMetaData),
-      trailMetaData.showBoostedHeadline.getOrElse(resolvedMetaData.showBoostedHeadline),
-      trailMetaData.showQuotedHeadline.getOrElse(resolvedMetaData.showQuotedHeadline)
+      resolvedMetaData.showBoostedHeadline,
+      resolvedMetaData.showQuotedHeadline
     )}
 }
 
@@ -322,15 +322,15 @@ object SupportingCuratedContent {
       trailMetaData.trailText.orElse(contentFields.get("trailText")),
       trailMetaData.group.getOrElse("0"),
       ImageReplace.fromTrailMeta(trailMetaData),
-      trailMetaData.isBreaking.getOrElse(resolvedMetaData.isBreaking),
-      trailMetaData.isBoosted.getOrElse(resolvedMetaData.isBoosted),
-      trailMetaData.imageHide.getOrElse(resolvedMetaData.imageHide),
-      trailMetaData.showMainVideo.getOrElse(resolvedMetaData.showMainVideo),
-      trailMetaData.showKickerTag.getOrElse(resolvedMetaData.showKickerTag),
+      resolvedMetaData.isBreaking,
+      resolvedMetaData.isBoosted,
+      resolvedMetaData.imageHide,
+      resolvedMetaData.showMainVideo,
+      resolvedMetaData.showKickerTag,
       trailMetaData.byline.orElse(contentFields.get("byline")),
-      trailMetaData.showByline.getOrElse(resolvedMetaData.showByline),
+      resolvedMetaData.showByline,
       ItemKicker.fromContentAndTrail(content, trailMetaData, resolvedMetaData, Some(collectionConfig)),
       ImageCutout.fromContentAndTrailMeta(content, trailMetaData),
-      trailMetaData.showBoostedHeadline.getOrElse(resolvedMetaData.showBoostedHeadline),
-      trailMetaData.showQuotedHeadline.getOrElse(resolvedMetaData.showQuotedHeadline))}
+      resolvedMetaData.showBoostedHeadline,
+      resolvedMetaData.showQuotedHeadline)}
 }
