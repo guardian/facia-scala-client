@@ -1,7 +1,7 @@
 package com.gu.facia.api.models
 
 import com.gu.contentapi.client.model.Content
-import com.gu.facia.api.utils.ItemKicker
+import com.gu.facia.api.utils.{ResolvedMetaData, ItemKicker}
 import com.gu.facia.client.models.{SupportingItem, MetaDataCommonFields, Trail, TrailMetaData}
 
 case class ImageReplace(imageSrc: String, imageSrcWidth: String, imageSrcHeight: String)
@@ -262,6 +262,7 @@ object CuratedContent {
                                         supportingContent: List[FaciaContent],
                                         collectionConfig: CollectionConfig) = {
     val contentFields: Map[String, String] = content.safeFields
+    val resolvedMetaData = ResolvedMetaData.fromContentAndTrailMetaData(content, trailMetaData)
 
     CuratedContent(
       content,
@@ -271,46 +272,48 @@ object CuratedContent {
       trailMetaData.trailText.orElse(contentFields.get("trailText")),
       trailMetaData.group.getOrElse("0"),
       ImageReplace.fromTrailMeta(trailMetaData),
-      trailMetaData.isBreaking.getOrElse(false),
-      trailMetaData.isBoosted.getOrElse(false),
-      trailMetaData.imageHide.getOrElse(false),
-      trailMetaData.showMainVideo.getOrElse(false),
-      trailMetaData.showKickerTag.getOrElse(false),
+      resolvedMetaData.isBreaking,
+      resolvedMetaData.isBoosted,
+      resolvedMetaData.imageHide,
+      resolvedMetaData.showMainVideo,
+      resolvedMetaData.showKickerTag,
       trailMetaData.byline.orElse(contentFields.get("byline")),
       trailMetaData.showByline.getOrElse(false),
-      ItemKicker.fromContentAndTrail(content, trailMetaData, Some(collectionConfig)),
+      ItemKicker.fromContentAndTrail(content, trailMetaData, resolvedMetaData, Some(collectionConfig)),
       ImageCutout.fromContentAndTrailMeta(content, trailMetaData),
-      trailMetaData.showBoostedHeadline.getOrElse(false),
-      trailMetaData.showQuotedHeadline.getOrElse(false))}
+      resolvedMetaData.showBoostedHeadline,
+      resolvedMetaData.showQuotedHeadline)}
 
   def fromTrailAndContent(content: Content, trailMetaData: MetaDataCommonFields, collectionConfig: CollectionConfig): CuratedContent = {
     val contentFields: Map[String, String] = content.safeFields
+    val resolvedMetaData = ResolvedMetaData.fromContentAndTrailMetaData(content, trailMetaData)
 
     CuratedContent(
       content,
       supportingContent = Nil,
-        trailMetaData.headline.orElse(content.safeFields.get("headline")).getOrElse(content.webTitle),
+      trailMetaData.headline.orElse(content.safeFields.get("headline")).getOrElse(content.webTitle),
       trailMetaData.href.orElse(contentFields.get("href")),
       trailMetaData.trailText.orElse(contentFields.get("trailText")),
       trailMetaData.group.getOrElse("0"),
       ImageReplace.fromTrailMeta(trailMetaData),
-      trailMetaData.isBreaking.getOrElse(false),
-      trailMetaData.isBoosted.getOrElse(false),
-      trailMetaData.imageHide.getOrElse(false),
-      trailMetaData.showMainVideo.getOrElse(false),
-      trailMetaData.showKickerTag.getOrElse(false),
+      resolvedMetaData.isBreaking,
+      resolvedMetaData.isBoosted,
+      resolvedMetaData.imageHide,
+      resolvedMetaData.showMainVideo,
+      resolvedMetaData.showKickerTag,
       trailMetaData.byline.orElse(contentFields.get("byline")),
-      trailMetaData.showByline.getOrElse(false),
-      ItemKicker.fromContentAndTrail(content, trailMetaData, Some(collectionConfig)),
+      resolvedMetaData.showByline,
+      ItemKicker.fromContentAndTrail(content, trailMetaData, resolvedMetaData, Some(collectionConfig)),
       ImageCutout.fromContentAndTrailMeta(content, trailMetaData),
-      trailMetaData.showBoostedHeadline.getOrElse(false),
-      trailMetaData.showQuotedHeadline.getOrElse(false)
+      resolvedMetaData.showBoostedHeadline,
+      resolvedMetaData.showQuotedHeadline
     )}
 }
 
 object SupportingCuratedContent {
   def fromTrailAndContent(content: Content, trailMetaData: MetaDataCommonFields, collectionConfig: CollectionConfig): SupportingCuratedContent = {
     val contentFields: Map[String, String] = content.safeFields
+    val resolvedMetaData = ResolvedMetaData.fromContentAndTrailMetaData(content, trailMetaData)
 
     SupportingCuratedContent(
       content,
@@ -319,15 +322,15 @@ object SupportingCuratedContent {
       trailMetaData.trailText.orElse(contentFields.get("trailText")),
       trailMetaData.group.getOrElse("0"),
       ImageReplace.fromTrailMeta(trailMetaData),
-      trailMetaData.isBreaking.getOrElse(false),
-      trailMetaData.isBoosted.getOrElse(false),
-      trailMetaData.imageHide.getOrElse(false),
-      trailMetaData.showMainVideo.getOrElse(false),
-      trailMetaData.showKickerTag.getOrElse(false),
+      resolvedMetaData.isBreaking,
+      resolvedMetaData.isBoosted,
+      resolvedMetaData.imageHide,
+      resolvedMetaData.showMainVideo,
+      resolvedMetaData.showKickerTag,
       trailMetaData.byline.orElse(contentFields.get("byline")),
-      trailMetaData.showByline.getOrElse(false),
-      ItemKicker.fromContentAndTrail(content, trailMetaData, Some(collectionConfig)),
+      resolvedMetaData.showByline,
+      ItemKicker.fromContentAndTrail(content, trailMetaData, resolvedMetaData, Some(collectionConfig)),
       ImageCutout.fromContentAndTrailMeta(content, trailMetaData),
-      trailMetaData.showBoostedHeadline.getOrElse(false),
-      trailMetaData.showQuotedHeadline.getOrElse(false))}
+      resolvedMetaData.showBoostedHeadline,
+      resolvedMetaData.showQuotedHeadline)}
 }
