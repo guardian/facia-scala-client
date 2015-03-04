@@ -329,7 +329,7 @@ object SupportingCuratedContent {
       resolvedMetaData.showKickerTag,
       trailMetaData.byline.orElse(contentFields.get("byline")),
       resolvedMetaData.showByline,
-      ItemKicker.fromContentAndTrail(content, trailMetaData, resolvedMetaData, Some(collectionConfig)),
+      ItemKicker.fromContentAndTrail(content, trailMetaData, resolvedMetaData, None),
       ImageCutout.fromContentAndTrailMeta(content, trailMetaData),
       resolvedMetaData.showBoostedHeadline,
       resolvedMetaData.showQuotedHeadline)}
