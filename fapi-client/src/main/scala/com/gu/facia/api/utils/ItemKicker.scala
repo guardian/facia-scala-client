@@ -95,14 +95,22 @@ object ItemKicker {
     case _ => None
   }
 
+  def stringIfPlainText(string: String) : Option[String] = {
+    val StringWithHtml = "<\\w+.*>".r.unanchored
+    string match {
+      case StringWithHtml() => None
+      case _ => Some(string)
+    }
+  }
+
   /** Return a plain-text representation of a kicker */
   def kickerText(itemKicker: ItemKicker): Option[String] = itemKicker match {
     case BreakingNewsKicker => Some("Breaking")
     case AnalysisKicker => Some("Analysis")
     case ReviewKicker => Some("Review")
     case CartoonKicker => Some("Cartoon")
-    case FreeHtmlKicker(_) => None
-    case FreeHtmlKickerWithLink(_, _) => None
+    case FreeHtmlKicker(text) => stringIfPlainText(text)
+    case FreeHtmlKickerWithLink(text, _) => stringIfPlainText(text)
     case _ => kickerContents(itemKicker)
   }
 }
