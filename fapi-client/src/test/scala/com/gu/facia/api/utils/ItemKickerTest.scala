@@ -78,6 +78,7 @@ class ItemKickerTest extends FreeSpec with ShouldMatchers with MockitoSugar with
 
     "should return nothing for free HTML kickers containing HTML" in {
       ItemKicker.kickerText(FreeHtmlKicker("<b>Something</b>")) shouldBe None
+      ItemKicker.kickerText(FreeHtmlKicker("Look at <a href=\"http://example.com\">this</a> link")) shouldBe None
       ItemKicker.kickerText(FreeHtmlKickerWithLink("<b>Something</b>", "http://www.theguardian.com/football")) shouldBe None
       ItemKicker.kickerText(FreeHtmlKickerWithLink("<a href=\"foo\">Something</b>", "http://www.theguardian.com/football")) shouldBe None
     }
