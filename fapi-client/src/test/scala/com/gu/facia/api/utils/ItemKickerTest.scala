@@ -10,12 +10,12 @@ import org.mockito.Mockito._
 
 
 class ItemKickerTest extends FreeSpec with ShouldMatchers with MockitoSugar with OptionValues with OneInstancePerTest {
-  "fromContentAndTrail" - {
-    val trailMetadata = Mockito.spy(TrailMetaData.empty)
-    val content = mock[Content]
-    val collectionConfig = Mockito.spy(CollectionConfig.fromCollectionJson(CollectionConfigJson.withDefaults()))
-    val metaDataDefaults = ResolvedMetaData.Default
+  val trailMetadata = Mockito.spy(TrailMetaData.empty)
+  val content = mock[Content]
+  val collectionConfig = Mockito.spy(CollectionConfig.fromCollectionJson(CollectionConfigJson.withDefaults()))
+  val metaDataDefaults = ResolvedMetaData.Default
 
+  "fromContentAndTrail" - {
     "should prefer item level custom kicker to collection level section kicker" in {
       when(trailMetadata.customKicker).thenReturn(Some("custom kicker"))
       when(trailMetadata.showKickerCustom).thenReturn(Some(true))
@@ -90,5 +90,19 @@ class ItemKickerTest extends FreeSpec with ShouldMatchers with MockitoSugar with
       ItemKicker.kickerText(FreeHtmlKicker("Something")) shouldBe Some("Something")
       ItemKicker.kickerText(FreeHtmlKickerWithLink("Something", "http://www.theguardian.com/football")) shouldBe Some("Something")
     }
+  }
+
+  "section kicker" - {
+    "should not appear for supporting" in {
+      when(trailMetadata.showKickerSection).thenReturn(Some(false))
+      val metaDataDefaultsWithShowKickerSection = metaDataDefaults.copy(showKickerSection = false)
+      when(content.sectionId).thenReturn(Some("section"))
+      when(content.sectionName).thenReturn(Some("Section"))
+      when(content.tags).thenReturn(Nil)
+      when(content.safeFields).thenReturn(Map.empty[String, String])
+
+      ItemKicker.fromContentAndTrail(content, trailMetadata, metaDataDefaultsWithShowKickerSection, None) should be (None)
+    }
+
   }
 }
