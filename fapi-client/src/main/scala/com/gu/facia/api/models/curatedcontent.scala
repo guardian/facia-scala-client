@@ -43,12 +43,14 @@ object ImageCutout {
         None)
   }
 
-  def fromContentAndTrailMeta(content: Content, trailMeta: MetaDataCommonFields): Option[ImageCutout] =
-    if (trailMeta.imageCutoutReplace.exists(identity))
+  def fromContentAndTrailMeta(content: Content, trailMeta: MetaDataCommonFields): Option[ImageCutout] = {
+    val resolvedMetaData = ResolvedMetaData.fromContentAndTrailMetaData(content, trailMeta)
+    if (resolvedMetaData.imageCutoutReplace)
       fromTrailMeta(trailMeta)
         .orElse(fromContentTags(content, trailMeta))
     else
       None
+  }
 }
 
 sealed trait FaciaContent
