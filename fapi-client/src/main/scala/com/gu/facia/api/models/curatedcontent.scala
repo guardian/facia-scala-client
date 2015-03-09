@@ -55,6 +55,154 @@ object ImageCutout {
 
 sealed trait FaciaContent
 
+object FaciaContent {
+
+  implicit class FaciaContentHelper(faciaContent: FaciaContent) {
+
+    def fold[T](c: (CuratedContent) => T, scc: (SupportingCuratedContent) => T,
+                ls: (LinkSnap) => T, las: (LatestSnap) => T): T = faciaContent match {
+      case curatedContent: CuratedContent => c(curatedContent)
+      case supportingCuratedContent: SupportingCuratedContent => scc(supportingCuratedContent)
+      case linkSnap: LinkSnap => ls(linkSnap)
+      case latestSnap: LatestSnap => las(latestSnap)}
+
+    def id: String = fold(
+      curatedContent => curatedContent.content.id,
+      supportingCuratedContent => supportingCuratedContent.content.id,
+      linkSnap => linkSnap.id,
+      latestSnap => latestSnap.id)
+
+    def content: Option[Content] = fold(
+      curatedContent => Option(curatedContent.content),
+      supportingCuratedContent => Option(supportingCuratedContent.content),
+      linkSnap => None,
+      latestSnap => latestSnap.latestContent)
+
+    def maybeContent = content
+
+    def supportingContent: List[FaciaContent] = fold(
+      curatedContent => curatedContent.supportingContent,
+      supportingCuratedContent => Nil,
+      linkSnap => Nil,
+      latestSnap => Nil)
+
+    def headline: String = fold(
+      curatedContent => curatedContent.headline,
+      supportingCuratedContent => supportingCuratedContent.headline,
+      linkSnap => linkSnap.headline.getOrElse("Missing Headline"),
+      latestSnap => latestSnap.headline.orElse(latestSnap.latestContent.map(_.webTitle)).getOrElse("Missing Headline"))
+
+    def href: String = fold(
+      curatedContent => curatedContent.href.getOrElse("Missing href"),
+      supportingCuratedContent => supportingCuratedContent.href.getOrElse("Missing href"),
+      linkSnap => linkSnap.snapUri.getOrElse(linkSnap.id),
+      latestSnap => latestSnap.snapUri.getOrElse(latestSnap.id)
+    )
+
+    def trailText: Option[String] = fold(
+      curatedContent => curatedContent.trailText,
+      supportingCuratedContent => supportingCuratedContent.trailText,
+      linkSnap => None,
+      latestSnap => None)
+
+    def group: String = fold(
+      curatedContent => curatedContent.group,
+      supportingCuratedContent => supportingCuratedContent.group,
+      linkSnap => linkSnap.group,
+      latestSnap => latestSnap.group
+    )
+
+    def snapType: Option[String] = fold(
+      curatedContent => None,
+      supportingCuratedContent => None,
+      linkSnap => Option("LinkSnap"),
+      latestSnap => Option("LatestSnap"))
+
+    def imageReplace: Option[ImageReplace] = fold(
+      curatedContent => curatedContent.imageReplace,
+      supportingCuratedContent => supportingCuratedContent.imageReplace,
+      linkSnap => None,
+      latestSnap => latestSnap.image
+    )
+
+    def isBreaking: Boolean = fold(
+      curatedContent => curatedContent.isBreaking,
+      supportingCuratedContent => supportingCuratedContent.isBreaking,
+      linkSnap => false,
+      latestSnap => false
+    )
+
+    def isBoosted: Boolean = fold(
+      curatedContent => curatedContent.isBoosted,
+      supportingCuratedContent => supportingCuratedContent.isBoosted,
+      linkSnap => false,
+      latestSnap => false
+    )
+
+    def imageHide: Boolean = fold(
+      curatedContent => curatedContent.imageHide,
+      supportingCuratedContent => supportingCuratedContent.imageHide,
+      linkSnap => false,
+      latestSnap => false
+    )
+
+    def showMainVideo: Boolean = fold(
+      curatedContent => curatedContent.showMainVideo,
+      supportingCuratedContent => supportingCuratedContent.showMainVideo,
+      linkSnap => false,
+      latestSnap => latestSnap.showMainVideo
+    )
+
+    def showKickerTag: Boolean = fold(
+      curatedContent => curatedContent.showKickerTag,
+      supportingCuratedContent => supportingCuratedContent.showKickerTag,
+      linkSnap => linkSnap.showKickerTag,
+      latestSnap => latestSnap.showKickerTag
+    )
+
+    def byline: Option[String] = fold(
+      curatedContent => curatedContent.byline,
+      supportingCuratedContent => supportingCuratedContent.byline,
+      linkSnap => None,
+      latestSnap => latestSnap.latestContent.flatMap(_.safeFields.get("byline"))
+    )
+
+    def showByline: Boolean = fold(
+      curatedContent => curatedContent.showByLine,
+      supportingCuratedContent => supportingCuratedContent.showByLine,
+      linkSnap => false,
+      latestSnap => false
+    )
+
+    def kicker: Option[ItemKicker] =
+      fold(
+        curatedContent => curatedContent.kicker,
+        supportingCuratedContent => supportingCuratedContent.kicker,
+        linkSnap => linkSnap.kicker,
+        latestSnap => latestSnap.kicker)
+
+    def imageCutout: Option[ImageCutout] = fold(
+      curatedContent => curatedContent.imageCutout,
+      supportingCuratedContent => supportingCuratedContent.imageCutout,
+      linkSnap => None,
+      latestSnap => latestSnap.imageCutout
+    )
+
+    def showBoostedHeadline: Boolean = fold(
+      curatedContent => curatedContent.showBoostedHeadline,
+      supportingCuratedContent => supportingCuratedContent.showBoostedHeadline,
+      linkSnap => false,
+      latestSnap => false
+    )
+
+    def showQuotedHeadline: Boolean = fold(
+      curatedContent => curatedContent.showQuotedHeadline,
+      supportingCuratedContent => supportingCuratedContent.showQuotedHeadline,
+      linkSnap => false,
+      latestSnap => false
+    )
+}
+
 object Snap {
   val LatestType = "latest"
   val LinkType = "link"
