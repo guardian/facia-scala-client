@@ -57,150 +57,149 @@ sealed trait FaciaContent
 
 object FaciaContent {
 
-  implicit class FaciaContentHelper(faciaContent: FaciaContent) {
+  def fold[T](fc: FaciaContent)(c: (CuratedContent) => T, scc: (SupportingCuratedContent) => T,
+              ls: (LinkSnap) => T, las: (LatestSnap) => T): T = fc match {
+    case curatedContent: CuratedContent => c(curatedContent)
+    case supportingCuratedContent: SupportingCuratedContent => scc(supportingCuratedContent)
+    case linkSnap: LinkSnap => ls(linkSnap)
+    case latestSnap: LatestSnap => las(latestSnap)
+  }
 
-    def fold[T](c: (CuratedContent) => T, scc: (SupportingCuratedContent) => T,
-                ls: (LinkSnap) => T, las: (LatestSnap) => T): T = faciaContent match {
-      case curatedContent: CuratedContent => c(curatedContent)
-      case supportingCuratedContent: SupportingCuratedContent => scc(supportingCuratedContent)
-      case linkSnap: LinkSnap => ls(linkSnap)
-      case latestSnap: LatestSnap => las(latestSnap)}
+  def id(fc: FaciaContent): String = fold(fc)(
+    curatedContent => curatedContent.content.id,
+    supportingCuratedContent => supportingCuratedContent.content.id,
+    linkSnap => linkSnap.id,
+    latestSnap => latestSnap.id)
 
-    def id: String = fold(
-      curatedContent => curatedContent.content.id,
-      supportingCuratedContent => supportingCuratedContent.content.id,
-      linkSnap => linkSnap.id,
-      latestSnap => latestSnap.id)
+  def content(fc: FaciaContent): Option[Content] = fold(fc)(
+    curatedContent => Option(curatedContent.content),
+    supportingCuratedContent => Option(supportingCuratedContent.content),
+    linkSnap => None,
+    latestSnap => latestSnap.latestContent)
 
-    def content: Option[Content] = fold(
-      curatedContent => Option(curatedContent.content),
-      supportingCuratedContent => Option(supportingCuratedContent.content),
-      linkSnap => None,
-      latestSnap => latestSnap.latestContent)
+  def maybeContent(fc: FaciaContent) = content(fc)
 
-    def maybeContent = content
+  def supportingContent(fc: FaciaContent): List[FaciaContent] = fold(fc)(
+    curatedContent => curatedContent.supportingContent,
+    supportingCuratedContent => Nil,
+    linkSnap => Nil,
+    latestSnap => Nil)
 
-    def supportingContent: List[FaciaContent] = fold(
-      curatedContent => curatedContent.supportingContent,
-      supportingCuratedContent => Nil,
-      linkSnap => Nil,
-      latestSnap => Nil)
+  def headline(fc: FaciaContent): String = fold(fc)(
+    curatedContent => curatedContent.headline,
+    supportingCuratedContent => supportingCuratedContent.headline,
+    linkSnap => linkSnap.headline.getOrElse("Missing Headline"),
+    latestSnap => latestSnap.headline.orElse(latestSnap.latestContent.map(_.webTitle)).getOrElse("Missing Headline"))
 
-    def headline: String = fold(
-      curatedContent => curatedContent.headline,
-      supportingCuratedContent => supportingCuratedContent.headline,
-      linkSnap => linkSnap.headline.getOrElse("Missing Headline"),
-      latestSnap => latestSnap.headline.orElse(latestSnap.latestContent.map(_.webTitle)).getOrElse("Missing Headline"))
+  def href(fc: FaciaContent): String = fold(fc)(
+    curatedContent => curatedContent.href.getOrElse("Missing href"),
+    supportingCuratedContent => supportingCuratedContent.href.getOrElse("Missing href"),
+    linkSnap => linkSnap.snapUri.getOrElse(linkSnap.id),
+    latestSnap => latestSnap.snapUri.getOrElse(latestSnap.id)
+  )
 
-    def href: String = fold(
-      curatedContent => curatedContent.href.getOrElse("Missing href"),
-      supportingCuratedContent => supportingCuratedContent.href.getOrElse("Missing href"),
-      linkSnap => linkSnap.snapUri.getOrElse(linkSnap.id),
-      latestSnap => latestSnap.snapUri.getOrElse(latestSnap.id)
-    )
+  def trailText(fc: FaciaContent): Option[String] = fold(fc)(
+    curatedContent => curatedContent.trailText,
+    supportingCuratedContent => supportingCuratedContent.trailText,
+    linkSnap => None,
+    latestSnap => None)
 
-    def trailText: Option[String] = fold(
-      curatedContent => curatedContent.trailText,
-      supportingCuratedContent => supportingCuratedContent.trailText,
-      linkSnap => None,
-      latestSnap => None)
+  def group(fc: FaciaContent): String = fold(fc)(
+    curatedContent => curatedContent.group,
+    supportingCuratedContent => supportingCuratedContent.group,
+    linkSnap => linkSnap.group,
+    latestSnap => latestSnap.group
+  )
 
-    def group: String = fold(
-      curatedContent => curatedContent.group,
-      supportingCuratedContent => supportingCuratedContent.group,
-      linkSnap => linkSnap.group,
-      latestSnap => latestSnap.group
-    )
+  def snapType(fc: FaciaContent): Option[String] = fold(fc)(
+    curatedContent => None,
+    supportingCuratedContent => None,
+    linkSnap => Option("LinkSnap"),
+    latestSnap => Option("LatestSnap"))
 
-    def snapType: Option[String] = fold(
-      curatedContent => None,
-      supportingCuratedContent => None,
-      linkSnap => Option("LinkSnap"),
-      latestSnap => Option("LatestSnap"))
+  def imageReplace(fc: FaciaContent): Option[ImageReplace] = fold(fc)(
+    curatedContent => curatedContent.imageReplace,
+    supportingCuratedContent => supportingCuratedContent.imageReplace,
+    linkSnap => None,
+    latestSnap => latestSnap.image
+  )
 
-    def imageReplace: Option[ImageReplace] = fold(
-      curatedContent => curatedContent.imageReplace,
-      supportingCuratedContent => supportingCuratedContent.imageReplace,
-      linkSnap => None,
-      latestSnap => latestSnap.image
-    )
+  def isBreaking(fc: FaciaContent): Boolean = fold(fc)(
+    curatedContent => curatedContent.isBreaking,
+    supportingCuratedContent => supportingCuratedContent.isBreaking,
+    linkSnap => false,
+    latestSnap => false
+  )
 
-    def isBreaking: Boolean = fold(
-      curatedContent => curatedContent.isBreaking,
-      supportingCuratedContent => supportingCuratedContent.isBreaking,
-      linkSnap => false,
-      latestSnap => false
-    )
+  def isBoosted(fc: FaciaContent): Boolean = fold(fc)(
+    curatedContent => curatedContent.isBoosted,
+    supportingCuratedContent => supportingCuratedContent.isBoosted,
+    linkSnap => false,
+    latestSnap => false
+  )
 
-    def isBoosted: Boolean = fold(
-      curatedContent => curatedContent.isBoosted,
-      supportingCuratedContent => supportingCuratedContent.isBoosted,
-      linkSnap => false,
-      latestSnap => false
-    )
+  def imageHide(fc: FaciaContent): Boolean = fold(fc)(
+    curatedContent => curatedContent.imageHide,
+    supportingCuratedContent => supportingCuratedContent.imageHide,
+    linkSnap => false,
+    latestSnap => false
+  )
 
-    def imageHide: Boolean = fold(
-      curatedContent => curatedContent.imageHide,
-      supportingCuratedContent => supportingCuratedContent.imageHide,
-      linkSnap => false,
-      latestSnap => false
-    )
+  def showMainVideo(fc: FaciaContent): Boolean = fold(fc)(
+    curatedContent => curatedContent.showMainVideo,
+    supportingCuratedContent => supportingCuratedContent.showMainVideo,
+    linkSnap => false,
+    latestSnap => latestSnap.showMainVideo
+  )
 
-    def showMainVideo: Boolean = fold(
-      curatedContent => curatedContent.showMainVideo,
-      supportingCuratedContent => supportingCuratedContent.showMainVideo,
-      linkSnap => false,
-      latestSnap => latestSnap.showMainVideo
-    )
+  def showKickerTag(fc: FaciaContent): Boolean = fold(fc)(
+    curatedContent => curatedContent.showKickerTag,
+    supportingCuratedContent => supportingCuratedContent.showKickerTag,
+    linkSnap => linkSnap.showKickerTag,
+    latestSnap => latestSnap.showKickerTag
+  )
 
-    def showKickerTag: Boolean = fold(
-      curatedContent => curatedContent.showKickerTag,
-      supportingCuratedContent => supportingCuratedContent.showKickerTag,
-      linkSnap => linkSnap.showKickerTag,
-      latestSnap => latestSnap.showKickerTag
-    )
+  def byline(fc: FaciaContent): Option[String] = fold(fc)(
+    curatedContent => curatedContent.byline,
+    supportingCuratedContent => supportingCuratedContent.byline,
+    linkSnap => None,
+    latestSnap => latestSnap.latestContent.flatMap(_.safeFields.get("byline"))
+  )
 
-    def byline: Option[String] = fold(
-      curatedContent => curatedContent.byline,
-      supportingCuratedContent => supportingCuratedContent.byline,
-      linkSnap => None,
-      latestSnap => latestSnap.latestContent.flatMap(_.safeFields.get("byline"))
-    )
+  def showByline(fc: FaciaContent): Boolean = fold(fc)(
+    curatedContent => curatedContent.showByLine,
+    supportingCuratedContent => supportingCuratedContent.showByLine,
+    linkSnap => false,
+    latestSnap => false
+  )
 
-    def showByline: Boolean = fold(
-      curatedContent => curatedContent.showByLine,
-      supportingCuratedContent => supportingCuratedContent.showByLine,
-      linkSnap => false,
-      latestSnap => false
-    )
+  def kicker(fc: FaciaContent): Option[ItemKicker] =
+    fold(fc)(
+      curatedContent => curatedContent.kicker,
+      supportingCuratedContent => supportingCuratedContent.kicker,
+      linkSnap => linkSnap.kicker,
+      latestSnap => latestSnap.kicker)
 
-    def kicker: Option[ItemKicker] =
-      fold(
-        curatedContent => curatedContent.kicker,
-        supportingCuratedContent => supportingCuratedContent.kicker,
-        linkSnap => linkSnap.kicker,
-        latestSnap => latestSnap.kicker)
+  def imageCutout(fc: FaciaContent): Option[ImageCutout] = fold(fc)(
+    curatedContent => curatedContent.imageCutout,
+    supportingCuratedContent => supportingCuratedContent.imageCutout,
+    linkSnap => None,
+    latestSnap => latestSnap.imageCutout
+  )
 
-    def imageCutout: Option[ImageCutout] = fold(
-      curatedContent => curatedContent.imageCutout,
-      supportingCuratedContent => supportingCuratedContent.imageCutout,
-      linkSnap => None,
-      latestSnap => latestSnap.imageCutout
-    )
+  def showBoostedHeadline(fc: FaciaContent): Boolean = fold(fc)(
+    curatedContent => curatedContent.showBoostedHeadline,
+    supportingCuratedContent => supportingCuratedContent.showBoostedHeadline,
+    linkSnap => false,
+    latestSnap => false
+  )
 
-    def showBoostedHeadline: Boolean = fold(
-      curatedContent => curatedContent.showBoostedHeadline,
-      supportingCuratedContent => supportingCuratedContent.showBoostedHeadline,
-      linkSnap => false,
-      latestSnap => false
-    )
-
-    def showQuotedHeadline: Boolean = fold(
-      curatedContent => curatedContent.showQuotedHeadline,
-      supportingCuratedContent => supportingCuratedContent.showQuotedHeadline,
-      linkSnap => false,
-      latestSnap => false
-    )
+  def showQuotedHeadline(fc: FaciaContent): Boolean = fold(fc)(
+    curatedContent => curatedContent.showQuotedHeadline,
+    supportingCuratedContent => supportingCuratedContent.showQuotedHeadline,
+    linkSnap => false,
+    latestSnap => false
+  )
 }
 
 object Snap {
