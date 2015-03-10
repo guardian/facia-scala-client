@@ -85,17 +85,17 @@ object FaciaContent {
     linkSnap => Nil,
     latestSnap => Nil)
 
-  def headline(fc: FaciaContent): String = fold(fc)(
-    curatedContent => curatedContent.headline,
-    supportingCuratedContent => supportingCuratedContent.headline,
-    linkSnap => linkSnap.headline.getOrElse("Missing Headline"),
-    latestSnap => latestSnap.headline.orElse(latestSnap.latestContent.map(_.webTitle)).getOrElse("Missing Headline"))
+  def headline(fc: FaciaContent): Option[String] = fold(fc)(
+    curatedContent => Some(curatedContent.headline),
+    supportingCuratedContent => Some(supportingCuratedContent.headline),
+    linkSnap => linkSnap.headline,
+    latestSnap => latestSnap.headline.orElse(latestSnap.latestContent.map(_.webTitle)))
 
-  def href(fc: FaciaContent): String = fold(fc)(
-    curatedContent => curatedContent.href.getOrElse("Missing href"),
-    supportingCuratedContent => supportingCuratedContent.href.getOrElse("Missing href"),
-    linkSnap => linkSnap.snapUri.getOrElse(linkSnap.id),
-    latestSnap => latestSnap.snapUri.getOrElse(latestSnap.id)
+  def href(fc: FaciaContent): Option[String] = fold(fc)(
+    curatedContent => curatedContent.href,
+    supportingCuratedContent => supportingCuratedContent.href,
+    linkSnap => linkSnap.snapUri,
+    latestSnap => latestSnap.snapUri
   )
 
   def trailText(fc: FaciaContent): Option[String] = fold(fc)(
