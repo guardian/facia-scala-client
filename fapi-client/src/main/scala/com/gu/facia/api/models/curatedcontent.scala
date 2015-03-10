@@ -77,8 +77,6 @@ object FaciaContent {
     linkSnap => None,
     latestSnap => latestSnap.latestContent)
 
-  def maybeContent(fc: FaciaContent) = content(fc)
-
   def supportingContent(fc: FaciaContent): List[FaciaContent] = fold(fc)(
     curatedContent => curatedContent.supportingContent,
     supportingCuratedContent => Nil,
