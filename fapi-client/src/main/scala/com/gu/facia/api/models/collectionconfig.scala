@@ -18,7 +18,8 @@ case class CollectionConfig(
     showLatestUpdate: Boolean,
     excludeFromRss: Boolean,
     showTimestamps: Boolean,
-    importance: Importance)
+    importance: Importance,
+    canonical: Boolean)
 
 object CollectionConfig {
   val DefaultCollectionType = "fixed/small/slow-VI"
@@ -37,7 +38,8 @@ object CollectionConfig {
     showLatestUpdate = false,
     excludeFromRss = false,
     showTimestamps = false,
-    importance = DefaultImportance)
+    importance = DefaultImportance,
+    canonical = false)
 
   def fromCollectionJson(collectionJson: CollectionConfigJson): CollectionConfig =
     CollectionConfig(
@@ -54,5 +56,6 @@ object CollectionConfig {
       collectionJson.showLatestUpdate.getOrElse(false),
       collectionJson.excludeFromRss.exists(identity),
       collectionJson.showTimestamps.exists(identity),
-      Importance.fromCollectionConfigJson(collectionJson))
+      Importance.fromCollectionConfigJson(collectionJson),
+      collectionJson.canonical.exists(identity))
 }
