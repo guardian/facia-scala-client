@@ -113,7 +113,7 @@ object ContentApi {
   def latestContentFromLatestSnaps(capiClient: GuardianContentClient, latestSnapsRequest: LatestSnapsRequest, adjustItemQuery: AdjustItemQuery)
                                   (implicit ec: ExecutionContext): Response[Map[String, Option[Content]]] = {
     def itemQueryFromSnapUri(uri: String): ItemQuery =
-      adjustItemQuery(capiClient.item(uri).pageSize(1).showFields("internalContentCode,shortUrl"))
+      adjustItemQuery(capiClient.item(uri).pageSize(1).showFields("internalContentCode"))
 
     Response.Async.Right(
       Future.traverse(latestSnapsRequest.snaps) { case (id, uri) =>
