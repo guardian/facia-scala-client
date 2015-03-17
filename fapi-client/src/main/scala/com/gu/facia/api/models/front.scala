@@ -23,7 +23,8 @@ case class Front(
                   frontImage: Option[FrontImage],
                   isImageDisplayed: Boolean,
                   priority: FrontPriority,
-                  isHidden: Boolean)
+                  isHidden: Boolean,
+                  canonicalCollection: String)
 
 object Front {
   private def getFrontPriority(frontJson: FrontJson): FrontPriority =
@@ -51,7 +52,8 @@ object Front {
       getImageUrl(frontJson),
       frontJson.isImageDisplayed.getOrElse(false),
       getFrontPriority(frontJson),
-      frontJson.isHidden.getOrElse(false)
+      frontJson.isHidden.getOrElse(false),
+      frontJson.canonical.orElse(frontJson.collections.headOption).getOrElse("no collections")
     )
 
   def frontsFromConfig(configJson: ConfigJson): Set[Front] = {

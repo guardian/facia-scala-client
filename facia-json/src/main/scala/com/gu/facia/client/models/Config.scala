@@ -76,7 +76,8 @@ case class FrontJson(
   imageHeight: Option[Int],
   isImageDisplayed: Option[Boolean],
   priority: Option[String],
-  isHidden: Option[Boolean]
+  isHidden: Option[Boolean],
+  canonical: Option[String]
 )
 
 object ConfigJson {
