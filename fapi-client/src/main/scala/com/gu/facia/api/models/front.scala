@@ -40,7 +40,13 @@ object Front {
       imageWidth <- frontJson.imageWidth
     } yield FrontImage(imageUrl, imageHeight, imageWidth)
 
-  def fromFrontJson(id: String, frontJson: FrontJson): Front =
+  def fromFrontJson(id: String, frontJson: FrontJson): Front = {
+    val canonical = id match {
+      case "uk" => "uk-alpha/news/regular-stories"
+      case "us" => "us-alpha/news/regular-stories"
+      case "au" => "au-alpha/news/regular-stories"
+      case _ => frontJson.canonical.orElse(frontJson.collections.headOption).getOrElse("no collections")
+    }
     Front(
       id,
       frontJson.collections,
@@ -53,8 +59,9 @@ object Front {
       frontJson.isImageDisplayed.getOrElse(false),
       getFrontPriority(frontJson),
       frontJson.isHidden.getOrElse(false),
-      frontJson.canonical.orElse(frontJson.collections.headOption).getOrElse("no collections")
+      canonical
     )
+  }
 
   def frontsFromConfig(configJson: ConfigJson): Set[Front] = {
     configJson.fronts

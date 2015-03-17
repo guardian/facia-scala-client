@@ -20,6 +20,18 @@ class FrontTest extends FreeSpec with ShouldMatchers with MockitoSugar with OneI
       "in the absence of a fronts config field, takes the first present collection" in {
         Front.fromFrontJson("frontId", frontJson).canonicalCollection should equal("collection1")
       }
+
+      "on the uk front, always takes the uk headlines container even if it is not at the top" in {
+        Front.fromFrontJson("uk", frontJson).canonicalCollection should equal("uk-alpha/news/regular-stories")
+      }
+
+      "on the us front, takes the uk headlines container even if it is not at the top" in {
+        Front.fromFrontJson("us", frontJson).canonicalCollection should equal("us-alpha/news/regular-stories")
+      }
+
+      "on the au front, takes the uk headlines container even if it is not at the top" in {
+        Front.fromFrontJson("au", frontJson).canonicalCollection should equal("au-alpha/news/regular-stories")
+      }
     }
   }
 }
