@@ -41,12 +41,6 @@ object Front {
     } yield FrontImage(imageUrl, imageHeight, imageWidth)
 
   def fromFrontJson(id: String, frontJson: FrontJson): Front = {
-    val canonical = id match {
-      case "uk" => "uk-alpha/news/regular-stories"
-      case "us" => "us-alpha/news/regular-stories"
-      case "au" => "au-alpha/news/regular-stories"
-      case _ => frontJson.canonical.orElse(frontJson.collections.headOption).getOrElse("no collections")
-    }
     Front(
       id,
       frontJson.collections,
@@ -59,8 +53,27 @@ object Front {
       frontJson.isImageDisplayed.getOrElse(false),
       getFrontPriority(frontJson),
       frontJson.isHidden.getOrElse(false),
-      canonical
+      canonicalCollection(id, frontJson)
     )
+  }
+
+  /**
+   * If we're on a network front, try hard-coded headlines ids, otherwise use editorially
+   * chosen canonical container if present, falling back to the first available collection.
+   * We should never have a front with no containers so final fallback is a placeholder.
+   */
+  private def canonicalCollection(id: String, frontJson: FrontJson): String = {
+    val frontHeadlineCollections = id match {
+      //                PROD                             CODE
+      case "uk" => List("uk-alpha/news/regular-stories", "f3d7d2bc-e667-4a86-974f-fe27daeaebcc")
+      case "us" => List("us-alpha/news/regular-stories")
+      case "au" => List("au-alpha/news/regular-stories")
+      case _ => Nil
+    }
+    frontHeadlineCollections.find(frontJson.collections.contains)
+      .orElse(frontJson.canonical.filter(frontJson.collections.contains))
+      .orElse(frontJson.collections.headOption)
+      .getOrElse("no collections")
   }
 
   def frontsFromConfig(configJson: ConfigJson): Set[Front] = {
