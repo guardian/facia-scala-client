@@ -19,11 +19,11 @@ class ImageReplaceTest extends FlatSpec with Matchers {
       "imageSrcWidth" -> JsString("theImageSrcWidth"),
       "imageSrcHeight" -> JsString("theImageSrcHeight")))
 
-  "ImageReplace" should "give a None back when it is not set" in {
-    ImageReplace.fromTrailMeta(trailMetaDataWithoutImageReplace) should be (None)
+  "Image" should "give an Image of type default when it is not set" in {
+    Image.fromTrailMeta(trailMetaDataWithoutImageReplace) should be (Some(Image("default", "theImageSrc", Some("theImageSrcWidth"), Some("theImageSrcHeight"))))
   }
 
-  it should "give back an ImageReplace when true" in {
-    ImageReplace.fromTrailMeta(trailMetaDataWithImageReplace) should be (Some(ImageReplace("theImageSrc", "theImageSrcWidth", "theImageSrcHeight")))
+  it should "give back an Image when true" in {
+    Image.fromTrailMeta(trailMetaDataWithImageReplace) should be (Some(Image("replace", "theImageSrc", Some("theImageSrcWidth"), Some("theImageSrcHeight"))))
   }
 }

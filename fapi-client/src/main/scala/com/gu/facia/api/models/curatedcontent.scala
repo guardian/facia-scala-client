@@ -4,46 +4,55 @@ import com.gu.contentapi.client.model.Content
 import com.gu.facia.api.utils.{ResolvedMetaData, ItemKicker}
 import com.gu.facia.client.models.{SupportingItem, MetaDataCommonFields, Trail, TrailMetaData}
 
-case class ImageReplace(imageSrc: String, imageSrcWidth: String, imageSrcHeight: String)
+case class Image(
+  imageType: String,
+  imageSrc: String,
+  imageSrcWidth: Option[String],
+  imageSrcHeight: Option[String]
+)
 
-object ImageReplace {
-  def fromTrailMeta(trailMeta: MetaDataCommonFields): Option[ImageReplace] =
-    for {
-      imageReplace <- trailMeta.imageReplace.filter(identity)
-      imageSrc <- trailMeta.imageSrc
-      imageSrcWidth <- trailMeta.imageSrcWidth
-      imageSrcHeight <- trailMeta.imageSrcHeight
-    } yield ImageReplace(imageSrc, imageSrcWidth, imageSrcHeight)
-}
+object Image {
+  def fromTrailMeta(trailMeta: MetaDataCommonFields): Option[Image] = {
 
-case class ImageCutout(
-  imageCutoutSrc: String,
-  imageCutoutSrcWidth: Option[String],
-  imageCutoutSrcHeight: Option[String])
-
-object ImageCutout {
-  def fromTrailMeta(trailMeta: MetaDataCommonFields): Option[ImageCutout] =
-    for {
-      src <- trailMeta.imageCutoutSrc
-      width <- trailMeta.imageCutoutSrcWidth
-      height <- trailMeta.imageCutoutSrcHeight
-    } yield ImageCutout(
-              src,
-              Option(width),
-              Option(height))
-
-  def fromContentTags(content: Content, trailMeta: MetaDataCommonFields): Option[ImageCutout] = {
-    val contributorTags = content.tags.filter(_.`type` == "contributor")
+    val maybeCutout = {
       for {
-        tag <- contributorTags.find(_.bylineLargeImageUrl.isDefined)
-        path <- tag.bylineLargeImageUrl
-      } yield ImageCutout(
-        path,
-        None,
-        None)
+        imageCutout <- trailMeta.imageCutoutReplace.filter(identity)
+        src <- trailMeta.imageCutoutSrc
+        width <- trailMeta.imageCutoutSrcWidth
+        height <- trailMeta.imageCutoutSrcHeight
+      } yield Image("cutout", src, Option(width), Option(height))
+    }
+
+    val maybeReplace = {
+      for {
+        imageReplace <- trailMeta.imageReplace.filter(identity)
+        src <- trailMeta.imageSrc
+        width <- trailMeta.imageSrcWidth
+        height <- trailMeta.imageSrcHeight
+      } yield Image("replace", src, Option(width), Option(height))
+    }
+
+    val defaultImage = {
+      for {
+        src <- trailMeta.imageSrc
+        width <- trailMeta.imageSrcWidth
+        height <- trailMeta.imageSrcHeight
+      } yield Image("default", src, Option(width), Option(height))
+    }
+
+    if (trailMeta.imageHide.exists(identity)) None else maybeCutout orElse maybeReplace orElse defaultImage orElse None
+
   }
 
-  def fromContentAndTrailMeta(content: Content, trailMeta: MetaDataCommonFields): Option[ImageCutout] = {
+  def fromContentTags(content: Content, trailMeta: MetaDataCommonFields): Option[Image] = {
+    val contributorTags = content.tags.filter(_.`type` == "contributor")
+    for {
+      tag <- contributorTags.find(_.bylineLargeImageUrl.isDefined)
+      path <- tag.bylineLargeImageUrl
+    } yield Image("cutout", path, None, None)
+  }
+
+  def fromContentAndTrailMeta(content: Content, trailMeta: MetaDataCommonFields): Option[Image] = {
     val resolvedMetaData = ResolvedMetaData.fromContentAndTrailMetaData(content, trailMeta)
     if (resolvedMetaData.imageCutoutReplace)
       fromTrailMeta(trailMeta)
@@ -115,9 +124,9 @@ object FaciaContent {
     linkSnap => Option("LinkSnap"),
     latestSnap => Option("LatestSnap"))
 
-  def imageReplace(fc: FaciaContent): Option[ImageReplace] = fold(fc)(
-    curatedContent => curatedContent.imageReplace,
-    supportingCuratedContent => supportingCuratedContent.imageReplace,
+  def image(fc: FaciaContent): Option[Image] = fold(fc)(
+    curatedContent => curatedContent.image,
+    supportingCuratedContent => supportingCuratedContent.image,
     linkSnap => None,
     latestSnap => latestSnap.image
   )
@@ -132,13 +141,6 @@ object FaciaContent {
   def isBoosted(fc: FaciaContent): Boolean = fold(fc)(
     curatedContent => curatedContent.isBoosted,
     supportingCuratedContent => supportingCuratedContent.isBoosted,
-    linkSnap => false,
-    latestSnap => false
-  )
-
-  def imageHide(fc: FaciaContent): Boolean = fold(fc)(
-    curatedContent => curatedContent.imageHide,
-    supportingCuratedContent => supportingCuratedContent.imageHide,
     linkSnap => false,
     latestSnap => false
   )
@@ -178,13 +180,6 @@ object FaciaContent {
       linkSnap => linkSnap.kicker,
       latestSnap => latestSnap.kicker)
 
-  def imageCutout(fc: FaciaContent): Option[ImageCutout] = fold(fc)(
-    curatedContent => curatedContent.imageCutout,
-    supportingCuratedContent => supportingCuratedContent.imageCutout,
-    linkSnap => None,
-    latestSnap => latestSnap.imageCutout
-  )
-
   def showBoostedHeadline(fc: FaciaContent): Boolean = fold(fc)(
     curatedContent => curatedContent.showBoostedHeadline,
     supportingCuratedContent => supportingCuratedContent.showBoostedHeadline,
@@ -218,17 +213,14 @@ object Snap {
       trail.safeMeta.href,
       trail.safeMeta.trailText,
       trail.safeMeta.group.getOrElse("0"),
-      ImageReplace.fromTrailMeta(trail.safeMeta),
+      Image.fromTrailMeta(trail.safeMeta),
       trail.safeMeta.isBreaking.exists(identity),
       trail.safeMeta.isBoosted.exists(identity),
-      trail.safeMeta.imageHide.exists(identity),
-      trail.safeMeta.imageReplace.exists(identity),
       trail.safeMeta.showMainVideo.exists(identity),
       trail.safeMeta.showKickerTag.exists(identity),
       trail.safeMeta.byline,
       trail.safeMeta.showByline.exists(identity),
       ItemKicker.fromTrailMetaData(trail.safeMeta),
-      ImageCutout.fromTrailMeta(trail.safeMeta),
       trail.safeMeta.showBoostedHeadline.exists(identity),
       trail.safeMeta.showQuotedHeadline.exists(identity)))
     case _ => None
@@ -247,17 +239,14 @@ object Snap {
       supportingItem.safeMeta.href,
       supportingItem.safeMeta.trailText,
       supportingItem.safeMeta.group.getOrElse("0"),
-      ImageReplace.fromTrailMeta(supportingItem.safeMeta),
+      Image.fromTrailMeta(supportingItem.safeMeta),
       supportingItem.safeMeta.isBreaking.exists(identity),
       supportingItem.safeMeta.isBoosted.exists(identity),
-      supportingItem.safeMeta.imageHide.exists(identity),
-      supportingItem.safeMeta.imageReplace.exists(identity),
       supportingItem.safeMeta.showMainVideo.exists(identity),
       supportingItem.safeMeta.showKickerTag.exists(identity),
       supportingItem.safeMeta.byline,
       supportingItem.safeMeta.showByline.exists(identity),
       ItemKicker.fromTrailMetaData(supportingItem.safeMeta),
-      ImageCutout.fromTrailMeta(supportingItem.safeMeta),
       supportingItem.safeMeta.showBoostedHeadline.exists(identity),
       supportingItem.safeMeta.showQuotedHeadline.exists(identity)
   ))
@@ -275,17 +264,14 @@ case class LinkSnap(
   href: Option[String],
   trailText: Option[String],
   group: String,
-  image: Option[ImageReplace],
+  image: Option[Image],
   isBreaking: Boolean,
   isBoosted: Boolean,
-  imageHide: Boolean,
-  imageReplace: Boolean,
   showMainVideo: Boolean,
   showKickerTag: Boolean,
   byline: Option[String],
   showByLine: Boolean,
   kicker: Option[ItemKicker],
-  imageCutout: Option[ImageCutout],
   showBoostedHeadline: Boolean,
   showQuotedHeadline: Boolean) extends Snap
 
@@ -298,17 +284,14 @@ case class LatestSnap(
   href: Option[String],
   trailText: Option[String],
   group: String,
-  image: Option[ImageReplace],
+  image: Option[Image],
   isBreaking: Boolean,
   isBoosted: Boolean,
-  imageHide: Boolean,
-  imageReplace: Boolean,
   showMainVideo: Boolean,
   showKickerTag: Boolean,
   byline: Option[String],
   showByLine: Boolean,
   kicker: Option[ItemKicker],
-  imageCutout: Option[ImageCutout],
   showBoostedHeadline: Boolean,
   showQuotedHeadline: Boolean) extends Snap
 
@@ -323,17 +306,14 @@ object LatestSnap {
       trail.safeMeta.href,
       trail.safeMeta.trailText,
       trail.safeMeta.group.getOrElse("0"),
-      ImageReplace.fromTrailMeta(trail.safeMeta),
+      Image.fromTrailMeta(trail.safeMeta),
       trail.safeMeta.isBreaking.exists(identity),
       trail.safeMeta.isBoosted.exists(identity),
-      trail.safeMeta.imageHide.exists(identity),
-      trail.safeMeta.imageReplace.exists(identity),
       trail.safeMeta.showMainVideo.exists(identity),
       trail.safeMeta.showKickerTag.exists(identity),
       trail.safeMeta.byline,
       trail.safeMeta.showByline.exists(identity),
       ItemKicker.fromTrailMetaData(trail.safeMeta),
-      ImageCutout.fromTrailMeta(trail.safeMeta),
       trail.safeMeta.showBoostedHeadline.exists(identity),
       trail.safeMeta.showQuotedHeadline.exists(identity)
     )
@@ -348,17 +328,14 @@ object LatestSnap {
       supportingItem.safeMeta.href,
       supportingItem.safeMeta.trailText,
       supportingItem.safeMeta.group.getOrElse("0"),
-      ImageReplace.fromTrailMeta(supportingItem.safeMeta),
+      Image.fromTrailMeta(supportingItem.safeMeta),
       supportingItem.safeMeta.isBreaking.exists(identity),
       supportingItem.safeMeta.isBoosted.exists(identity),
-      supportingItem.safeMeta.imageHide.exists(identity),
-      supportingItem.safeMeta.imageReplace.exists(identity),
       supportingItem.safeMeta.showMainVideo.exists(identity),
       supportingItem.safeMeta.showKickerTag.exists(identity),
       supportingItem.safeMeta.byline,
       supportingItem.safeMeta.showByline.exists(identity),
       ItemKicker.fromTrailMetaData(supportingItem.safeMeta),
-      ImageCutout.fromTrailMeta(supportingItem.safeMeta),
       supportingItem.safeMeta.showBoostedHeadline.exists(identity),
       supportingItem.safeMeta.showQuotedHeadline.exists(identity)
     )
@@ -371,16 +348,14 @@ case class CuratedContent(
   href: Option[String],
   trailText: Option[String],
   group: String,
-  imageReplace: Option[ImageReplace],
+  image: Option[Image],
   isBreaking: Boolean,
   isBoosted: Boolean,
-  imageHide: Boolean,
   showMainVideo: Boolean,
   showKickerTag: Boolean,
   byline: Option[String],
   showByLine: Boolean,
   kicker: Option[ItemKicker],
-  imageCutout: Option[ImageCutout],
   showBoostedHeadline: Boolean,
   showQuotedHeadline: Boolean) extends FaciaContent
 
@@ -390,16 +365,14 @@ case class SupportingCuratedContent(
   href: Option[String],
   trailText: Option[String],
   group: String,
-  imageReplace: Option[ImageReplace],
+  image: Option[Image],
   isBreaking: Boolean,
   isBoosted: Boolean,
-  imageHide: Boolean,
   showMainVideo: Boolean,
   showKickerTag: Boolean,
   byline: Option[String],
   showByLine: Boolean,
   kicker: Option[ItemKicker],
-  imageCutout: Option[ImageCutout],
   showBoostedHeadline: Boolean,
   showQuotedHeadline: Boolean) extends FaciaContent
 
@@ -418,16 +391,14 @@ object CuratedContent {
       trailMetaData.href.orElse(contentFields.get("href")),
       trailMetaData.trailText.orElse(contentFields.get("trailText")),
       trailMetaData.group.getOrElse("0"),
-      ImageReplace.fromTrailMeta(trailMetaData),
+      Image.fromTrailMeta(trailMetaData),
       resolvedMetaData.isBreaking,
       resolvedMetaData.isBoosted,
-      resolvedMetaData.imageHide,
       resolvedMetaData.showMainVideo,
       resolvedMetaData.showKickerTag,
       trailMetaData.byline.orElse(contentFields.get("byline")),
       trailMetaData.showByline.getOrElse(false),
       ItemKicker.fromContentAndTrail(content, trailMetaData, resolvedMetaData, Some(collectionConfig)),
-      ImageCutout.fromContentAndTrailMeta(content, trailMetaData),
       resolvedMetaData.showBoostedHeadline,
       resolvedMetaData.showQuotedHeadline)}
 
@@ -442,16 +413,14 @@ object CuratedContent {
       trailMetaData.href.orElse(contentFields.get("href")),
       trailMetaData.trailText.orElse(contentFields.get("trailText")),
       trailMetaData.group.getOrElse("0"),
-      ImageReplace.fromTrailMeta(trailMetaData),
+      Image.fromTrailMeta(trailMetaData),
       resolvedMetaData.isBreaking,
       resolvedMetaData.isBoosted,
-      resolvedMetaData.imageHide,
       resolvedMetaData.showMainVideo,
       resolvedMetaData.showKickerTag,
       trailMetaData.byline.orElse(contentFields.get("byline")),
       resolvedMetaData.showByline,
       ItemKicker.fromContentAndTrail(content, trailMetaData, resolvedMetaData, Some(collectionConfig)),
-      ImageCutout.fromContentAndTrailMeta(content, trailMetaData),
       resolvedMetaData.showBoostedHeadline,
       resolvedMetaData.showQuotedHeadline
     )}
@@ -468,16 +437,14 @@ object SupportingCuratedContent {
       trailMetaData.href.orElse(contentFields.get("href")),
       trailMetaData.trailText.orElse(contentFields.get("trailText")),
       trailMetaData.group.getOrElse("0"),
-      ImageReplace.fromTrailMeta(trailMetaData),
+      Image.fromTrailMeta(trailMetaData),
       resolvedMetaData.isBreaking,
       resolvedMetaData.isBoosted,
-      resolvedMetaData.imageHide,
       resolvedMetaData.showMainVideo,
       resolvedMetaData.showKickerTag,
       trailMetaData.byline.orElse(contentFields.get("byline")),
       resolvedMetaData.showByline,
       ItemKicker.fromContentAndTrail(content, trailMetaData, resolvedMetaData, None),
-      ImageCutout.fromContentAndTrailMeta(content, trailMetaData),
       resolvedMetaData.showBoostedHeadline,
       resolvedMetaData.showQuotedHeadline)}
 }

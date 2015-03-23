@@ -36,7 +36,7 @@ class ImageCutoutTest extends FreeSpec with Matchers {
 
     "should return None for imageCutoutReplace=true but nothing to replace with" in {
       val trailMeta = trailMetaDataWithImageCutout(true)
-      val imageCutout = ImageCutout.fromContentAndTrailMeta(emptyContent, trailMeta)
+      val imageCutout = Image.fromContentAndTrailMeta(emptyContent, trailMeta)
       imageCutout should be (None)
     }
 
@@ -46,14 +46,14 @@ class ImageCutoutTest extends FreeSpec with Matchers {
       val height = Option("height")
 
       val trailMetaTrue = trailMetaDataWithImageCutout(true, Option(src), width, height)
-      val imageCutoutTrue = ImageCutout.fromContentAndTrailMeta(emptyContent, trailMetaTrue)
+      val imageCutoutTrue = Image.fromContentAndTrailMeta(emptyContent, trailMetaTrue)
       imageCutoutTrue.isDefined should be (true)
-      imageCutoutTrue.get.imageCutoutSrc should be (src)
-      imageCutoutTrue.get.imageCutoutSrcWidth should be (width)
-      imageCutoutTrue.get.imageCutoutSrcHeight should be (height)
+      imageCutoutTrue.get.imageSrc should be (src)
+      imageCutoutTrue.get.imageSrcWidth should be (width)
+      imageCutoutTrue.get.imageSrcHeight should be (height)
 
       val trailMetaFalse = trailMetaDataWithImageCutout(false, Option(src), width, height)
-      val imageCutoutFalse = ImageCutout.fromContentAndTrailMeta(emptyContent, trailMetaFalse)
+      val imageCutoutFalse = Image.fromContentAndTrailMeta(emptyContent, trailMetaFalse)
       imageCutoutFalse should be (None)
     }
 
@@ -63,20 +63,20 @@ class ImageCutoutTest extends FreeSpec with Matchers {
       val height = Option("height")
 
       val trailMeta = trailMetaDataWithImageCutout(true, src, widthNone, height)
-      val imageCutout = ImageCutout.fromContentAndTrailMeta(emptyContent, trailMeta)
+      val imageCutout = Image.fromContentAndTrailMeta(emptyContent, trailMeta)
       imageCutout should be (None)
     }
 
-    "should return an ImageCutout from content tags" in {
+    "should return an Image of type cutout from content tags" in {
       val trailMeta = trailMetaDataWithImageCutout(true, None, None, None)
-      val imageCutout = ImageCutout.fromContentAndTrailMeta(contentWithContributor, trailMeta)
+      val imageCutout = Image.fromContentAndTrailMeta(contentWithContributor, trailMeta)
       imageCutout.isDefined should be (true)
-      imageCutout should be (Some(ImageCutout(bylineImageUrl, None, None)))
+      imageCutout should be (Some(Image("cutout", bylineImageUrl, None, None)))
     }
 
-    "should not return an ImageCutout from content tags if imageCutoutReplace is false" in {
+    "should not return an Image of type cutout from content tags if imageCutoutReplace is false" in {
       val trailMeta = trailMetaDataWithImageCutout(false, None, None, None)
-      val imageCutout = ImageCutout.fromContentAndTrailMeta(contentWithContributor, trailMeta)
+      val imageCutout = Image.fromContentAndTrailMeta(contentWithContributor, trailMeta)
       imageCutout should be (None)
     }
   }
