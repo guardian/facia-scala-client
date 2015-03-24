@@ -40,7 +40,7 @@ object Image {
       } yield Image("default", src, Option(width), Option(height))
     }
 
-    if (trailMeta.imageHide.exists(identity)) None else maybeCutout orElse maybeReplace orElse defaultImage orElse None
+    if (trailMeta.imageHide.exists(identity)) None else maybeCutout orElse maybeReplace orElse defaultImage
 
   }
 
