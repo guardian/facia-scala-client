@@ -4,15 +4,15 @@ import com.gu.contentapi.client.model.Content
 import com.gu.facia.api.utils.{ResolvedMetaData, ItemKicker}
 import com.gu.facia.client.models.{SupportingItem, MetaDataCommonFields, Trail, TrailMetaData}
 
-case class Image(
+case class FaciaImage(
   imageType: String,
   imageSrc: String,
   imageSrcWidth: Option[String],
   imageSrcHeight: Option[String]
 )
 
-object Image {
-  def fromTrailMeta(trailMeta: MetaDataCommonFields): Option[Image] = {
+object FaciaImage {
+  def fromTrailMeta(trailMeta: MetaDataCommonFields): Option[FaciaImage] = {
 
     val maybeCutout = {
       for {
@@ -20,7 +20,7 @@ object Image {
         src <- trailMeta.imageCutoutSrc
         width <- trailMeta.imageCutoutSrcWidth
         height <- trailMeta.imageCutoutSrcHeight
-      } yield Image("cutout", src, Option(width), Option(height))
+      } yield FaciaImage("cutout", src, Option(width), Option(height))
     }
 
     val maybeReplace = {
@@ -29,7 +29,7 @@ object Image {
         src <- trailMeta.imageSrc
         width <- trailMeta.imageSrcWidth
         height <- trailMeta.imageSrcHeight
-      } yield Image("replace", src, Option(width), Option(height))
+      } yield FaciaImage("replace", src, Option(width), Option(height))
     }
 
     val defaultImage = {
@@ -37,22 +37,22 @@ object Image {
         src <- trailMeta.imageSrc
         width <- trailMeta.imageSrcWidth
         height <- trailMeta.imageSrcHeight
-      } yield Image("default", src, Option(width), Option(height))
+      } yield FaciaImage("default", src, Option(width), Option(height))
     }
 
     if (trailMeta.imageHide.exists(identity)) None else maybeCutout orElse maybeReplace orElse defaultImage
 
   }
 
-  def fromContentTags(content: Content, trailMeta: MetaDataCommonFields): Option[Image] = {
+  def fromContentTags(content: Content, trailMeta: MetaDataCommonFields): Option[FaciaImage] = {
     val contributorTags = content.tags.filter(_.`type` == "contributor")
     for {
       tag <- contributorTags.find(_.bylineLargeImageUrl.isDefined)
       path <- tag.bylineLargeImageUrl
-    } yield Image("cutout", path, None, None)
+    } yield FaciaImage("cutout", path, None, None)
   }
 
-  def fromContentAndTrailMeta(content: Content, trailMeta: MetaDataCommonFields): Option[Image] = {
+  def fromContentAndTrailMeta(content: Content, trailMeta: MetaDataCommonFields): Option[FaciaImage] = {
     val resolvedMetaData = ResolvedMetaData.fromContentAndTrailMetaData(content, trailMeta)
     if (resolvedMetaData.imageCutoutReplace)
       fromTrailMeta(trailMeta)
@@ -124,7 +124,7 @@ object FaciaContent {
     linkSnap => Option("LinkSnap"),
     latestSnap => Option("LatestSnap"))
 
-  def image(fc: FaciaContent): Option[Image] = fold(fc)(
+  def image(fc: FaciaContent): Option[FaciaImage] = fold(fc)(
     curatedContent => curatedContent.image,
     supportingCuratedContent => supportingCuratedContent.image,
     linkSnap => None,
@@ -213,7 +213,7 @@ object Snap {
       trail.safeMeta.href,
       trail.safeMeta.trailText,
       trail.safeMeta.group.getOrElse("0"),
-      Image.fromTrailMeta(trail.safeMeta),
+      FaciaImage.fromTrailMeta(trail.safeMeta),
       trail.safeMeta.isBreaking.exists(identity),
       trail.safeMeta.isBoosted.exists(identity),
       trail.safeMeta.showMainVideo.exists(identity),
@@ -239,7 +239,7 @@ object Snap {
       supportingItem.safeMeta.href,
       supportingItem.safeMeta.trailText,
       supportingItem.safeMeta.group.getOrElse("0"),
-      Image.fromTrailMeta(supportingItem.safeMeta),
+      FaciaImage.fromTrailMeta(supportingItem.safeMeta),
       supportingItem.safeMeta.isBreaking.exists(identity),
       supportingItem.safeMeta.isBoosted.exists(identity),
       supportingItem.safeMeta.showMainVideo.exists(identity),
@@ -264,7 +264,7 @@ case class LinkSnap(
   href: Option[String],
   trailText: Option[String],
   group: String,
-  image: Option[Image],
+  image: Option[FaciaImage],
   isBreaking: Boolean,
   isBoosted: Boolean,
   showMainVideo: Boolean,
@@ -284,7 +284,7 @@ case class LatestSnap(
   href: Option[String],
   trailText: Option[String],
   group: String,
-  image: Option[Image],
+  image: Option[FaciaImage],
   isBreaking: Boolean,
   isBoosted: Boolean,
   showMainVideo: Boolean,
@@ -306,7 +306,7 @@ object LatestSnap {
       trail.safeMeta.href,
       trail.safeMeta.trailText,
       trail.safeMeta.group.getOrElse("0"),
-      Image.fromTrailMeta(trail.safeMeta),
+      FaciaImage.fromTrailMeta(trail.safeMeta),
       trail.safeMeta.isBreaking.exists(identity),
       trail.safeMeta.isBoosted.exists(identity),
       trail.safeMeta.showMainVideo.exists(identity),
@@ -328,7 +328,7 @@ object LatestSnap {
       supportingItem.safeMeta.href,
       supportingItem.safeMeta.trailText,
       supportingItem.safeMeta.group.getOrElse("0"),
-      Image.fromTrailMeta(supportingItem.safeMeta),
+      FaciaImage.fromTrailMeta(supportingItem.safeMeta),
       supportingItem.safeMeta.isBreaking.exists(identity),
       supportingItem.safeMeta.isBoosted.exists(identity),
       supportingItem.safeMeta.showMainVideo.exists(identity),
@@ -348,7 +348,7 @@ case class CuratedContent(
   href: Option[String],
   trailText: Option[String],
   group: String,
-  image: Option[Image],
+  image: Option[FaciaImage],
   isBreaking: Boolean,
   isBoosted: Boolean,
   showMainVideo: Boolean,
@@ -365,7 +365,7 @@ case class SupportingCuratedContent(
   href: Option[String],
   trailText: Option[String],
   group: String,
-  image: Option[Image],
+  image: Option[FaciaImage],
   isBreaking: Boolean,
   isBoosted: Boolean,
   showMainVideo: Boolean,
@@ -391,7 +391,7 @@ object CuratedContent {
       trailMetaData.href.orElse(contentFields.get("href")),
       trailMetaData.trailText.orElse(contentFields.get("trailText")),
       trailMetaData.group.getOrElse("0"),
-      Image.fromTrailMeta(trailMetaData),
+      FaciaImage.fromTrailMeta(trailMetaData),
       resolvedMetaData.isBreaking,
       resolvedMetaData.isBoosted,
       resolvedMetaData.showMainVideo,
@@ -413,7 +413,7 @@ object CuratedContent {
       trailMetaData.href.orElse(contentFields.get("href")),
       trailMetaData.trailText.orElse(contentFields.get("trailText")),
       trailMetaData.group.getOrElse("0"),
-      Image.fromTrailMeta(trailMetaData),
+      FaciaImage.fromTrailMeta(trailMetaData),
       resolvedMetaData.isBreaking,
       resolvedMetaData.isBoosted,
       resolvedMetaData.showMainVideo,
@@ -437,7 +437,7 @@ object SupportingCuratedContent {
       trailMetaData.href.orElse(contentFields.get("href")),
       trailMetaData.trailText.orElse(contentFields.get("trailText")),
       trailMetaData.group.getOrElse("0"),
-      Image.fromTrailMeta(trailMetaData),
+      FaciaImage.fromTrailMeta(trailMetaData),
       resolvedMetaData.isBreaking,
       resolvedMetaData.isBoosted,
       resolvedMetaData.showMainVideo,
