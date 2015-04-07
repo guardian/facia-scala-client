@@ -1,7 +1,7 @@
 package com.gu.facia.api.models
 
 import com.gu.contentapi.client.model.Content
-import com.gu.facia.api.contentapi.LatestSnapsRequest
+import com.gu.facia.api.contentapi.{TreatsRequest, LatestSnapsRequest}
 import com.gu.facia.api.utils.IntegerString
 import com.gu.facia.client.models.{SupportingItem, Trail, CollectionJson}
 import org.joda.time.DateTime
@@ -27,13 +27,17 @@ object Collection {
       collectionJson.flatMap(_.href).orElse(collectionConfig.href),
       collectionJson.map(_.live).getOrElse(Nil),
       collectionJson.flatMap(_.draft),
+      collectionJson.flatMap(_.treats).getOrElse(Nil),
       collectionJson.map(_.lastUpdated),
       collectionJson.map(_.updatedBy),
       collectionJson.map(_.updatedEmail),
       collectionConfig)
   }
 
-  def liveContent(collection: Collection, content: Set[Content], snapContent: Map[String, Option[Content]] = Map.empty): List[FaciaContent] = {
+  def contentFrom(collection: Collection,
+                  content: Set[Content],
+                  snapContent: Map[String, Option[Content]] = Map.empty,
+                  from: Collection => List[Trail]): List[FaciaContent] = {
     // if content is not in the set it was most likely filtered out by the CAPI query, so exclude it
     // note that this does not currently deal with e.g. snaps
     def resolveTrail(trail: Trail): Option[FaciaContent] = {
@@ -59,8 +63,18 @@ object Collection {
             .map(c => LatestSnap.fromSupportingItemAndContent(supportingItem, c._2))}
         .orElse{ Snap.maybeFromSupportingItem(supportingItem)}}
 
-    collection.live.flatMap(resolveTrail)
+    from(collection).flatMap(resolveTrail)
   }
+
+  def liveContent(collection: Collection,
+                  content: Set[Content],
+                  snapContent: Map[String, Option[Content]] = Map.empty): List[FaciaContent] =
+    contentFrom(collection, content, snapContent, collection => collection.live)
+
+  def treatContent(collection: Collection,
+                  content: Set[Content],
+                  snapContent: Map[String, Option[Content]] = Map.empty): List[FaciaContent] =
+    contentFrom(collection, content, snapContent, collection => collection.treats)
 
   def liveIdsWithoutSnaps(collection: Collection): List[String] =
     collection.live.filterNot(_.isSnap).map(_.id)
