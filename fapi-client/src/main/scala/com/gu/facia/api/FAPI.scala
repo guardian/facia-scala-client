@@ -87,6 +87,19 @@ object FAPI {
     for(snapContent <- ContentApi.latestContentFromLatestSnaps(capiClient, allSnaps, adjustItemQuery))
       yield snapContent}
 
+  def getTreatsForCollection(collection: Collection, adjustSearchQuery: AdjustSearchQuery = identity, adjustItemQuery: AdjustItemQuery = identity)
+                      (implicit capiClient: GuardianContentClient, ec: ExecutionContext) = {
+    val treatsRequest = Collection.treatsRequestFor(collection)
+    ContentApi.buildHydrateQueries(capiClient, treatsRequest.treatIds, adjustSearchQuery) match {
+      case Success(hydrateQueries) =>
+        for {
+          hydrateResponses <- ContentApi.getHydrateResponse(capiClient, hydrateQueries)
+          snapContent <- ContentApi.latestContentFromLatestSnaps(capiClient, treatsRequest.latestSnapsRequest, adjustItemQuery)
+          setOfContent = ContentApi.itemsFromSearchResponses(hydrateResponses)}
+    yield Collection.treatContent(collection, setOfContent, snapContent)
+      case Failure(error) =>
+        Response.Left(UrlConstructError(error.getMessage, Some(error)))}}
+
   def collectionContentWithoutSnaps(collection: Collection, adjustSearchQuery: AdjustSearchQuery = identity)
                                 (implicit capiClient: GuardianContentClient, ec: ExecutionContext): Response[List[FaciaContent]] = {
     val collectionWithoutSnaps = Collection.withoutSnaps(collection)
