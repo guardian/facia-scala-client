@@ -13,12 +13,7 @@ case class LatestSnapsRequest(snaps: Map[String, String]) {
   def join(other: LatestSnapsRequest): LatestSnapsRequest = this.copy(snaps = this.snaps ++ other.snaps)
 }
 
-case class TreatsRequest(treatIds: List[String], latestSnapsRequest: LatestSnapsRequest) {
-  def join(other: TreatsRequest): TreatsRequest =
-    this.copy(
-      latestSnapsRequest = this.latestSnapsRequest.join(other.latestSnapsRequest),
-      treatIds = this.treatIds ++ treatIds)
-}
+case class TreatsRequest(treatIds: List[String], latestSnapsRequest: LatestSnapsRequest)
 
 object ContentApi {
   type AdjustSearchQuery = SearchQuery => SearchQuery
