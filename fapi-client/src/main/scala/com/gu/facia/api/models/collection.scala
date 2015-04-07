@@ -12,6 +12,7 @@ case class Collection(
   href: Option[String],
   live: List[Trail],
   draft: Option[List[Trail]],
+  treats: List[Trail],
   lastUpdated: Option[DateTime],
   updatedBy: Option[String],
   updatedEmail: Option[String],
