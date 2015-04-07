@@ -98,7 +98,21 @@ object Collection {
       collection.live
       .filter(_.isSnap)
       .filter(_.safeMeta.snapType == Some("latest"))
-      .flatMap(snap => snap.safeMeta.snapUri.map(uri => snap.id -> uri)).toMap)
+      .flatMap(snap => snap.safeMeta.snapUri.map(uri => snap.id -> uri))
+      .toMap)
+
+  def treatsRequestFor(collection: Collection): TreatsRequest = {
+    val latestSnapsRequest =
+      LatestSnapsRequest(
+        collection.treats
+          .filter(_.isSnap)
+          .filter(_.safeMeta.snapType == Some("latest"))
+          .flatMap(snap => snap.safeMeta.snapUri.map(uri => snap.id -> uri))
+          .toMap)
+
+    val treatIds = collection.treats.filterNot(_.isSnap).map(_.id)
+
+    TreatsRequest(treatIds, latestSnapsRequest)}
 
   def withoutSnaps(collection: Collection): Collection = {
     collection.copy(
