@@ -332,7 +332,7 @@ object LatestSnap {
       trail.safeMeta.showKickerTag.exists(identity),
       trail.safeMeta.byline,
       trail.safeMeta.showByline.exists(identity),
-      ItemKicker.fromTrailMetaData(trail.safeMeta),
+      ItemKicker.fromTrailMetaDataAndMaybeContent(trail.safeMeta, maybeContent),
       ImageCutout.fromTrailMeta(trail.safeMeta),
       trail.safeMeta.showBoostedHeadline.exists(identity),
       trail.safeMeta.showQuotedHeadline.exists(identity)
@@ -357,7 +357,7 @@ object LatestSnap {
       supportingItem.safeMeta.showKickerTag.exists(identity),
       supportingItem.safeMeta.byline,
       supportingItem.safeMeta.showByline.exists(identity),
-      ItemKicker.fromTrailMetaData(supportingItem.safeMeta),
+      ItemKicker.fromTrailMetaDataAndMaybeContent(supportingItem.safeMeta, maybeContent),
       ImageCutout.fromTrailMeta(supportingItem.safeMeta),
       supportingItem.safeMeta.showBoostedHeadline.exists(identity),
       supportingItem.safeMeta.showQuotedHeadline.exists(identity)
