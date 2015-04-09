@@ -1,7 +1,7 @@
 package com.gu.facia.api.models
 
 import com.gu.contentapi.client.model.Content
-import com.gu.facia.api.contentapi.{TreatsRequest, LatestSnapsRequest}
+import com.gu.facia.api.contentapi.LatestSnapsRequest
 import com.gu.facia.api.utils.IntegerString
 import com.gu.facia.client.models.{SupportingItem, Trail, CollectionJson}
 import org.joda.time.DateTime
@@ -101,7 +101,7 @@ object Collection {
       .flatMap(snap => snap.safeMeta.snapUri.map(uri => snap.id -> uri))
       .toMap)
 
-  def treatsRequestFor(collection: Collection): TreatsRequest = {
+  def treatsRequestFor(collection: Collection): (List[String], LatestSnapsRequest) = {
     val latestSnapsRequest =
       LatestSnapsRequest(
         collection.treats
@@ -112,7 +112,7 @@ object Collection {
 
     val treatIds = collection.treats.filterNot(_.isSnap).map(_.id)
 
-    TreatsRequest(treatIds, latestSnapsRequest)}
+    (treatIds, latestSnapsRequest)}
 
   def withoutSnaps(collection: Collection): Collection = {
     collection.copy(
