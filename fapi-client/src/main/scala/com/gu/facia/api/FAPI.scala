@@ -70,14 +70,12 @@ object FAPI {
     val itemIdsForRequest = Collection.liveIdsWithoutSnaps(collection)
     val supportingIdsForRequest = Collection.liveSupportingIdsWithoutSnaps(collection)
     val allItemIdsForRequest = itemIdsForRequest ::: supportingIdsForRequest
-    ContentApi.buildHydrateQueries(capiClient, allItemIdsForRequest, adjustSearchQuery) match {
-      case Success(hydrateQueries) =>
-        for {
-          hydrateResponses <- ContentApi.getHydrateResponse(capiClient, hydrateQueries)
-          content = ContentApi.itemsFromSearchResponses(hydrateResponses)}
-        yield content
-      case Failure(error) =>
-        Response.Left(UrlConstructError(error.getMessage, Some(error)))}}
+    for {
+      hydrateQueries <- ContentApi.buildHydrateQueries(capiClient, allItemIdsForRequest, adjustSearchQuery)
+      hydrateResponses <- ContentApi.getHydrateResponse(capiClient, hydrateQueries)
+      content = ContentApi.itemsFromSearchResponses(hydrateResponses)}
+      yield content
+  }
 
   private def getLatestSnapContentForCollection(collection: Collection, adjustItemQuery: AdjustItemQuery)
                       (implicit capiClient: GuardianContentClient, ec: ExecutionContext) = {
@@ -90,15 +88,13 @@ object FAPI {
   def getTreatsForCollection(collection: Collection, adjustSearchQuery: AdjustSearchQuery = identity, adjustItemQuery: AdjustItemQuery = identity)
                             (implicit capiClient: GuardianContentClient, ec: ExecutionContext) = {
     val (treatIds, treatsSnapsRequest) = Collection.treatsRequestFor(collection)
-    ContentApi.buildHydrateQueries(capiClient, treatIds, adjustSearchQuery) match {
-      case Success(hydrateQueries) =>
-        for {
-          hydrateResponses <- ContentApi.getHydrateResponse(capiClient, hydrateQueries)
-          snapContent <- ContentApi.latestContentFromLatestSnaps(capiClient, treatsSnapsRequest, adjustItemQuery)
-          setOfContent = ContentApi.itemsFromSearchResponses(hydrateResponses)}
+      for {
+        hydrateQueries <- ContentApi.buildHydrateQueries(capiClient, treatIds, adjustSearchQuery)
+        hydrateResponses <- ContentApi.getHydrateResponse(capiClient, hydrateQueries)
+        snapContent <- ContentApi.latestContentFromLatestSnaps(capiClient, treatsSnapsRequest, adjustItemQuery)
+        setOfContent = ContentApi.itemsFromSearchResponses(hydrateResponses)}
     yield Collection.treatContent(collection, setOfContent, snapContent)
-      case Failure(error) =>
-        Response.Left(UrlConstructError(error.getMessage, Some(error)))}}
+  }
 
   def collectionContentWithoutSnaps(collection: Collection, adjustSearchQuery: AdjustSearchQuery = identity)
                                 (implicit capiClient: GuardianContentClient, ec: ExecutionContext): Response[List[FaciaContent]] = {
