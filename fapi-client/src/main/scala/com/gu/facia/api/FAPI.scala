@@ -88,7 +88,7 @@ object FAPI {
       yield snapContent}
 
   def getTreatsForCollection(collection: Collection, adjustSearchQuery: AdjustSearchQuery = identity, adjustItemQuery: AdjustItemQuery = identity)
-                      (implicit capiClient: GuardianContentClient, ec: ExecutionContext) = {
+                            (implicit capiClient: GuardianContentClient, ec: ExecutionContext) = {
     val treatsRequest = Collection.treatsRequestFor(collection)
     ContentApi.buildHydrateQueries(capiClient, treatsRequest.treatIds, adjustSearchQuery) match {
       case Success(hydrateQueries) =>
