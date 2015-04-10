@@ -2,7 +2,7 @@ package com.gu.facia.api.utils
 
 import com.gu.contentapi.client.model.{Content, Tag}
 import com.gu.facia.api.models.CollectionConfig
-import com.gu.facia.client.models.{MetaDataCommonFields, TrailMetaData}
+import com.gu.facia.client.models.MetaDataCommonFields
 
 object ItemKicker {
   def fromContentAndTrail(

@@ -9,7 +9,6 @@ import com.gu.facia.client.ApiClient
 import com.gu.facia.client.models.TrailMetaData
 
 import scala.concurrent.{ExecutionContext, Future}
-import scala.util.{Failure, Success}
 
 
 object FAPI {
