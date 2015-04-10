@@ -76,6 +76,11 @@ object Collection {
                   snapContent: Map[String, Option[Content]] = Map.empty): List[FaciaContent] =
     contentFrom(collection, content, snapContent, collection => collection.treats)
 
+  def draftContent(collection: Collection,
+                  content: Set[Content],
+                  snapContent: Map[String, Option[Content]] = Map.empty): List[FaciaContent] =
+    contentFrom(collection, content, snapContent, collection => collection.draft.getOrElse(Nil))
+
   def liveIdsWithoutSnaps(collection: Collection): List[String] =
     collection.live.filterNot(_.isSnap).map(_.id)
 
