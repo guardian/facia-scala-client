@@ -382,7 +382,10 @@ case class CuratedContent(
   kicker: Option[ItemKicker],
   imageCutout: Option[ImageCutout],
   showBoostedHeadline: Boolean,
-  showQuotedHeadline: Boolean) extends FaciaContent
+  showQuotedHeadline: Boolean,
+  embedType: Option[String],
+  embedUri: Option[String],
+  embedCss: Option[String]) extends FaciaContent
 
 case class SupportingCuratedContent(
   content: Content,
@@ -429,7 +432,10 @@ object CuratedContent {
       ItemKicker.fromContentAndTrail(content, trailMetaData, resolvedMetaData, Some(collectionConfig)),
       ImageCutout.fromContentAndTrailMeta(content, trailMetaData),
       resolvedMetaData.showBoostedHeadline,
-      resolvedMetaData.showQuotedHeadline)}
+      resolvedMetaData.showQuotedHeadline,
+      embedType = trailMetaData.snapType,
+      embedUri = trailMetaData.snapUri,
+      embedCss = trailMetaData.snapCss)}
 
   def fromTrailAndContent(content: Content, trailMetaData: MetaDataCommonFields, collectionConfig: CollectionConfig): CuratedContent = {
     val contentFields: Map[String, String] = content.safeFields
@@ -453,8 +459,10 @@ object CuratedContent {
       ItemKicker.fromContentAndTrail(content, trailMetaData, resolvedMetaData, Some(collectionConfig)),
       ImageCutout.fromContentAndTrailMeta(content, trailMetaData),
       resolvedMetaData.showBoostedHeadline,
-      resolvedMetaData.showQuotedHeadline
-    )}
+      resolvedMetaData.showQuotedHeadline,
+      embedType = trailMetaData.snapType,
+      embedUri = trailMetaData.snapUri,
+      embedCss = trailMetaData.snapCss)}
 }
 
 object SupportingCuratedContent {
