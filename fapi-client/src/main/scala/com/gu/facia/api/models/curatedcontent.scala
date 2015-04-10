@@ -12,36 +12,16 @@ case class FaciaImage(
 )
 
 object FaciaImage {
-  def fromTrailMeta(trailMeta: MetaDataCommonFields): Option[FaciaImage] = {
 
-    val maybeCutout = {
-      for {
-        imageCutout <- trailMeta.imageCutoutReplace.filter(identity)
-        src <- trailMeta.imageCutoutSrc
-        width <- trailMeta.imageCutoutSrcWidth
-        height <- trailMeta.imageCutoutSrcHeight
-      } yield FaciaImage("cutout", src, Option(width), Option(height))
-    }
-
-    val maybeReplace = {
-      for {
-        imageReplace <- trailMeta.imageReplace.filter(identity)
-        src <- trailMeta.imageSrc
-        width <- trailMeta.imageSrcWidth
-        height <- trailMeta.imageSrcHeight
-      } yield FaciaImage("replace", src, Option(width), Option(height))
-    }
-
-    val defaultImage = {
-      for {
-        src <- trailMeta.imageSrc
-        width <- trailMeta.imageSrcWidth
-        height <- trailMeta.imageSrcHeight
-      } yield FaciaImage("default", src, Option(width), Option(height))
-    }
-
-    if (trailMeta.imageHide.exists(identity)) None else maybeCutout orElse maybeReplace orElse defaultImage
-
+  def getFaciaImage(maybeContent: Option[Content], trailMeta: MetaDataCommonFields): Option[FaciaImage] = {
+    if (trailMeta.imageHide.exists(identity)) None
+    else {
+      if (!trailMeta.imageCutoutReplace.exists(identity)) None
+      else maybeContent match {
+        case None => imageCutout(trailMeta)
+        case Some(content) => imageCutout(trailMeta) orElse fromContentTags(content, trailMeta)
+        }
+      } orElse imageReplace(trailMeta) orElse defaultImage(trailMeta)
   }
 
   def fromContentTags(content: Content, trailMeta: MetaDataCommonFields): Option[FaciaImage] = {
@@ -52,13 +32,30 @@ object FaciaImage {
     } yield FaciaImage("cutout", path, None, None)
   }
 
-  def fromContentAndTrailMeta(content: Content, trailMeta: MetaDataCommonFields): Option[FaciaImage] = {
-    val resolvedMetaData = ResolvedMetaData.fromContentAndTrailMetaData(content, trailMeta)
-    if (resolvedMetaData.imageCutoutReplace)
-      fromTrailMeta(trailMeta)
-        .orElse(fromContentTags(content, trailMeta))
-    else
-      None
+  def imageCutout(trailMeta: MetaDataCommonFields): Option[FaciaImage] = {
+    for {
+      imageCutout <- trailMeta.imageCutoutReplace.filter(identity)
+      src <- trailMeta.imageCutoutSrc
+      width <- trailMeta.imageCutoutSrcWidth
+      height <- trailMeta.imageCutoutSrcHeight
+    } yield FaciaImage("cutout", src, Option(width), Option(height))
+  }
+
+  def imageReplace(trailMeta: MetaDataCommonFields): Option[FaciaImage] = {
+    for {
+      imageReplace <- trailMeta.imageReplace.filter(identity)
+      src <- trailMeta.imageSrc
+      width <- trailMeta.imageSrcWidth
+      height <- trailMeta.imageSrcHeight
+    } yield FaciaImage("replace", src, Option(width), Option(height))
+  }
+
+  def defaultImage(trailMeta: MetaDataCommonFields): Option[FaciaImage] = {
+    for {
+      src <- trailMeta.imageSrc
+      width <- trailMeta.imageSrcWidth
+      height <- trailMeta.imageSrcHeight
+    } yield FaciaImage("default", src, Option(width), Option(height))
   }
 }
 
@@ -213,7 +210,7 @@ object Snap {
       trail.safeMeta.href,
       trail.safeMeta.trailText,
       trail.safeMeta.group.getOrElse("0"),
-      FaciaImage.fromTrailMeta(trail.safeMeta),
+      FaciaImage.getFaciaImage(None, trail.safeMeta),
       trail.safeMeta.isBreaking.exists(identity),
       trail.safeMeta.isBoosted.exists(identity),
       trail.safeMeta.showMainVideo.exists(identity),
@@ -239,7 +236,7 @@ object Snap {
       supportingItem.safeMeta.href,
       supportingItem.safeMeta.trailText,
       supportingItem.safeMeta.group.getOrElse("0"),
-      FaciaImage.fromTrailMeta(supportingItem.safeMeta),
+      FaciaImage.getFaciaImage(None, supportingItem.safeMeta),
       supportingItem.safeMeta.isBreaking.exists(identity),
       supportingItem.safeMeta.isBoosted.exists(identity),
       supportingItem.safeMeta.showMainVideo.exists(identity),
@@ -306,7 +303,7 @@ object LatestSnap {
       trail.safeMeta.href,
       trail.safeMeta.trailText,
       trail.safeMeta.group.getOrElse("0"),
-      FaciaImage.fromTrailMeta(trail.safeMeta),
+      FaciaImage.getFaciaImage(maybeContent,  trail.safeMeta),
       trail.safeMeta.isBreaking.exists(identity),
       trail.safeMeta.isBoosted.exists(identity),
       trail.safeMeta.showMainVideo.exists(identity),
@@ -328,7 +325,7 @@ object LatestSnap {
       supportingItem.safeMeta.href,
       supportingItem.safeMeta.trailText,
       supportingItem.safeMeta.group.getOrElse("0"),
-      FaciaImage.fromTrailMeta(supportingItem.safeMeta),
+      FaciaImage.getFaciaImage(None, supportingItem.safeMeta),
       supportingItem.safeMeta.isBreaking.exists(identity),
       supportingItem.safeMeta.isBoosted.exists(identity),
       supportingItem.safeMeta.showMainVideo.exists(identity),
@@ -391,7 +388,7 @@ object CuratedContent {
       trailMetaData.href.orElse(contentFields.get("href")),
       trailMetaData.trailText.orElse(contentFields.get("trailText")),
       trailMetaData.group.getOrElse("0"),
-      FaciaImage.fromTrailMeta(trailMetaData),
+      FaciaImage.getFaciaImage(Some(content), trailMetaData),
       resolvedMetaData.isBreaking,
       resolvedMetaData.isBoosted,
       resolvedMetaData.showMainVideo,
@@ -413,7 +410,7 @@ object CuratedContent {
       trailMetaData.href.orElse(contentFields.get("href")),
       trailMetaData.trailText.orElse(contentFields.get("trailText")),
       trailMetaData.group.getOrElse("0"),
-      FaciaImage.fromTrailMeta(trailMetaData),
+      FaciaImage.getFaciaImage(Some(content), trailMetaData),
       resolvedMetaData.isBreaking,
       resolvedMetaData.isBoosted,
       resolvedMetaData.showMainVideo,
@@ -437,7 +434,7 @@ object SupportingCuratedContent {
       trailMetaData.href.orElse(contentFields.get("href")),
       trailMetaData.trailText.orElse(contentFields.get("trailText")),
       trailMetaData.group.getOrElse("0"),
-      FaciaImage.fromTrailMeta(trailMetaData),
+      FaciaImage.getFaciaImage(Some(content), trailMetaData),
       resolvedMetaData.isBreaking,
       resolvedMetaData.isBoosted,
       resolvedMetaData.showMainVideo,
