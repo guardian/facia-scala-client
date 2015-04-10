@@ -12,13 +12,13 @@ class FaciaContentHelperTest extends FreeSpec with Matchers {
 
   "should return the headline for a CuratedContent" in {
     val content = Content("myId", None, None, None, "myTitle", "myUrl", "myApi", Some(Map("byline" -> "myByline")), Nil, None, Nil, None)
-    val cc = CuratedContent(content, Nil, "The headline", None, None, "myGroup", None, false, false, false, false, false, None, false, None, None, false, false)
+    val cc = CuratedContent(content, Nil, "The headline", None, None, "myGroup", None, false, false, false, false, false, None, false, None, None, false, false, None, None, None)
     FaciaContent.headline(cc) should equal(Some("The headline"))
   }
 
   "should return 'Missing href' when the href is None in a CuratedContent" in {
     val content = Content("myId", None, None, None, "myTitle", "myUrl", "myApi", Some(Map("byline" -> "myByline")), Nil, None, Nil, None)
-    val cc = CuratedContent(content, Nil, "The headline", None, None, "myGroup", None, false, false, false, false, false, None, false, None, None, false, false)
+    val cc = CuratedContent(content, Nil, "The headline", None, None, "myGroup", None, false, false, false, false, false, None, false, None, None, false, false, None, None, None)
     FaciaContent.href(cc) should equal(None)
   }
 
