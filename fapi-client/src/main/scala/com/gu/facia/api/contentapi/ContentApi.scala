@@ -7,7 +7,7 @@ import com.gu.contentapi.client.model._
 import com.gu.facia.api.{UrlConstructError, CapiError, Response}
 
 import scala.concurrent.{Future, ExecutionContext}
-import scala.util.Try
+import scala.util.{Success, Try}
 
 case class LatestSnapsRequest(snaps: Map[String, String]) {
   def join(other: LatestSnapsRequest): LatestSnapsRequest = this.copy(snaps = this.snaps ++ other.snaps)
@@ -23,10 +23,10 @@ object ContentApi {
       .pageSize(ids.size)
       .showFields("internalContentCode"))
 
-    IdsSearchQueries.makeBatches(ids)(ids => client.getUrl(queryForIds(ids))) match {
-        case Some(batches) =>
+    Try(IdsSearchQueries.makeBatches(ids)(ids => client.getUrl(queryForIds(ids)))) match {
+        case Success(Some(batches)) =>
           Response.Right(batches.map(queryForIds))
-        case None =>
+        case _ =>
           Response.Left(UrlConstructError("Unable to construct url for ids search query (the constructed URL for a " +
             s"single ID must be too long!): ${ids.mkString(", ")}"))}
   }
