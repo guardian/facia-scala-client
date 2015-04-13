@@ -33,7 +33,6 @@ object FaciaImage {
 
   def imageCutout(trailMeta: MetaDataCommonFields): Option[FaciaImage] = {
     for {
-      imageCutout <- trailMeta.imageCutoutReplace.filter(identity)
       src <- trailMeta.imageCutoutSrc
       width <- trailMeta.imageCutoutSrcWidth
       height <- trailMeta.imageCutoutSrcHeight
