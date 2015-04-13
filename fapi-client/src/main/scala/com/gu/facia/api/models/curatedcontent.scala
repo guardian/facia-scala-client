@@ -15,13 +15,12 @@ object FaciaImage {
 
   def getFaciaImage(maybeContent: Option[Content], trailMeta: MetaDataCommonFields): Option[FaciaImage] = {
     if (trailMeta.imageHide.exists(identity)) None
-    else {
-      if (!trailMeta.imageCutoutReplace.exists(identity)) None
-      else maybeContent match {
-        case None => imageCutout(trailMeta)
-        case Some(content) => imageCutout(trailMeta) orElse fromContentTags(content, trailMeta)
-        }
+    else { maybeContent flatMap { content =>
+        val resolvedMetadata = ResolvedMetaData.fromContentAndTrailMetaData(content, trailMeta)
+        if (resolvedMetadata.imageCutoutReplace) imageCutout(trailMeta) orElse fromContentTags(content, trailMeta)
+        else None
       } orElse imageReplace(trailMeta) orElse defaultImage(trailMeta)
+    }
   }
 
   def fromContentTags(content: Content, trailMeta: MetaDataCommonFields): Option[FaciaImage] = {
