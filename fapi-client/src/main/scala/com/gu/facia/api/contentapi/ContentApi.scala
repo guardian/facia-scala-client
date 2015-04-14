@@ -4,10 +4,10 @@ import java.net.URI
 
 import com.gu.contentapi.client.{GuardianContentClient, ContentApiClientLogic}
 import com.gu.contentapi.client.model._
-import com.gu.facia.api.{CapiError, Response}
+import com.gu.facia.api.{UrlConstructError, CapiError, Response}
 
 import scala.concurrent.{Future, ExecutionContext}
-import scala.util.Try
+import scala.util.{Success, Try}
 
 case class LatestSnapsRequest(snaps: Map[String, String]) {
   def join(other: LatestSnapsRequest): LatestSnapsRequest = this.copy(snaps = this.snaps ++ other.snaps)
@@ -17,22 +17,18 @@ object ContentApi {
   type AdjustSearchQuery = SearchQuery => SearchQuery
   type AdjustItemQuery = ItemQuery => ItemQuery
 
-  def buildHydrateQueries(client: ContentApiClientLogic, ids: List[String], adjustSearchQuery: AdjustSearchQuery = identity): Try[Seq[SearchQuery]] = {
+  def buildHydrateQueries(client: ContentApiClientLogic, ids: List[String], adjustSearchQuery: AdjustSearchQuery = identity): Response[Seq[SearchQuery]] = {
     def queryForIds(ids: Seq[String]) = adjustSearchQuery(client.search
       .ids(ids mkString ",")
       .pageSize(ids.size)
       .showFields("internalContentCode"))
 
-    Try {
-      IdsSearchQueries.makeBatches(ids)(ids => client.getUrl(queryForIds(ids))) match {
-        case Some(batches) =>
-          batches.map(queryForIds)
-
-        case None =>
-          throw new RuntimeException("Unable to construct url for ids search query (the constructed URL for a " +
-            s"single ID must be too long!): ${ids.mkString(", ")}")
-      }
-    }
+    Try(IdsSearchQueries.makeBatches(ids)(ids => client.getUrl(queryForIds(ids)))) match {
+        case Success(Some(batches)) =>
+          Response.Right(batches.map(queryForIds))
+        case _ =>
+          Response.Left(UrlConstructError("Unable to construct url for ids search query (the constructed URL for a " +
+            s"single ID must be too long!): ${ids.mkString(", ")}"))}
   }
 
   def getHydrateResponse(client: ContentApiClientLogic, searchQueries: Seq[SearchQuery])(implicit ec: ExecutionContext): Response[Seq[SearchResponse]] = {

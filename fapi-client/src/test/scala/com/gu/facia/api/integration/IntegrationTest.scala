@@ -174,6 +174,7 @@ class IntegrationTest extends FreeSpec with ShouldMatchers with ScalaFutures wit
       None,
       Nil,
       None,
+      Nil,
       Some(new DateTime(1)),
       Some("updatedBy"),
       Some("updatedBy@example.com"),
@@ -305,6 +306,74 @@ class IntegrationTest extends FreeSpec with ShouldMatchers with ScalaFutures wit
       })
     }
   }
+
+  "Treats" - {
+    def makeCollectionJsonWithTreats(treats: Trail*) = CollectionJson(
+      live = Nil,
+      draft = None,
+      treats = Option(treats.toList),
+      lastUpdated = new DateTime(1),
+      updatedBy = "test",
+      updatedEmail = "test@example.com",
+      displayName = Some("displayName"),
+      href = Some("href"),
+      previously = None)
+
+    val normalTrail = Trail("internal-code/content/445034105", 0, None)
+    val normalTrailTwo = Trail("internal-code/content/445529464", 0, None)
+    val collectionConfig = CollectionConfig.fromCollectionJson(CollectionConfigJson.withDefaults())
+
+    "should request normal item treats" in {
+      val collectionJson = makeCollectionJsonWithTreats(normalTrail, normalTrailTwo)
+      val collection = Collection.fromCollectionJsonConfigAndContent("id", Some(collectionJson), collectionConfig)
+      val faciaContent = FAPI.getTreatsForCollection(collection)
+
+      faciaContent.asFuture.futureValue.fold(
+          err => fail(s"expected 2 treat result, got $err", err.cause),
+          treatsContents => {
+            treatsContents.size should be(2)
+            treatsContents.head.asInstanceOf[CuratedContent].headline should be ("PM returns from holiday after video shows US reporter beheaded by Briton")
+            treatsContents.apply(1).asInstanceOf[CuratedContent].headline should be ("Inside the 29 August edition")
+          })
+    }
+
+    "should request dream snap treats" in {
+      val dreamSnapOne = makeLatestTrailFor("snap/1281727", "uk/culture")
+      val dreamSnapTwo = makeLatestTrailFor("snap/2372382", "technology")
+      val collectionJson = makeCollectionJsonWithTreats(dreamSnapOne, dreamSnapTwo)
+      val collection = Collection.fromCollectionJsonConfigAndContent("id", Some(collectionJson), collectionConfig)
+      val faciaContent = FAPI.getTreatsForCollection(collection, adjustItemQuery = itemQuery => itemQuery.showTags("all"))
+
+      faciaContent.asFuture.futureValue.fold(
+          err => fail(s"expected 2 treat result, got $err", err.cause),
+          treatsContents => {
+            treatsContents.size should be(2)
+            treatsContents.head.asInstanceOf[LatestSnap].latestContent.get.tags.exists(_.sectionId == Some("culture")) should be (true)
+            treatsContents.apply(1).asInstanceOf[LatestSnap].latestContent.get.tags.exists(_.sectionId == Some("technology")) should be (true)
+          })
+    }
+
+    "Should request a mix of both" in {
+      val dreamSnapOne = makeLatestTrailFor("snap/1281727", "uk/culture")
+      val dreamSnapTwo = makeLatestTrailFor("snap/2372382", "technology")
+      val collectionJson = makeCollectionJsonWithTreats(dreamSnapOne, normalTrail, dreamSnapTwo, normalTrailTwo)
+      val collection = Collection.fromCollectionJsonConfigAndContent("id", Some(collectionJson), collectionConfig)
+      val faciaContent = FAPI.getTreatsForCollection(collection, adjustItemQuery = itemQuery => itemQuery.showTags("all"))
+
+      faciaContent.asFuture.futureValue.fold(
+        err => fail(s"expected 2 treat result, got $err", err.cause),
+        treatsContents => {
+          treatsContents.size should be(4)
+          treatsContents.head.asInstanceOf[LatestSnap].latestContent.get.tags.exists(_.sectionId == Some("culture")) should be (true)
+          treatsContents.apply(1).asInstanceOf[CuratedContent].headline should be ("PM returns from holiday after video shows US reporter beheaded by Briton")
+          treatsContents.apply(2).asInstanceOf[LatestSnap].latestContent.get.tags.exists(_.sectionId == Some("technology")) should be (true)
+          treatsContents.apply(3).asInstanceOf[CuratedContent].headline should be ("Inside the 29 August edition")
+
+        })
+
+    }
+  }
+
 
   def fail(message: String, cause: Option[Throwable]): Nothing = {
     cause.map(fail(message, _)).getOrElse(fail(message))
