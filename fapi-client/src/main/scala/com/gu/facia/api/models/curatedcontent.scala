@@ -341,7 +341,9 @@ object LatestSnap {
     )
   }
 
-  def fromSupportingItemAndContent(supportingItem: SupportingItem, maybeContent: Option[Content]): LatestSnap =
+  def fromSupportingItemAndContent(supportingItem: SupportingItem, maybeContent: Option[Content]): LatestSnap = {
+    val resolvedMetaData: ResolvedMetaData =
+      maybeContent.fold(ResolvedMetaData.fromTrailMetaData(supportingItem.safeMeta))(ResolvedMetaData.fromContentAndTrailMetaData(_, supportingItem.safeMeta))
     LatestSnap(
       supportingItem.id,
       supportingItem.safeMeta.snapUri,
@@ -352,19 +354,20 @@ object LatestSnap {
       supportingItem.safeMeta.trailText,
       supportingItem.safeMeta.group.getOrElse("0"),
       ImageReplace.fromTrailMeta(supportingItem.safeMeta),
-      supportingItem.safeMeta.isBreaking.exists(identity),
-      supportingItem.safeMeta.isBoosted.exists(identity),
-      supportingItem.safeMeta.imageHide.exists(identity),
-      supportingItem.safeMeta.imageReplace.exists(identity),
-      supportingItem.safeMeta.showMainVideo.exists(identity),
-      supportingItem.safeMeta.showKickerTag.exists(identity),
+      resolvedMetaData.isBreaking,
+      resolvedMetaData.isBoosted,
+      resolvedMetaData.imageHide,
+      resolvedMetaData.imageReplace,
+      resolvedMetaData.showMainVideo,
+      resolvedMetaData.showKickerTag,
       supportingItem.safeMeta.byline,
-      supportingItem.safeMeta.showByline.exists(identity),
-      ItemKicker.fromTrailMetaData(supportingItem.safeMeta),
-      ImageCutout.fromTrailMeta(supportingItem.safeMeta),
-      supportingItem.safeMeta.showBoostedHeadline.exists(identity),
-      supportingItem.safeMeta.showQuotedHeadline.exists(identity)
+      resolvedMetaData.showByline,
+      ItemKicker.fromTrailMetaDataAndMaybeContent(supportingItem.safeMeta, maybeContent),
+      maybeContent.fold(ImageCutout.fromTrailMeta(supportingItem.safeMeta))(ImageCutout.fromContentAndTrailMeta(_, supportingItem.safeMeta)),
+      resolvedMetaData.showBoostedHeadline,
+      resolvedMetaData.showQuotedHeadline
     )
+  }
 }
 
 case class CuratedContent(
