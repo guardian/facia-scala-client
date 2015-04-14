@@ -116,6 +116,13 @@ object FaciaContent {
     latestSnap => latestSnap.image
   )
 
+  def imageHide(fc: FaciaContent): Boolean = fold(fc)(
+    curatedContent => curatedContent.imageHide,
+    supportingCuratedContent => supportingCuratedContent.imageHide,
+    linkSnap => false,
+    latestSnap => false
+  )
+
   def isBreaking(fc: FaciaContent): Boolean = fold(fc)(
     curatedContent => curatedContent.isBreaking,
     supportingCuratedContent => supportingCuratedContent.isBreaking,
@@ -270,6 +277,7 @@ case class LatestSnap(
   trailText: Option[String],
   group: String,
   image: Option[FaciaImage],
+  imageHide: Boolean,
   isBreaking: Boolean,
   isBoosted: Boolean,
   showMainVideo: Boolean,
@@ -292,6 +300,7 @@ object LatestSnap {
       trail.safeMeta.trailText,
       trail.safeMeta.group.getOrElse("0"),
       FaciaImage.getFaciaImage(maybeContent,  trail.safeMeta),
+      trail.safeMeta.imageHide.exists(identity),
       trail.safeMeta.isBreaking.exists(identity),
       trail.safeMeta.isBoosted.exists(identity),
       trail.safeMeta.showMainVideo.exists(identity),
@@ -314,6 +323,7 @@ object LatestSnap {
       supportingItem.safeMeta.trailText,
       supportingItem.safeMeta.group.getOrElse("0"),
       FaciaImage.getFaciaImage(maybeContent, supportingItem.safeMeta),
+      supportingItem.safeMeta.imageHide.exists(identity),
       supportingItem.safeMeta.isBreaking.exists(identity),
       supportingItem.safeMeta.isBoosted.exists(identity),
       supportingItem.safeMeta.showMainVideo.exists(identity),
@@ -334,6 +344,7 @@ case class CuratedContent(
   trailText: Option[String],
   group: String,
   image: Option[FaciaImage],
+  imageHide: Boolean,
   isBreaking: Boolean,
   isBoosted: Boolean,
   showMainVideo: Boolean,
@@ -351,6 +362,7 @@ case class SupportingCuratedContent(
   trailText: Option[String],
   group: String,
   image: Option[FaciaImage],
+  imageHide: Boolean,
   isBreaking: Boolean,
   isBoosted: Boolean,
   showMainVideo: Boolean,
@@ -377,6 +389,7 @@ object CuratedContent {
       trailMetaData.trailText.orElse(contentFields.get("trailText")),
       trailMetaData.group.getOrElse("0"),
       FaciaImage.getFaciaImage(Some(content), trailMetaData),
+      resolvedMetaData.imageHide,
       resolvedMetaData.isBreaking,
       resolvedMetaData.isBoosted,
       resolvedMetaData.showMainVideo,
@@ -399,6 +412,7 @@ object CuratedContent {
       trailMetaData.trailText.orElse(contentFields.get("trailText")),
       trailMetaData.group.getOrElse("0"),
       FaciaImage.getFaciaImage(Some(content), trailMetaData),
+      resolvedMetaData.imageHide,
       resolvedMetaData.isBreaking,
       resolvedMetaData.isBoosted,
       resolvedMetaData.showMainVideo,
@@ -423,6 +437,7 @@ object SupportingCuratedContent {
       trailMetaData.trailText.orElse(contentFields.get("trailText")),
       trailMetaData.group.getOrElse("0"),
       FaciaImage.getFaciaImage(Some(content), trailMetaData),
+      resolvedMetaData.imageHide,
       resolvedMetaData.isBreaking,
       resolvedMetaData.isBoosted,
       resolvedMetaData.showMainVideo,
