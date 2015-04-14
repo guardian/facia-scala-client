@@ -1,10 +1,6 @@
 package com.gu.facia.api.models
 
-import _root_.common.Urls
-import _root_.models.Image
-import _root_.models.Landscape
-import _root_.models.Portrait
-import com.gu.contentapi.client.model.{Asset, ContentType, Content}
+import com.gu.contentapi.client.model.Content
 import com.gu.facia.api.utils.{ResolvedMetaData, ItemKicker}
 import com.gu.facia.client.models.{SupportingItem, MetaDataCommonFields, Trail, TrailMetaData}
 
