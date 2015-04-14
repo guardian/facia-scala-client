@@ -33,7 +33,7 @@ object ResolvedMetaData {
     imageCutoutReplace = false,
     showQuotedHeadline = false)
 
-  private[utils] def fromTrailMetaData(trailMeta: MetaDataCommonFields): ResolvedMetaData =
+  def fromTrailMetaData(trailMeta: MetaDataCommonFields): ResolvedMetaData =
     ResolvedMetaData(
       isBreaking = trailMeta.isBreaking.exists(identity),
       isBoosted = trailMeta.isBoosted.exists(identity),
