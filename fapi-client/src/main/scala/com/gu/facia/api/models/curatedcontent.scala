@@ -25,10 +25,12 @@ object FaciaImage {
 
   def fromContentTags(content: Content, trailMeta: MetaDataCommonFields): Option[FaciaImage] = {
     val contributorTags = content.tags.filter(_.`type` == "contributor")
-    for {
-      tag <- contributorTags.find(_.bylineLargeImageUrl.isDefined)
-      path <- tag.bylineLargeImageUrl
-    } yield FaciaImage("cutout", path, None, None)
+    if (contributorTags.length == 1)
+      for {
+        tag <- contributorTags.find(_.bylineLargeImageUrl.isDefined)
+        path <- tag.bylineLargeImageUrl
+      } yield FaciaImage("cutout", path, None, None)
+    else None
   }
 
   def imageCutout(trailMeta: MetaDataCommonFields): Option[FaciaImage] = for {
