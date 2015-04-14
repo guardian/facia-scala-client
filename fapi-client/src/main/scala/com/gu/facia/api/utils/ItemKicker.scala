@@ -41,7 +41,10 @@ object ItemKicker {
     }
   }
 
-  def fromTrailMetaData(trailMeta: MetaDataCommonFields): Option[ItemKicker] = fromContentAndTrail(None, trailMeta, ResolvedMetaData.Default, None)
+  def fromTrailMetaData(trailMeta: MetaDataCommonFields): Option[ItemKicker] = fromContentAndTrail(None, trailMeta, ResolvedMetaData.fromTrailMetaData(trailMeta), None)
+
+  def fromTrailMetaDataAndMaybeContent(trailMeta: MetaDataCommonFields, maybeContent: Option[Content]): Option[ItemKicker] =
+    fromContentAndTrail(maybeContent, trailMeta, ResolvedMetaData.fromTrailMetaData(trailMeta), None)
 
   def fromContentAndTrail(content: Content, trailMeta: MetaDataCommonFields, metaDataDefaults: ResolvedMetaData, config: Option[CollectionConfig]): Option[ItemKicker]
     = fromContentAndTrail(Option(content), trailMeta, metaDataDefaults, config)
