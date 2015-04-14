@@ -313,7 +313,9 @@ case class LatestSnap(
   showQuotedHeadline: Boolean) extends Snap
 
 object LatestSnap {
-  def fromTrailAndContent(trail: Trail, maybeContent: Option[Content]): LatestSnap =
+  def fromTrailAndContent(trail: Trail, maybeContent: Option[Content]): LatestSnap = {
+    val resolvedMetaData: ResolvedMetaData =
+      maybeContent.fold(ResolvedMetaData.fromTrailMetaData(trail.safeMeta))(ResolvedMetaData.fromContentAndTrailMetaData(_, trail.safeMeta))
     LatestSnap(
       trail.id,
       trail.safeMeta.snapUri,
@@ -324,19 +326,20 @@ object LatestSnap {
       trail.safeMeta.trailText,
       trail.safeMeta.group.getOrElse("0"),
       ImageReplace.fromTrailMeta(trail.safeMeta),
-      trail.safeMeta.isBreaking.exists(identity),
-      trail.safeMeta.isBoosted.exists(identity),
-      trail.safeMeta.imageHide.exists(identity),
-      trail.safeMeta.imageReplace.exists(identity),
-      trail.safeMeta.showMainVideo.exists(identity),
-      trail.safeMeta.showKickerTag.exists(identity),
+      resolvedMetaData.isBreaking,
+      resolvedMetaData.isBoosted,
+      resolvedMetaData.imageHide,
+      resolvedMetaData.imageReplace,
+      resolvedMetaData.showMainVideo,
+      resolvedMetaData.showKickerTag,
       trail.safeMeta.byline,
-      trail.safeMeta.showByline.exists(identity),
-      ItemKicker.fromTrailMetaData(trail.safeMeta),
-      ImageCutout.fromTrailMeta(trail.safeMeta),
-      trail.safeMeta.showBoostedHeadline.exists(identity),
-      trail.safeMeta.showQuotedHeadline.exists(identity)
+      resolvedMetaData.showByline,
+      ItemKicker.fromTrailMetaDataAndMaybeContent(trail.safeMeta, maybeContent),
+      maybeContent.fold(ImageCutout.fromTrailMeta(trail.safeMeta))(ImageCutout.fromContentAndTrailMeta(_, trail.safeMeta)),
+      resolvedMetaData.showBoostedHeadline,
+      resolvedMetaData.showQuotedHeadline
     )
+  }
 
   def fromSupportingItemAndContent(supportingItem: SupportingItem, maybeContent: Option[Content]): LatestSnap =
     LatestSnap(
