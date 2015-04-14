@@ -1,6 +1,10 @@
 package com.gu.facia.api.models
 
-import com.gu.contentapi.client.model.Content
+import _root_.common.Urls
+import _root_.models.Image
+import _root_.models.Landscape
+import _root_.models.Portrait
+import com.gu.contentapi.client.model.{Asset, ContentType, Content}
 import com.gu.facia.api.utils.{ResolvedMetaData, ItemKicker}
 import com.gu.facia.client.models.{SupportingItem, MetaDataCommonFields, Trail, TrailMetaData}
 
@@ -19,7 +23,7 @@ object FaciaImage {
         val resolvedMetadata = ResolvedMetaData.fromContentAndTrailMetaData(content, trailMeta)
         if (resolvedMetadata.imageCutoutReplace) imageCutout(trailMeta) orElse fromContentTags(content, trailMeta)
         else None
-      } orElse imageReplace(trailMeta) orElse defaultImage(trailMeta)
+      } orElse imageReplace(trailMeta)
     }
   }
 
@@ -31,30 +35,18 @@ object FaciaImage {
     } yield FaciaImage("cutout", path, None, None)
   }
 
-  def imageCutout(trailMeta: MetaDataCommonFields): Option[FaciaImage] = {
-    for {
-      src <- trailMeta.imageCutoutSrc
-      width <- trailMeta.imageCutoutSrcWidth
-      height <- trailMeta.imageCutoutSrcHeight
-    } yield FaciaImage("cutout", src, Option(width), Option(height))
-  }
+  def imageCutout(trailMeta: MetaDataCommonFields): Option[FaciaImage] = for {
+    src <- trailMeta.imageCutoutSrc
+    width <- trailMeta.imageCutoutSrcWidth
+    height <- trailMeta.imageCutoutSrcHeight
+  } yield FaciaImage("cutout", src, Option(width), Option(height))
 
-  def imageReplace(trailMeta: MetaDataCommonFields): Option[FaciaImage] = {
-    for {
-      imageReplace <- trailMeta.imageReplace.filter(identity)
-      src <- trailMeta.imageSrc
-      width <- trailMeta.imageSrcWidth
-      height <- trailMeta.imageSrcHeight
-    } yield FaciaImage("replace", src, Option(width), Option(height))
-  }
-
-  def defaultImage(trailMeta: MetaDataCommonFields): Option[FaciaImage] = {
-    for {
-      src <- trailMeta.imageSrc
-      width <- trailMeta.imageSrcWidth
-      height <- trailMeta.imageSrcHeight
-    } yield FaciaImage("default", src, Option(width), Option(height))
-  }
+  def imageReplace(trailMeta: MetaDataCommonFields): Option[FaciaImage] = for {
+    src <- trailMeta.imageSrc
+    width <- trailMeta.imageSrcWidth
+    height <- trailMeta.imageSrcHeight
+    imageType = {if (trailMeta.imageReplace.exists(identity)) "replace" else "default"}
+  } yield FaciaImage(imageType, src, Option(width), Option(height))
 }
 
 sealed trait FaciaContent
@@ -323,7 +315,7 @@ object LatestSnap {
       supportingItem.safeMeta.href,
       supportingItem.safeMeta.trailText,
       supportingItem.safeMeta.group.getOrElse("0"),
-      FaciaImage.getFaciaImage(None, supportingItem.safeMeta),
+      FaciaImage.getFaciaImage(maybeContent, supportingItem.safeMeta),
       supportingItem.safeMeta.isBreaking.exists(identity),
       supportingItem.safeMeta.isBoosted.exists(identity),
       supportingItem.safeMeta.showMainVideo.exists(identity),
