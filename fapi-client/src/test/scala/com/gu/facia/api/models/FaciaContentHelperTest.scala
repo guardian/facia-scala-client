@@ -1,10 +1,12 @@
 package com.gu.facia.api.models
 
 import com.gu.contentapi.client.model.Content
-import com.gu.facia.api.utils.FaciaContentUtils
+import com.gu.facia.api.utils.{ContentProperties, Default, FaciaContentUtils}
 import org.scalatest.{FreeSpec, Matchers}
 
 class FaciaContentHelperTest extends FreeSpec with Matchers {
+
+  val emptyContentProperties = ContentProperties(isBreaking = false, isBoosted = false, imageHide = false, showBoostedHeadline = false, showMainVideo = false, showKickerTag = false, showByline = false, showQuotedHeadline = false)
 
   "should return 'Missing Headline' when the headline is None in a Snaps" in {
     val snap = LatestSnap("myId", None, None, None, None, None, None, "myGroup", None, false, false, false, false, false, false, None, false, None, None, false, false)
@@ -13,13 +15,13 @@ class FaciaContentHelperTest extends FreeSpec with Matchers {
 
   "should return the headline for a CuratedContent" in {
     val content = Content("myId", None, None, None, "myTitle", "myUrl", "myApi", Some(Map("byline" -> "myByline")), Nil, None, Nil, None)
-    val cc = CuratedContent(content, Nil, "The headline", None, None, "myGroup", None, false, false, false, false, false, None, false, None, None, false, false, None, None, None)
+    val cc = CuratedContent(content, Nil, Default, "The headline", None, None, "myGroup", None, emptyContentProperties, None, None, None, None, None, None)
     FaciaContentUtils.headlineOption(cc) should equal(Some("The headline"))
   }
 
   "should return 'Missing href' when the href is None in a CuratedContent" in {
     val content = Content("myId", None, None, None, "myTitle", "myUrl", "myApi", Some(Map("byline" -> "myByline")), Nil, None, Nil, None)
-    val cc = CuratedContent(content, Nil, "The headline", None, None, "myGroup", None, false, false, false, false, false, None, false, None, None, false, false, None, None, None)
+    val cc = CuratedContent(content, Nil, Default, "The headline", None, None, "myGroup", None, emptyContentProperties, None, None, None, None, None, None)
     FaciaContentUtils.href(cc) should equal(None)
   }
 

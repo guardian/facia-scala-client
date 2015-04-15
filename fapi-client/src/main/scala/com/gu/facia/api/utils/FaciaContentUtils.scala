@@ -183,31 +183,31 @@ object FaciaContentUtils {
   def shortUrlPath(fc: FaciaContent) = maybeShortUrl(fc).map(_.replace("http://gu.com", ""))
   def discussionId(fc: FaciaContent) = shortUrlPath(fc)
   def  isBoosted(fc: FaciaContent): Boolean = fold(fc)(
-    curatedContent => curatedContent.isBoosted,
+    curatedContent => curatedContent.properties.isBoosted,
     supportingCuratedContent => supportingCuratedContent.isBoosted,
     linkSnap => linkSnap.isBoosted,
     latestSnap => latestSnap.isBoosted
   )
   def showBoostedHeadline(fc: FaciaContent): Boolean = fold(fc)(
-    curatedContent => curatedContent.showBoostedHeadline,
+    curatedContent => curatedContent.properties.showBoostedHeadline,
     supportingCuratedContent => supportingCuratedContent.showBoostedHeadline,
     linkSnap => linkSnap.showBoostedHeadline,
     latestSnap => latestSnap.showBoostedHeadline
   )
   def showQuotedHeadline(fc: FaciaContent): Boolean = fold(fc)(
-    curatedContent => curatedContent.showQuotedHeadline,
+    curatedContent => curatedContent.properties.showQuotedHeadline,
     supportingCuratedContent => supportingCuratedContent.showQuotedHeadline,
     linkSnap => linkSnap.showQuotedHeadline,
     latestSnap => latestSnap.showQuotedHeadline
   )
   def showMainVideo(fc: FaciaContent): Boolean = fold(fc)(
-    curatedContent => curatedContent.showMainVideo,
+    curatedContent => curatedContent.properties.showMainVideo,
     supportingCuratedContent => supportingCuratedContent.showMainVideo,
     linkSnap => linkSnap.showMainVideo,
     latestSnap => latestSnap.showMainVideo
   )
   def imageHide(fc: FaciaContent): Boolean = fold(fc)(
-    curatedContent => curatedContent.imageHide,
+    curatedContent => curatedContent.properties.imageHide,
     supportingCuratedContent => supportingCuratedContent.imageHide,
     linkSnap => linkSnap.imageHide,
     latestSnap => latestSnap.imageHide
@@ -233,7 +233,7 @@ object FaciaContentUtils {
     latestSnap => latestSnap.latestContent.flatMap(_.safeFields.get("byline")))
 
   def  showByline(fc: FaciaContent): Boolean = fold(fc)(
-    curatedContent => curatedContent.showByLine,
+    curatedContent => curatedContent.properties.showByline,
     supportingCuratedContent => supportingCuratedContent.showByLine,
     linkSnap => linkSnap.showByLine,
     latestSnap => latestSnap.showByLine)

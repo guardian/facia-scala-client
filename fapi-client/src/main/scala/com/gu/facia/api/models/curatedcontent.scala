@@ -1,7 +1,7 @@
 package com.gu.facia.api.models
 
 import com.gu.contentapi.client.model.{Tag, Content}
-import com.gu.facia.api.utils.{ContentApiUtils, ResolvedMetaData, ItemKicker}
+import com.gu.facia.api.utils._
 import com.gu.facia.client.models.{SupportingItem, MetaDataCommonFields, Trail, TrailMetaData}
 
 case class ImageReplace(imageSrc: String, imageSrcWidth: String, imageSrcHeight: String)
@@ -231,22 +231,16 @@ object LatestSnap {
 case class CuratedContent(
   content: Content,
   supportingContent: List[FaciaContent],
+  cardStyle: CardStyle,
   headline: String,
   href: Option[String],
   trailText: Option[String],
   group: String,
   imageReplace: Option[ImageReplace],
-  isBreaking: Boolean,
-  isBoosted: Boolean,
-  imageHide: Boolean,
-  showMainVideo: Boolean,
-  showKickerTag: Boolean,
+  properties: ContentProperties,
   byline: Option[String],
-  showByLine: Boolean,
   kicker: Option[ItemKicker],
   imageCutout: Option[ImageCutout],
-  showBoostedHeadline: Boolean,
-  showQuotedHeadline: Boolean,
   embedType: Option[String],
   embedUri: Option[String],
   embedCss: Option[String]) extends FaciaContent
@@ -281,22 +275,16 @@ object CuratedContent {
     CuratedContent(
       content,
       supportingContent,
+      CardStyle(content, trailMetaData),
       trailMetaData.headline.orElse(content.safeFields.get("headline")).getOrElse(content.webTitle),
       trailMetaData.href.orElse(contentFields.get("href")),
       trailMetaData.trailText.orElse(contentFields.get("trailText")),
       trailMetaData.group.getOrElse("0"),
       ImageReplace.fromTrailMeta(trailMetaData),
-      resolvedMetaData.isBreaking,
-      resolvedMetaData.isBoosted,
-      resolvedMetaData.imageHide,
-      resolvedMetaData.showMainVideo,
-      resolvedMetaData.showKickerTag,
+      ContentProperties.fromResolvedMetaData(resolvedMetaData),
       trailMetaData.byline.orElse(contentFields.get("byline")),
-      trailMetaData.showByline.getOrElse(false),
       ItemKicker.fromContentAndTrail(content, trailMetaData, resolvedMetaData, Some(collectionConfig)),
       ImageCutout.fromContentAndTrailMeta(content, trailMetaData),
-      resolvedMetaData.showBoostedHeadline,
-      resolvedMetaData.showQuotedHeadline,
       embedType = trailMetaData.snapType,
       embedUri = trailMetaData.snapUri,
       embedCss = trailMetaData.snapCss)}
@@ -308,22 +296,16 @@ object CuratedContent {
     CuratedContent(
       content,
       supportingContent = Nil,
+      cardStyle = CardStyle(content, trailMetaData),
       trailMetaData.headline.orElse(content.safeFields.get("headline")).getOrElse(content.webTitle),
       trailMetaData.href.orElse(contentFields.get("href")),
       trailMetaData.trailText.orElse(contentFields.get("trailText")),
       trailMetaData.group.getOrElse("0"),
       ImageReplace.fromTrailMeta(trailMetaData),
-      resolvedMetaData.isBreaking,
-      resolvedMetaData.isBoosted,
-      resolvedMetaData.imageHide,
-      resolvedMetaData.showMainVideo,
-      resolvedMetaData.showKickerTag,
+      ContentProperties.fromResolvedMetaData(resolvedMetaData),
       trailMetaData.byline.orElse(contentFields.get("byline")),
-      resolvedMetaData.showByline,
       ItemKicker.fromContentAndTrail(content, trailMetaData, resolvedMetaData, Some(collectionConfig)),
       ImageCutout.fromContentAndTrailMeta(content, trailMetaData),
-      resolvedMetaData.showBoostedHeadline,
-      resolvedMetaData.showQuotedHeadline,
       embedType = trailMetaData.snapType,
       embedUri = trailMetaData.snapUri,
       embedCss = trailMetaData.snapCss)}
