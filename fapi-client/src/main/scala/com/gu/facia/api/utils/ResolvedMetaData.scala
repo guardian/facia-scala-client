@@ -90,3 +90,26 @@ case class ResolvedMetaData(
     showByline: Boolean,
     imageCutoutReplace: Boolean,
     showQuotedHeadline: Boolean)
+
+object ContentProperties {
+  def fromResolvedMetaData(resolvedMetaData: ResolvedMetaData): ContentProperties =
+    ContentProperties(
+      isBreaking = resolvedMetaData.isBreaking,
+      isBoosted = resolvedMetaData.isBoosted,
+      imageHide = resolvedMetaData.imageHide,
+      showBoostedHeadline = resolvedMetaData.showBoostedHeadline,
+      showMainVideo = resolvedMetaData.showMainVideo,
+      showKickerTag = resolvedMetaData.showKickerTag,
+      showByline = resolvedMetaData.showByline,
+      showQuotedHeadline = resolvedMetaData.showQuotedHeadline)
+}
+
+case class ContentProperties(
+    isBreaking: Boolean,
+    isBoosted: Boolean,
+    imageHide: Boolean,
+    showBoostedHeadline: Boolean,
+    showMainVideo: Boolean,
+    showKickerTag: Boolean,
+    showByline: Boolean,
+    showQuotedHeadline: Boolean)
