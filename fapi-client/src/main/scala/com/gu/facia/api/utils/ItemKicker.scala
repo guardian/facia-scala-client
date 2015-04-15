@@ -151,6 +151,14 @@ object Tags {
   val Editorial = "tone/editorials"
   val Cartoon = "type/cartoon"
   val Letters = "tone/letters"
+  val Audio = "type/audio"
+
+  val Article = "type/article"
+  val Gallery = "type/gallery"
+  val Video = "type/video"
+  val Poll = "type/poll"
+  val Interactive = "type/interactive"
+  val Sudoku = "type/sudoku"
 
   object VisualTone {
     val Live = "live"
