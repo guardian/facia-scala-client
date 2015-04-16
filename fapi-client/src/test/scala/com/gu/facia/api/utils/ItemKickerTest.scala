@@ -23,7 +23,7 @@ class ItemKickerTest extends FreeSpec with ShouldMatchers with MockitoSugar with
       when(collectionConfig.showSections).thenReturn(true)
       when(content.tags).thenReturn(Nil)
 
-      ItemKicker.fromContentAndTrail(content, trailMetadata, metaDataDefaultsWithShowKickerCustom, Some(collectionConfig)).value shouldBe a [FreeHtmlKicker]
+      ItemKicker.fromContentAndTrail(Option(content), trailMetadata, metaDataDefaultsWithShowKickerCustom, Some(collectionConfig)).value shouldBe a [FreeHtmlKicker]
     }
 
     "should prefer item level section kicker to collection level tag kicker" in {
@@ -34,7 +34,7 @@ class ItemKickerTest extends FreeSpec with ShouldMatchers with MockitoSugar with
       when(content.sectionName).thenReturn(Some("Section"))
       when(content.tags).thenReturn(Nil)
 
-      ItemKicker.fromContentAndTrail(content, trailMetadata, metaDataDefaultsWithShowKickerSection, Some(collectionConfig)).value shouldBe a [SectionKicker]
+      ItemKicker.fromContentAndTrail(Option(content), trailMetadata, metaDataDefaultsWithShowKickerSection, Some(collectionConfig)).value shouldBe a [SectionKicker]
     }
   }
 
@@ -103,7 +103,7 @@ class ItemKickerTest extends FreeSpec with ShouldMatchers with MockitoSugar with
       when(content.tags).thenReturn(Nil)
       when(content.safeFields).thenReturn(Map.empty[String, String])
 
-      ItemKicker.fromContentAndTrail(content, trailMetadata, metaDataDefaultsWithShowKickerSection, None) should be (None)
+      ItemKicker.fromContentAndTrail(Option(content), trailMetadata, metaDataDefaultsWithShowKickerSection, None) should be (None)
     }
 
   }
