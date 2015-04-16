@@ -58,8 +58,7 @@ object ResolvedMetaData {
       case _ => Default
     }
 
-  def fromContentAndTrailMetaData(content: Content, trailMeta: MetaDataCommonFields): ResolvedMetaData = {
-    val cardStyle = CardStyle(content, trailMeta)
+  def fromContentAndTrailMetaData(content: Content, trailMeta: MetaDataCommonFields, cardStyle: CardStyle): ResolvedMetaData = {
     val metaDataFromContent = fromContent(content, cardStyle)
     metaDataFromContent.copy(
       isBreaking = trailMeta.isBreaking.getOrElse(metaDataFromContent.isBreaking),

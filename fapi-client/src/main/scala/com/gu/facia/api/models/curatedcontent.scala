@@ -171,8 +171,9 @@ case class LatestSnap(
 
 object LatestSnap {
   def fromTrailAndContent(trail: Trail, maybeContent: Option[Content]): LatestSnap = {
+    val cardStyle: CardStyle = maybeContent.map(CardStyle.apply(_, trail.safeMeta)).getOrElse(Default)
     val resolvedMetaData: ResolvedMetaData =
-      maybeContent.fold(ResolvedMetaData.fromTrailMetaData(trail.safeMeta))(ResolvedMetaData.fromContentAndTrailMetaData(_, trail.safeMeta))
+      maybeContent.fold(ResolvedMetaData.fromTrailMetaData(trail.safeMeta))(ResolvedMetaData.fromContentAndTrailMetaData(_, trail.safeMeta, cardStyle))
     LatestSnap(
       trail.id,
       trail.safeMeta.snapUri,
@@ -199,8 +200,9 @@ object LatestSnap {
   }
 
   def fromSupportingItemAndContent(supportingItem: SupportingItem, maybeContent: Option[Content]): LatestSnap = {
+    val cardStyle: CardStyle = maybeContent.map(CardStyle.apply(_, supportingItem.safeMeta)).getOrElse(Default)
     val resolvedMetaData: ResolvedMetaData =
-      maybeContent.fold(ResolvedMetaData.fromTrailMetaData(supportingItem.safeMeta))(ResolvedMetaData.fromContentAndTrailMetaData(_, supportingItem.safeMeta))
+      maybeContent.fold(ResolvedMetaData.fromTrailMetaData(supportingItem.safeMeta))(ResolvedMetaData.fromContentAndTrailMetaData(_, supportingItem.safeMeta, cardStyle))
     LatestSnap(
       supportingItem.id,
       supportingItem.safeMeta.snapUri,
@@ -269,7 +271,8 @@ object CuratedContent {
                                         supportingContent: List[FaciaContent],
                                         collectionConfig: CollectionConfig) = {
     val contentFields: Map[String, String] = content.safeFields
-    val resolvedMetaData = ResolvedMetaData.fromContentAndTrailMetaData(content, trailMetaData)
+    val cardStyle = CardStyle(content, trailMetaData)
+    val resolvedMetaData = ResolvedMetaData.fromContentAndTrailMetaData(content, trailMetaData, cardStyle)
 
     CuratedContent(
       content,
@@ -291,7 +294,7 @@ object CuratedContent {
   def fromTrailAndContent(content: Content, trailMetaData: MetaDataCommonFields, collectionConfig: CollectionConfig): CuratedContent = {
     val contentFields: Map[String, String] = content.safeFields
     val cardStyle = CardStyle(content, trailMetaData)
-    val resolvedMetaData = ResolvedMetaData.fromContentAndTrailMetaData(content, trailMetaData)
+    val resolvedMetaData = ResolvedMetaData.fromContentAndTrailMetaData(content, trailMetaData, cardStyle)
 
     CuratedContent(
       content,
@@ -314,7 +317,8 @@ object CuratedContent {
 object SupportingCuratedContent {
   def fromTrailAndContent(content: Content, trailMetaData: MetaDataCommonFields, collectionConfig: CollectionConfig): SupportingCuratedContent = {
     val contentFields: Map[String, String] = content.safeFields
-    val resolvedMetaData = ResolvedMetaData.fromContentAndTrailMetaData(content, trailMetaData)
+    val cardStyle = CardStyle(content, trailMetaData)
+    val resolvedMetaData = ResolvedMetaData.fromContentAndTrailMetaData(content, trailMetaData, cardStyle)
 
     SupportingCuratedContent(
       content,
