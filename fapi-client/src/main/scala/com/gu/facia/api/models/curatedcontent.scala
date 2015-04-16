@@ -46,8 +46,7 @@ object ImageCutout {
       None
   }
 
-  def fromContentAndTrailMeta(content: Content, trailMeta: MetaDataCommonFields): Option[ImageCutout] = {
-    val resolvedMetaData = ResolvedMetaData.fromContentAndTrailMetaData(content, trailMeta)
+  def fromContentAndTrailMeta(content: Content, trailMeta: MetaDataCommonFields, resolvedMetaData: ResolvedMetaData): Option[ImageCutout] = {
     if (resolvedMetaData.imageCutoutReplace)
       fromTrailMeta(trailMeta)
         .orElse(fromContentTags(content, trailMeta))
@@ -192,8 +191,8 @@ object LatestSnap {
       resolvedMetaData.showKickerTag,
       trail.safeMeta.byline,
       resolvedMetaData.showByline,
-      ItemKicker.fromTrailMetaDataAndMaybeContent(trail.safeMeta, maybeContent),
-      maybeContent.fold(ImageCutout.fromTrailMeta(trail.safeMeta))(ImageCutout.fromContentAndTrailMeta(_, trail.safeMeta)),
+      ItemKicker.fromMaybeContentTrailMetaAndResolvedMetaData(maybeContent, trail.safeMeta, resolvedMetaData),
+      maybeContent.fold(ImageCutout.fromTrailMeta(trail.safeMeta))(ImageCutout.fromContentAndTrailMeta(_, trail.safeMeta, resolvedMetaData)),
       resolvedMetaData.showBoostedHeadline,
       resolvedMetaData.showQuotedHeadline
     )
@@ -220,8 +219,8 @@ object LatestSnap {
       resolvedMetaData.showKickerTag,
       supportingItem.safeMeta.byline,
       resolvedMetaData.showByline,
-      ItemKicker.fromTrailMetaDataAndMaybeContent(supportingItem.safeMeta, maybeContent),
-      maybeContent.fold(ImageCutout.fromTrailMeta(supportingItem.safeMeta))(ImageCutout.fromContentAndTrailMeta(_, supportingItem.safeMeta)),
+      ItemKicker.fromMaybeContentTrailMetaAndResolvedMetaData(maybeContent, supportingItem.safeMeta, resolvedMetaData),
+      maybeContent.fold(ImageCutout.fromTrailMeta(supportingItem.safeMeta))(ImageCutout.fromContentAndTrailMeta(_, supportingItem.safeMeta, resolvedMetaData)),
       resolvedMetaData.showBoostedHeadline,
       resolvedMetaData.showQuotedHeadline
     )
@@ -283,20 +282,21 @@ object CuratedContent {
       ImageReplace.fromTrailMeta(trailMetaData),
       ContentProperties.fromResolvedMetaData(resolvedMetaData),
       trailMetaData.byline.orElse(contentFields.get("byline")),
-      ItemKicker.fromContentAndTrail(content, trailMetaData, resolvedMetaData, Some(collectionConfig)),
-      ImageCutout.fromContentAndTrailMeta(content, trailMetaData),
+      ItemKicker.fromContentAndTrail(Option(content), trailMetaData, resolvedMetaData, Some(collectionConfig)),
+      ImageCutout.fromContentAndTrailMeta(content, trailMetaData, resolvedMetaData),
       embedType = trailMetaData.snapType,
       embedUri = trailMetaData.snapUri,
       embedCss = trailMetaData.snapCss)}
 
   def fromTrailAndContent(content: Content, trailMetaData: MetaDataCommonFields, collectionConfig: CollectionConfig): CuratedContent = {
     val contentFields: Map[String, String] = content.safeFields
+    val cardStyle = CardStyle(content, trailMetaData)
     val resolvedMetaData = ResolvedMetaData.fromContentAndTrailMetaData(content, trailMetaData)
 
     CuratedContent(
       content,
       supportingContent = Nil,
-      cardStyle = CardStyle(content, trailMetaData),
+      cardStyle = cardStyle,
       trailMetaData.headline.orElse(content.safeFields.get("headline")).getOrElse(content.webTitle),
       trailMetaData.href.orElse(contentFields.get("href")),
       trailMetaData.trailText.orElse(contentFields.get("trailText")),
@@ -304,8 +304,8 @@ object CuratedContent {
       ImageReplace.fromTrailMeta(trailMetaData),
       ContentProperties.fromResolvedMetaData(resolvedMetaData),
       trailMetaData.byline.orElse(contentFields.get("byline")),
-      ItemKicker.fromContentAndTrail(content, trailMetaData, resolvedMetaData, Some(collectionConfig)),
-      ImageCutout.fromContentAndTrailMeta(content, trailMetaData),
+      ItemKicker.fromContentAndTrail(Option(content), trailMetaData, resolvedMetaData, Some(collectionConfig)),
+      ImageCutout.fromContentAndTrailMeta(content, trailMetaData, resolvedMetaData),
       embedType = trailMetaData.snapType,
       embedUri = trailMetaData.snapUri,
       embedCss = trailMetaData.snapCss)}
@@ -330,8 +330,8 @@ object SupportingCuratedContent {
       resolvedMetaData.showKickerTag,
       trailMetaData.byline.orElse(contentFields.get("byline")),
       resolvedMetaData.showByline,
-      ItemKicker.fromContentAndTrail(content, trailMetaData, resolvedMetaData, None),
-      ImageCutout.fromContentAndTrailMeta(content, trailMetaData),
+      ItemKicker.fromContentAndTrail(Option(content), trailMetaData, resolvedMetaData, None),
+      ImageCutout.fromContentAndTrailMeta(content, trailMetaData, resolvedMetaData),
       resolvedMetaData.showBoostedHeadline,
       resolvedMetaData.showQuotedHeadline)}
 }
