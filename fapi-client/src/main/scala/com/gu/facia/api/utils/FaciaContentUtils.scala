@@ -295,4 +295,10 @@ object FaciaContentUtils {
     linkSnap => Nil,
     latestSnap => latestSnap.latestContent.flatMap(_.elements).getOrElse(Nil))
 
+  def cardStyle(fc: FaciaContent): CardStyle = fold(fc)(
+    curatedContent => curatedContent.cardStyle,
+    supportingCuratedContent => Default,
+    linkSnap => Default,
+    latestSnap => Default)
+
 }
