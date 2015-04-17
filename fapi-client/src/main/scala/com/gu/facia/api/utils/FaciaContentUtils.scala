@@ -184,33 +184,33 @@ object FaciaContentUtils {
   def discussionId(fc: FaciaContent) = shortUrlPath(fc)
   def  isBoosted(fc: FaciaContent): Boolean = fold(fc)(
     curatedContent => curatedContent.properties.isBoosted,
-    supportingCuratedContent => supportingCuratedContent.isBoosted,
+    supportingCuratedContent => supportingCuratedContent.properties.isBoosted,
     linkSnap => linkSnap.isBoosted,
-    latestSnap => latestSnap.isBoosted
+    latestSnap => latestSnap.properties.isBoosted
   )
   def showBoostedHeadline(fc: FaciaContent): Boolean = fold(fc)(
     curatedContent => curatedContent.properties.showBoostedHeadline,
-    supportingCuratedContent => supportingCuratedContent.showBoostedHeadline,
+    supportingCuratedContent => supportingCuratedContent.properties.showBoostedHeadline,
     linkSnap => linkSnap.showBoostedHeadline,
-    latestSnap => latestSnap.showBoostedHeadline
+    latestSnap => latestSnap.properties.showBoostedHeadline
   )
   def showQuotedHeadline(fc: FaciaContent): Boolean = fold(fc)(
     curatedContent => curatedContent.properties.showQuotedHeadline,
-    supportingCuratedContent => supportingCuratedContent.showQuotedHeadline,
+    supportingCuratedContent => supportingCuratedContent.properties.showQuotedHeadline,
     linkSnap => linkSnap.showQuotedHeadline,
-    latestSnap => latestSnap.showQuotedHeadline
+    latestSnap => latestSnap.properties.showQuotedHeadline
   )
   def showMainVideo(fc: FaciaContent): Boolean = fold(fc)(
     curatedContent => curatedContent.properties.showMainVideo,
-    supportingCuratedContent => supportingCuratedContent.showMainVideo,
+    supportingCuratedContent => supportingCuratedContent.properties.showMainVideo,
     linkSnap => linkSnap.showMainVideo,
-    latestSnap => latestSnap.showMainVideo
+    latestSnap => latestSnap.properties.showMainVideo
   )
   def imageHide(fc: FaciaContent): Boolean = fold(fc)(
     curatedContent => curatedContent.properties.imageHide,
-    supportingCuratedContent => supportingCuratedContent.imageHide,
+    supportingCuratedContent => supportingCuratedContent.properties.imageHide,
     linkSnap => linkSnap.imageHide,
-    latestSnap => latestSnap.imageHide
+    latestSnap => latestSnap.properties.imageHide
   )
   def sectionName(fc: FaciaContent): Option[String] = fold(fc)(
     curatedContent => curatedContent.content.sectionName,
@@ -234,9 +234,9 @@ object FaciaContentUtils {
 
   def  showByline(fc: FaciaContent): Boolean = fold(fc)(
     curatedContent => curatedContent.properties.showByline,
-    supportingCuratedContent => supportingCuratedContent.showByLine,
+    supportingCuratedContent => supportingCuratedContent.properties.showByline,
     linkSnap => linkSnap.showByLine,
-    latestSnap => latestSnap.showByLine)
+    latestSnap => latestSnap.properties.showByline)
 
   private def tagsOfType(fc: FaciaContent)(tagType: String): Seq[Tag] = tags(fc).filter(_.`type` == tagType)
   def keywords(fc: FaciaContent): Seq[Tag] = tagsOfType(fc)("keyword")

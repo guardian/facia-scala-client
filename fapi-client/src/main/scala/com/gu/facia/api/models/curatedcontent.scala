@@ -148,6 +148,7 @@ case class LinkSnap(
 
 case class LatestSnap(
   id: String,
+  cardStyle: CardStyle,
   snapUri: Option[String],
   snapCss: Option[String],
   latestContent: Option[Content],
@@ -156,18 +157,10 @@ case class LatestSnap(
   trailText: Option[String],
   group: String,
   image: Option[ImageReplace],
-  isBreaking: Boolean,
-  isBoosted: Boolean,
-  imageHide: Boolean,
-  imageReplace: Boolean,
-  showMainVideo: Boolean,
-  showKickerTag: Boolean,
+  properties: ContentProperties,
   byline: Option[String],
-  showByLine: Boolean,
   kicker: Option[ItemKicker],
-  imageCutout: Option[ImageCutout],
-  showBoostedHeadline: Boolean,
-  showQuotedHeadline: Boolean) extends Snap
+  imageCutout: Option[ImageCutout]) extends Snap
 
 object LatestSnap {
   def fromTrailAndContent(trail: Trail, maybeContent: Option[Content]): LatestSnap = {
@@ -176,6 +169,7 @@ object LatestSnap {
       maybeContent.fold(ResolvedMetaData.fromTrailMetaData(trail.safeMeta))(ResolvedMetaData.fromContentAndTrailMetaData(_, trail.safeMeta, cardStyle))
     LatestSnap(
       trail.id,
+      cardStyle,
       trail.safeMeta.snapUri,
       trail.safeMeta.snapCss,
       maybeContent,
@@ -184,18 +178,10 @@ object LatestSnap {
       trail.safeMeta.trailText,
       trail.safeMeta.group.getOrElse("0"),
       ImageReplace.fromTrailMeta(trail.safeMeta),
-      resolvedMetaData.isBreaking,
-      resolvedMetaData.isBoosted,
-      resolvedMetaData.imageHide,
-      resolvedMetaData.imageReplace,
-      resolvedMetaData.showMainVideo,
-      resolvedMetaData.showKickerTag,
+      ContentProperties.fromResolvedMetaData(resolvedMetaData),
       trail.safeMeta.byline,
-      resolvedMetaData.showByline,
       ItemKicker.fromMaybeContentTrailMetaAndResolvedMetaData(maybeContent, trail.safeMeta, resolvedMetaData),
-      maybeContent.fold(ImageCutout.fromTrailMeta(trail.safeMeta))(ImageCutout.fromContentAndTrailMeta(_, trail.safeMeta, resolvedMetaData)),
-      resolvedMetaData.showBoostedHeadline,
-      resolvedMetaData.showQuotedHeadline
+      maybeContent.fold(ImageCutout.fromTrailMeta(trail.safeMeta))(ImageCutout.fromContentAndTrailMeta(_, trail.safeMeta, resolvedMetaData))
     )
   }
 
@@ -205,6 +191,7 @@ object LatestSnap {
       maybeContent.fold(ResolvedMetaData.fromTrailMetaData(supportingItem.safeMeta))(ResolvedMetaData.fromContentAndTrailMetaData(_, supportingItem.safeMeta, cardStyle))
     LatestSnap(
       supportingItem.id,
+      cardStyle,
       supportingItem.safeMeta.snapUri,
       supportingItem.safeMeta.snapCss,
       maybeContent,
@@ -213,18 +200,10 @@ object LatestSnap {
       supportingItem.safeMeta.trailText,
       supportingItem.safeMeta.group.getOrElse("0"),
       ImageReplace.fromTrailMeta(supportingItem.safeMeta),
-      resolvedMetaData.isBreaking,
-      resolvedMetaData.isBoosted,
-      resolvedMetaData.imageHide,
-      resolvedMetaData.imageReplace,
-      resolvedMetaData.showMainVideo,
-      resolvedMetaData.showKickerTag,
+      ContentProperties.fromResolvedMetaData(resolvedMetaData),
       supportingItem.safeMeta.byline,
-      resolvedMetaData.showByline,
       ItemKicker.fromMaybeContentTrailMetaAndResolvedMetaData(maybeContent, supportingItem.safeMeta, resolvedMetaData),
-      maybeContent.fold(ImageCutout.fromTrailMeta(supportingItem.safeMeta))(ImageCutout.fromContentAndTrailMeta(_, supportingItem.safeMeta, resolvedMetaData)),
-      resolvedMetaData.showBoostedHeadline,
-      resolvedMetaData.showQuotedHeadline
+      maybeContent.fold(ImageCutout.fromTrailMeta(supportingItem.safeMeta))(ImageCutout.fromContentAndTrailMeta(_, supportingItem.safeMeta, resolvedMetaData))
     )
   }
 }
@@ -248,22 +227,16 @@ case class CuratedContent(
 
 case class SupportingCuratedContent(
   content: Content,
+  cardStyle: CardStyle,
   headline: String,
   href: Option[String],
   trailText: Option[String],
   group: String,
   imageReplace: Option[ImageReplace],
-  isBreaking: Boolean,
-  isBoosted: Boolean,
-  imageHide: Boolean,
-  showMainVideo: Boolean,
-  showKickerTag: Boolean,
+  properties: ContentProperties,
   byline: Option[String],
-  showByLine: Boolean,
   kicker: Option[ItemKicker],
-  imageCutout: Option[ImageCutout],
-  showBoostedHeadline: Boolean,
-  showQuotedHeadline: Boolean) extends FaciaContent
+  imageCutout: Option[ImageCutout]) extends FaciaContent
 
 object CuratedContent {
 
@@ -322,20 +295,14 @@ object SupportingCuratedContent {
 
     SupportingCuratedContent(
       content,
+      cardStyle,
       trailMetaData.headline.orElse(content.safeFields.get("headline")).getOrElse(content.webTitle),
       trailMetaData.href.orElse(contentFields.get("href")),
       trailMetaData.trailText.orElse(contentFields.get("trailText")),
       trailMetaData.group.getOrElse("0"),
       ImageReplace.fromTrailMeta(trailMetaData),
-      resolvedMetaData.isBreaking,
-      resolvedMetaData.isBoosted,
-      resolvedMetaData.imageHide,
-      resolvedMetaData.showMainVideo,
-      resolvedMetaData.showKickerTag,
+      ContentProperties.fromResolvedMetaData(resolvedMetaData),
       trailMetaData.byline.orElse(contentFields.get("byline")),
-      resolvedMetaData.showByline,
       ItemKicker.fromContentAndTrail(Option(content), trailMetaData, resolvedMetaData, None),
-      ImageCutout.fromContentAndTrailMeta(content, trailMetaData, resolvedMetaData),
-      resolvedMetaData.showBoostedHeadline,
-      resolvedMetaData.showQuotedHeadline)}
+      ImageCutout.fromContentAndTrailMeta(content, trailMetaData, resolvedMetaData))}
 }

@@ -9,7 +9,7 @@ class FaciaContentHelperTest extends FreeSpec with Matchers {
   val emptyContentProperties = ContentProperties(isBreaking = false, isBoosted = false, imageHide = false, showBoostedHeadline = false, showMainVideo = false, showKickerTag = false, showByline = false, showQuotedHeadline = false)
 
   "should return 'Missing Headline' when the headline is None in a Snaps" in {
-    val snap = LatestSnap("myId", None, None, None, None, None, None, "myGroup", None, false, false, false, false, false, false, None, false, None, None, false, false)
+    val snap = LatestSnap("myId", Default, None, None, None, None, None, None, "myGroup", None, emptyContentProperties, None, None, None)
     FaciaContentUtils.headlineOption(snap) should equal(None)
   }
 
@@ -26,13 +26,13 @@ class FaciaContentHelperTest extends FreeSpec with Matchers {
   }
 
   "should return a href for a LatestSnap" in {
-    val snap = LatestSnap("myId", None, None, None, None, Some("The href"), None, "myGroup", None, false, false, false, false, false, false, None, false, None, None, false, false)
+    val snap = LatestSnap("myId", Default, None, None, None, None, Some("The href"), None, "myGroup", None, emptyContentProperties, None, None, None)
     FaciaContentUtils.href(snap) should equal(None)
   }
 
   "should return a byline for a LatestSnap" in {
     val content = Content("myId", None, None, None, "myTitle", "myUrl", "myApi", Some(Map("byline" -> "myByline")), Nil, None, Nil, None)
-    val snap = LatestSnap("myId", None, None, Some(content), None, Some("The href"), None, "myGroup", None, false, false, false, false, false, false, None, false, None, None, false, false)
+    val snap = LatestSnap("myId", Default, None, None, Some(content), None, Some("The href"), None, "myGroup", None, emptyContentProperties, None, None, None)
     FaciaContentUtils.byline(snap) should equal(Some("myByline"))
   }
 

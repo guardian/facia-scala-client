@@ -1,7 +1,7 @@
 package com.gu.facia.api.models
 
 import com.gu.contentapi.client.model.Content
-import com.gu.facia.api.utils.{ItemKicker, FreeHtmlKicker}
+import com.gu.facia.api.utils._
 import com.gu.facia.client.models.{CollectionConfigJson, CollectionJson, Trail, TrailMetaData}
 import org.joda.time.DateTime
 import org.mockito.Mockito._
@@ -56,6 +56,7 @@ class CollectionTest extends FreeSpec with ShouldMatchers with MockitoSugar with
     showQuotedHeadline: Boolean = false): LatestSnap =
     LatestSnap(
       id,
+      Default,
       snapUri,
       snapCss,
       latestContent,
@@ -64,18 +65,10 @@ class CollectionTest extends FreeSpec with ShouldMatchers with MockitoSugar with
       trailText,
       group,
       image,
-      isBreaking,
-      isBoosted,
-      imageHide,
-      imageReplace,
-      showMainVideo,
-      showKickerTag,
+      ContentProperties.fromResolvedMetaData(ResolvedMetaData.Default),
       byline,
-      showByLine,
       kicker,
-      imageCutout,
-      showBoostedHeadline,
-      showQuotedHeadline)
+      imageCutout)
 
   def makeLinkSnap(
     id: String = "id",
