@@ -277,7 +277,7 @@ object CuratedContent {
     CuratedContent(
       content,
       supportingContent,
-      CardStyle(content, trailMetaData),
+      cardStyle,
       trailMetaData.headline.orElse(content.safeFields.get("headline")).getOrElse(content.webTitle),
       trailMetaData.href.orElse(contentFields.get("href")),
       trailMetaData.trailText.orElse(contentFields.get("trailText")),
