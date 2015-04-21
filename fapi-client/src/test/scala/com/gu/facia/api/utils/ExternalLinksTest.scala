@@ -19,7 +19,7 @@ class ExternalLinksTest extends FlatSpec with Matchers with Inspectors {
 
   it should "be false for absolute URLs to any Guardian origin domains" in {
     forAll(for {
-      domain <- ExternalLinks.GuardianDomains
+      domain <- ExternalLinks.guardianDomains
       path <- testPaths
     } yield domain + path) { id =>
       external(id) should be(false)
@@ -29,7 +29,7 @@ class ExternalLinksTest extends FlatSpec with Matchers with Inspectors {
   it should "be false for absolute URLs to any Guardian subdomains" in {
     forAll(for {
       subdomain <- Seq("profile", "witness")
-      domain <- ExternalLinks.GuardianDomains
+      domain <- ExternalLinks.guardianDomains
       path <- testPaths
     } yield s"$subdomain.$domain$path") { id =>
       external(id) should be(false)
