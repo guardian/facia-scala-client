@@ -31,8 +31,6 @@ object CardStyle {
       } else {
         DeadBlog
       }
-    } else if (content.isPodcast) {
-      Podcast
     } else if (content.isMedia) {
       Media
     } else if (content.isEditorial) {
@@ -79,10 +77,6 @@ case object Editorial extends CardStyle {
 
 case object Comment extends CardStyle {
   val toneString = CardStyle.comment
-}
-
-case object Podcast extends CardStyle {
-  val toneString = CardStyle.podcast
 }
 
 case object Media extends CardStyle {
