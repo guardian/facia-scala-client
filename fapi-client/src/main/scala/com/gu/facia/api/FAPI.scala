@@ -64,7 +64,7 @@ object FAPI {
     }
   }
 
-  private def getContentForCollection(collection: Collection, adjustSearchQuery: AdjustSearchQuery = identity)
+  private def getLiveContentForCollection(collection: Collection, adjustSearchQuery: AdjustSearchQuery = identity)
                                    (implicit capiClient: GuardianContentClient, ec: ExecutionContext): Response[Set[Content]] = {
     val itemIdsForRequest = Collection.liveIdsWithoutSnaps(collection)
     val supportingIdsForRequest = Collection.liveSupportingIdsWithoutSnaps(collection)
@@ -76,10 +76,30 @@ object FAPI {
       yield content
   }
 
-  private def getLatestSnapContentForCollection(collection: Collection, adjustItemQuery: AdjustItemQuery)
+  private def getDraftContentForCollection(collection: Collection, adjustSearchQuery: AdjustSearchQuery = identity)
+                                   (implicit capiClient: GuardianContentClient, ec: ExecutionContext): Response[Set[Content]] = {
+    val itemIdsForRequest = Collection.draftIdsWithoutSnaps(collection)
+    val supportingIdsForRequest = Collection.draftSupportingIdsWithoutSnaps(collection)
+    val allItemIdsForRequest = itemIdsForRequest ::: supportingIdsForRequest
+    for {
+      hydrateQueries <- ContentApi.buildHydrateQueries(capiClient, allItemIdsForRequest, adjustSearchQuery)
+      hydrateResponses <- ContentApi.getHydrateResponse(capiClient, hydrateQueries)
+      content = ContentApi.itemsFromSearchResponses(hydrateResponses)}
+      yield content
+  }
+
+  private def getLiveLatestSnapContentForCollection(collection: Collection, adjustItemQuery: AdjustItemQuery)
                       (implicit capiClient: GuardianContentClient, ec: ExecutionContext) = {
-    val latestSnapsRequest: LatestSnapsRequest = Collection.latestSnapsRequestFor(collection)
+    val latestSnapsRequest: LatestSnapsRequest = Collection.liveLatestSnapsRequestFor(collection)
     val latestSupportingSnaps: LatestSnapsRequest = Collection.liveSupportingSnaps(collection)
+    val allSnaps = latestSnapsRequest.join(latestSupportingSnaps)
+    for(snapContent <- ContentApi.latestContentFromLatestSnaps(capiClient, allSnaps, adjustItemQuery))
+      yield snapContent}
+
+  private def getDraftLatestSnapContentForCollection(collection: Collection, adjustItemQuery: AdjustItemQuery)
+                      (implicit capiClient: GuardianContentClient, ec: ExecutionContext) = {
+    val latestSnapsRequest: LatestSnapsRequest = Collection.draftLatestSnapsRequestFor(collection)
+    val latestSupportingSnaps: LatestSnapsRequest = Collection.draftSupportingSnaps(collection)
     val allSnaps = latestSnapsRequest.join(latestSupportingSnaps)
     for(snapContent <- ContentApi.latestContentFromLatestSnaps(capiClient, allSnaps, adjustItemQuery))
       yield snapContent}
@@ -98,29 +118,29 @@ object FAPI {
   def liveCollectionContentWithoutSnaps(collection: Collection, adjustSearchQuery: AdjustSearchQuery = identity)
                                 (implicit capiClient: GuardianContentClient, ec: ExecutionContext): Response[List[FaciaContent]] = {
     val collectionWithoutSnaps = Collection.withoutSnaps(collection)
-    for(setOfContent <- getContentForCollection(collection, adjustSearchQuery))
+    for(setOfContent <- getLiveContentForCollection(collection, adjustSearchQuery))
       yield Collection.liveContent(collectionWithoutSnaps, setOfContent)
   }
 
   def liveCollectionContentWithSnaps(collection: Collection, adjustSearchQuery: AdjustSearchQuery = identity, adjustSnapItemQuery: AdjustItemQuery = identity)
                                    (implicit capiClient: GuardianContentClient, ec: ExecutionContext): Response[List[FaciaContent]] = {
     for {
-      setOfContent <- getContentForCollection(collection, adjustSearchQuery)
-      snapContent <- getLatestSnapContentForCollection(collection, adjustSnapItemQuery)}
+      setOfContent <- getLiveContentForCollection(collection, adjustSearchQuery)
+      snapContent <- getLiveLatestSnapContentForCollection(collection, adjustSnapItemQuery)}
     yield Collection.liveContent(collection, setOfContent, snapContent)}
 
   def draftCollectionContentWithoutSnaps(collection: Collection, adjustSearchQuery: AdjustSearchQuery = identity)
                                 (implicit capiClient: GuardianContentClient, ec: ExecutionContext): Response[List[FaciaContent]] = {
     val collectionWithoutSnaps = Collection.withoutSnaps(collection)
-    for(setOfContent <- getContentForCollection(collection, adjustSearchQuery))
+    for(setOfContent <- getDraftContentForCollection(collection, adjustSearchQuery))
       yield Collection.draftContent(collectionWithoutSnaps, setOfContent)
   }
 
   def draftCollectionContentWithSnaps(collection: Collection, adjustSearchQuery: AdjustSearchQuery = identity, adjustSnapItemQuery: AdjustItemQuery = identity)
                                    (implicit capiClient: GuardianContentClient, ec: ExecutionContext): Response[List[FaciaContent]] = {
     for {
-      setOfContent <- getContentForCollection(collection, adjustSearchQuery)
-      snapContent <- getLatestSnapContentForCollection(collection, adjustSnapItemQuery)}
+      setOfContent <- getDraftContentForCollection(collection, adjustSearchQuery)
+      snapContent <- getDraftLatestSnapContentForCollection(collection, adjustSnapItemQuery)}
     yield Collection.draftContent(collection, setOfContent, snapContent)}
 
   /**

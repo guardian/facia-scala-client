@@ -374,6 +374,92 @@ class IntegrationTest extends FreeSpec with ShouldMatchers with ScalaFutures wit
     }
   }
 
+  "Draft" - {
+    def makeCollectionJsonWithTreats(draft: List[Trail], live: Trail*) = CollectionJson(
+      live = live.toList,
+      draft = Option(draft),
+      treats = None,
+      lastUpdated = new DateTime(1),
+      updatedBy = "test",
+      updatedEmail = "test@example.com",
+      displayName = Some("displayName"),
+      href = Some("href"),
+      previously = None)
+
+    val normalTrail = Trail("internal-code/content/445034105", 0, None)
+    val normalTrailTwo = Trail("internal-code/content/445529464", 0, None)
+    val collectionConfig = CollectionConfig.fromCollectionJson(CollectionConfigJson.withDefaults())
+
+    "should request draft items" in {
+      val collectionJson = makeCollectionJsonWithTreats(List(normalTrail, normalTrailTwo))
+      val collection = Collection.fromCollectionJsonConfigAndContent("id", Some(collectionJson), collectionConfig)
+      val faciaContent = FAPI.draftCollectionContentWithoutSnaps(collection)
+
+      faciaContent.asFuture.futureValue.fold(
+        err => fail(s"expected 2 treat result, got $err", err.cause),
+        contents => {
+          contents.size should be(2)
+          contents.head.asInstanceOf[CuratedContent].headline should be ("PM returns from holiday after video shows US reporter beheaded by Briton")
+          contents.apply(1).asInstanceOf[CuratedContent].headline should be ("Inside the 29 August edition")
+        })
+    }
+
+    "should return nothing" in {
+      val collectionJson = makeCollectionJsonWithTreats(List(normalTrail, normalTrailTwo))
+      val collection = Collection.fromCollectionJsonConfigAndContent("id", Some(collectionJson), collectionConfig)
+      val faciaContent = FAPI.liveCollectionContentWithoutSnaps(collection)
+
+      faciaContent.asFuture.futureValue.fold(
+        err => fail(s"expected 2 treat result, got $err", err.cause),
+        contents => {
+          contents.size should be(0)
+        })
+    }
+
+    "should request dreamsnaps in draft" in {
+      val dreamSnapOne = makeLatestTrailFor("snap/1281727", "uk/culture")
+      val dreamSnapTwo = makeLatestTrailFor("snap/2372382", "technology")
+      val collectionJson = makeCollectionJsonWithTreats(List(dreamSnapOne, dreamSnapTwo))
+      val collection = Collection.fromCollectionJsonConfigAndContent("id", Some(collectionJson), collectionConfig)
+      val faciaContent = FAPI.draftCollectionContentWithSnaps(collection, adjustSnapItemQuery = itemQuery => itemQuery.showTags("all"))
+
+      faciaContent.asFuture.futureValue.fold(
+        err => fail(s"expected 2 results, got $err", err.cause),
+        contents => {
+          contents.size should be(2)
+          contents.head.asInstanceOf[LatestSnap].latestContent.get.tags.exists(_.sectionId == Some("culture")) should be (true)
+          contents.apply(1).asInstanceOf[LatestSnap].latestContent.get.tags.exists(_.sectionId == Some("technology")) should be (true)
+        })
+    }
+
+    "Should request a mix of both" in {
+      val normalTrailThree = Trail("internal-code/content/454695023", 0, None)
+      val dreamSnapOne = makeLatestTrailFor("snap/1281727", "uk/culture")
+      val dreamSnapTwo = makeLatestTrailFor("snap/2372382", "technology")
+      val collectionJson = makeCollectionJsonWithTreats(List(dreamSnapOne, normalTrail, dreamSnapTwo, normalTrailTwo), normalTrailThree)
+      val collection = Collection.fromCollectionJsonConfigAndContent("id", Some(collectionJson), collectionConfig)
+      val faciaContent = FAPI.draftCollectionContentWithSnaps(collection, adjustSnapItemQuery = itemQuery => itemQuery.showTags("all"))
+      val faciaContentLive = FAPI.liveCollectionContentWithoutSnaps(collection, adjustSearchQuery = searchQuery => searchQuery.showTags("all"))
+
+      faciaContent.asFuture.futureValue.fold(
+        err => fail(s"expected 2 treat result, got $err", err.cause),
+        contents => {
+          contents.size should be(4)
+          contents.head.asInstanceOf[LatestSnap].latestContent.get.tags.exists(_.sectionId == Some("culture")) should be (true)
+          contents.apply(1).asInstanceOf[CuratedContent].headline should be ("PM returns from holiday after video shows US reporter beheaded by Briton")
+          contents.apply(2).asInstanceOf[LatestSnap].latestContent.get.tags.exists(_.sectionId == Some("technology")) should be (true)
+          contents.apply(3).asInstanceOf[CuratedContent].headline should be ("Inside the 29 August edition")
+        })
+
+      faciaContentLive.asFuture.futureValue.fold(
+        err => fail(s"expected 2 treat result, got $err", err.cause),
+        contents => {
+          contents.size should be(1)
+          contents.head.asInstanceOf[CuratedContent].headline should be ("Pope Francis greeted by huge crowds in the Philippines – video")
+        })
+    }
+  }
+
 
   def fail(message: String, cause: Option[Throwable]): Nothing = {
     cause.map(fail(message, _)).getOrElse(fail(message))
