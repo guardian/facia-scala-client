@@ -5,14 +5,23 @@ import com.gu.facia.api.utils.ContentApiUtils._
 import com.gu.facia.client.models.MetaDataCommonFields
 
 object CardStyle {
-
-  def isExternalLink(content: Content, metaDataFields: MetaDataCommonFields): Boolean = (for {
-    snapType <- metaDataFields.snapType
-    href <- metaDataFields.href.orElse(content.safeFields.get("href"))
-  } yield snapType == "link" && ExternalLinks.external(href)) getOrElse false
+  val specialReport = "special-report"
+  val live = "live"
+  val dead = "dead"
+  val feature = "feature"
+  val editorial = "editorial"
+  val comment = "comment"
+  val podcast = "podcast"
+  val media = "media"
+  val analysis = "analysis"
+  val review = "review"
+  val letters = "letters"
+  val external = "external"
+  val news = "news"
 
   def apply(content: Content, trailMetaData: MetaDataCommonFields): CardStyle = {
-    if (isExternalLink(content, trailMetaData)) {
+    val href = trailMetaData.href.orElse(content.safeFields.get("href"))
+    if (trailMetaData.snapType == Some("link") && href.exists(ExternalLinks.external)) {
       ExternalLink
     } else if (content.tags.exists(_.id == "news/series/hsbc-files")) {
       SpecialReport
@@ -49,53 +58,53 @@ sealed trait CardStyle {
 }
 
 case object SpecialReport extends CardStyle {
-  override def toneString: String = "special-report"
+  val toneString = CardStyle.specialReport
 }
 
 case object LiveBlog extends CardStyle {
-  override def toneString: String = "live"
+  val toneString = CardStyle.live
 }
 
 case object DeadBlog extends CardStyle {
-  override def toneString: String = "dead"
+  val toneString = CardStyle.dead
 }
 
 case object Feature extends CardStyle {
-  override def toneString: String = "feature"
+  val toneString = CardStyle.feature
 }
 
 case object Editorial extends CardStyle {
-  override def toneString: String = "editorial"
+  val toneString = CardStyle.editorial
 }
 
 case object Comment extends CardStyle {
-  override def toneString: String = "comment"
+  val toneString = CardStyle.comment
 }
 
 case object Podcast extends CardStyle {
-  override def toneString: String = "podcast"
+  val toneString = CardStyle.podcast
 }
 
 case object Media extends CardStyle {
-  override def toneString: String = "media"
+  val toneString = CardStyle.media
 }
 
 case object Analysis extends CardStyle {
-  override def toneString: String = "analysis"
+  val toneString = CardStyle.analysis
 }
 
 case object Review extends CardStyle {
-  override def toneString: String = "review"
+  val toneString = CardStyle.review
 }
 
 case object Letters extends CardStyle {
-  override def toneString: String = "letters"
+  val toneString = CardStyle.letters
 }
 
 case object ExternalLink extends CardStyle {
-  override def toneString: String = "external"
+  val toneString = CardStyle.external
 }
 
 case object Default extends CardStyle {
-  override def toneString: String = "news"
+  val toneString = CardStyle.news
 }
