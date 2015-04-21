@@ -66,54 +66,28 @@ object Collection {
     from(collection).flatMap(resolveTrail)
   }
 
+  /* Live Methods */
   def liveContent(collection: Collection,
-                  content: Set[Content],
-                  snapContent: Map[String, Option[Content]] = Map.empty): List[FaciaContent] =
+    content: Set[Content],
+    snapContent: Map[String, Option[Content]] = Map.empty): List[FaciaContent] =
     contentFrom(collection, content, snapContent, collection => collection.live)
-
-  def treatContent(collection: Collection,
-                  content: Set[Content],
-                  snapContent: Map[String, Option[Content]] = Map.empty): List[FaciaContent] =
-    contentFrom(collection, content, snapContent, collection => collection.treats)
-
-  def draftContent(collection: Collection,
-                  content: Set[Content],
-                  snapContent: Map[String, Option[Content]] = Map.empty): List[FaciaContent] =
-    contentFrom(collection, content, snapContent, collection => collection.draft.getOrElse(Nil))
 
   def liveIdsWithoutSnaps(collection: Collection): List[String] =
     collection.live.filterNot(_.isSnap).map(_.id)
 
-  def draftIdsWithoutSnaps(collection: Collection): List[String] =
-    collection.draft.map(_.filterNot(_.isSnap).map(_.id)).getOrElse(Nil)
-
   private def allLiveSupportingItems(collection: Collection): List[SupportingItem] =
     collection.live.flatMap(_.meta).flatMap(_.supporting).flatten
-
-  private def allDraftSupportingItems(collection: Collection): List[SupportingItem] =
-    collection.draft.map(_.flatMap(_.meta).flatMap(_.supporting).flatten).getOrElse(Nil)
 
   def liveSupportingIdsWithoutSnaps(collection: Collection): List[String] =
     allLiveSupportingItems(collection).filterNot(_.isSnap).map(_.id)
 
-  def draftSupportingIdsWithoutSnaps(collection: Collection): List[String] =
-    allDraftSupportingItems(collection).filterNot(_.isSnap).map(_.id)
-
   def liveSupportingSnaps(collection: Collection): LatestSnapsRequest =
     LatestSnapsRequest(
       allLiveSupportingItems(collection)
-      .filter(_.isSnap)
-      .filter(_.safeMeta.snapType == Some("latest"))
-      .flatMap(snap => snap.meta.flatMap(_.snapUri).map(uri => snap.id ->uri))
-      .toMap)
-
-  def draftSupportingSnaps(collection: Collection): LatestSnapsRequest =
-    LatestSnapsRequest(
-      allDraftSupportingItems(collection)
-      .filter(_.isSnap)
-      .filter(_.safeMeta.snapType == Some("latest"))
-      .flatMap(snap => snap.meta.flatMap(_.snapUri).map(uri => snap.id ->uri))
-      .toMap)
+        .filter(_.isSnap)
+        .filter(_.safeMeta.snapType == Some("latest"))
+        .flatMap(snap => snap.meta.flatMap(_.snapUri).map(uri => snap.id ->uri))
+        .toMap)
 
   def liveLatestSnapsRequestFor(collection: Collection): LatestSnapsRequest =
     LatestSnapsRequest(
@@ -123,6 +97,29 @@ object Collection {
       .flatMap(snap => snap.safeMeta.snapUri.map(uri => snap.id -> uri))
       .toMap)
 
+  /* Draft Methods */
+  def draftContent(collection: Collection,
+    content: Set[Content],
+    snapContent: Map[String, Option[Content]] = Map.empty): List[FaciaContent] =
+    contentFrom(collection, content, snapContent, collection => collection.draft.getOrElse(Nil))
+
+  def draftIdsWithoutSnaps(collection: Collection): List[String] =
+    collection.draft.map(_.filterNot(_.isSnap).map(_.id)).getOrElse(Nil)
+
+  private def allDraftSupportingItems(collection: Collection): List[SupportingItem] =
+    collection.draft.map(_.flatMap(_.meta).flatMap(_.supporting).flatten).getOrElse(Nil)
+
+  def draftSupportingIdsWithoutSnaps(collection: Collection): List[String] =
+    allDraftSupportingItems(collection).filterNot(_.isSnap).map(_.id)
+
+  def draftSupportingSnaps(collection: Collection): LatestSnapsRequest =
+    LatestSnapsRequest(
+      allDraftSupportingItems(collection)
+        .filter(_.isSnap)
+        .filter(_.safeMeta.snapType == Some("latest"))
+        .flatMap(snap => snap.meta.flatMap(_.snapUri).map(uri => snap.id ->uri))
+        .toMap)
+
   def draftLatestSnapsRequestFor(collection: Collection): LatestSnapsRequest =
     LatestSnapsRequest(
       collection.draft.map(
@@ -130,6 +127,12 @@ object Collection {
       .filter(_.safeMeta.snapType == Some("latest"))
       .flatMap(snap => snap.safeMeta.snapUri.map(uri => snap.id -> uri))
       .toMap).getOrElse(Map.empty))
+
+  /* Treats */
+  def treatContent(collection: Collection,
+    content: Set[Content],
+    snapContent: Map[String, Option[Content]] = Map.empty): List[FaciaContent] =
+    contentFrom(collection, content, snapContent, collection => collection.treats)
 
   def treatsRequestFor(collection: Collection): (List[String], LatestSnapsRequest) = {
     val latestSnapsRequest =
