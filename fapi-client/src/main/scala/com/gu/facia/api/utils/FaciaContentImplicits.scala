@@ -78,11 +78,11 @@ object FaciaContentImplicits {
 
     def maybeSection: Option[String] = FaciaContentUtils.maybeSection(fc)
 
-    def section(fc: FaciaContent): String = FaciaContentUtils.section(fc)
+    def section: String = FaciaContentUtils.section(fc)
 
-    def byline(fc: FaciaContent): Option[String] = FaciaContentUtils.byline(fc)
+    def byline: Option[String] = FaciaContentUtils.byline(fc)
 
-    def showByline(fc: FaciaContent): Boolean = FaciaContentUtils.showByline(fc)
+    def showByline: Boolean = FaciaContentUtils.showByline(fc)
 
     def keywords: Seq[Tag] = FaciaContentUtils.keywords(fc)
     def nonKeywordTags: Seq[Tag] = FaciaContentUtils.nonKeywordTags(fc)
@@ -112,8 +112,11 @@ object FaciaContentImplicits {
 
     def linkText = FaciaContentUtils.linkText(fc)
 
-    def imageReplace(fc: FaciaContent): Option[ImageReplace] = FaciaContentUtils.imageReplace(fc)
+    def imageReplace: Option[ImageReplace] = FaciaContentUtils.imageReplace(fc)
 
-    def elements(fc: FaciaContent): List[Element] = FaciaContentUtils.elements(fc)
+    def elements: List[Element] = FaciaContentUtils.elements(fc)
+    def cardStyle: CardStyle = FaciaContentUtils.cardStyle(fc)
+
+    def isClosedForComments = FaciaContentUtils.isClosedForComments(fc)
   }
 }
