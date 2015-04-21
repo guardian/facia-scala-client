@@ -47,14 +47,14 @@ class ImageCutoutTest extends FreeSpec with Matchers {
       val height = Option("height")
 
       val trailMetaTrue = trailMetaDataWithImageCutout(true, Option(src), width, height)
-      val imageCutoutTrue = ImageCutout.fromContentAndTrailMeta(emptyContent, trailMetaTrue, ResolvedMetaData.Default)
+      val imageCutoutTrue = ImageCutout.fromContentAndTrailMeta(emptyContent, trailMetaTrue, ResolvedMetaData.fromTrailMetaData(trailMetaTrue))
       imageCutoutTrue.isDefined should be (true)
       imageCutoutTrue.get.imageCutoutSrc should be (src)
       imageCutoutTrue.get.imageCutoutSrcWidth should be (width)
       imageCutoutTrue.get.imageCutoutSrcHeight should be (height)
 
       val trailMetaFalse = trailMetaDataWithImageCutout(false, Option(src), width, height)
-      val imageCutoutFalse = ImageCutout.fromContentAndTrailMeta(emptyContent, trailMetaFalse, ResolvedMetaData.Default)
+      val imageCutoutFalse = ImageCutout.fromContentAndTrailMeta(emptyContent, trailMetaFalse, ResolvedMetaData.fromTrailMetaData(trailMetaFalse))
       imageCutoutFalse should be (None)
     }
 
@@ -70,14 +70,14 @@ class ImageCutoutTest extends FreeSpec with Matchers {
 
     "should return an ImageCutout from content tags" in {
       val trailMeta = trailMetaDataWithImageCutout(true, None, None, None)
-      val imageCutout = ImageCutout.fromContentAndTrailMeta(contentWithContributor, trailMeta, ResolvedMetaData.Default)
+      val imageCutout = ImageCutout.fromContentAndTrailMeta(contentWithContributor, trailMeta, ResolvedMetaData.fromTrailMetaData(trailMeta))
       imageCutout.isDefined should be (true)
       imageCutout should be (Some(ImageCutout(bylineImageUrl, None, None)))
     }
 
     "should not return an ImageCutout from content tags if imageCutoutReplace is false" in {
       val trailMeta = trailMetaDataWithImageCutout(false, None, None, None)
-      val imageCutout = ImageCutout.fromContentAndTrailMeta(contentWithContributor, trailMeta, ResolvedMetaData.Default)
+      val imageCutout = ImageCutout.fromContentAndTrailMeta(contentWithContributor, trailMeta, ResolvedMetaData.fromTrailMetaData(trailMeta))
       imageCutout should be (None)
     }
   }

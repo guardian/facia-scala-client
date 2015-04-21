@@ -45,7 +45,7 @@ class ResolvedMetaDataTest extends FreeSpec with Matchers {
     }
 
     "Content with type comment should showByline, showQuotedHeadline and imageCutoutReplace" in {
-      val resolvedMetaData = ResolvedMetaData.fromContent(contentWithComment, Default)
+      val resolvedMetaData = ResolvedMetaData.fromContent(contentWithComment, Comment)
       resolvedMetaData should have (
         'showByline (true),
         'showQuotedHeadline (true),
@@ -121,7 +121,7 @@ class ResolvedMetaDataTest extends FreeSpec with Matchers {
     }
 
     "should resolve correct for comment when trailMetaData is not set" in {
-      val resolvedComment = ResolvedMetaData.fromContentAndTrailMetaData(contentWithComment, emptyTrailMetaData, Default)
+      val resolvedComment = ResolvedMetaData.fromContentAndTrailMetaData(contentWithComment, emptyTrailMetaData, Comment)
       resolvedComment should have (
         'showByline (true),
         'showQuotedHeadline (true),
