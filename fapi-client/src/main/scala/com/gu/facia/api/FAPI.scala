@@ -95,19 +95,33 @@ object FAPI {
     yield Collection.treatContent(collection, setOfContent, snapContent)
   }
 
-  def collectionContentWithoutSnaps(collection: Collection, adjustSearchQuery: AdjustSearchQuery = identity)
+  def liveCollectionContentWithoutSnaps(collection: Collection, adjustSearchQuery: AdjustSearchQuery = identity)
                                 (implicit capiClient: GuardianContentClient, ec: ExecutionContext): Response[List[FaciaContent]] = {
     val collectionWithoutSnaps = Collection.withoutSnaps(collection)
     for(setOfContent <- getContentForCollection(collection, adjustSearchQuery))
       yield Collection.liveContent(collectionWithoutSnaps, setOfContent)
   }
 
-  def collectionContentWithSnaps(collection: Collection, adjustSearchQuery: AdjustSearchQuery = identity, adjustSnapItemQuery: AdjustItemQuery = identity)
+  def liveCollectionContentWithSnaps(collection: Collection, adjustSearchQuery: AdjustSearchQuery = identity, adjustSnapItemQuery: AdjustItemQuery = identity)
                                    (implicit capiClient: GuardianContentClient, ec: ExecutionContext): Response[List[FaciaContent]] = {
     for {
       setOfContent <- getContentForCollection(collection, adjustSearchQuery)
       snapContent <- getLatestSnapContentForCollection(collection, adjustSnapItemQuery)}
     yield Collection.liveContent(collection, setOfContent, snapContent)}
+
+  def draftCollectionContentWithoutSnaps(collection: Collection, adjustSearchQuery: AdjustSearchQuery = identity)
+                                (implicit capiClient: GuardianContentClient, ec: ExecutionContext): Response[List[FaciaContent]] = {
+    val collectionWithoutSnaps = Collection.withoutSnaps(collection)
+    for(setOfContent <- getContentForCollection(collection, adjustSearchQuery))
+      yield Collection.draftContent(collectionWithoutSnaps, setOfContent)
+  }
+
+  def draftCollectionContentWithSnaps(collection: Collection, adjustSearchQuery: AdjustSearchQuery = identity, adjustSnapItemQuery: AdjustItemQuery = identity)
+                                   (implicit capiClient: GuardianContentClient, ec: ExecutionContext): Response[List[FaciaContent]] = {
+    for {
+      setOfContent <- getContentForCollection(collection, adjustSearchQuery)
+      snapContent <- getLatestSnapContentForCollection(collection, adjustSnapItemQuery)}
+    yield Collection.draftContent(collection, setOfContent, snapContent)}
 
   /**
    * Fetches content for the given backfill query. The query can be manipulated for different

@@ -75,7 +75,7 @@ class IntegrationTest extends FreeSpec with ShouldMatchers with ScalaFutures wit
     )
 
     "should return the curated content for the collection" in {
-      FAPI.collectionContentWithSnaps(collection).asFuture.futureValue.fold(
+      FAPI.liveCollectionContentWithSnaps(collection).asFuture.futureValue.fold(
         err => fail(s"expected collection, got $err", err.cause),
         curatedContent => curatedContent.size should be > 0
       )
@@ -83,7 +83,7 @@ class IntegrationTest extends FreeSpec with ShouldMatchers with ScalaFutures wit
 
     "will use the provided function to adjust the query used to hydrate content" in {
       val adjust: AdjustSearchQuery = q => q.showTags("tone")
-      FAPI.collectionContentWithSnaps(collection, adjust).asFuture.futureValue.fold(
+      FAPI.liveCollectionContentWithSnaps(collection, adjust).asFuture.futureValue.fold(
         err => fail(s"expected collection, got $err", err.cause),
         curatedContent => curatedContent.flatMap{
           case c: CuratedContent => Some(c)
@@ -105,7 +105,7 @@ class IntegrationTest extends FreeSpec with ShouldMatchers with ScalaFutures wit
       "should turn dream snaps into content" in {
         val collectionJson = makeCollectionJson(dreamSnapOne, dreamSnapTwo)
         val collection = Collection.fromCollectionJsonConfigAndContent("id", Some(collectionJson), collectionConfig)
-        val faciaContent = FAPI.collectionContentWithSnaps(collection)
+        val faciaContent = FAPI.liveCollectionContentWithSnaps(collection)
 
         faciaContent.asFuture.futureValue.fold(
           err => fail(s"expected to get two dream snaps, got $err", err.cause),
@@ -125,7 +125,7 @@ class IntegrationTest extends FreeSpec with ShouldMatchers with ScalaFutures wit
       "work with normal content and link snaps" in {
         val collectionJson = makeCollectionJson(dreamSnapOne, normalTrail, plainSnapOne, dreamSnapTwo)
         val collection = Collection.fromCollectionJsonConfigAndContent("id", Some(collectionJson), collectionConfig)
-        val faciaContent = FAPI.collectionContentWithSnaps(collection)
+        val faciaContent = FAPI.liveCollectionContentWithSnaps(collection)
 
         faciaContent.asFuture.futureValue.fold(
           err => fail(s"expected to get three items, got $err", err.cause),
@@ -151,7 +151,7 @@ class IntegrationTest extends FreeSpec with ShouldMatchers with ScalaFutures wit
       "not request dream snaps in" in {
         val collectionJson = makeCollectionJson(dreamSnapOne, normalTrail, dreamSnapTwo)
         val collection = Collection.fromCollectionJsonConfigAndContent("id", Some(collectionJson), collectionConfig)
-        val faciaContent = FAPI.collectionContentWithoutSnaps(collection)
+        val faciaContent = FAPI.liveCollectionContentWithoutSnaps(collection)
 
         faciaContent.asFuture.futureValue.fold(
         err => fail(s"expected to get three items, got $err", err.cause),
@@ -238,7 +238,7 @@ class IntegrationTest extends FreeSpec with ShouldMatchers with ScalaFutures wit
 
     "should be filled correctly" in {
       val collection = Collection.fromCollectionJsonConfigAndContent("id", Option(collectionJson), collectionConfig)
-      val faciaContent = FAPI.collectionContentWithoutSnaps(collection)
+      val faciaContent = FAPI.liveCollectionContentWithoutSnaps(collection)
 
       faciaContent.asFuture.futureValue.fold(
       err => fail(s"expected to get one item with supporting, got $err", err.cause),
@@ -255,7 +255,7 @@ class IntegrationTest extends FreeSpec with ShouldMatchers with ScalaFutures wit
 
     "should not fill in dream snaps in supporting items" in {
       val collection = Collection.fromCollectionJsonConfigAndContent("id", Option(collectionJsonSupportingWithDreamSnaps), collectionConfig)
-      val faciaContent = FAPI.collectionContentWithoutSnaps(collection)
+      val faciaContent = FAPI.liveCollectionContentWithoutSnaps(collection)
 
       faciaContent.asFuture.futureValue.fold(
       err => fail(s"expected to get one item with supporting and dream snaps, got $err", err.cause),
@@ -277,7 +277,7 @@ class IntegrationTest extends FreeSpec with ShouldMatchers with ScalaFutures wit
 
     "should fill in dream snaps in supporting items" in {
       val collection = Collection.fromCollectionJsonConfigAndContent("id", Option(collectionJsonSupportingWithDreamSnaps), collectionConfig)
-      val faciaContent = FAPI.collectionContentWithSnaps(collection)
+      val faciaContent = FAPI.liveCollectionContentWithSnaps(collection)
 
       faciaContent.asFuture.futureValue.fold(
       err => fail(s"expected to get one item with supporting and dream snaps, got $err", err.cause),
