@@ -297,8 +297,10 @@ object FaciaContentUtils {
 
   def cardStyle(fc: FaciaContent): CardStyle = fold(fc)(
     curatedContent => curatedContent.cardStyle,
-    supportingCuratedContent => Default,
+    supportingCuratedContent => supportingCuratedContent.cardStyle,
     linkSnap => Default,
-    latestSnap => Default)
+    latestSnap => latestSnap.cardStyle)
+
+  def isClosedForComments (fc: FaciaContent) = fieldsExists(fc)(!_.get("commentCloseDate").exists(new DateTime(_).isAfterNow))
 
 }
