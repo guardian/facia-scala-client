@@ -182,7 +182,7 @@ object FaciaContentUtils {
   def shortUrl(fc: FaciaContent): String = maybeShortUrl(fc).getOrElse("")
   def shortUrlPath(fc: FaciaContent) = maybeShortUrl(fc).map(_.replace("http://gu.com", ""))
   def discussionId(fc: FaciaContent) = shortUrlPath(fc)
-  def  isBoosted(fc: FaciaContent): Boolean = fold(fc)(
+  def isBoosted(fc: FaciaContent): Boolean = fold(fc)(
     curatedContent => curatedContent.isBoosted,
     supportingCuratedContent => supportingCuratedContent.isBoosted,
     linkSnap => linkSnap.isBoosted,
@@ -232,7 +232,7 @@ object FaciaContentUtils {
     linkSnap => linkSnap.byline,
     latestSnap => latestSnap.latestContent.flatMap(_.safeFields.get("byline")))
 
-  def  showByline(fc: FaciaContent): Boolean = fold(fc)(
+  def showByline(fc: FaciaContent): Boolean = fold(fc)(
     curatedContent => curatedContent.showByLine,
     supportingCuratedContent => supportingCuratedContent.showByLine,
     linkSnap => linkSnap.showByLine,
