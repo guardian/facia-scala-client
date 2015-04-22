@@ -114,7 +114,7 @@ object FaciaContentUtils {
     curatedContent => curatedContent.content.safeFields.get("liveBloggingNow").exists(_.toBoolean),
     supportingCuratedContent => supportingCuratedContent.content.safeFields.get("liveBloggingNow").exists(_.toBoolean),
     linkSnap => false,
-    latestSnap => false)
+    latestSnap => latestSnap.latestContent.exists(_.safeFields.get("liveBloggingNow").exists(_.toBoolean)))
 
   def isPodcast(fc: FaciaContent): Boolean = fold(fc)(
     curatedContent => curatedContent.content.isPodcast,
