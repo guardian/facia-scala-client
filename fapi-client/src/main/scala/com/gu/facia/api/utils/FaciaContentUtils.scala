@@ -114,7 +114,7 @@ object FaciaContentUtils {
     curatedContent => curatedContent.content.safeFields.get("liveBloggingNow").exists(_.toBoolean),
     supportingCuratedContent => supportingCuratedContent.content.safeFields.get("liveBloggingNow").exists(_.toBoolean),
     linkSnap => false,
-    latestSnap => false)
+    latestSnap => latestSnap.latestContent.exists(_.safeFields.get("liveBloggingNow").exists(_.toBoolean)))
 
   def isPodcast(fc: FaciaContent): Boolean = fold(fc)(
     curatedContent => curatedContent.content.isPodcast,
@@ -182,7 +182,8 @@ object FaciaContentUtils {
   def shortUrl(fc: FaciaContent): String = maybeShortUrl(fc).getOrElse("")
   def shortUrlPath(fc: FaciaContent) = maybeShortUrl(fc).map(_.replace("http://gu.com", ""))
   def discussionId(fc: FaciaContent) = shortUrlPath(fc)
-  def  isBoosted(fc: FaciaContent): Boolean = fold(fc)(
+
+  def isBoosted(fc: FaciaContent): Boolean = fold(fc)(
     curatedContent => curatedContent.properties.isBoosted,
     supportingCuratedContent => supportingCuratedContent.properties.isBoosted,
     linkSnap => linkSnap.isBoosted,
@@ -232,7 +233,7 @@ object FaciaContentUtils {
     linkSnap => linkSnap.byline,
     latestSnap => latestSnap.latestContent.flatMap(_.safeFields.get("byline")))
 
-  def  showByline(fc: FaciaContent): Boolean = fold(fc)(
+  def showByline(fc: FaciaContent): Boolean = fold(fc)(
     curatedContent => curatedContent.properties.showByline,
     supportingCuratedContent => supportingCuratedContent.properties.showByline,
     linkSnap => linkSnap.showByLine,
