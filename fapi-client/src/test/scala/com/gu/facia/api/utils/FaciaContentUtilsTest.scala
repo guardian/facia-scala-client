@@ -7,6 +7,8 @@ import org.scalatest.{FreeSpec, Matchers}
 
 class FaciaContentUtilsTest extends FreeSpec with Matchers {
 
+  val emptyProperties = ContentProperties.fromResolvedMetaData(ResolvedMetaData.Default)
+
   def makeLinkSnap(linkSnapId: String) = LinkSnap(
     id = linkSnapId,
     snapType = "",
@@ -39,6 +41,7 @@ class FaciaContentUtilsTest extends FreeSpec with Matchers {
 
   def makeLatestSnap(latestSnapId: String, content: Content = content) = LatestSnap(
     id = latestSnapId,
+    cardStyle = Default,
     snapUri = None,
     snapCss = None,
     latestContent = Option(content),
@@ -47,60 +50,40 @@ class FaciaContentUtilsTest extends FreeSpec with Matchers {
     trailText = None,
     group = "",
     image = None,
-    isBreaking = false,
-    isBoosted = false,
-    imageHide = false,
-    imageReplace = false,
-    showMainVideo = false,
-    showKickerTag = false,
+    properties = emptyProperties,
     byline = None,
-    showByLine = false,
     kicker = None,
-    imageCutout = None,
-    showBoostedHeadline = false,
-    showQuotedHeadline = false)
+    imageCutout = None)
 
   def makeCuratedContent(curatedContentId: String, content: Content = content) = CuratedContent(
     content = content,
     supportingContent = Nil,
+    cardStyle = Default,
     headline = "",
     href = None,
     trailText = None,
     group = "",
     imageReplace = None,
-    isBreaking = false,
-    isBoosted = false,
-    imageHide = false,
-    showMainVideo = false,
-    showKickerTag = false,
+    properties = emptyProperties,
     byline = None,
-    showByLine = false,
     kicker = None,
     imageCutout = None,
-    showBoostedHeadline = false,
-    showQuotedHeadline = false,
     embedType = None,
     embedUri = None,
     embedCss = None)
 
   def makeSupportingCuratedContent(curatedContentId: String, content: Content = content) = SupportingCuratedContent(
     content = content,
+    cardStyle = Default,
     headline = "",
     href = None,
     trailText = None,
     group = "",
     imageReplace = None,
-    isBreaking = false,
-    isBoosted = false,
-    imageHide = false,
-    showMainVideo = false,
-    showKickerTag = false,
+    properties = emptyProperties,
     byline = None,
-    showByLine = false,
     kicker = None,
-    imageCutout = None,
-    showBoostedHeadline = false,
-    showQuotedHeadline = false)
+    imageCutout = None)
 
   "webPublicationDateOption" - {
     "should return a None for a LinkSnap" in {
