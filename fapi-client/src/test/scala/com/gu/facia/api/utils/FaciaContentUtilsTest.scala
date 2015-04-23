@@ -348,47 +348,94 @@ class FaciaContentUtilsTest extends FreeSpec with Matchers {
 
     val contentWithNoShortUrl = content
 
+    val latestSnapWithShortUrl = makeLatestSnap("some-latest-snap", contentWithShortUrl("http://gu.com/p/4vq42"))
+    val latestSnapWithNoShortUrl = makeLatestSnap("some-latest-snap", contentWithNoShortUrl)
+    val curatedContentWithShortUrl = makeCuratedContent("some-latest-snap", contentWithShortUrl("http://gu.com/p/4vq42"))
+    val curatedContentWithNoShortUrl = makeLatestSnap("some-latest-snap", contentWithNoShortUrl)
+    val supportingCuratedContentWithShortUrl = makeSupportingCuratedContent("some-latest-snap", contentWithShortUrl("http://gu.com/p/4vq42"))
+    val supportingCuratedContentWithNoShortUrl = makeLatestSnap("some-latest-snap", contentWithNoShortUrl)
+
     "should return a false for a LinkSnap" in {
       val linkSnap = makeLinkSnap("some-link-snap")
       FaciaContentUtils.isCommentable(linkSnap) should be (false)
     }
 
-    "should return return correctly for LatestSnap" in {
-      val latestSnap = makeLatestSnap("some-latest-snap", contentWithShortUrl("http://gu.com/p/4vq42"))
-      FaciaContentUtils.maybeShortUrl(latestSnap) should be(Some("http://gu.com/p/4vq42"))
-      FaciaContentUtils.shortUrl(latestSnap) should be("http://gu.com/p/4vq42")
-      FaciaContentUtils.shortUrlPath(latestSnap) should be(Some("/p/4vq42"))
+    "maybeShortUrl should" - {
+      "return Some for LatestSnap with inner content with shortUrl" in {
+        FaciaContentUtils.maybeShortUrl(latestSnapWithShortUrl) should be(Some("http://gu.com/p/4vq42"))
+      }
 
-      val latestSnap2 = makeLatestSnap("some-latest-snap", contentWithNoShortUrl)
-      FaciaContentUtils.maybeShortUrl(latestSnap2) should be(None)
-      FaciaContentUtils.shortUrl(latestSnap2) should be("")
-      FaciaContentUtils.shortUrlPath(latestSnap2) should be(None)
+      "return None for LatestSnap with inner content with no shortUrl" in {
+        FaciaContentUtils.maybeShortUrl(latestSnapWithNoShortUrl) should be(None)
+      }
+
+      "return Some for CuratedContent with inner content with shortUrl" in {
+        FaciaContentUtils.maybeShortUrl(curatedContentWithShortUrl) should be(Some("http://gu.com/p/4vq42"))
+      }
+
+      "return None for CuratedContent with inner content with no shortUrl" in {
+        FaciaContentUtils.maybeShortUrl(curatedContentWithNoShortUrl) should be(None)
+      }
+
+      "return Some for SupportingCuratedContent with inner content with shortUrl" in {
+        FaciaContentUtils.maybeShortUrl(supportingCuratedContentWithShortUrl) should be(Some("http://gu.com/p/4vq42"))
+      }
+
+      "return None for SupportingCuratedContent with inner content with no shortUrl" in {
+        FaciaContentUtils.maybeShortUrl(supportingCuratedContentWithNoShortUrl) should be(None)
+      }
     }
 
-    "should return return correctly for CuratedContent" in {
-      val curatedContent = makeCuratedContent("some-latest-snap", contentWithShortUrl("http://gu.com/p/4vq42"))
-      FaciaContentUtils.maybeShortUrl(curatedContent) should be(Some("http://gu.com/p/4vq42"))
-      FaciaContentUtils.shortUrl(curatedContent) should be("http://gu.com/p/4vq42")
-      FaciaContentUtils.shortUrlPath(curatedContent) should be(Some("/p/4vq42"))
+    "shortUrl should" - {
+      "return Some for LatestSnap with inner content with shortUrl" in {
+        FaciaContentUtils.shortUrl(latestSnapWithShortUrl) should be("http://gu.com/p/4vq42")
+      }
 
-      val curatedContent2 = makeLatestSnap("some-latest-snap", contentWithNoShortUrl)
-      FaciaContentUtils.maybeShortUrl(curatedContent2) should be(None)
-      FaciaContentUtils.shortUrl(curatedContent2) should be("")
-      FaciaContentUtils.shortUrlPath(curatedContent2) should be(None)
+      "return None for LatestSnap with inner content with no shortUrl" in {
+        FaciaContentUtils.shortUrl(latestSnapWithNoShortUrl) should be("")
+      }
+
+      "return Some for CuratedContent with inner content with shortUrl" in {
+        FaciaContentUtils.shortUrl(curatedContentWithShortUrl) should be("http://gu.com/p/4vq42")
+      }
+
+      "return None for CuratedContent with inner content with no shortUrl" in {
+        FaciaContentUtils.shortUrl(curatedContentWithNoShortUrl) should be("")
+      }
+
+      "return Some for SupportingCuratedContent with inner content with shortUrl" in {
+        FaciaContentUtils.shortUrl(supportingCuratedContentWithShortUrl) should be("http://gu.com/p/4vq42")
+      }
+
+      "return None for SupportingCuratedContent with inner content with no shortUrl" in {
+        FaciaContentUtils.shortUrl(supportingCuratedContentWithNoShortUrl) should be("")
+      }
     }
 
-    "should return return correctly for SupportingCuratedContent" in {
-      val supportingCuratedContent = makeSupportingCuratedContent("some-latest-snap", contentWithShortUrl("http://gu.com/p/4vq42"))
-      FaciaContentUtils.maybeShortUrl(supportingCuratedContent) should be(Some("http://gu.com/p/4vq42"))
-      FaciaContentUtils.shortUrl(supportingCuratedContent) should be("http://gu.com/p/4vq42")
-      FaciaContentUtils.shortUrlPath(supportingCuratedContent) should be(Some("/p/4vq42"))
+    "shortUrlPath should" - {
+      "return Some for LatestSnap with inner content with shortUrl" in {
+        FaciaContentUtils.shortUrlPath(latestSnapWithShortUrl) should be(Some("/p/4vq42"))
+      }
 
-      val supportingCuratedContent2 = makeLatestSnap("some-latest-snap", contentWithNoShortUrl)
-      FaciaContentUtils.maybeShortUrl(supportingCuratedContent2) should be(None)
-      FaciaContentUtils.shortUrl(supportingCuratedContent2) should be("")
-      FaciaContentUtils.shortUrlPath(supportingCuratedContent2) should be(None)
+      "return None for LatestSnap with inner content with no shortUrl" in {
+        FaciaContentUtils.shortUrlPath(latestSnapWithNoShortUrl) should be(None)
+      }
+
+      "return Some for CuratedContent with inner content with shortUrl" in {
+        FaciaContentUtils.shortUrlPath(curatedContentWithShortUrl) should be(Some("/p/4vq42"))
+      }
+
+      "return None for CuratedContent with inner content with no shortUrl" in {
+        FaciaContentUtils.shortUrlPath(curatedContentWithNoShortUrl) should be(None)
+      }
+
+      "return Some for SupportingCuratedContent with inner content with shortUrl" in {
+        FaciaContentUtils.shortUrlPath(supportingCuratedContentWithShortUrl) should be(Some("/p/4vq42"))
+      }
+
+      "return None for SupportingCuratedContent with inner content with no shortUrl" in {
+        FaciaContentUtils.shortUrlPath(supportingCuratedContentWithNoShortUrl) should be(None)
+      }
     }
   }
-
-
 }
