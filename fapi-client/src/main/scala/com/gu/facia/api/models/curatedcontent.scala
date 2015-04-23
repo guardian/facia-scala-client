@@ -109,7 +109,7 @@ object FaciaContent {
     linkSnap => Option("LinkSnap"),
     latestSnap => Option("LatestSnap"))
 
-  def image(fc: FaciaContent): Option[FaciaImage] = fold(fc)(
+  def imageFromTool(fc: FaciaContent): Option[FaciaImage] = fold(fc)(
     curatedContent => curatedContent.image,
     supportingCuratedContent => supportingCuratedContent.image,
     linkSnap => None,
