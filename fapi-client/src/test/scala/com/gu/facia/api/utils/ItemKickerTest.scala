@@ -21,6 +21,7 @@ class ItemKickerTest extends FreeSpec with ShouldMatchers with MockitoSugar with
       when(trailMetadata.showKickerCustom).thenReturn(Some(true))
       val metaDataDefaultsWithShowKickerCustom = metaDataDefaults.copy(showKickerCustom = true)
       when(collectionConfig.showSections).thenReturn(true)
+      when(content.tags).thenReturn(Nil)
 
       ItemKicker.fromContentAndTrail(content, trailMetadata, metaDataDefaultsWithShowKickerCustom, Some(collectionConfig)).value shouldBe a [FreeHtmlKicker]
     }
@@ -31,6 +32,7 @@ class ItemKickerTest extends FreeSpec with ShouldMatchers with MockitoSugar with
       val metaDataDefaultsWithShowKickerSection = metaDataDefaults.copy(showKickerSection = true)
       when(content.sectionId).thenReturn(Some("section"))
       when(content.sectionName).thenReturn(Some("Section"))
+      when(content.tags).thenReturn(Nil)
 
       ItemKicker.fromContentAndTrail(content, trailMetadata, metaDataDefaultsWithShowKickerSection, Some(collectionConfig)).value shouldBe a [SectionKicker]
     }

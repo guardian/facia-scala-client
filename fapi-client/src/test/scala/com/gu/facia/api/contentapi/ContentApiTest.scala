@@ -22,11 +22,17 @@ class ContentApiTest extends FreeSpec
 
   "buildHydrateQueries" - {
     "should do a search query with the provided ids" in {
-      ContentApi.buildHydrateQueries(testClient, List("1", "2")).success.get.head.parameters.get("ids").value should equal("1,2")
+      ContentApi.buildHydrateQueries(testClient, List("1", "2")).asFuture.futureValue.fold(
+        err => fail(s"expected hydrated queries, got error $err"),
+        result => result.head.parameters.get("ids").value should equal("1,2")
+      )
     }
 
     "sets page size to the number of curated items" in {
-      ContentApi.buildHydrateQueries(testClient, List("1", "2")).success.get.head.parameters.get("page-size").value should equal("2")
+      ContentApi.buildHydrateQueries(testClient, List("1", "2")).asFuture.futureValue.fold(
+        err => fail(s"expected hydrated queries, got error $err"),
+        result => result.head.parameters.get("page-size").value should equal("2")
+      )
     }
   }
 

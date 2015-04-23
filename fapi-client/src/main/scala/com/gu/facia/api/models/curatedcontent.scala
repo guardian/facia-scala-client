@@ -289,7 +289,9 @@ case class LatestSnap(
   showQuotedHeadline: Boolean) extends Snap
 
 object LatestSnap {
-  def fromTrailAndContent(trail: Trail, maybeContent: Option[Content]): LatestSnap =
+  def fromTrailAndContent(trail: Trail, maybeContent: Option[Content]): LatestSnap = {
+    val resolvedMetaData: ResolvedMetaData =
+      maybeContent.fold(ResolvedMetaData.fromTrailMetaData(trail.safeMeta))(ResolvedMetaData.fromContentAndTrailMetaData(_, trail.safeMeta))
     LatestSnap(
       trail.id,
       trail.safeMeta.snapUri,
@@ -299,20 +301,23 @@ object LatestSnap {
       trail.safeMeta.href,
       trail.safeMeta.trailText,
       trail.safeMeta.group.getOrElse("0"),
-      FaciaImage.getFaciaImage(maybeContent,  trail.safeMeta),
-      trail.safeMeta.imageHide.exists(identity),
-      trail.safeMeta.isBreaking.exists(identity),
-      trail.safeMeta.isBoosted.exists(identity),
-      trail.safeMeta.showMainVideo.exists(identity),
-      trail.safeMeta.showKickerTag.exists(identity),
+      FaciaImage.getFaciaImage(maybeContent,  trail.safeMeta), //ImageReplace.fromTrailMeta(trail.safeMeta),
+      resolvedMetaData.imageHide,
+      resolvedMetaData.isBreaking,
+      resolvedMetaData.isBoosted,
+      resolvedMetaData.showMainVideo,
+      resolvedMetaData.showKickerTag,
       trail.safeMeta.byline,
-      trail.safeMeta.showByline.exists(identity),
-      ItemKicker.fromTrailMetaData(trail.safeMeta),
-      trail.safeMeta.showBoostedHeadline.exists(identity),
-      trail.safeMeta.showQuotedHeadline.exists(identity)
+      resolvedMetaData.showByline,
+      ItemKicker.fromTrailMetaDataAndMaybeContent(trail.safeMeta, maybeContent),
+      resolvedMetaData.showBoostedHeadline,
+      resolvedMetaData.showQuotedHeadline
     )
+  }
 
-  def fromSupportingItemAndContent(supportingItem: SupportingItem, maybeContent: Option[Content]): LatestSnap =
+  def fromSupportingItemAndContent(supportingItem: SupportingItem, maybeContent: Option[Content]): LatestSnap = {
+    val resolvedMetaData: ResolvedMetaData =
+      maybeContent.fold(ResolvedMetaData.fromTrailMetaData(supportingItem.safeMeta))(ResolvedMetaData.fromContentAndTrailMetaData(_, supportingItem.safeMeta))
     LatestSnap(
       supportingItem.id,
       supportingItem.safeMeta.snapUri,
@@ -323,17 +328,18 @@ object LatestSnap {
       supportingItem.safeMeta.trailText,
       supportingItem.safeMeta.group.getOrElse("0"),
       FaciaImage.getFaciaImage(maybeContent, supportingItem.safeMeta),
-      supportingItem.safeMeta.imageHide.exists(identity),
-      supportingItem.safeMeta.isBreaking.exists(identity),
-      supportingItem.safeMeta.isBoosted.exists(identity),
-      supportingItem.safeMeta.showMainVideo.exists(identity),
-      supportingItem.safeMeta.showKickerTag.exists(identity),
+      resolvedMetaData.imageHide,
+      resolvedMetaData.isBreaking,
+      resolvedMetaData.isBoosted,
+      resolvedMetaData.showMainVideo,
+      resolvedMetaData.showKickerTag,
       supportingItem.safeMeta.byline,
-      supportingItem.safeMeta.showByline.exists(identity),
-      ItemKicker.fromTrailMetaData(supportingItem.safeMeta),
-      supportingItem.safeMeta.showBoostedHeadline.exists(identity),
-      supportingItem.safeMeta.showQuotedHeadline.exists(identity)
+      resolvedMetaData.showByline,
+      ItemKicker.fromTrailMetaDataAndMaybeContent(supportingItem.safeMeta, maybeContent),
+      resolvedMetaData.showBoostedHeadline,
+      resolvedMetaData.showQuotedHeadline
     )
+  }
 }
 
 case class CuratedContent(
@@ -353,7 +359,10 @@ case class CuratedContent(
   showByLine: Boolean,
   kicker: Option[ItemKicker],
   showBoostedHeadline: Boolean,
-  showQuotedHeadline: Boolean) extends FaciaContent
+  showQuotedHeadline: Boolean,
+  embedType: Option[String],
+  embedUri: Option[String],
+  embedCss: Option[String]) extends FaciaContent
 
 case class SupportingCuratedContent(
   content: Content,
@@ -398,7 +407,10 @@ object CuratedContent {
       trailMetaData.showByline.getOrElse(false),
       ItemKicker.fromContentAndTrail(content, trailMetaData, resolvedMetaData, Some(collectionConfig)),
       resolvedMetaData.showBoostedHeadline,
-      resolvedMetaData.showQuotedHeadline)}
+      resolvedMetaData.showQuotedHeadline,
+      embedType = trailMetaData.snapType,
+      embedUri = trailMetaData.snapUri,
+      embedCss = trailMetaData.snapCss)}
 
   def fromTrailAndContent(content: Content, trailMetaData: MetaDataCommonFields, collectionConfig: CollectionConfig): CuratedContent = {
     val contentFields: Map[String, String] = content.safeFields
@@ -421,8 +433,10 @@ object CuratedContent {
       resolvedMetaData.showByline,
       ItemKicker.fromContentAndTrail(content, trailMetaData, resolvedMetaData, Some(collectionConfig)),
       resolvedMetaData.showBoostedHeadline,
-      resolvedMetaData.showQuotedHeadline
-    )}
+      resolvedMetaData.showQuotedHeadline,
+      embedType = trailMetaData.snapType,
+      embedUri = trailMetaData.snapUri,
+      embedCss = trailMetaData.snapCss)}
 }
 
 object SupportingCuratedContent {

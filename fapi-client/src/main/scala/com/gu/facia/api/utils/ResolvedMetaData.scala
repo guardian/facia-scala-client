@@ -1,8 +1,7 @@
 package com.gu.facia.api.utils
 
 import com.gu.contentapi.client.model.Content
-import com.gu.facia.api.models._
-import com.gu.facia.client.models.{TrailMetaData, MetaDataCommonFields}
+import com.gu.facia.client.models.MetaDataCommonFields
 
 
 object ResolvedMetaData {
@@ -33,7 +32,7 @@ object ResolvedMetaData {
     imageCutoutReplace = false,
     showQuotedHeadline = false)
 
-  private[utils] def fromTrailMetaData(trailMeta: MetaDataCommonFields): ResolvedMetaData =
+  def fromTrailMetaData(trailMeta: MetaDataCommonFields): ResolvedMetaData =
     ResolvedMetaData(
       isBreaking = trailMeta.isBreaking.exists(identity),
       isBoosted = trailMeta.isBoosted.exists(identity),

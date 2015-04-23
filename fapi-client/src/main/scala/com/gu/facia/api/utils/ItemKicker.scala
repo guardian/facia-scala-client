@@ -2,7 +2,7 @@ package com.gu.facia.api.utils
 
 import com.gu.contentapi.client.model.{Content, Tag}
 import com.gu.facia.api.models.CollectionConfig
-import com.gu.facia.client.models.{MetaDataCommonFields, TrailMetaData}
+import com.gu.facia.client.models.MetaDataCommonFields
 
 object ItemKicker {
   def fromContentAndTrail(
@@ -41,10 +41,17 @@ object ItemKicker {
     }
   }
 
-  def fromTrailMetaData(trailMeta: MetaDataCommonFields): Option[ItemKicker] = fromContentAndTrail(None, trailMeta, ResolvedMetaData.Default, None)
+  def fromTrailMetaData(trailMeta: MetaDataCommonFields): Option[ItemKicker] = fromContentAndTrail(None, trailMeta, ResolvedMetaData.fromTrailMetaData(trailMeta), None)
 
-  def fromContentAndTrail(content: Content, trailMeta: MetaDataCommonFields, metaDataDefaults: ResolvedMetaData, config: Option[CollectionConfig]): Option[ItemKicker]
-    = fromContentAndTrail(Option(content), trailMeta, metaDataDefaults, config)
+  def fromTrailMetaDataAndMaybeContent(trailMeta: MetaDataCommonFields, maybeContent: Option[Content]): Option[ItemKicker] = {
+    val resolvedMetaData = maybeContent.fold(ResolvedMetaData.fromTrailMetaData(trailMeta))(ResolvedMetaData.fromContentAndTrailMetaData(_, trailMeta))
+    fromContentAndTrail(maybeContent, trailMeta, resolvedMetaData, None)
+  }
+
+  def fromContentAndTrail(content: Content, trailMeta: MetaDataCommonFields, metaDataDefaults: ResolvedMetaData, config: Option[CollectionConfig]): Option[ItemKicker] = {
+    val resolvedMetaData = ResolvedMetaData.fromContentAndTrailMetaData(content, trailMeta)
+    fromContentAndTrail (Option (content), trailMeta, resolvedMetaData, config)
+  }
 
   private[utils] def tonalKicker(content: Content, trailMeta: MetaDataCommonFields): Option[ItemKicker] = {
     def tagsOfType(tagType: String): Seq[Tag] = content.tags.filter(_.`type` == tagType)

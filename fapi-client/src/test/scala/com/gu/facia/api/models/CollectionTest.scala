@@ -238,16 +238,6 @@ class CollectionTest extends FreeSpec with ShouldMatchers with MockitoSugar with
     }
   }
 
-  "importance" - {
-    "Resolve critical correctly" in {
-      val collectionConfigWithImportance = CollectionConfig.fromCollectionJson(CollectionConfigJson.withDefaults(importance = Option("critical")))
-
-      val collection = Collection.fromCollectionJsonConfigAndContent("id", Some(collectionJson), collectionConfigWithImportance)
-
-      collection.collectionConfig.importance should be (Critical)
-    }
-  }
-
   "Collection" - {
     "filter out the snaps in live" in {
         val trailOne = Trail("internal-code/content/1", 1, Some(trailMetadata))
