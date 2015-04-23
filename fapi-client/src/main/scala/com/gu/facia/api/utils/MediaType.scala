@@ -1,10 +1,10 @@
 package com.gu.facia.api.utils
 
 import com.gu.facia.api.models.FaciaContent
-import FaciaContentImplicits._
+import FaciaContentUtils._
 
 object MediaType {
-  def fromFaciaContent(faciaContent: FaciaContent): Option[MediaType] = faciaContent.mediaType
+  def fromFaciaContent(faciaContent: FaciaContent): Option[MediaType] = mediaType(faciaContent)
 }
 
 sealed trait MediaType
