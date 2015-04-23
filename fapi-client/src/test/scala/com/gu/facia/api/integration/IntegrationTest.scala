@@ -432,31 +432,29 @@ class IntegrationTest extends FreeSpec with ShouldMatchers with ScalaFutures wit
         })
     }
 
-    "Should request a mix of both" in {
+    "Should request a mix of both" - {
       val normalTrailThree = Trail("internal-code/content/454695023", 0, None)
       val dreamSnapOne = makeLatestTrailFor("snap/1281727", "uk/culture")
       val dreamSnapTwo = makeLatestTrailFor("snap/2372382", "technology")
       val collectionJson = makeCollectionJsonWithTreats(List(dreamSnapOne, normalTrail, dreamSnapTwo, normalTrailTwo), normalTrailThree)
       val collection = Collection.fromCollectionJsonConfigAndContent("id", Some(collectionJson), collectionConfig)
-      val faciaContent = FAPI.draftCollectionContentWithSnaps(collection, adjustSnapItemQuery = itemQuery => itemQuery.showTags("all"))
-      val faciaContentLive = FAPI.liveCollectionContentWithoutSnaps(collection, adjustSearchQuery = searchQuery => searchQuery.showTags("all"))
 
-      faciaContent.asFuture.futureValue.fold(
-        err => fail(s"expected 4 results, got $err", err.cause),
-        contents => {
+      "for draft" in {
+        val faciaContent = FAPI.draftCollectionContentWithSnaps(collection, adjustSnapItemQuery = itemQuery => itemQuery.showTags("all"))
+        faciaContent.asFuture.futureValue.fold(err => fail(s"expected 4 results, got $err", err.cause), contents => {
           contents.size should be(4)
-          contents.head.asInstanceOf[LatestSnap].latestContent.get.tags.exists(_.sectionId == Some("culture")) should be (true)
-          contents.apply(1).asInstanceOf[CuratedContent].headline should be ("PM returns from holiday after video shows US reporter beheaded by Briton")
-          contents.apply(2).asInstanceOf[LatestSnap].latestContent.get.tags.exists(_.sectionId == Some("technology")) should be (true)
-          contents.apply(3).asInstanceOf[CuratedContent].headline should be ("Inside the 29 August edition")
-        })
+          contents.head.asInstanceOf[LatestSnap].latestContent.get.tags.exists(_.sectionId == Some("culture")) should be(true)
+          contents.apply(1).asInstanceOf[CuratedContent].headline should be("PM returns from holiday after video shows US reporter beheaded by Briton")
+          contents.apply(2).asInstanceOf[LatestSnap].latestContent.get.tags.exists(_.sectionId == Some("technology")) should be(true)
+          contents.apply(3).asInstanceOf[CuratedContent].headline should be("Inside the 29 August edition")})
+      }
 
-      faciaContentLive.asFuture.futureValue.fold(
-        err => fail(s"expected 1 results, got $err", err.cause),
-        contents => {
+      "for live" in {
+        val faciaContentLive = FAPI.liveCollectionContentWithoutSnaps(collection, adjustSearchQuery = searchQuery => searchQuery.showTags("all"))
+        faciaContentLive.asFuture.futureValue.fold(err => fail(s"expected 1 results, got $err", err.cause), contents => {
           contents.size should be(1)
-          contents.head.asInstanceOf[CuratedContent].headline should be ("Pope Francis greeted by huge crowds in the Philippines – video")
-        })
+          contents.head.asInstanceOf[CuratedContent].headline should be("Pope Francis greeted by huge crowds in the Philippines – video")})
+      }
     }
   }
 
