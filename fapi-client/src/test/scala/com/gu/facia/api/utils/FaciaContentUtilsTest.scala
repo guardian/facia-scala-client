@@ -224,37 +224,56 @@ class FaciaContentUtilsTest extends FreeSpec with Matchers {
       FaciaContentUtils.isLive(linkSnap) should be (false)
     }
 
-    "should return true and false on inner content for LatestSnap" in {
-      val latestSnap = makeLatestSnap("some-latest-snap", contentWithFields(Map("liveBloggingNow" -> "true")))
-      FaciaContentUtils.isLive(latestSnap) should be(true)
+    "should return" - {
+      "true on inner content with liveBloggingNow true for LatestSnap" in {
+        val latestSnap = makeLatestSnap("some-latest-snap", contentWithFields(Map("liveBloggingNow" -> "true")))
+        FaciaContentUtils.isLive(latestSnap) should be(true)
+      }
 
-      val latestSnap2 = makeLatestSnap("some-latest-snap", contentWithFields(Map("liveBloggingNow" -> "false")))
-      FaciaContentUtils.isLive(latestSnap2) should be(false)
+      "false on inner content with with liveBloggingNow false for LatestSnap" in {
+        val latestSnap2 = makeLatestSnap("some-latest-snap", contentWithFields(Map("liveBloggingNow" -> "false")))
+        FaciaContentUtils.isLive(latestSnap2) should be(false)
+      }
 
-      val latestSnap3 = makeLatestSnap("some-latest-snap", contentWithFields(Map.empty))
-      FaciaContentUtils.isLive(latestSnap3) should be(false)
+      "false on inner content with no fields for LatestSnap" in {
+        val latestSnap3 = makeLatestSnap("some-latest-snap", contentWithFields(Map.empty))
+        FaciaContentUtils.isLive(latestSnap3) should be(false)
+      }
     }
 
-    "should return true and false on inner content for CuratedContent" in {
-      val curatedContent = makeCuratedContent("some-curated-content", contentWithFields(Map("liveBloggingNow" -> "true")))
-      FaciaContentUtils.isLive(curatedContent) should be(true)
+    "should return" - {
+      "true on inner content with liveBloggingNow true for CuratedContent" in {
+        val curatedContent = makeCuratedContent("some-curated-content", contentWithFields(Map("liveBloggingNow" -> "true")))
+        FaciaContentUtils.isLive(curatedContent) should be(true)
+      }
 
-      val curatedContent2 = makeCuratedContent("some-curated-content", contentWithFields(Map("liveBloggingNow" -> "false")))
-      FaciaContentUtils.isLive(curatedContent2) should be(false)
+      "false on inner content with liveBloggingNow false for CuratedContent" in {
+        val curatedContent2 = makeCuratedContent("some-curated-content", contentWithFields(Map("liveBloggingNow" -> "false")))
+        FaciaContentUtils.isLive(curatedContent2) should be(false)
+      }
 
-      val curatedContent3 = makeCuratedContent("some-curated-content", contentWithFields(Map.empty))
-      FaciaContentUtils.isLive(curatedContent3) should be(false)
+      "false on inner content with no fields for CuratedContent" in {
+        val curatedContent3 = makeCuratedContent("some-curated-content", contentWithFields(Map.empty))
+        FaciaContentUtils.isLive(curatedContent3) should be(false)
+      }
     }
 
-    "should return true and false on inner content for SupportingCuratedContent" in {
-      val supportingCuratedContent = makeSupportingCuratedContent("some-supporting-curated-content", contentWithFields(Map("liveBloggingNow" -> "true")))
-      FaciaContentUtils.isLive(supportingCuratedContent) should be(true)
+    "should return true and false on inner content for SupportingCuratedContent" - {
 
-      val supportingCuratedContent2 = makeSupportingCuratedContent("some-supporting-curated-content", contentWithFields(Map("liveBloggingNow" -> "false")))
-      FaciaContentUtils.isLive(supportingCuratedContent2) should be(false)
+      "true on inner content with liveBloggingNow true for SupportingCuratedContent" in {
+        val supportingCuratedContent = makeSupportingCuratedContent("some-supporting-curated-content", contentWithFields(Map("liveBloggingNow" -> "true")))
+        FaciaContentUtils.isLive(supportingCuratedContent) should be(true)
+      }
 
-      val supportingCuratedContent3 = makeSupportingCuratedContent("some-supporting-curated-content", contentWithFields(Map.empty))
-      FaciaContentUtils.isLive(supportingCuratedContent3) should be(false)
+      "false on inner content with liveBloggingNow false for SupportingCuratedContent" in {
+        val supportingCuratedContent = makeSupportingCuratedContent("some-supporting-curated-content", contentWithFields(Map("liveBloggingNow" -> "false")))
+        FaciaContentUtils.isLive(supportingCuratedContent) should be(false)
+      }
+
+      "false on inner content with no fields for SupportingCuratedContent" in {
+        val supportingCuratedContent = makeSupportingCuratedContent("some-supporting-curated-content", contentWithFields(Map.empty))
+        FaciaContentUtils.isLive(supportingCuratedContent) should be(false)
+      }
     }
   }
 
@@ -269,37 +288,55 @@ class FaciaContentUtilsTest extends FreeSpec with Matchers {
       FaciaContentUtils.isCommentable(linkSnap) should be (false)
     }
 
-    "should return true and false on inner content for LatestSnap" in {
-      val latestSnap = makeLatestSnap("some-latest-snap", contentWithFields(Map("commentable" -> "true")))
-      FaciaContentUtils.isCommentable(latestSnap) should be(true)
+    "should return" - {
+      "true on inner content with commentable true for LatestSnap" in {
+        val latestSnap = makeLatestSnap("some-latest-snap", contentWithFields(Map("commentable" -> "true")))
+        FaciaContentUtils.isCommentable(latestSnap) should be(true)
+      }
 
-      val latestSnap2 = makeLatestSnap("some-latest-snap", contentWithFields(Map("commentable" -> "false")))
-      FaciaContentUtils.isCommentable(latestSnap2) should be(false)
+      "false on inner content with commentable false for LatestSnap" in {
+        val latestSnap = makeLatestSnap("some-latest-snap", contentWithFields(Map("commentable" -> "false")))
+        FaciaContentUtils.isCommentable(latestSnap) should be(false)
+      }
 
-      val latestSnap3 = makeLatestSnap("some-latest-snap", contentWithFields(Map.empty))
-      FaciaContentUtils.isCommentable(latestSnap3) should be(false)
+      "true on inner content with no fields for LatestSnap" in {
+        val latestSnap = makeLatestSnap("some-latest-snap", contentWithFields(Map.empty))
+        FaciaContentUtils.isCommentable(latestSnap) should be(false)
+      }
     }
 
-    "should return true and false on inner content for CuratedContent" in {
-      val curatedContent = makeCuratedContent("some-curated-content", contentWithFields(Map("commentable" -> "true")))
-      FaciaContentUtils.isCommentable(curatedContent) should be(true)
+    "should return" - {
+      "true on inner content with commentable true for CuratedContent" in {
+        val curatedContent = makeCuratedContent("some-curated-content", contentWithFields(Map("commentable" -> "true")))
+        FaciaContentUtils.isCommentable(curatedContent) should be(true)
+      }
 
-      val curatedContent2 = makeCuratedContent("some-curated-content", contentWithFields(Map("commentable" -> "false")))
-      FaciaContentUtils.isCommentable(curatedContent2) should be(false)
+      "false on inner content with commentable false for CuratedContent" in {
+        val curatedContent = makeCuratedContent("some-curated-content", contentWithFields(Map("commentable" -> "false")))
+        FaciaContentUtils.isCommentable(curatedContent) should be(false)
+      }
 
-      val curatedContent3 = makeCuratedContent("some-curated-content", contentWithFields(Map.empty))
-      FaciaContentUtils.isCommentable(curatedContent3) should be(false)
+      "false on inner content with no fields for CuratedContent" in {
+        val curatedContent = makeCuratedContent("some-curated-content", contentWithFields(Map.empty))
+        FaciaContentUtils.isCommentable(curatedContent) should be(false)
+      }
     }
 
-    "should return true and false on inner content for SupportingCuratedContent" in {
-      val supportingCuratedContent = makeSupportingCuratedContent("some-supporting-curated-content", contentWithFields(Map("commentable" -> "true")))
-      FaciaContentUtils.isCommentable(supportingCuratedContent) should be(true)
+    "should return" - {
+      "true on inner content with commentable true for SupportingCuratedContent" in {
+        val supportingCuratedContent = makeSupportingCuratedContent("some-supporting-curated-content", contentWithFields(Map("commentable" -> "true")))
+        FaciaContentUtils.isCommentable(supportingCuratedContent) should be(true)
+      }
 
-      val supportingCuratedContent2 = makeSupportingCuratedContent("some-supporting-curated-content", contentWithFields(Map("commentable" -> "false")))
-      FaciaContentUtils.isCommentable(supportingCuratedContent2) should be(false)
+      "false on inner content with commentable false for SupportingCuratedContent" in {
+        val supportingCuratedContent2 = makeSupportingCuratedContent("some-supporting-curated-content", contentWithFields(Map("commentable" -> "false")))
+        FaciaContentUtils.isCommentable(supportingCuratedContent2) should be(false)
+      }
 
-      val supportingCuratedContent3 = makeSupportingCuratedContent("some-supporting-curated-content", contentWithFields(Map.empty))
-      FaciaContentUtils.isCommentable(supportingCuratedContent3) should be(false)
+      "false on inner content with no fields for SupportingCuratedContent" in {
+        val supportingCuratedContent3 = makeSupportingCuratedContent("some-supporting-curated-content", contentWithFields(Map.empty))
+        FaciaContentUtils.isCommentable(supportingCuratedContent3) should be(false)
+      }
     }
   }
 
