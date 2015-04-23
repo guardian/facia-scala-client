@@ -410,7 +410,7 @@ class IntegrationTest extends FreeSpec with ShouldMatchers with ScalaFutures wit
       val faciaContent = FAPI.liveCollectionContentWithoutSnaps(collection)
 
       faciaContent.asFuture.futureValue.fold(
-        err => fail(s"expected 2 results, got $err", err.cause),
+        err => fail(s"expected 0 results, got $err", err.cause),
         contents => {
           contents.size should be(0)
         })
@@ -442,7 +442,7 @@ class IntegrationTest extends FreeSpec with ShouldMatchers with ScalaFutures wit
       val faciaContentLive = FAPI.liveCollectionContentWithoutSnaps(collection, adjustSearchQuery = searchQuery => searchQuery.showTags("all"))
 
       faciaContent.asFuture.futureValue.fold(
-        err => fail(s"expected 2 results, got $err", err.cause),
+        err => fail(s"expected 4 results, got $err", err.cause),
         contents => {
           contents.size should be(4)
           contents.head.asInstanceOf[LatestSnap].latestContent.get.tags.exists(_.sectionId == Some("culture")) should be (true)
@@ -452,7 +452,7 @@ class IntegrationTest extends FreeSpec with ShouldMatchers with ScalaFutures wit
         })
 
       faciaContentLive.asFuture.futureValue.fold(
-        err => fail(s"expected 2 results, got $err", err.cause),
+        err => fail(s"expected 1 results, got $err", err.cause),
         contents => {
           contents.size should be(1)
           contents.head.asInstanceOf[CuratedContent].headline should be ("Pope Francis greeted by huge crowds in the Philippines – video")
