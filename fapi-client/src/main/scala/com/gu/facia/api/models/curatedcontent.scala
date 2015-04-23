@@ -5,11 +5,16 @@ import com.gu.facia.api.utils.{ResolvedMetaData, ItemKicker}
 import com.gu.facia.client.models.{SupportingItem, MetaDataCommonFields, Trail, TrailMetaData}
 
 case class FaciaImage(
-  imageType: String,
+  imageType: ImageType,
   imageSrc: String,
   imageSrcWidth: Option[String],
   imageSrcHeight: Option[String]
 )
+
+sealed trait ImageType
+case object Cutout extends ImageType { override def toString = "cutout" }
+case object Replace extends ImageType { override def toString = "replace" }
+case object Default extends ImageType { override def toString = "default" }
 
 object FaciaImage {
 
@@ -29,7 +34,7 @@ object FaciaImage {
       for {
         tag <- contributorTags.find(_.bylineLargeImageUrl.isDefined)
         path <- tag.bylineLargeImageUrl
-      } yield FaciaImage("cutout", path, None, None)
+      } yield FaciaImage(Cutout, path, None, None)
     else None
   }
 
@@ -37,13 +42,13 @@ object FaciaImage {
     src <- trailMeta.imageCutoutSrc
     width <- trailMeta.imageCutoutSrcWidth
     height <- trailMeta.imageCutoutSrcHeight
-  } yield FaciaImage("cutout", src, Option(width), Option(height))
+  } yield FaciaImage(Cutout, src, Option(width), Option(height))
 
   def imageReplace(trailMeta: MetaDataCommonFields): Option[FaciaImage] = for {
     src <- trailMeta.imageSrc
     width <- trailMeta.imageSrcWidth
     height <- trailMeta.imageSrcHeight
-    imageType = {if (trailMeta.imageReplace.exists(identity)) "replace" else "default"}
+    imageType = {if (trailMeta.imageReplace.exists(identity)) Replace else Default}
   } yield FaciaImage(imageType, src, Option(width), Option(height))
 }
 

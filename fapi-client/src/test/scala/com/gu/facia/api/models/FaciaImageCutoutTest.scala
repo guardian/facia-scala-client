@@ -71,7 +71,7 @@ class FaciaImageCutoutTest extends FreeSpec with Matchers {
       val trailMeta = trailMetaDataWithImageCutout(true, None, None, None)
       val imageCutout = FaciaImage.getFaciaImage(Some(contentWithContributor), trailMeta)
       imageCutout.isDefined should be (true)
-      imageCutout should be (Some(FaciaImage("cutout", bylineImageUrl, None, None)))
+      imageCutout should be (Some(FaciaImage(Cutout, bylineImageUrl, None, None)))
     }
 
     "should not return an Image of type cutout from content tags if imageCutoutReplace is false" in {
