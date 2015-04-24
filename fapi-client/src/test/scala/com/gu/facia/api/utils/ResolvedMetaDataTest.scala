@@ -39,13 +39,13 @@ class ResolvedMetaDataTest extends FreeSpec with Matchers {
   "Resolving Metadata using fromContent" - {
 
     "Content with type cartoon should showByline" in {
-      val resolvedMetaData = ResolvedMetaData.fromContent(contentWithCartoon)
+      val resolvedMetaData = ResolvedMetaData.fromContent(contentWithCartoon, Default)
       resolvedMetaData should have (
         'showByline (true))
     }
 
     "Content with type comment should showByline, showQuotedHeadline and imageCutoutReplace" in {
-      val resolvedMetaData = ResolvedMetaData.fromContent(contentWithComment)
+      val resolvedMetaData = ResolvedMetaData.fromContent(contentWithComment, Comment)
       resolvedMetaData should have (
         'showByline (true),
         'showQuotedHeadline (true),
@@ -53,14 +53,14 @@ class ResolvedMetaDataTest extends FreeSpec with Matchers {
     }
 
     "Content with type video should showMainVideo" in {
-      val resolvedMetaData = ResolvedMetaData.fromContent(contentWithVideo)
+      val resolvedMetaData = ResolvedMetaData.fromContent(contentWithVideo, Default)
       resolvedMetaData should have (
         'showMainVideo (true))
     }
 
     "Content with silly type should all false" in {
       val contentWithVideo = contentWithTags(tagWithId("sillyid"))
-      val resolvedMetaData = ResolvedMetaData.fromContent(contentWithVideo)
+      val resolvedMetaData = ResolvedMetaData.fromContent(contentWithVideo, Default)
       resolvedMetaData should have (
         'showByline (false),
         'showQuotedHeadline (false),
@@ -115,13 +115,13 @@ class ResolvedMetaDataTest extends FreeSpec with Matchers {
   "Resolving Metadata using fromContentAndTrailMetaData" - {
 
     "should resolve correct for cartoon when trailMetaData is not set" in {
-      val resolvedCartoon = ResolvedMetaData.fromContentAndTrailMetaData(contentWithCartoon, emptyTrailMetaData)
+      val resolvedCartoon = ResolvedMetaData.fromContentAndTrailMetaData(contentWithCartoon, emptyTrailMetaData, Default)
       resolvedCartoon should have (
         'showByline (true))
     }
 
     "should resolve correct for comment when trailMetaData is not set" in {
-      val resolvedComment = ResolvedMetaData.fromContentAndTrailMetaData(contentWithComment, emptyTrailMetaData)
+      val resolvedComment = ResolvedMetaData.fromContentAndTrailMetaData(contentWithComment, emptyTrailMetaData, Comment)
       resolvedComment should have (
         'showByline (true),
         'showQuotedHeadline (true),
@@ -129,19 +129,19 @@ class ResolvedMetaDataTest extends FreeSpec with Matchers {
     }
 
     "should resolve correct for video when trailMetaData is not set" in {
-      val resolvedVideo = ResolvedMetaData.fromContentAndTrailMetaData(contentWithVideo, emptyTrailMetaData)
+      val resolvedVideo = ResolvedMetaData.fromContentAndTrailMetaData(contentWithVideo, emptyTrailMetaData, Default)
       resolvedVideo should have (
         'showMainVideo (true))
     }
 
     "should resolve correct for cartoon when trailMetaData IS set" in {
-      val resolvedCartoon = ResolvedMetaData.fromContentAndTrailMetaData(contentWithCartoon, trailMetaDataWithFieldsSetFalse)
+      val resolvedCartoon = ResolvedMetaData.fromContentAndTrailMetaData(contentWithCartoon, trailMetaDataWithFieldsSetFalse, Default)
       resolvedCartoon should have (
         'showByline (false))
     }
 
     "should resolve correct for comment when trailMetaData IS set" in {
-      val resolvedComment = ResolvedMetaData.fromContentAndTrailMetaData(contentWithComment, trailMetaDataWithFieldsSetFalse)
+      val resolvedComment = ResolvedMetaData.fromContentAndTrailMetaData(contentWithComment, trailMetaDataWithFieldsSetFalse, Default)
       resolvedComment should have (
         'showByline (false),
         'showQuotedHeadline (false),
@@ -149,7 +149,7 @@ class ResolvedMetaDataTest extends FreeSpec with Matchers {
     }
 
     "should resolve correct for video when trailMetaData IS set" in {
-      val resolvedVideo = ResolvedMetaData.fromContentAndTrailMetaData(contentWithVideo, trailMetaDataWithFieldsSetFalse)
+      val resolvedVideo = ResolvedMetaData.fromContentAndTrailMetaData(contentWithVideo, trailMetaDataWithFieldsSetFalse, Default)
       resolvedVideo should have (
         'showMainVideo (false))
     }

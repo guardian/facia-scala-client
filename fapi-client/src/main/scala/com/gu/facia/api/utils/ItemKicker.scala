@@ -43,15 +43,11 @@ object ItemKicker {
 
   def fromTrailMetaData(trailMeta: MetaDataCommonFields): Option[ItemKicker] = fromContentAndTrail(None, trailMeta, ResolvedMetaData.fromTrailMetaData(trailMeta), None)
 
-  def fromTrailMetaDataAndMaybeContent(trailMeta: MetaDataCommonFields, maybeContent: Option[Content]): Option[ItemKicker] = {
-    val resolvedMetaData = maybeContent.fold(ResolvedMetaData.fromTrailMetaData(trailMeta))(ResolvedMetaData.fromContentAndTrailMetaData(_, trailMeta))
+  def fromMaybeContentTrailMetaAndResolvedMetaData(maybeContent: Option[Content], trailMeta: MetaDataCommonFields, resolvedMetaData: ResolvedMetaData) =
     fromContentAndTrail(maybeContent, trailMeta, resolvedMetaData, None)
-  }
 
-  def fromContentAndTrail(content: Content, trailMeta: MetaDataCommonFields, metaDataDefaults: ResolvedMetaData, config: Option[CollectionConfig]): Option[ItemKicker] = {
-    val resolvedMetaData = ResolvedMetaData.fromContentAndTrailMetaData(content, trailMeta)
-    fromContentAndTrail (Option (content), trailMeta, resolvedMetaData, config)
-  }
+  def fromContentTrailMetaResolvedMetaAndConfig(content: Content, trailMeta: MetaDataCommonFields, resolvedMetaData: ResolvedMetaData, config: Option[CollectionConfig]): Option[ItemKicker] =
+    fromContentAndTrail(Option(content), trailMeta, resolvedMetaData, config)
 
   private[utils] def tonalKicker(content: Content, trailMeta: MetaDataCommonFields): Option[ItemKicker] = {
     def tagsOfType(tagType: String): Seq[Tag] = content.tags.filter(_.`type` == tagType)
@@ -151,6 +147,14 @@ object Tags {
   val Editorial = "tone/editorials"
   val Cartoon = "type/cartoon"
   val Letters = "tone/letters"
+  val Audio = "type/audio"
+
+  val Article = "type/article"
+  val Gallery = "type/gallery"
+  val Video = "type/video"
+  val Poll = "type/poll"
+  val Interactive = "type/interactive"
+  val Sudoku = "type/sudoku"
 
   object VisualTone {
     val Live = "live"

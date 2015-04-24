@@ -47,21 +47,19 @@ object ResolvedMetaData {
       imageCutoutReplace = trailMeta.imageCutoutReplace.exists(identity),
       showQuotedHeadline = trailMeta.showQuotedHeadline.exists(identity))
 
-  private[utils] def fromContent(content: Content): ResolvedMetaData = {
-    if (isCartoonForContent(content))
-      Default.copy(showByline = true)
-    else if (isCommentForContent(content))
-      Default.copy(
+  private[utils] def fromContent(content: Content, cardStyle: CardStyle): ResolvedMetaData =
+    cardStyle match {
+      case com.gu.facia.api.utils.Comment => Default.copy(
         showByline = true,
         showQuotedHeadline = true,
         imageCutoutReplace = true)
-    else if (isVideoForContent(content))
-      Default.copy(showMainVideo = true)
-    else
-      Default}
+      case _ if isCartoonForContent(content) => Default.copy(showByline = true)
+      case _ if isVideoForContent(content) => Default.copy(showMainVideo = true)
+      case _ => Default
+    }
 
-  def fromContentAndTrailMetaData(content: Content, trailMeta: MetaDataCommonFields): ResolvedMetaData = {
-    val metaDataFromContent = fromContent(content)
+  def fromContentAndTrailMetaData(content: Content, trailMeta: MetaDataCommonFields, cardStyle: CardStyle): ResolvedMetaData = {
+    val metaDataFromContent = fromContent(content, cardStyle)
     metaDataFromContent.copy(
       isBreaking = trailMeta.isBreaking.getOrElse(metaDataFromContent.isBreaking),
       isBoosted = trailMeta.isBoosted.getOrElse(metaDataFromContent.isBoosted),
@@ -89,4 +87,27 @@ case class ResolvedMetaData(
     showKickerTag: Boolean,
     showByline: Boolean,
     imageCutoutReplace: Boolean,
+    showQuotedHeadline: Boolean)
+
+object ContentProperties {
+  def fromResolvedMetaData(resolvedMetaData: ResolvedMetaData): ContentProperties =
+    ContentProperties(
+      isBreaking = resolvedMetaData.isBreaking,
+      isBoosted = resolvedMetaData.isBoosted,
+      imageHide = resolvedMetaData.imageHide,
+      showBoostedHeadline = resolvedMetaData.showBoostedHeadline,
+      showMainVideo = resolvedMetaData.showMainVideo,
+      showKickerTag = resolvedMetaData.showKickerTag,
+      showByline = resolvedMetaData.showByline,
+      showQuotedHeadline = resolvedMetaData.showQuotedHeadline)
+}
+
+case class ContentProperties(
+    isBreaking: Boolean,
+    isBoosted: Boolean,
+    imageHide: Boolean,
+    showBoostedHeadline: Boolean,
+    showMainVideo: Boolean,
+    showKickerTag: Boolean,
+    showByline: Boolean,
     showQuotedHeadline: Boolean)
