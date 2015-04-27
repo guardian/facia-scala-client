@@ -20,7 +20,7 @@ class FaciaImageReplaceTest extends FlatSpec with Matchers {
       "imageSrcHeight" -> JsString("theImageSrcHeight")))
 
   "Image" should "give an Image of type default when it is not set" in {
-    FaciaImage.getFaciaImage(None, trailMetaDataWithoutImageReplace) should be (Some(FaciaImage(Default, "theImageSrc", Some("theImageSrcWidth"), Some("theImageSrcHeight"))))
+    FaciaImage.getFaciaImage(None, trailMetaDataWithoutImageReplace) should be (Some(FaciaImage(ImageDefault, "theImageSrc", Some("theImageSrcWidth"), Some("theImageSrcHeight"))))
   }
 
   it should "give back an Image when true" in {

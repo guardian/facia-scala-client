@@ -15,7 +15,7 @@ case class FaciaImage(
 sealed trait ImageType
 case object Cutout extends ImageType { override def toString = "cutout" }
 case object Replace extends ImageType { override def toString = "replace" }
-case object Default extends ImageType { override def toString = "default" }
+case object ImageDefault extends ImageType { override def toString = "default" }
 
 object FaciaImage {
 
@@ -48,7 +48,7 @@ object FaciaImage {
     src <- trailMeta.imageSrc
     width <- trailMeta.imageSrcWidth
     height <- trailMeta.imageSrcHeight
-    imageType = {if (trailMeta.imageReplace.exists(identity)) Replace else Default}
+    imageType = {if (trailMeta.imageReplace.exists(identity)) Replace else ImageDefault}
   } yield FaciaImage(imageType, src, Option(width), Option(height))
 
 }
