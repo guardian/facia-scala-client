@@ -1,6 +1,7 @@
 package com.gu.facia.api.models
 
 import com.gu.contentapi.client.model.Content
+import com.gu.facia.api.utils.{ Default => CardStyleDefault }
 import com.gu.facia.api.utils._
 import com.gu.facia.client.models.{CollectionConfigJson, CollectionJson, Trail, TrailMetaData}
 import org.joda.time.DateTime
@@ -41,22 +42,20 @@ class CollectionTest extends FreeSpec with ShouldMatchers with MockitoSugar with
     href: Option[String] = None,
     trailText: Option[String] = None,
     group: String = "0",
-    image: Option[ImageReplace] = None,
+    image: Option[FaciaImage] = None,
+    imageHide: Boolean = false,
     isBreaking: Boolean = false,
     isBoosted: Boolean = false,
-    imageHide: Boolean = false,
-    imageReplace: Boolean = false,
     showMainVideo: Boolean = false,
     showKickerTag: Boolean = false,
     byline: Option[String] = None,
     showByLine: Boolean = false,
     kicker: Option[ItemKicker] = None,
-    imageCutout: Option[ImageCutout] = None,
     showBoostedHeadline: Boolean = false,
     showQuotedHeadline: Boolean = false): LatestSnap =
     LatestSnap(
       id,
-      Default,
+      CardStyleDefault,
       snapUri,
       snapCss,
       latestContent,
@@ -67,8 +66,7 @@ class CollectionTest extends FreeSpec with ShouldMatchers with MockitoSugar with
       image,
       ContentProperties.fromResolvedMetaData(ResolvedMetaData.Default),
       byline,
-      kicker,
-      imageCutout)
+      kicker)
 
   def makeLinkSnap(
     id: String = "id",
@@ -79,17 +77,14 @@ class CollectionTest extends FreeSpec with ShouldMatchers with MockitoSugar with
     href: Option[String] = None,
     trailText: Option[String] = None,
     group: String = "0",
-    image: Option[ImageReplace] = None,
+    image: Option[FaciaImage] = None,
     isBreaking: Boolean = false,
     isBoosted: Boolean = false,
-    imageHide: Boolean = false,
-    imageReplace: Boolean = false,
     showMainVideo: Boolean = false,
     showKickerTag: Boolean = false,
     byline: Option[String] = None,
     showByLine: Boolean = false,
     kicker: Option[ItemKicker] = None,
-    imageCutout: Option[ImageCutout] = None,
     showBoostedHeadline: Boolean = false,
     showQuotedHeadline: Boolean = false): LinkSnap =
     LinkSnap(
@@ -104,14 +99,11 @@ class CollectionTest extends FreeSpec with ShouldMatchers with MockitoSugar with
       image,
       isBreaking,
       isBoosted,
-      imageHide,
-      imageReplace,
       showMainVideo,
       showKickerTag,
       byline,
       showByLine,
       kicker,
-      imageCutout,
       showBoostedHeadline,
       showQuotedHeadline)
 

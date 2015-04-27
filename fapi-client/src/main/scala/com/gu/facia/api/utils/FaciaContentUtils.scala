@@ -207,12 +207,7 @@ object FaciaContentUtils {
     linkSnap => linkSnap.showMainVideo,
     latestSnap => latestSnap.properties.showMainVideo
   )
-  def imageHide(fc: FaciaContent): Boolean = fold(fc)(
-    curatedContent => curatedContent.properties.imageHide,
-    supportingCuratedContent => supportingCuratedContent.properties.imageHide,
-    linkSnap => linkSnap.imageHide,
-    latestSnap => latestSnap.properties.imageHide
-  )
+
   def sectionName(fc: FaciaContent): Option[String] = fold(fc)(
     curatedContent => curatedContent.content.sectionName,
     supportingCuratedContent => supportingCuratedContent.content.sectionName,
@@ -254,12 +249,6 @@ object FaciaContentUtils {
   def isCartoon(fc: FaciaContent) = types(fc).exists(_.id == Tags.Cartoon)
   def isCrossword(fc: FaciaContent) = types(fc).exists(_.id == Tags.Crossword)
 
-  def imageCutout(fc: FaciaContent): Option[ImageCutout] = fold(fc)(
-    curatedContent => curatedContent.imageCutout,
-    supportingCuratedContent => supportingCuratedContent.imageCutout,
-    linkSnap => linkSnap.imageCutout,
-    latestSnap => latestSnap.imageCutout)
-
   def supporting(fc: FaciaContent): List[FaciaContent] = fold(fc)(
     curatedContent => curatedContent.supportingContent,
     supportingCuratedContent => Nil,
@@ -284,13 +273,7 @@ object FaciaContentUtils {
 
   def linkText(fc: FaciaContent) = maybeWebTitle(fc)
 
-  def  imageReplace(fc: FaciaContent): Option[ImageReplace] = fold(fc)(
-    _.imageReplace,
-    _.imageReplace,
-    _.image,
-    _.image)
-
-  def  elements(fc: FaciaContent): List[Element] = fold(fc)(
+  def elements(fc: FaciaContent): List[Element] = fold(fc)(
     curatedContent => curatedContent.content.elements.getOrElse(Nil),
     supportingCuratedContent => supportingCuratedContent.content.elements.getOrElse(Nil),
     linkSnap => Nil,

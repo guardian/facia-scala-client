@@ -1,58 +1,56 @@
 package com.gu.facia.api.models
 
 import com.gu.contentapi.client.model.{Tag, Content}
+import com.gu.facia.api.utils.{Default => CardStyleDefault}
 import com.gu.facia.api.utils._
 import com.gu.facia.client.models.{SupportingItem, MetaDataCommonFields, Trail, TrailMetaData}
 
-case class ImageReplace(imageSrc: String, imageSrcWidth: String, imageSrcHeight: String)
+case class FaciaImage(
+  imageType: ImageType,
+  imageSrc: String,
+  imageSrcWidth: Option[String],
+  imageSrcHeight: Option[String]
+)
 
-object ImageReplace {
-  def fromTrailMeta(trailMeta: MetaDataCommonFields): Option[ImageReplace] =
-    for {
-      imageReplace <- trailMeta.imageReplace.filter(identity)
-      imageSrc <- trailMeta.imageSrc
-      imageSrcWidth <- trailMeta.imageSrcWidth
-      imageSrcHeight <- trailMeta.imageSrcHeight
-    } yield ImageReplace(imageSrc, imageSrcWidth, imageSrcHeight)
-}
+sealed trait ImageType
+case object Cutout extends ImageType { override def toString = "cutout" }
+case object Replace extends ImageType { override def toString = "replace" }
+case object Default extends ImageType { override def toString = "default" }
 
-case class ImageCutout(
-  imageCutoutSrc: String,
-  imageCutoutSrcWidth: Option[String],
-  imageCutoutSrcHeight: Option[String])
+object FaciaImage {
 
-object ImageCutout {
-  def fromTrailMeta(trailMeta: MetaDataCommonFields): Option[ImageCutout] =
-    for {
-      src <- trailMeta.imageCutoutSrc
-      width <- trailMeta.imageCutoutSrcWidth
-      height <- trailMeta.imageCutoutSrcHeight
-    } yield ImageCutout(
-              src,
-              Option(width),
-              Option(height))
+  def getFaciaImage(maybeContent: Option[Content], trailMeta: MetaDataCommonFields, resolvedMetadata: ResolvedMetaData = ResolvedMetaData.Default): Option[FaciaImage] = {
+    if (resolvedMetadata.imageHide) None
+    else { maybeContent flatMap { content =>
+        if (resolvedMetadata.imageCutoutReplace) imageCutout(trailMeta) orElse fromContentTags(content, trailMeta)
+        else None
+      } orElse imageReplace(trailMeta)
+    }
+  }
 
-  def fromContentTags(content: Content, trailMeta: MetaDataCommonFields): Option[ImageCutout] = {
+  def fromContentTags(content: Content, trailMeta: MetaDataCommonFields): Option[FaciaImage] = {
     val contributorTags = content.tags.filter(_.`type` == "contributor")
     if (contributorTags.length == 1)
       for {
         tag <- contributorTags.find(_.bylineLargeImageUrl.isDefined)
         path <- tag.bylineLargeImageUrl
-      } yield ImageCutout(
-        path,
-        None,
-        None)
-    else
-      None
+      } yield FaciaImage(Cutout, path, None, None)
+    else None
   }
 
-  def fromContentAndTrailMeta(content: Content, trailMeta: MetaDataCommonFields, resolvedMetaData: ResolvedMetaData): Option[ImageCutout] = {
-    if (resolvedMetaData.imageCutoutReplace)
-      fromTrailMeta(trailMeta)
-        .orElse(fromContentTags(content, trailMeta))
-    else
-      None
-  }
+  def imageCutout(trailMeta: MetaDataCommonFields): Option[FaciaImage] = for {
+    src <- trailMeta.imageCutoutSrc
+    width <- trailMeta.imageCutoutSrcWidth
+    height <- trailMeta.imageCutoutSrcHeight
+  } yield FaciaImage(Cutout, src, Option(width), Option(height))
+
+  def imageReplace(trailMeta: MetaDataCommonFields): Option[FaciaImage] = for {
+    src <- trailMeta.imageSrc
+    width <- trailMeta.imageSrcWidth
+    height <- trailMeta.imageSrcHeight
+    imageType = {if (trailMeta.imageReplace.exists(identity)) Replace else Default}
+  } yield FaciaImage(imageType, src, Option(width), Option(height))
+
 }
 
 sealed trait FaciaContent
@@ -75,17 +73,14 @@ object Snap {
       trail.safeMeta.href,
       trail.safeMeta.trailText,
       trail.safeMeta.group.getOrElse("0"),
-      ImageReplace.fromTrailMeta(trail.safeMeta),
+      FaciaImage.getFaciaImage(None, trail.safeMeta),
       trail.safeMeta.isBreaking.exists(identity),
       trail.safeMeta.isBoosted.exists(identity),
-      trail.safeMeta.imageHide.exists(identity),
-      trail.safeMeta.imageReplace.exists(identity),
       trail.safeMeta.showMainVideo.exists(identity),
       trail.safeMeta.showKickerTag.exists(identity),
       trail.safeMeta.byline,
       trail.safeMeta.showByline.exists(identity),
       ItemKicker.fromTrailMetaData(trail.safeMeta),
-      ImageCutout.fromTrailMeta(trail.safeMeta),
       trail.safeMeta.showBoostedHeadline.exists(identity),
       trail.safeMeta.showQuotedHeadline.exists(identity)))
     case _ => None
@@ -104,17 +99,14 @@ object Snap {
       supportingItem.safeMeta.href,
       supportingItem.safeMeta.trailText,
       supportingItem.safeMeta.group.getOrElse("0"),
-      ImageReplace.fromTrailMeta(supportingItem.safeMeta),
+      FaciaImage.getFaciaImage(None, supportingItem.safeMeta),
       supportingItem.safeMeta.isBreaking.exists(identity),
       supportingItem.safeMeta.isBoosted.exists(identity),
-      supportingItem.safeMeta.imageHide.exists(identity),
-      supportingItem.safeMeta.imageReplace.exists(identity),
       supportingItem.safeMeta.showMainVideo.exists(identity),
       supportingItem.safeMeta.showKickerTag.exists(identity),
       supportingItem.safeMeta.byline,
       supportingItem.safeMeta.showByline.exists(identity),
       ItemKicker.fromTrailMetaData(supportingItem.safeMeta),
-      ImageCutout.fromTrailMeta(supportingItem.safeMeta),
       supportingItem.safeMeta.showBoostedHeadline.exists(identity),
       supportingItem.safeMeta.showQuotedHeadline.exists(identity)
   ))
@@ -132,17 +124,14 @@ case class LinkSnap(
   href: Option[String],
   trailText: Option[String],
   group: String,
-  image: Option[ImageReplace],
+  image: Option[FaciaImage],
   isBreaking: Boolean,
   isBoosted: Boolean,
-  imageHide: Boolean,
-  imageReplace: Boolean,
   showMainVideo: Boolean,
   showKickerTag: Boolean,
   byline: Option[String],
   showByLine: Boolean,
   kicker: Option[ItemKicker],
-  imageCutout: Option[ImageCutout],
   showBoostedHeadline: Boolean,
   showQuotedHeadline: Boolean) extends Snap
 
@@ -156,15 +145,14 @@ case class LatestSnap(
   href: Option[String],
   trailText: Option[String],
   group: String,
-  image: Option[ImageReplace],
+  image: Option[FaciaImage],
   properties: ContentProperties,
   byline: Option[String],
-  kicker: Option[ItemKicker],
-  imageCutout: Option[ImageCutout]) extends Snap
+  kicker: Option[ItemKicker]) extends Snap
 
 object LatestSnap {
   def fromTrailAndContent(trail: Trail, maybeContent: Option[Content]): LatestSnap = {
-    val cardStyle: CardStyle = maybeContent.map(CardStyle.apply(_, trail.safeMeta)).getOrElse(Default)
+    val cardStyle: CardStyle = maybeContent.map(CardStyle.apply(_, trail.safeMeta)).getOrElse(CardStyleDefault)
     val resolvedMetaData: ResolvedMetaData =
       maybeContent.fold(ResolvedMetaData.fromTrailMetaData(trail.safeMeta))(ResolvedMetaData.fromContentAndTrailMetaData(_, trail.safeMeta, cardStyle))
     LatestSnap(
@@ -177,16 +165,15 @@ object LatestSnap {
       trail.safeMeta.href,
       trail.safeMeta.trailText,
       trail.safeMeta.group.getOrElse("0"),
-      ImageReplace.fromTrailMeta(trail.safeMeta),
+      FaciaImage.getFaciaImage(maybeContent,  trail.safeMeta),
       ContentProperties.fromResolvedMetaData(resolvedMetaData),
       trail.safeMeta.byline,
-      ItemKicker.fromMaybeContentTrailMetaAndResolvedMetaData(maybeContent, trail.safeMeta, resolvedMetaData),
-      maybeContent.fold(ImageCutout.fromTrailMeta(trail.safeMeta))(ImageCutout.fromContentAndTrailMeta(_, trail.safeMeta, resolvedMetaData))
+      ItemKicker.fromMaybeContentTrailMetaAndResolvedMetaData(maybeContent, trail.safeMeta, resolvedMetaData)
     )
   }
 
   def fromSupportingItemAndContent(supportingItem: SupportingItem, maybeContent: Option[Content]): LatestSnap = {
-    val cardStyle: CardStyle = maybeContent.map(CardStyle.apply(_, supportingItem.safeMeta)).getOrElse(Default)
+    val cardStyle: CardStyle = maybeContent.map(CardStyle.apply(_, supportingItem.safeMeta)).getOrElse(CardStyleDefault)
     val resolvedMetaData: ResolvedMetaData =
       maybeContent.fold(ResolvedMetaData.fromTrailMetaData(supportingItem.safeMeta))(ResolvedMetaData.fromContentAndTrailMetaData(_, supportingItem.safeMeta, cardStyle))
     LatestSnap(
@@ -199,11 +186,10 @@ object LatestSnap {
       supportingItem.safeMeta.href,
       supportingItem.safeMeta.trailText,
       supportingItem.safeMeta.group.getOrElse("0"),
-      ImageReplace.fromTrailMeta(supportingItem.safeMeta),
+      FaciaImage.getFaciaImage(maybeContent, supportingItem.safeMeta),
       ContentProperties.fromResolvedMetaData(resolvedMetaData),
       supportingItem.safeMeta.byline,
-      ItemKicker.fromMaybeContentTrailMetaAndResolvedMetaData(maybeContent, supportingItem.safeMeta, resolvedMetaData),
-      maybeContent.fold(ImageCutout.fromTrailMeta(supportingItem.safeMeta))(ImageCutout.fromContentAndTrailMeta(_, supportingItem.safeMeta, resolvedMetaData))
+      ItemKicker.fromMaybeContentTrailMetaAndResolvedMetaData(maybeContent, supportingItem.safeMeta, resolvedMetaData)
     )
   }
 }
@@ -216,11 +202,10 @@ case class CuratedContent(
   href: Option[String],
   trailText: Option[String],
   group: String,
-  imageReplace: Option[ImageReplace],
+  image: Option[FaciaImage],
   properties: ContentProperties,
   byline: Option[String],
   kicker: Option[ItemKicker],
-  imageCutout: Option[ImageCutout],
   embedType: Option[String],
   embedUri: Option[String],
   embedCss: Option[String]) extends FaciaContent
@@ -232,11 +217,10 @@ case class SupportingCuratedContent(
   href: Option[String],
   trailText: Option[String],
   group: String,
-  imageReplace: Option[ImageReplace],
+  image: Option[FaciaImage],
   properties: ContentProperties,
   byline: Option[String],
-  kicker: Option[ItemKicker],
-  imageCutout: Option[ImageCutout]) extends FaciaContent
+  kicker: Option[ItemKicker]) extends FaciaContent
 
 object CuratedContent {
 
@@ -255,11 +239,10 @@ object CuratedContent {
       trailMetaData.href.orElse(contentFields.get("href")),
       trailMetaData.trailText.orElse(contentFields.get("trailText")),
       trailMetaData.group.getOrElse("0"),
-      ImageReplace.fromTrailMeta(trailMetaData),
+      FaciaImage.getFaciaImage(Some(content), trailMetaData),
       ContentProperties.fromResolvedMetaData(resolvedMetaData),
       trailMetaData.byline.orElse(contentFields.get("byline")),
       ItemKicker.fromContentAndTrail(Option(content), trailMetaData, resolvedMetaData, Some(collectionConfig)),
-      ImageCutout.fromContentAndTrailMeta(content, trailMetaData, resolvedMetaData),
       embedType = trailMetaData.snapType,
       embedUri = trailMetaData.snapUri,
       embedCss = trailMetaData.snapCss)}
@@ -277,11 +260,10 @@ object CuratedContent {
       trailMetaData.href.orElse(contentFields.get("href")),
       trailMetaData.trailText.orElse(contentFields.get("trailText")),
       trailMetaData.group.getOrElse("0"),
-      ImageReplace.fromTrailMeta(trailMetaData),
+      FaciaImage.getFaciaImage(Some(content), trailMetaData),
       ContentProperties.fromResolvedMetaData(resolvedMetaData),
       trailMetaData.byline.orElse(contentFields.get("byline")),
       ItemKicker.fromContentAndTrail(Option(content), trailMetaData, resolvedMetaData, Some(collectionConfig)),
-      ImageCutout.fromContentAndTrailMeta(content, trailMetaData, resolvedMetaData),
       embedType = trailMetaData.snapType,
       embedUri = trailMetaData.snapUri,
       embedCss = trailMetaData.snapCss)}
@@ -300,9 +282,10 @@ object SupportingCuratedContent {
       trailMetaData.href.orElse(contentFields.get("href")),
       trailMetaData.trailText.orElse(contentFields.get("trailText")),
       trailMetaData.group.getOrElse("0"),
-      ImageReplace.fromTrailMeta(trailMetaData),
+      FaciaImage.getFaciaImage(Some(content), trailMetaData),
       ContentProperties.fromResolvedMetaData(resolvedMetaData),
       trailMetaData.byline.orElse(contentFields.get("byline")),
-      ItemKicker.fromContentAndTrail(Option(content), trailMetaData, resolvedMetaData, None),
-      ImageCutout.fromContentAndTrailMeta(content, trailMetaData, resolvedMetaData))}
+      ItemKicker.fromContentAndTrail(Option(content), trailMetaData, resolvedMetaData, None)
+    )
+  }
 }

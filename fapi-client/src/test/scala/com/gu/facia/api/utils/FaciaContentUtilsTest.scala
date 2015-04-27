@@ -21,14 +21,11 @@ class FaciaContentUtilsTest extends FreeSpec with Matchers {
     image = None,
     isBreaking = false,
     isBoosted = false,
-    imageHide = false,
-    imageReplace = false,
     showMainVideo = false,
     showKickerTag = false,
     byline = None,
     showByLine = false,
     kicker = None,
-    imageCutout = None,
     showBoostedHeadline = false,
     showQuotedHeadline = false)
 
@@ -52,8 +49,7 @@ class FaciaContentUtilsTest extends FreeSpec with Matchers {
     image = None,
     properties = emptyProperties,
     byline = None,
-    kicker = None,
-    imageCutout = None)
+    kicker = None)
 
   def makeCuratedContent(curatedContentId: String, content: Content = content) = CuratedContent(
     content = content,
@@ -63,11 +59,10 @@ class FaciaContentUtilsTest extends FreeSpec with Matchers {
     href = None,
     trailText = None,
     group = "",
-    imageReplace = None,
+    image = None,
     properties = emptyProperties,
     byline = None,
     kicker = None,
-    imageCutout = None,
     embedType = None,
     embedUri = None,
     embedCss = None)
@@ -79,11 +74,10 @@ class FaciaContentUtilsTest extends FreeSpec with Matchers {
     href = None,
     trailText = None,
     group = "",
-    imageReplace = None,
+    image = None,
     properties = emptyProperties,
     byline = None,
-    kicker = None,
-    imageCutout = None)
+    kicker = None)
 
   "webPublicationDateOption" - {
     "should return a None for a LinkSnap" in {
