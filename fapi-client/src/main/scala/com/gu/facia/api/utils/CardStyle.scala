@@ -46,7 +46,7 @@ object CardStyle {
     } else if (content.isFeature) {
       Feature
     } else {
-      Default
+      DefaultCardstyle
     }
   }
 }
@@ -99,6 +99,6 @@ case object ExternalLink extends CardStyle {
   val toneString = CardStyle.external
 }
 
-case object Default extends CardStyle {
+case object DefaultCardstyle extends CardStyle {
   val toneString = CardStyle.news
 }

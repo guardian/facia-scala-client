@@ -38,7 +38,7 @@ class FaciaContentUtilsTest extends FreeSpec with Matchers {
 
   def makeLatestSnap(latestSnapId: String, content: Content = content) = LatestSnap(
     id = latestSnapId,
-    cardStyle = Default,
+    cardStyle = DefaultCardstyle,
     snapUri = None,
     snapCss = None,
     latestContent = Option(content),
@@ -54,7 +54,7 @@ class FaciaContentUtilsTest extends FreeSpec with Matchers {
   def makeCuratedContent(curatedContentId: String, content: Content = content) = CuratedContent(
     content = content,
     supportingContent = Nil,
-    cardStyle = Default,
+    cardStyle = DefaultCardstyle,
     headline = "",
     href = None,
     trailText = None,
@@ -69,7 +69,7 @@ class FaciaContentUtilsTest extends FreeSpec with Matchers {
 
   def makeSupportingCuratedContent(curatedContentId: String, content: Content = content) = SupportingCuratedContent(
     content = content,
-    cardStyle = Default,
+    cardStyle = DefaultCardstyle,
     headline = "",
     href = None,
     trailText = None,

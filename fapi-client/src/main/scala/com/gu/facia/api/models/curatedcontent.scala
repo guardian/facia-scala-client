@@ -1,7 +1,6 @@
 package com.gu.facia.api.models
 
 import com.gu.contentapi.client.model.{Tag, Content}
-import com.gu.facia.api.utils.{Default => CardStyleDefault}
 import com.gu.facia.api.utils._
 import com.gu.facia.client.models.{SupportingItem, MetaDataCommonFields, Trail, TrailMetaData}
 
@@ -152,7 +151,7 @@ case class LatestSnap(
 
 object LatestSnap {
   def fromTrailAndContent(trail: Trail, maybeContent: Option[Content]): LatestSnap = {
-    val cardStyle: CardStyle = maybeContent.map(CardStyle.apply(_, trail.safeMeta)).getOrElse(CardStyleDefault)
+    val cardStyle: CardStyle = maybeContent.map(CardStyle.apply(_, trail.safeMeta)).getOrElse(DefaultCardstyle)
     val resolvedMetaData: ResolvedMetaData =
       maybeContent.fold(ResolvedMetaData.fromTrailMetaData(trail.safeMeta))(ResolvedMetaData.fromContentAndTrailMetaData(_, trail.safeMeta, cardStyle))
     LatestSnap(
@@ -173,7 +172,7 @@ object LatestSnap {
   }
 
   def fromSupportingItemAndContent(supportingItem: SupportingItem, maybeContent: Option[Content]): LatestSnap = {
-    val cardStyle: CardStyle = maybeContent.map(CardStyle.apply(_, supportingItem.safeMeta)).getOrElse(CardStyleDefault)
+    val cardStyle: CardStyle = maybeContent.map(CardStyle.apply(_, supportingItem.safeMeta)).getOrElse(DefaultCardstyle)
     val resolvedMetaData: ResolvedMetaData =
       maybeContent.fold(ResolvedMetaData.fromTrailMetaData(supportingItem.safeMeta))(ResolvedMetaData.fromContentAndTrailMetaData(_, supportingItem.safeMeta, cardStyle))
     LatestSnap(

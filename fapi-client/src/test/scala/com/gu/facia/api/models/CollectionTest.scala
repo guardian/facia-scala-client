@@ -1,7 +1,6 @@
 package com.gu.facia.api.models
 
 import com.gu.contentapi.client.model.Content
-import com.gu.facia.api.utils.{ Default => CardStyleDefault }
 import com.gu.facia.api.utils._
 import com.gu.facia.client.models.{CollectionConfigJson, CollectionJson, Trail, TrailMetaData}
 import org.joda.time.DateTime
@@ -55,7 +54,7 @@ class CollectionTest extends FreeSpec with ShouldMatchers with MockitoSugar with
     showQuotedHeadline: Boolean = false): LatestSnap =
     LatestSnap(
       id,
-      CardStyleDefault,
+      DefaultCardstyle,
       snapUri,
       snapCss,
       latestContent,
