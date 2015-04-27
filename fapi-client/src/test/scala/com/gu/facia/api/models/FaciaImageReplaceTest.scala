@@ -1,5 +1,6 @@
 package com.gu.facia.api.models
 
+import com.gu.facia.api.utils.ResolvedMetaData
 import com.gu.facia.client.models.TrailMetaData
 import org.scalatest.{Matchers, FlatSpec}
 import play.api.libs.json.{JsString, JsBoolean}
@@ -20,10 +21,12 @@ class FaciaImageReplaceTest extends FlatSpec with Matchers {
       "imageSrcHeight" -> JsString("theImageSrcHeight")))
 
   "Image" should "give an Image of type default when it is not set" in {
-    FaciaImage.getFaciaImage(None, trailMetaDataWithoutImageReplace) should be (Some(FaciaImage(ImageDefault, "theImageSrc", Some("theImageSrcWidth"), Some("theImageSrcHeight"))))
+    val resolvedMetaData =  ResolvedMetaData.fromTrailMetaData(trailMetaDataWithoutImageReplace)
+    FaciaImage.getFaciaImage(None, trailMetaDataWithoutImageReplace, resolvedMetaData) should be (None)
   }
 
   it should "give back an Image when true" in {
-    FaciaImage.getFaciaImage(None, trailMetaDataWithImageReplace) should be (Some(FaciaImage(Replace, "theImageSrc", Some("theImageSrcWidth"), Some("theImageSrcHeight"))))
+    val resolvedMetaData =  ResolvedMetaData.fromTrailMetaData(trailMetaDataWithImageReplace)
+    FaciaImage.getFaciaImage(None, trailMetaDataWithImageReplace, resolvedMetaData) should be (Some(FaciaImage(Replace, "theImageSrc", Some("theImageSrcWidth"), Some("theImageSrcHeight"))))
   }
 }

@@ -37,7 +37,8 @@ class FaciaImageCutoutTest extends FreeSpec with Matchers {
 
     "should return None for imageCutoutReplace=true but nothing to replace with" in {
       val trailMeta = trailMetaDataWithImageCutout(true)
-      val imageCutout = FaciaImage.getFaciaImage(Some(emptyContent), trailMeta)
+      val resolvedMetaData = ResolvedMetaData.fromTrailMetaData(trailMeta)
+      val imageCutout = FaciaImage.getFaciaImage(Some(emptyContent), trailMeta, resolvedMetaData)
       imageCutout should be (None)
     }
 
@@ -47,14 +48,16 @@ class FaciaImageCutoutTest extends FreeSpec with Matchers {
       val height = Option("height")
 
       val trailMetaTrue = trailMetaDataWithImageCutout(true, Option(src), width, height)
-      val imageCutoutTrue = FaciaImage.getFaciaImage(Some(emptyContent), trailMetaTrue, ResolvedMetaData.fromTrailMetaData(trailMetaTrue))
+      val resolvedMetaDataTrue = ResolvedMetaData.fromTrailMetaData(trailMetaTrue)
+      val imageCutoutTrue = FaciaImage.getFaciaImage(Some(emptyContent), trailMetaTrue, resolvedMetaDataTrue)
       imageCutoutTrue.isDefined should be (true)
       imageCutoutTrue.get.imageSrc should be (src)
       imageCutoutTrue.get.imageSrcWidth should be (width)
       imageCutoutTrue.get.imageSrcHeight should be (height)
 
       val trailMetaFalse = trailMetaDataWithImageCutout(false, Option(src), width, height)
-      val imageCutoutFalse = FaciaImage.getFaciaImage(Some(emptyContent), trailMetaFalse, ResolvedMetaData.fromTrailMetaData(trailMetaFalse))
+      val resolvedMetaDataFalse = ResolvedMetaData.fromTrailMetaData(trailMetaFalse)
+      val imageCutoutFalse = FaciaImage.getFaciaImage(Some(emptyContent), trailMetaFalse, resolvedMetaDataFalse)
       imageCutoutFalse should be (None)
     }
 
@@ -64,20 +67,23 @@ class FaciaImageCutoutTest extends FreeSpec with Matchers {
       val height = Option("height")
 
       val trailMeta = trailMetaDataWithImageCutout(true, src, widthNone, height)
-      val imageCutout = FaciaImage.getFaciaImage(Some(emptyContent), trailMeta)
+      val resolvedMetaData = ResolvedMetaData.fromTrailMetaData(trailMeta)
+      val imageCutout = FaciaImage.getFaciaImage(Some(emptyContent), trailMeta, resolvedMetaData)
       imageCutout should be (None)
     }
 
     "should return an Image of type cutout from content tags" in {
       val trailMeta = trailMetaDataWithImageCutout(true, None, None, None)
-      val imageCutout = FaciaImage.getFaciaImage(Some(contentWithContributor), trailMeta, ResolvedMetaData.fromTrailMetaData(trailMeta))
+      val resolvedMetaData = ResolvedMetaData.fromTrailMetaData(trailMeta)
+      val imageCutout = FaciaImage.getFaciaImage(Some(contentWithContributor), trailMeta, resolvedMetaData)
       imageCutout.isDefined should be (true)
       imageCutout should be (Some(FaciaImage(Cutout, bylineImageUrl, None, None)))
     }
 
     "should not return an Image of type cutout from content tags if imageCutoutReplace is false" in {
       val trailMeta = trailMetaDataWithImageCutout(false, None, None, None)
-      val imageCutout = FaciaImage.getFaciaImage(Some(contentWithContributor), trailMeta, ResolvedMetaData.fromTrailMetaData(trailMeta))
+      val resolvedMetaData = ResolvedMetaData.fromTrailMetaData(trailMeta)
+      val imageCutout = FaciaImage.getFaciaImage(Some(contentWithContributor), trailMeta, resolvedMetaData)
       imageCutout should be (None)
     }
   }

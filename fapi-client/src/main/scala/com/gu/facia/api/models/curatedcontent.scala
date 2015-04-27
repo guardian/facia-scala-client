@@ -14,16 +14,15 @@ case class FaciaImage(
 sealed trait ImageType
 case object Cutout extends ImageType { override def toString = "cutout" }
 case object Replace extends ImageType { override def toString = "replace" }
-case object ImageDefault extends ImageType { override def toString = "default" }
 
 object FaciaImage {
 
-  def getFaciaImage(maybeContent: Option[Content], trailMeta: MetaDataCommonFields, resolvedMetadata: ResolvedMetaData = ResolvedMetaData.Default): Option[FaciaImage] = {
+  def getFaciaImage(maybeContent: Option[Content], trailMeta: MetaDataCommonFields, resolvedMetadata: ResolvedMetaData): Option[FaciaImage] = {
     if (resolvedMetadata.imageHide) None
     else { maybeContent flatMap { content =>
         if (resolvedMetadata.imageCutoutReplace) imageCutout(trailMeta) orElse fromContentTags(content, trailMeta)
         else None
-      } orElse imageReplace(trailMeta)
+      } orElse imageReplace(trailMeta, resolvedMetadata)
     }
   }
 
@@ -43,12 +42,13 @@ object FaciaImage {
     height <- trailMeta.imageCutoutSrcHeight
   } yield FaciaImage(Cutout, src, Option(width), Option(height))
 
-  def imageReplace(trailMeta: MetaDataCommonFields): Option[FaciaImage] = for {
-    src <- trailMeta.imageSrc
-    width <- trailMeta.imageSrcWidth
-    height <- trailMeta.imageSrcHeight
-    imageType = {if (trailMeta.imageReplace.exists(identity)) Replace else ImageDefault}
-  } yield FaciaImage(imageType, src, Option(width), Option(height))
+  def imageReplace(trailMeta: MetaDataCommonFields, resolvedMetaData: ResolvedMetaData): Option[FaciaImage] =
+    if (resolvedMetaData.imageReplace)
+      for {src <- trailMeta.imageSrc
+           width <- trailMeta.imageSrcWidth
+           height <- trailMeta.imageSrcHeight} yield FaciaImage(Replace, src, Option(width), Option(height))
+    else
+      None
 
 }
 
@@ -63,6 +63,7 @@ object Snap {
     case Some("latest") =>
       Option(LatestSnap.fromTrailAndContent(trail, None))
     case Some(snapType) =>
+      val resolvedMetaData = ResolvedMetaData.fromTrailMetaData(trail.safeMeta)
       Option(LinkSnap(
       trail.id,
       snapType,
@@ -72,7 +73,7 @@ object Snap {
       trail.safeMeta.href,
       trail.safeMeta.trailText,
       trail.safeMeta.group.getOrElse("0"),
-      FaciaImage.getFaciaImage(None, trail.safeMeta),
+      FaciaImage.getFaciaImage(None, trail.safeMeta, resolvedMetaData),
       trail.safeMeta.isBreaking.exists(identity),
       trail.safeMeta.isBoosted.exists(identity),
       trail.safeMeta.showMainVideo.exists(identity),
@@ -89,6 +90,7 @@ object Snap {
     case Some("latest") =>
       Option(LatestSnap.fromSupportingItemAndContent(supportingItem, None))
     case Some(snapType) =>
+      val resolvedMetaData = ResolvedMetaData.fromTrailMetaData(supportingItem.safeMeta)
       Option(LinkSnap(
       supportingItem.id,
       snapType,
@@ -98,7 +100,7 @@ object Snap {
       supportingItem.safeMeta.href,
       supportingItem.safeMeta.trailText,
       supportingItem.safeMeta.group.getOrElse("0"),
-      FaciaImage.getFaciaImage(None, supportingItem.safeMeta),
+      FaciaImage.getFaciaImage(None, supportingItem.safeMeta, resolvedMetaData),
       supportingItem.safeMeta.isBreaking.exists(identity),
       supportingItem.safeMeta.isBoosted.exists(identity),
       supportingItem.safeMeta.showMainVideo.exists(identity),
@@ -164,7 +166,7 @@ object LatestSnap {
       trail.safeMeta.href,
       trail.safeMeta.trailText,
       trail.safeMeta.group.getOrElse("0"),
-      FaciaImage.getFaciaImage(maybeContent,  trail.safeMeta),
+      FaciaImage.getFaciaImage(maybeContent, trail.safeMeta, resolvedMetaData),
       ContentProperties.fromResolvedMetaData(resolvedMetaData),
       trail.safeMeta.byline,
       ItemKicker.fromMaybeContentTrailMetaAndResolvedMetaData(maybeContent, trail.safeMeta, resolvedMetaData)
@@ -185,7 +187,7 @@ object LatestSnap {
       supportingItem.safeMeta.href,
       supportingItem.safeMeta.trailText,
       supportingItem.safeMeta.group.getOrElse("0"),
-      FaciaImage.getFaciaImage(maybeContent, supportingItem.safeMeta),
+      FaciaImage.getFaciaImage(maybeContent, supportingItem.safeMeta, resolvedMetaData),
       ContentProperties.fromResolvedMetaData(resolvedMetaData),
       supportingItem.safeMeta.byline,
       ItemKicker.fromMaybeContentTrailMetaAndResolvedMetaData(maybeContent, supportingItem.safeMeta, resolvedMetaData)
@@ -238,7 +240,7 @@ object CuratedContent {
       trailMetaData.href.orElse(contentFields.get("href")),
       trailMetaData.trailText.orElse(contentFields.get("trailText")),
       trailMetaData.group.getOrElse("0"),
-      FaciaImage.getFaciaImage(Some(content), trailMetaData),
+      FaciaImage.getFaciaImage(Some(content), trailMetaData, resolvedMetaData),
       ContentProperties.fromResolvedMetaData(resolvedMetaData),
       trailMetaData.byline.orElse(contentFields.get("byline")),
       ItemKicker.fromContentAndTrail(Option(content), trailMetaData, resolvedMetaData, Some(collectionConfig)),
@@ -259,7 +261,7 @@ object CuratedContent {
       trailMetaData.href.orElse(contentFields.get("href")),
       trailMetaData.trailText.orElse(contentFields.get("trailText")),
       trailMetaData.group.getOrElse("0"),
-      FaciaImage.getFaciaImage(Some(content), trailMetaData),
+      FaciaImage.getFaciaImage(Some(content), trailMetaData, resolvedMetaData),
       ContentProperties.fromResolvedMetaData(resolvedMetaData),
       trailMetaData.byline.orElse(contentFields.get("byline")),
       ItemKicker.fromContentAndTrail(Option(content), trailMetaData, resolvedMetaData, Some(collectionConfig)),
@@ -281,7 +283,7 @@ object SupportingCuratedContent {
       trailMetaData.href.orElse(contentFields.get("href")),
       trailMetaData.trailText.orElse(contentFields.get("trailText")),
       trailMetaData.group.getOrElse("0"),
-      FaciaImage.getFaciaImage(Some(content), trailMetaData),
+      FaciaImage.getFaciaImage(Some(content), trailMetaData, resolvedMetaData),
       ContentProperties.fromResolvedMetaData(resolvedMetaData),
       trailMetaData.byline.orElse(contentFields.get("byline")),
       ItemKicker.fromContentAndTrail(Option(content), trailMetaData, resolvedMetaData, None)
