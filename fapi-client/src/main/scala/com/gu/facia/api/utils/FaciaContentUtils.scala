@@ -285,6 +285,17 @@ object FaciaContentUtils {
     linkSnap => DefaultCardstyle,
     latestSnap => latestSnap.cardStyle)
 
+  def image(fc: FaciaContent): Option[FaciaImage] = fold(fc)(
+    curatedContent => curatedContent.image,
+    supportingCuratedContent => supportingCuratedContent.image,
+    linkSnap => linkSnap.image,
+    latestSnap => latestSnap.image)
+
   def isClosedForComments (fc: FaciaContent) = fieldsExists(fc)(!_.get("commentCloseDate").exists(new DateTime(_).isAfterNow))
 
+  def properties(fc: FaciaContent): Option[ContentProperties] = fold(fc)(
+    curatedContent => Option(curatedContent.properties),
+    supportingCuratedContent => Option(supportingCuratedContent.properties),
+    linkSnap => None,
+    latestSnap => Option(latestSnap.properties))
 }
