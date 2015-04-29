@@ -13,10 +13,13 @@ object FaciaImage {
 
   def getFaciaImage(maybeContent: Option[Content], trailMeta: MetaDataCommonFields, resolvedMetadata: ResolvedMetaData): Option[FaciaImage] = {
     if (resolvedMetadata.imageHide) None
-    else { maybeContent flatMap { content =>
-        if (resolvedMetadata.imageCutoutReplace) imageCutout(trailMeta) orElse fromContentTags(content, trailMeta)
+    else {
+      maybeContent flatMap { content =>
+        if (resolvedMetadata.imageCutoutReplace)
+          imageCutout(trailMeta) orElse fromContentTags(content, trailMeta)
         else None
-      } orElse imageReplace(trailMeta, resolvedMetadata)
+      } orElse
+          imageSlideshow(trailMeta, resolvedMetadata) orElse imageReplace(trailMeta, resolvedMetadata)
     }
   }
 
@@ -26,7 +29,7 @@ object FaciaImage {
       for {
         tag <- contributorTags.find(_.bylineLargeImageUrl.isDefined)
         path <- tag.bylineLargeImageUrl
-      } yield FaciaImage(Cutout, path, None, None)
+      } yield Cutout(path, None, None)
     else None
   }
 
@@ -34,13 +37,21 @@ object FaciaImage {
     src <- trailMeta.imageCutoutSrc
     width <- trailMeta.imageCutoutSrcWidth
     height <- trailMeta.imageCutoutSrcHeight
-  } yield FaciaImage(Cutout, src, Option(width), Option(height))
+  } yield Cutout(src, Option(width), Option(height))
 
   def imageReplace(trailMeta: MetaDataCommonFields, resolvedMetaData: ResolvedMetaData): Option[FaciaImage] =
     if (resolvedMetaData.imageReplace)
       for {src <- trailMeta.imageSrc
            width <- trailMeta.imageSrcWidth
-           height <- trailMeta.imageSrcHeight} yield FaciaImage(Replace, src, Option(width), Option(height))
+           height <- trailMeta.imageSrcHeight} yield Replace(src, width, height)
+    else
+      None
+
+  def imageSlideshow(trailMeta: MetaDataCommonFields, resolvedMetaData: ResolvedMetaData): Option[FaciaImage] =
+    if (resolvedMetaData.imageSlideshowReplace) {
+      trailMeta.slideshow.map { assets =>
+        val slideshowAssets = assets.map(asset => Replace(asset.src, asset.width, asset.height))
+        ImageSlideshow(slideshowAssets)}}
     else
       None
 
