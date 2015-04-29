@@ -4,16 +4,10 @@ import com.gu.contentapi.client.model.{Tag, Content}
 import com.gu.facia.api.utils._
 import com.gu.facia.client.models.{SupportingItem, MetaDataCommonFields, Trail, TrailMetaData}
 
-case class FaciaImage(
-  imageType: ImageType,
-  imageSrc: String,
-  imageSrcWidth: Option[String],
-  imageSrcHeight: Option[String]
-)
-
-sealed trait ImageType
-case object Cutout extends ImageType { override def toString = "cutout" }
-case object Replace extends ImageType { override def toString = "replace" }
+sealed trait FaciaImage
+case class Cutout(imageSrc: String, imageSrcWidth: Option[String], imageSrcHeight: Option[String]) extends FaciaImage { override def toString = "cutout" }
+case class Replace(imageSrc: String, imageSrcWidth: String, imageSrcHeight: String) extends FaciaImage { override def toString = "replace" }
+case class ImageSlideshow(replace: List[Replace]) extends FaciaImage
 
 object FaciaImage {
 
