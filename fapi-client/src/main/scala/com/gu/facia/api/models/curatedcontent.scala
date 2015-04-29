@@ -7,7 +7,7 @@ import com.gu.facia.client.models.{SupportingItem, MetaDataCommonFields, Trail, 
 sealed trait FaciaImage
 case class Cutout(imageSrc: String, imageSrcWidth: Option[String], imageSrcHeight: Option[String]) extends FaciaImage
 case class Replace(imageSrc: String, imageSrcWidth: String, imageSrcHeight: String) extends FaciaImage
-case class ImageSlideshow(replace: List[Replace]) extends FaciaImage
+case class ImageSlideshow(assets: List[Replace]) extends FaciaImage
 
 object FaciaImage {
 
