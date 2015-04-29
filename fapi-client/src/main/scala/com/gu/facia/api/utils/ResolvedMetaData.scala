@@ -30,7 +30,8 @@ object ResolvedMetaData {
     showKickerTag = false,
     showByline = false,
     imageCutoutReplace = false,
-    showQuotedHeadline = false)
+    showQuotedHeadline = false,
+    imageSlideshowReplace = false)
 
   def fromTrailMetaData(trailMeta: MetaDataCommonFields): ResolvedMetaData =
     ResolvedMetaData(
@@ -45,7 +46,9 @@ object ResolvedMetaData {
       showKickerTag = trailMeta.showKickerTag.exists(identity),
       showByline = trailMeta.showByline.exists(identity),
       imageCutoutReplace = trailMeta.imageCutoutReplace.exists(identity),
-      showQuotedHeadline = trailMeta.showQuotedHeadline.exists(identity))
+      showQuotedHeadline = trailMeta.showQuotedHeadline.exists(identity),
+      imageSlideshowReplace = trailMeta.imageSlideshowReplace.exists(identity)
+  )
 
   private[utils] def fromContent(content: Content, cardStyle: CardStyle): ResolvedMetaData =
     cardStyle match {
@@ -72,7 +75,8 @@ object ResolvedMetaData {
       showKickerTag = trailMeta.showKickerTag.getOrElse(metaDataFromContent.showKickerTag),
       showByline = trailMeta.showByline.getOrElse(metaDataFromContent.showByline),
       imageCutoutReplace = trailMeta.imageCutoutReplace.getOrElse(metaDataFromContent.imageCutoutReplace),
-      showQuotedHeadline = trailMeta.showQuotedHeadline.getOrElse(metaDataFromContent.showQuotedHeadline))}
+      showQuotedHeadline = trailMeta.showQuotedHeadline.getOrElse(metaDataFromContent.showQuotedHeadline),
+      imageSlideshowReplace = trailMeta.imageSlideshowReplace.getOrElse(metaDataFromContent.imageSlideshowReplace))}
 }
 
 case class ResolvedMetaData(
@@ -87,7 +91,8 @@ case class ResolvedMetaData(
     showKickerTag: Boolean,
     showByline: Boolean,
     imageCutoutReplace: Boolean,
-    showQuotedHeadline: Boolean)
+    showQuotedHeadline: Boolean,
+    imageSlideshowReplace: Boolean)
 
 object ContentProperties {
   def fromResolvedMetaData(resolvedMetaData: ResolvedMetaData): ContentProperties =
