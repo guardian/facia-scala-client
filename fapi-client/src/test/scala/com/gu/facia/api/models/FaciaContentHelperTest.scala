@@ -6,7 +6,17 @@ import org.scalatest.{FreeSpec, Matchers}
 
 class FaciaContentHelperTest extends FreeSpec with Matchers {
 
-  val emptyContentProperties = ContentProperties(isBreaking = false, isBoosted = false, imageHide = false, showBoostedHeadline = false, showMainVideo = false, showKickerTag = false, showByline = false, showQuotedHeadline = false)
+  val emptyContentProperties =
+    ContentProperties(
+      isBreaking = false,
+      isBoosted = false,
+      imageHide = false,
+      showBoostedHeadline = false,
+      showMainVideo = false,
+      showKickerTag = false,
+      showByline = false,
+      showQuotedHeadline = false,
+      imageSlideshowReplace = false)
 
   "should return 'Missing Headline' when the headline is None in a Snaps" in {
     val snap = LatestSnap("myId", DefaultCardstyle, None, None, None, None, None, None, "myGroup", None, emptyContentProperties, None, None)

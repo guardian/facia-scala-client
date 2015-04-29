@@ -104,7 +104,8 @@ object ContentProperties {
       showMainVideo = resolvedMetaData.showMainVideo,
       showKickerTag = resolvedMetaData.showKickerTag,
       showByline = resolvedMetaData.showByline,
-      showQuotedHeadline = resolvedMetaData.showQuotedHeadline)
+      showQuotedHeadline = resolvedMetaData.showQuotedHeadline,
+      imageSlideshowReplace = resolvedMetaData.imageSlideshowReplace)
 }
 
 case class ContentProperties(
@@ -115,4 +116,5 @@ case class ContentProperties(
     showMainVideo: Boolean,
     showKickerTag: Boolean,
     showByline: Boolean,
-    showQuotedHeadline: Boolean)
+    showQuotedHeadline: Boolean,
+    imageSlideshowReplace: Boolean)
