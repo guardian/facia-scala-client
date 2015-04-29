@@ -27,6 +27,6 @@ class FaciaImageReplaceTest extends FlatSpec with Matchers {
 
   it should "give back an Image when true" in {
     val resolvedMetaData =  ResolvedMetaData.fromTrailMetaData(trailMetaDataWithImageReplace)
-    FaciaImage.getFaciaImage(None, trailMetaDataWithImageReplace, resolvedMetaData) should be (Some(FaciaImage(Replace, "theImageSrc", Some("theImageSrcWidth"), Some("theImageSrcHeight"))))
+    FaciaImage.getFaciaImage(None, trailMetaDataWithImageReplace, resolvedMetaData) should be (Some(Replace("theImageSrc", "theImageSrcWidth", "theImageSrcHeight")))
   }
 }
