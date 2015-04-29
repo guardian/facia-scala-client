@@ -4,6 +4,11 @@ import play.api.libs.json._
 import org.joda.time.DateTime
 import play.api.libs.json.{JsValue, Json}
 
+case class SlideshowAsset(src: String, width: String, height: String)
+object SlideshowAsset {
+  implicit val slideshowAssetFormat = Json.format[SlideshowAsset]
+}
+
 sealed trait MetaDataCommonFields {
   val json: Map[String, JsValue]
 
@@ -35,6 +40,9 @@ sealed trait MetaDataCommonFields {
   lazy val showBoostedHeadline: Option[Boolean] = json.get("showBoostedHeadline").flatMap(_.asOpt[Boolean])
   lazy val showQuotedHeadline: Option[Boolean] = json.get("showQuotedHeadline").flatMap(_.asOpt[Boolean])
   lazy val excludeFromRss: Option[Boolean] = json.get("excludeFromRss").flatMap(_.asOpt[Boolean])
+  lazy val imageSlideshowReplace: Option[Boolean] = json.get("imageSlideshowReplace").flatMap(_.asOpt[Boolean])
+  lazy val slideshow: Option[List[SlideshowAsset]] =
+    json.get("slideshow").flatMap(_.asOpt[List[SlideshowAsset]]).filter(_.nonEmpty)
 }
 
 object SupportingItemMetaData {
