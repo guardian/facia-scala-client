@@ -247,6 +247,7 @@ object FaciaContentUtils {
   def isGallery(fc: FaciaContent) = types(fc).exists(_.id == "type/gallery")
   def isAudio(fc: FaciaContent) = types(fc).exists(_.id == "type/audio")
   def isCartoon(fc: FaciaContent) = types(fc).exists(_.id == Tags.Cartoon)
+  def isArticle(fc: FaciaContent) = types(fc).exists(_.id == Tags.Article)
   def isCrossword(fc: FaciaContent) = types(fc).exists(_.id == Tags.Crossword)
 
   def supporting(fc: FaciaContent): List[FaciaContent] = fold(fc)(
