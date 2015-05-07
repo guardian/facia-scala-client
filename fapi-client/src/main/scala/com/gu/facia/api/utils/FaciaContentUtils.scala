@@ -22,11 +22,8 @@ object FaciaContentUtils {
     linkSnap => None,
     latestSnap => latestSnap.latestContent)
 
-  def tags(fc: FaciaContent): List[com.gu.contentapi.client.model.Tag] = fold(fc)(
-    curatedContent => curatedContent.content.tags,
-    supportingCuratedContent => supportingCuratedContent.content.tags,
-    _ => Nil,
-    latestSnap => latestSnap.latestContent.map(_.tags).getOrElse(Nil))
+  def tags(fc: FaciaContent): List[com.gu.contentapi.client.model.Tag] =
+    maybeContent(fc).map(_.tags).getOrElse(Nil)
 
   def webPublicationDateOption(fc: FaciaContent): Option[DateTime] = fold(fc)(
     curatedContent => Option(curatedContent.content.webPublicationDate),
@@ -94,9 +91,9 @@ object FaciaContentUtils {
 
   def mediaType(fc: FaciaContent): Option[MediaType] = {
     def mediaTypeFromContent(content: Content): Option[MediaType] =
-      if (content.isGallery) Option(Gallery)
-      else if (content.isAudio) Option(Audio)
-      else if (content.isVideo) Option(Video)
+      if (isGallery(fc)) Option(Gallery)
+      else if (isAudio(fc)) Option(Audio)
+      else if (isVideo(fc)) Option(Video)
       else None
     fold(fc)(
       curatedContent => mediaTypeFromContent(curatedContent.content),
