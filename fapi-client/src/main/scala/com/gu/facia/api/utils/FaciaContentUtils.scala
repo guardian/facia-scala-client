@@ -104,66 +104,12 @@ object FaciaContentUtils {
       linkSnap => None,
       latestSnap => latestSnap.latestContent.flatMap(mediaTypeFromContent))}
 
-  def isLiveBlog(fc: FaciaContent): Boolean = fold(fc)(
-    curatedContent => curatedContent.content.isLiveBlog,
-    supportingCuratedContent => supportingCuratedContent.content.isLiveBlog,
-    linkSnap => false,
-    latestSnap => latestSnap.latestContent.exists(_.isLiveBlog))
-
   def isLive(fc: FaciaContent): Boolean = fold(fc)(
     curatedContent => curatedContent.content.safeFields.get("liveBloggingNow").exists(_.toBoolean),
     supportingCuratedContent => supportingCuratedContent.content.safeFields.get("liveBloggingNow").exists(_.toBoolean),
     linkSnap => false,
     latestSnap => latestSnap.latestContent.exists(_.safeFields.get("liveBloggingNow").exists(_.toBoolean)))
 
-  def isPodcast(fc: FaciaContent): Boolean = fold(fc)(
-    curatedContent => curatedContent.content.isPodcast,
-    supportingCuratedContent => supportingCuratedContent.content.isPodcast,
-    linkSnap => false,
-    latestSnap => latestSnap.latestContent.exists(_.isPodcast))
-
-  def isMedia(fc: FaciaContent): Boolean = fold(fc)(
-    curatedContent => curatedContent.content.isMedia,
-    supportingCuratedContent => supportingCuratedContent.content.isMedia,
-    linkSnap => false,
-    latestSnap => latestSnap.latestContent.exists(_.isMedia)
-  )
-  def isEditorial(fc: FaciaContent): Boolean = fold(fc)(
-    curatedContent => curatedContent.content.isEditorial,
-    supportingCuratedContent => supportingCuratedContent.content.isEditorial,
-    linkSnap => false,
-    latestSnap => latestSnap.latestContent.exists(_.isEditorial)
-  )
-  def isComment(fc: FaciaContent): Boolean = fold(fc)(
-    curatedContent => curatedContent.content.isComment,
-    supportingCuratedContent => supportingCuratedContent.content.isComment,
-    linkSnap => false,
-    latestSnap => latestSnap.latestContent.exists(_.isComment)
-  )
-  def isAnalysis(fc: FaciaContent): Boolean = fold(fc)(
-    curatedContent => curatedContent.content.isAnalysis,
-    supportingCuratedContent =>supportingCuratedContent.content.isAnalysis,
-    linkSnap => false,
-    latestSnap => latestSnap.latestContent.exists(_.isAnalysis)
-  )
-  def isReview(fc: FaciaContent): Boolean = fold(fc)(
-    curatedContent => curatedContent.content.isReview,
-    supportingCuratedContent => supportingCuratedContent.content.isReview,
-    linkSnap => false,
-    latestSnap => latestSnap.latestContent.exists(_.isReview)
-  )
-  def isLetters(fc: FaciaContent): Boolean = fold(fc)(
-    curatedContent => curatedContent.content.isLetters,
-    supportingCuratedContent => supportingCuratedContent.content.isLetters,
-    linkSnap => false,
-    latestSnap => latestSnap.latestContent.exists(_.isLetters)
-  )
-  def isFeature(fc: FaciaContent): Boolean = fold(fc)(
-    curatedContent => curatedContent.content.isFeature,
-    supportingCuratedContent => supportingCuratedContent.content.isFeature,
-    linkSnap => false,
-    latestSnap => latestSnap.latestContent.exists(_.isFeature)
-  )
   private def fieldsExists(fc: FaciaContent)(f: (Map[String, String]) => Boolean): Boolean = fold(fc)(
     curatedContent => f(curatedContent.content.safeFields),
     supportingCuratedContent => f(supportingCuratedContent.content.safeFields),
@@ -235,20 +181,32 @@ object FaciaContentUtils {
     latestSnap => latestSnap.properties.showByline)
 
   private def tagsOfType(fc: FaciaContent)(tagType: String): Seq[Tag] = tags(fc).filter(_.`type` == tagType)
-  def keywords(fc: FaciaContent): Seq[Tag] = tagsOfType(fc)("keyword")
   def nonKeywordTags(fc: FaciaContent): Seq[Tag] = tags(fc).filterNot(_.`type` == "keyword")
-  def contributors(fc: FaciaContent): Seq[Tag] = tagsOfType(fc)("contributor")
-  def isContributorPage(fc: FaciaContent): Boolean = contributors(fc).nonEmpty
+  def keywords(fc: FaciaContent): Seq[Tag] = tagsOfType(fc)("keyword")
   def series(fc: FaciaContent): Seq[Tag] = tagsOfType(fc)("series")
   def blogs(fc: FaciaContent): Seq[Tag] = tagsOfType(fc)("blog")
   def tones(fc: FaciaContent): Seq[Tag] = tagsOfType(fc)("tone")
   def types(fc: FaciaContent): Seq[Tag] = tagsOfType(fc)("type")
-  def isVideo(fc: FaciaContent) = types(fc).exists(_.id == "type/video")
-  def isGallery(fc: FaciaContent) = types(fc).exists(_.id == "type/gallery")
-  def isAudio(fc: FaciaContent) = types(fc).exists(_.id == "type/audio")
-  def isCartoon(fc: FaciaContent) = types(fc).exists(_.id == Tags.Cartoon)
-  def isArticle(fc: FaciaContent) = types(fc).exists(_.id == Tags.Article)
-  def isCrossword(fc: FaciaContent) = types(fc).exists(_.id == Tags.Crossword)
+
+  def contributors(fc: FaciaContent): Seq[Tag] = maybeContent(fc).map(_.contributors).getOrElse(Nil)
+  def isContributorPage(fc: FaciaContent): Boolean = maybeContent(fc).exists(_.contributors.nonEmpty)
+  def isVideo(fc: FaciaContent) = maybeContent(fc).exists(_.isVideo)
+  def isGallery(fc: FaciaContent) = maybeContent(fc).exists(_.isGallery)
+  def isAudio(fc: FaciaContent) = maybeContent(fc).exists(_.isAudio)
+  def isCartoon(fc: FaciaContent) = maybeContent(fc).exists(_.isCartoon)
+  def isArticle(fc: FaciaContent) = maybeContent(fc).exists(_.isArticle)
+  def isCrossword(fc: FaciaContent) = maybeContent(fc).exists(_.isCrossword)
+  def isLiveBlog(fc: FaciaContent): Boolean = maybeContent(fc).exists(_.isLiveBlog)
+  def isPodcast(fc: FaciaContent): Boolean = maybeContent(fc).exists(_.isPodcast)
+  def isMedia(fc: FaciaContent): Boolean = maybeContent(fc).exists(_.isMedia)
+  def isEditorial(fc: FaciaContent): Boolean = maybeContent(fc).exists(_.isEditorial)
+  def isComment(fc: FaciaContent): Boolean = maybeContent(fc).exists(_.isComment)
+  def isAnalysis(fc: FaciaContent): Boolean = maybeContent(fc).exists(_.isAnalysis)
+  def isReview(fc: FaciaContent): Boolean = maybeContent(fc).exists(_.isReview)
+  def isLetters(fc: FaciaContent): Boolean = maybeContent(fc).exists(_.isLetters)
+  def isFeature(fc: FaciaContent): Boolean = maybeContent(fc).exists(_.isFeature)
+
+
 
   def supporting(fc: FaciaContent): List[FaciaContent] = fold(fc)(
     curatedContent => curatedContent.supportingContent,
