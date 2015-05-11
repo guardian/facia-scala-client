@@ -2,9 +2,12 @@ package com.gu.facia.api.utils
 
 import com.gu.contentapi.client.model.Content
 import com.gu.facia.client.models.MetaDataCommonFields
+import play.api.libs.json.{Format, Json}
 
 
 object ResolvedMetaData {
+  implicit val resolvedMetaDataFormat: Format[ResolvedMetaData] = Json.format[ResolvedMetaData]
+
   val Cartoon = "type/cartoon"
   val Video = "type/video"
   val Comment = "tone/comment"
