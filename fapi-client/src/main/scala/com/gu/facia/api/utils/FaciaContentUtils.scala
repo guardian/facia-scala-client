@@ -236,10 +236,10 @@ object FaciaContentUtils {
     latestSnap => latestSnap.latestContent.flatMap(_.elements).getOrElse(Nil))
 
   def cardStyle(fc: FaciaContent): CardStyle = fold(fc)(
-    curatedContent => curatedContent.cardStyle,
-    supportingCuratedContent => supportingCuratedContent.cardStyle,
-    linkSnap => DefaultCardstyle,
-    latestSnap => latestSnap.cardStyle)
+      curatedContent => curatedContent.cardStyle,
+      supportingCuratedContent => supportingCuratedContent.cardStyle,
+      linkSnap => if(linkSnap.href.exists(ExternalLinks.external)) ExternalLink else DefaultCardstyle,
+      latestSnap => latestSnap.cardStyle)
 
   def image(fc: FaciaContent): Option[FaciaImage] = fold(fc)(
     curatedContent => curatedContent.image,
