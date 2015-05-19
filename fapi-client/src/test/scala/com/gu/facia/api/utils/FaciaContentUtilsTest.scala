@@ -107,10 +107,11 @@ class FaciaContentUtilsTest extends FreeSpec with Matchers {
       fields = Some(Map("internalContentCode" -> "CODE", "headline" -> "Content headline", "href" -> "Content href", "trailText" -> "Content trailtext", "byline" -> "Content byline")),
       Nil, None, Nil, None)
 
+    val now = DateTime.now()
+
     "should return a NOW for a LinkSnap" in {
       val linkSnap = makeLinkSnap("some-link-snap")
       val dateTime = FaciaContentUtils.webPublicationDate(linkSnap)
-      val now = DateTime.now()
 
       dateTime.getDayOfMonth should be (now.getDayOfMonth)
       dateTime.getMonthOfYear should be (now.getMonthOfYear)
@@ -119,17 +120,29 @@ class FaciaContentUtilsTest extends FreeSpec with Matchers {
 
     "should throw exception for DateTime on inner content with no DateTime for LatestSnap" in {
       val latestSnap = makeLatestSnap("some-latest-snap", contentWithNoDatetime)
-      an [NoSuchElementException] should be thrownBy FaciaContentUtils.webPublicationDate(latestSnap)
+      val dateTime = FaciaContentUtils.webPublicationDate(latestSnap)
+
+      dateTime.getDayOfMonth should be (now.getDayOfMonth)
+      dateTime.getMonthOfYear should be (now.getMonthOfYear)
+      dateTime.getYear should be (now.getYear)
     }
 
     "should throw exception for DateTime on inner content with no DateTime for CuratedContent" in {
       val curatedContent = makeCuratedContent("some-curated-content", contentWithNoDatetime)
-      an [NoSuchElementException] should be thrownBy FaciaContentUtils.webPublicationDateOption(curatedContent)
+      val dateTime = FaciaContentUtils.webPublicationDate(curatedContent)
+
+      dateTime.getDayOfMonth should be (now.getDayOfMonth)
+      dateTime.getMonthOfYear should be (now.getMonthOfYear)
+      dateTime.getYear should be (now.getYear)
     }
 
     "should throw exception for DateTime on inner content with no DateTime for SupportingCuratedContent" in {
       val supportingCuratedContent = makeSupportingCuratedContent("some-supporting-curated-content", contentWithNoDatetime)
-      an [NoSuchElementException] should be thrownBy FaciaContentUtils.webPublicationDateOption(supportingCuratedContent)
+      val dateTime = FaciaContentUtils.webPublicationDate(supportingCuratedContent)
+
+      dateTime.getDayOfMonth should be (now.getDayOfMonth)
+      dateTime.getMonthOfYear should be (now.getMonthOfYear)
+      dateTime.getYear should be (now.getYear)
     }
   }
 
