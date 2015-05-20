@@ -39,6 +39,12 @@ object FaciaContentUtils {
     linkSnap => linkSnap.id,
     latestSnap => latestSnap.id)
 
+  def group(fc: FaciaContent): String = fold(fc)(
+    curatedContent => curatedContent.group,
+    supportingCuratedContent => supportingCuratedContent.group,
+    linkSnap => linkSnap.group,
+    latestSnap => latestSnap.group)
+
   def embedType(fc: FaciaContent): Option[String] = fold(fc)(
     curatedContent => curatedContent.embedType,
     supportingCuratedContent => None,
