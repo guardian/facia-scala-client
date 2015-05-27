@@ -108,7 +108,7 @@ object ItemKicker {
 
   /** Return a plain-text representation of a kicker */
   def kickerText(itemKicker: ItemKicker): Option[String] = itemKicker match {
-    case BreakingNewsKicker => Some("Breaking")
+    case BreakingNewsKicker => Some("Breaking news")
     case AnalysisKicker => Some("Analysis")
     case ReviewKicker => Some("Review")
     case CartoonKicker => Some("Cartoon")

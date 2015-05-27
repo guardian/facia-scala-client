@@ -58,7 +58,7 @@ class ItemKickerTest extends FreeSpec with ShouldMatchers with MockitoSugar with
 
   "kickerText" - {
     "should return a textual description for Breaking News kickers" in {
-      ItemKicker.kickerText(BreakingNewsKicker) shouldBe Some("Breaking")
+      ItemKicker.kickerText(BreakingNewsKicker) shouldBe Some("Breaking news")
     }
 
     "should return a textual description for Analysis kickers" in {
