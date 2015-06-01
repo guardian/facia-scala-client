@@ -432,6 +432,38 @@ class IntegrationTest extends FreeSpec with ShouldMatchers with ScalaFutures wit
         })
     }
 
+    "should request what is in live when draft is None" - {
+      "for normal content" in {
+        val collectionJson = makeCollectionJson(normalTrail, normalTrailTwo)
+        val collection = Collection.fromCollectionJsonConfigAndContent("id", Some(collectionJson), collectionConfig)
+
+        val faciaContent = FAPI.draftCollectionContentWithoutSnaps(collection)
+
+        faciaContent.asFuture.futureValue.fold(err => fail(s"expected 2 results, got $err", err.cause), contents => {
+          contents.size should be(2)
+          contents.head.asInstanceOf[CuratedContent].headline should be("PM returns from holiday after video shows US reporter beheaded by Briton")
+          contents.apply(1).asInstanceOf[CuratedContent].headline should be("Inside the 29 August edition")
+        })
+      }
+
+      "for dreamsnaps" in {
+        val dreamSnapOne = makeLatestTrailFor("snap/1281727", "uk/culture")
+        val dreamSnapTwo = makeLatestTrailFor("snap/2372382", "technology")
+        val collectionJson = makeCollectionJson(normalTrail, normalTrailTwo, dreamSnapOne, dreamSnapTwo)
+        val collection = Collection.fromCollectionJsonConfigAndContent("id", Some(collectionJson), collectionConfig)
+
+        val faciaContent = FAPI.draftCollectionContentWithSnaps(collection, adjustSnapItemQuery = itemQuery => itemQuery.showTags("all"))
+
+        faciaContent.asFuture.futureValue.fold(err => fail(s"expected 4 results, got $err", err.cause), contents => {
+          contents.size should be(4)
+          contents.head.asInstanceOf[CuratedContent].headline should be("PM returns from holiday after video shows US reporter beheaded by Briton")
+          contents.apply(1).asInstanceOf[CuratedContent].headline should be("Inside the 29 August edition")
+          contents.apply(2).asInstanceOf[LatestSnap].latestContent.get.tags.exists(_.sectionId == Some("culture")) should be(true)
+          contents.apply(3).asInstanceOf[LatestSnap].latestContent.get.tags.exists(_.sectionId == Some("technology")) should be(true)
+        })
+      }
+    }
+
     "Should request a mix of both" - {
       val normalTrailThree = Trail("internal-code/content/454695023", 0, None)
       val dreamSnapOne = makeLatestTrailFor("snap/1281727", "uk/culture")
