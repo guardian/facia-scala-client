@@ -23,7 +23,7 @@ object CardStyle {
     val href = trailMetaData.href.orElse(content.safeFields.get("href"))
     if (trailMetaData.snapType == Some("link") && href.exists(ExternalLinks.external)) {
       ExternalLink
-    } else if (content.tags.exists(_.id == "news/series/hsbc-files")) {
+    } else if (trail.tags.exists(_.id == "news/series/hsbc-files") || trail.tags.exists(_.id == "us-news/series/counted-us-police-killings")) {
       SpecialReport
     } else if (content.isLiveBlog) {
       if (content.isLive) {
