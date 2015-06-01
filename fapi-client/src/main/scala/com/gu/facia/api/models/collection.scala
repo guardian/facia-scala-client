@@ -103,30 +103,31 @@ object Collection {
     snapContent: Map[String, Option[Content]] = Map.empty): List[FaciaContent] =
     contentFrom(collection, content, snapContent, collection => collection.draft.getOrElse(Nil))
 
-  def draftIdsWithoutSnaps(collection: Collection): List[String] =
-    collection.draft.map(_.filterNot(_.isSnap).map(_.id)).getOrElse(Nil)
+  def draftIdsWithoutSnaps(collection: Collection): Option[List[String]] =
+    collection.draft.map(_.filterNot(_.isSnap).map(_.id))
 
-  private def allDraftSupportingItems(collection: Collection): List[SupportingItem] =
-    collection.draft.map(_.flatMap(_.meta).flatMap(_.supporting).flatten).getOrElse(Nil)
+  private def allDraftSupportingItems(collection: Collection): Option[List[SupportingItem]] =
+    collection.draft.map(_.flatMap(_.meta).flatMap(_.supporting).flatten)
 
-  def draftSupportingIdsWithoutSnaps(collection: Collection): List[String] =
-    allDraftSupportingItems(collection).filterNot(_.isSnap).map(_.id)
+  def draftSupportingIdsWithoutSnaps(collection: Collection): Option[List[String]] =
+    allDraftSupportingItems(collection).map(_.filterNot(_.isSnap).map(_.id))
 
-  def draftSupportingSnaps(collection: Collection): LatestSnapsRequest =
-    LatestSnapsRequest(
+  def draftSupportingSnaps(collection: Collection): Option[LatestSnapsRequest] =
       allDraftSupportingItems(collection)
-        .filter(_.isSnap)
-        .filter(_.safeMeta.snapType.contains("latest"))
-        .flatMap(snap => snap.meta.flatMap(_.snapUri).map(uri => snap.id ->uri))
-        .toMap)
+        .map( listOfSupportingItems =>
+          LatestSnapsRequest(
+            listOfSupportingItems.filter(_.isSnap)
+              .filter(_.safeMeta.snapType.contains("latest"))
+              .flatMap(snap => snap.meta.flatMap(_.snapUri).map(uri => snap.id ->uri))
+              .toMap))
 
-  def draftLatestSnapsRequestFor(collection: Collection): LatestSnapsRequest =
-    LatestSnapsRequest(
-      collection.draft.map(
-      _.filter(_.isSnap)
-      .filter(_.safeMeta.snapType.contains("latest"))
-      .flatMap(snap => snap.safeMeta.snapUri.map(uri => snap.id -> uri))
-      .toMap).getOrElse(Map.empty))
+  def draftLatestSnapsRequestFor(collection: Collection): Option[LatestSnapsRequest] =
+      collection.draft.map( listOfTrails =>
+        LatestSnapsRequest(
+          listOfTrails.filter(_.isSnap)
+          .filter(_.safeMeta.snapType.contains("latest"))
+          .flatMap(snap => snap.safeMeta.snapUri.map(uri => snap.id -> uri))
+          .toMap))
 
   /* Treats */
   def treatContent(collection: Collection,
