@@ -85,7 +85,7 @@ object Collection {
     LatestSnapsRequest(
       allLiveSupportingItems(collection)
         .filter(_.isSnap)
-        .filter(_.safeMeta.snapType.contains("latest"))
+        .filter(_.safeMeta.snapType == Some("latest"))
         .flatMap(snap => snap.meta.flatMap(_.snapUri).map(uri => snap.id ->uri))
         .toMap)
 
@@ -93,7 +93,7 @@ object Collection {
     LatestSnapsRequest(
       collection.live
       .filter(_.isSnap)
-      .filter(_.safeMeta.snapType.contains("latest"))
+      .filter(_.safeMeta.snapType == Some("latest"))
       .flatMap(snap => snap.safeMeta.snapUri.map(uri => snap.id -> uri))
       .toMap)
 
@@ -117,7 +117,7 @@ object Collection {
         .map( listOfSupportingItems =>
           LatestSnapsRequest(
             listOfSupportingItems.filter(_.isSnap)
-              .filter(_.safeMeta.snapType.contains("latest"))
+              .filter(_.safeMeta.snapType == Some("latest"))
               .flatMap(snap => snap.meta.flatMap(_.snapUri).map(uri => snap.id ->uri))
               .toMap))
 
@@ -125,7 +125,7 @@ object Collection {
       collection.draft.map( listOfTrails =>
         LatestSnapsRequest(
           listOfTrails.filter(_.isSnap)
-          .filter(_.safeMeta.snapType.contains("latest"))
+          .filter(_.safeMeta.snapType == Some("latest"))
           .flatMap(snap => snap.safeMeta.snapUri.map(uri => snap.id -> uri))
           .toMap))
 
@@ -140,7 +140,7 @@ object Collection {
       LatestSnapsRequest(
         collection.treats
           .filter(_.isSnap)
-          .filter(_.safeMeta.snapType.contains("latest"))
+          .filter(_.safeMeta.snapType == Some("latest"))
           .flatMap(snap => snap.safeMeta.snapUri.map(uri => snap.id -> uri))
           .toMap)
 
