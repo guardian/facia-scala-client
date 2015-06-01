@@ -101,7 +101,7 @@ object Collection {
   def draftContent(collection: Collection,
     content: Set[Content],
     snapContent: Map[String, Option[Content]] = Map.empty): List[FaciaContent] =
-    contentFrom(collection, content, snapContent, collection => collection.draft.getOrElse(Nil))
+    contentFrom(collection, content, snapContent, collection => collection.draft.getOrElse(collection.live))
 
   def draftIdsWithoutSnaps(collection: Collection): Option[List[String]] =
     collection.draft.map(_.filterNot(_.isSnap).map(_.id))
