@@ -78,8 +78,12 @@ object FAPI {
 
   private def getDraftContentForCollection(collection: Collection, adjustSearchQuery: AdjustSearchQuery = identity)
                                    (implicit capiClient: GuardianContentClient, ec: ExecutionContext): Response[Set[Content]] = {
-    val itemIdsForRequest = Collection.draftIdsWithoutSnaps(collection)
-    val supportingIdsForRequest = Collection.draftSupportingIdsWithoutSnaps(collection)
+    val itemIdsForRequest =
+      Collection.draftIdsWithoutSnaps(collection)
+        .getOrElse(Collection.liveIdsWithoutSnaps(collection))
+    val supportingIdsForRequest =
+      Collection.draftSupportingIdsWithoutSnaps(collection)
+        .getOrElse(Collection.liveSupportingIdsWithoutSnaps(collection))
     val allItemIdsForRequest = itemIdsForRequest ::: supportingIdsForRequest
     for {
       hydrateQueries <- ContentApi.buildHydrateQueries(capiClient, allItemIdsForRequest, adjustSearchQuery)
@@ -98,8 +102,12 @@ object FAPI {
 
   private def getDraftLatestSnapContentForCollection(collection: Collection, adjustItemQuery: AdjustItemQuery)
                       (implicit capiClient: GuardianContentClient, ec: ExecutionContext) = {
-    val latestSnapsRequest: LatestSnapsRequest = Collection.draftLatestSnapsRequestFor(collection)
-    val latestSupportingSnaps: LatestSnapsRequest = Collection.draftSupportingSnaps(collection)
+    val latestSnapsRequest: LatestSnapsRequest =
+      Collection.draftLatestSnapsRequestFor(collection)
+        .getOrElse(Collection.liveLatestSnapsRequestFor(collection))
+    val latestSupportingSnaps: LatestSnapsRequest =
+      Collection.draftSupportingSnaps(collection)
+        .getOrElse(Collection.liveSupportingSnaps(collection))
     val allSnaps = latestSnapsRequest.join(latestSupportingSnaps)
     for(snapContent <- ContentApi.latestContentFromLatestSnaps(capiClient, allSnaps, adjustItemQuery))
       yield snapContent}
