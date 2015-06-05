@@ -16,7 +16,7 @@ class ResolvedMetaDataTest extends FreeSpec with Matchers {
 
   def contentWithTags(tags: Tag*): Content = Content(
     "content-id", Some("section"), Some("Section Name"), None, "webTitle", "webUrl", "apiUrl",
-    fields = Option(Map.empty), tags.toList, None, Nil, None)
+    fields = Option(Map.empty), tags.toList, None, Nil, None, None, None)
 
   val contentWithCartoon = contentWithTags(tagWithId("type/cartoon"))
   val contentWithComment = contentWithTags(tagWithId("tone/comment"))

@@ -15,12 +15,12 @@ class CuratedContentTest extends FreeSpec with Matchers {
     val contentWithFieldHeadline = Content(
       "content-id", Some("section"), Some("Section Name"), None, "webTitle", "webUrl", "apiUrl",
       fields = Some(Map("internalContentCode" -> "CODE", "headline" -> "Content headline", "href" -> "Content href", "trailText" -> "Content trailtext", "byline" -> "Content byline")),
-      Nil, None, Nil, None)
+      Nil, None, Nil, None, None, None)
 
     val contentWithoutFieldHeadline = Content(
       "content-id", Some("section"), Some("Section Name"), None, "contentWithoutFieldHeadlineHeadline", "webUrl", "apiUrl",
       fields = Some(Map("internalContentCode" -> "CODE", "href" -> "Content href", "trailText" -> "Content trailtext", "byline" -> "Content byline")),
-      Nil, None, Nil, None)
+      Nil, None, Nil, None, None, None)
 
     val trailMetaDataWithHeadline = TrailMetaData(Map("headline" -> JsString("trailMetaDataHeadline")))
     val trailMetaDataWithoutHeadline = TrailMetaData(Map.empty)
@@ -44,7 +44,7 @@ class CuratedContentTest extends FreeSpec with Matchers {
     val emptyContent = Content(
       "content-id", Some("section"), Some("Section Name"), None, "webTitle", "webUrl", "apiUrl",
       fields = Some(Map("internalContentCode" -> "CODE", "headline" -> "Content headline", "href" -> "Content href", "trailText" -> "Content trailtext", "byline" -> "Content byline")),
-      List(Tag("id", "type", None, None, "", "", "")), None, Nil, None)
+      List(Tag("id", "type", None, None, "", "", "")), None, Nil, None, None, None)
     val emptyTrailMetaData = TrailMetaData(Map.empty)
     val collectionConfig = CollectionConfig.fromCollectionJson(CollectionConfigJson.withDefaults())
     val collectionConfigShowSections = CollectionConfig.fromCollectionJson(CollectionConfigJson.withDefaults(showSections = Option(true)))
@@ -83,7 +83,7 @@ class CuratedContentTest extends FreeSpec with Matchers {
     val emptyContent = Content(
       "content-id", Some("section"), Some("Section Name"), None, "webTitle", "webUrl", "apiUrl",
       fields = Some(Map("internalContentCode" -> "CODE", "headline" -> "Content headline", "href" -> "Content href", "trailText" -> "Content trailtext", "byline" -> "Content byline")),
-      List(Tag("id", "type", None, None, "", "", "")), None, Nil, None)
+      List(Tag("id", "type", None, None, "", "", "")), None, Nil, None, None, None)
     val emptyTrailMetaData = TrailMetaData(Map.empty)
     val collectionConfig = CollectionConfig.fromCollectionJson(CollectionConfigJson.withDefaults())
     val collectionConfigShowSections = CollectionConfig.fromCollectionJson(CollectionConfigJson.withDefaults(showSections = Option(true)))
