@@ -167,7 +167,7 @@ object FAPI {
     for {
       backfillContent <- ContentApi.backfillContentFromResponse(backfillResponse)
     } yield {
-      backfillContent.map(CuratedContent.fromTrailAndContent(_, TrailMetaData.empty, collection.collectionConfig))
+      backfillContent.map(CuratedContent.fromTrailAndContent(_, TrailMetaData.empty, None, collection.collectionConfig))
     }
   }
 }

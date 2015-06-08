@@ -45,8 +45,8 @@ object Collection {
         .map { content =>
         trail.safeMeta.supporting
           .map(_.flatMap(resolveSupportingContent))
-          .map(supportingItems => CuratedContent.fromTrailAndContentWithSupporting(content, trail.safeMeta, supportingItems, collection.collectionConfig))
-          .getOrElse(CuratedContent.fromTrailAndContent(content, trail.safeMeta, collection.collectionConfig))}
+          .map(supportingItems => CuratedContent.fromTrailAndContentWithSupporting(content, trail.safeMeta, Option(trail.frontPublicationDate), supportingItems, collection.collectionConfig))
+          .getOrElse(CuratedContent.fromTrailAndContent(content, trail.safeMeta, Option(trail.frontPublicationDate), collection.collectionConfig))}
         .orElse {
           snapContent
             .find{case (id, _) => trail.id == id}
@@ -56,7 +56,7 @@ object Collection {
     def resolveSupportingContent(supportingItem: SupportingItem): Option[FaciaContent] = {
       content
         .find(c => supportingItem.id.endsWith("/" + c.safeFields.getOrElse("internalContentCode", throw new RuntimeException("No internal content code"))))
-        .map { content => SupportingCuratedContent.fromTrailAndContent(content, supportingItem.safeMeta, collection.collectionConfig)}
+        .map { content => SupportingCuratedContent.fromTrailAndContent(content, supportingItem.safeMeta, supportingItem.frontPublicationDate, collection.collectionConfig)}
         .orElse {
           snapContent
             .find{case (id, _) => supportingItem.id == id}
