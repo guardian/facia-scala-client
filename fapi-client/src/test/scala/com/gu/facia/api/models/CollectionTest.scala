@@ -34,6 +34,7 @@ class CollectionTest extends FreeSpec with ShouldMatchers with MockitoSugar with
 
   def makeLatestSnap(
     id: String = "id",
+    maybeFrontPublicationDate: Option[Long] = None,
     snapUri: Option[String] = None,
     snapCss: Option[String] = None,
     latestContent: Option[Content] = None,
@@ -54,6 +55,7 @@ class CollectionTest extends FreeSpec with ShouldMatchers with MockitoSugar with
     showQuotedHeadline: Boolean = false): LatestSnap =
     LatestSnap(
       id,
+      maybeFrontPublicationDate,
       DefaultCardstyle,
       snapUri,
       snapCss,
@@ -69,6 +71,7 @@ class CollectionTest extends FreeSpec with ShouldMatchers with MockitoSugar with
 
   def makeLinkSnap(
     id: String = "id",
+    maybeFrontPublicationDate: Option[Long] = None,
     snapType: String = Snap.DefaultType,
     snapUri: Option[String] = None,
     snapCss: Option[String] = None,
@@ -88,6 +91,7 @@ class CollectionTest extends FreeSpec with ShouldMatchers with MockitoSugar with
     showQuotedHeadline: Boolean = false): LinkSnap =
     LinkSnap(
       id,
+      maybeFrontPublicationDate,
       snapType,
       snapUri,
       snapCss,
@@ -195,10 +199,10 @@ class CollectionTest extends FreeSpec with ShouldMatchers with MockitoSugar with
       val faciaContent = Collection.liveContent(collection, Set.empty, snapContent)
 
       faciaContent.length should be (4)
-      faciaContent(0) should be (makeLinkSnap(id = "snap/1415985080061", snapUri = Some("abc")))
-      faciaContent(1) should be (makeLinkSnap(id = "snap/5345345215342", snapCss = Some("css")))
-      faciaContent(2) should be (makeLatestSnap(id = "snap/8474745745660", href = Some("uk"), latestContent = Some(snapContentOne)))
-      faciaContent(3) should be (makeLatestSnap(id = "snap/4324234234234", href = Some("culture"), latestContent = Some(snapContentTwo)))
+      faciaContent(0) should be (makeLinkSnap(id = "snap/1415985080061", maybeFrontPublicationDate = Option(1L), snapUri = Some("abc")))
+      faciaContent(1) should be (makeLinkSnap(id = "snap/5345345215342", maybeFrontPublicationDate = Option(1L), snapCss = Some("css")))
+      faciaContent(2) should be (makeLatestSnap(id = "snap/8474745745660", maybeFrontPublicationDate = Option(1L), href = Some("uk"), latestContent = Some(snapContentOne)))
+      faciaContent(3) should be (makeLatestSnap(id = "snap/4324234234234", maybeFrontPublicationDate = Option(1L), href = Some("culture"), latestContent = Some(snapContentTwo)))
     }
   }
 
