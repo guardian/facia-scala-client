@@ -71,6 +71,7 @@ object Snap {
       val resolvedMetaData = ResolvedMetaData.fromTrailMetaData(trail.safeMeta)
       Option(LinkSnap(
       trail.id,
+      Option(trail.frontPublicationDate),
       snapType,
       trail.safeMeta.snapUri,
       trail.safeMeta.snapCss,
@@ -98,6 +99,7 @@ object Snap {
       val resolvedMetaData = ResolvedMetaData.fromTrailMetaData(supportingItem.safeMeta)
       Option(LinkSnap(
       supportingItem.id,
+      supportingItem.frontPublicationDate,
       snapType,
       supportingItem.safeMeta.snapUri,
       supportingItem.safeMeta.snapCss,
@@ -123,6 +125,7 @@ object Snap {
 sealed trait Snap extends FaciaContent
 case class LinkSnap(
   id: String,
+  maybeFrontPublicationDate: Option[Long],
   snapType: String,
   snapUri: Option[String],
   snapCss: Option[String],
@@ -143,6 +146,7 @@ case class LinkSnap(
 
 case class LatestSnap(
   id: String,
+  maybeFrontPublicationDate: Option[Long],
   cardStyle: CardStyle,
   snapUri: Option[String],
   snapCss: Option[String],
@@ -163,6 +167,7 @@ object LatestSnap {
       maybeContent.fold(ResolvedMetaData.fromTrailMetaData(trail.safeMeta))(ResolvedMetaData.fromContentAndTrailMetaData(_, trail.safeMeta, cardStyle))
     LatestSnap(
       trail.id,
+      Option(trail.frontPublicationDate),
       cardStyle,
       trail.safeMeta.snapUri,
       trail.safeMeta.snapCss,
@@ -184,6 +189,7 @@ object LatestSnap {
       maybeContent.fold(ResolvedMetaData.fromTrailMetaData(supportingItem.safeMeta))(ResolvedMetaData.fromContentAndTrailMetaData(_, supportingItem.safeMeta, cardStyle))
     LatestSnap(
       supportingItem.id,
+      supportingItem.frontPublicationDate,
       cardStyle,
       supportingItem.safeMeta.snapUri,
       supportingItem.safeMeta.snapCss,
@@ -202,6 +208,7 @@ object LatestSnap {
 
 case class CuratedContent(
   content: Content,
+  maybeFrontPublicationDate: Option[Long],
   supportingContent: List[FaciaContent],
   cardStyle: CardStyle,
   headline: String,
@@ -218,6 +225,7 @@ case class CuratedContent(
 
 case class SupportingCuratedContent(
   content: Content,
+  maybeFrontPublicationDate: Option[Long],
   cardStyle: CardStyle,
   headline: String,
   href: Option[String],
@@ -230,7 +238,9 @@ case class SupportingCuratedContent(
 
 object CuratedContent {
 
-  def fromTrailAndContentWithSupporting(content: Content, trailMetaData: TrailMetaData,
+  def fromTrailAndContentWithSupporting(content: Content,
+                                        trailMetaData: TrailMetaData,
+                                        maybeFrontPublicationDate: Option[Long],
                                         supportingContent: List[FaciaContent],
                                         collectionConfig: CollectionConfig) = {
     val contentFields: Map[String, String] = content.safeFields
@@ -239,6 +249,7 @@ object CuratedContent {
 
     CuratedContent(
       content,
+      maybeFrontPublicationDate,
       supportingContent,
       cardStyle,
       trailMetaData.headline.orElse(content.safeFields.get("headline")).getOrElse(content.webTitle),
@@ -253,13 +264,18 @@ object CuratedContent {
       embedUri = trailMetaData.snapUri,
       embedCss = trailMetaData.snapCss)}
 
-  def fromTrailAndContent(content: Content, trailMetaData: MetaDataCommonFields, collectionConfig: CollectionConfig): CuratedContent = {
+  def fromTrailAndContent(content: Content,
+                          trailMetaData: MetaDataCommonFields,
+                          maybeFrontPublicationDate: Option[Long],
+                          collectionConfig: CollectionConfig): CuratedContent = {
+
     val contentFields: Map[String, String] = content.safeFields
     val cardStyle = CardStyle(content, trailMetaData)
     val resolvedMetaData = ResolvedMetaData.fromContentAndTrailMetaData(content, trailMetaData, cardStyle)
 
     CuratedContent(
       content,
+      maybeFrontPublicationDate,
       supportingContent = Nil,
       cardStyle = cardStyle,
       trailMetaData.headline.orElse(content.safeFields.get("headline")).getOrElse(content.webTitle),
@@ -276,13 +292,17 @@ object CuratedContent {
 }
 
 object SupportingCuratedContent {
-  def fromTrailAndContent(content: Content, trailMetaData: MetaDataCommonFields, collectionConfig: CollectionConfig): SupportingCuratedContent = {
+  def fromTrailAndContent(content: Content,
+                          trailMetaData: MetaDataCommonFields,
+                          maybeFrontPublicationDate: Option[Long],
+                          collectionConfig: CollectionConfig): SupportingCuratedContent = {
     val contentFields: Map[String, String] = content.safeFields
     val cardStyle = CardStyle(content, trailMetaData)
     val resolvedMetaData = ResolvedMetaData.fromContentAndTrailMetaData(content, trailMetaData, cardStyle)
 
     SupportingCuratedContent(
       content,
+      maybeFrontPublicationDate,
       cardStyle,
       trailMetaData.headline.orElse(content.safeFields.get("headline")).getOrElse(content.webTitle),
       trailMetaData.href.orElse(contentFields.get("href")),
