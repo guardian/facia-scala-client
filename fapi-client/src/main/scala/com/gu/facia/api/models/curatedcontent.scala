@@ -64,12 +64,11 @@ object Snap {
   val LinkType = "link"
   val DefaultType = LinkType
 
-  def maybeFromTrail(trail: Trail): Option[Snap] = {
-  val resolvedMetaData = ResolvedMetaData.fromTrailMetaData(trail.safeMeta)
-  trail.safeMeta.snapType match {
+  def maybeFromTrail(trail: Trail): Option[Snap] = trail.safeMeta.snapType match {
     case Some("latest") =>
       Option(LatestSnap.fromTrailAndContent(trail, None))
     case Some(snapType) =>
+      val resolvedMetaData = ResolvedMetaData.fromTrailMetaData(trail.safeMeta)
       Option(LinkSnap(
       trail.id,
       Option(trail.frontPublicationDate),
@@ -90,36 +89,14 @@ object Snap {
       ItemKicker.fromTrailMetaData(trail.safeMeta),
       trail.safeMeta.showBoostedHeadline.exists(identity),
       trail.safeMeta.showQuotedHeadline.exists(identity)))
-    case None =>
-      Option(LinkSnap(
-        trail.id,
-        LinkType,
-        trail.safeMeta.snapUri,
-        trail.safeMeta.snapCss,
-        trail.safeMeta.headline,
-        trail.safeMeta.href,
-        trail.safeMeta.trailText,
-        trail.safeMeta.group.getOrElse("0"),
-        FaciaImage.getFaciaImage(None, trail.safeMeta, resolvedMetaData),
-        trail.safeMeta.isBreaking.exists(identity),
-        trail.safeMeta.isBoosted.exists(identity),
-        trail.safeMeta.showMainVideo.exists(identity),
-        trail.safeMeta.showKickerTag.exists(identity),
-        trail.safeMeta.byline,
-        trail.safeMeta.showByline.exists(identity),
-        ItemKicker.fromTrailMetaData(trail.safeMeta),
-        trail.safeMeta.showBoostedHeadline.exists(identity),
-        trail.safeMeta.showQuotedHeadline.exists(identity)))
-    }
+    case _ => None
   }
 
-
-  def maybeFromSupportingItem(supportingItem: SupportingItem): Option[Snap] = {
-    val resolvedMetaData = ResolvedMetaData.fromTrailMetaData(supportingItem.safeMeta)
-    supportingItem.safeMeta.snapType match {
+  def maybeFromSupportingItem(supportingItem: SupportingItem): Option[Snap] = supportingItem.safeMeta.snapType match {
     case Some("latest") =>
       Option(LatestSnap.fromSupportingItemAndContent(supportingItem, None))
     case Some(snapType) =>
+      val resolvedMetaData = ResolvedMetaData.fromTrailMetaData(supportingItem.safeMeta)
       Option(LinkSnap(
       supportingItem.id,
       supportingItem.frontPublicationDate,
@@ -139,28 +116,9 @@ object Snap {
       supportingItem.safeMeta.showByline.exists(identity),
       ItemKicker.fromTrailMetaData(supportingItem.safeMeta),
       supportingItem.safeMeta.showBoostedHeadline.exists(identity),
-      supportingItem.safeMeta.showQuotedHeadline.exists(identity)))
-    case None =>
-      Option(LinkSnap(
-        supportingItem.id,
-        LinkType,
-        supportingItem.safeMeta.snapUri,
-        supportingItem.safeMeta.snapCss,
-        supportingItem.safeMeta.headline,
-        supportingItem.safeMeta.href,
-        supportingItem.safeMeta.trailText,
-        supportingItem.safeMeta.group.getOrElse("0"),
-        FaciaImage.getFaciaImage(None, supportingItem.safeMeta, resolvedMetaData),
-        supportingItem.safeMeta.isBreaking.exists(identity),
-        supportingItem.safeMeta.isBoosted.exists(identity),
-        supportingItem.safeMeta.showMainVideo.exists(identity),
-        supportingItem.safeMeta.showKickerTag.exists(identity),
-        supportingItem.safeMeta.byline,
-        supportingItem.safeMeta.showByline.exists(identity),
-        ItemKicker.fromTrailMetaData(supportingItem.safeMeta),
-        supportingItem.safeMeta.showBoostedHeadline.exists(identity),
-        supportingItem.safeMeta.showQuotedHeadline.exists(identity)))
-    }
+      supportingItem.safeMeta.showQuotedHeadline.exists(identity)
+  ))
+    case _ => None
   }
 }
 
