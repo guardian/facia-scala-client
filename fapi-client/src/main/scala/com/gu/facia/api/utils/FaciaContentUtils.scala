@@ -260,4 +260,10 @@ object FaciaContentUtils {
     supportingCuratedContent => Option(supportingCuratedContent.properties),
     linkSnap => None,
     latestSnap => Option(latestSnap.properties))
+
+  def maybeFrontPublicationDate(fc: FaciaContent): Option[Long] = fold(fc)(
+    curatedContent => curatedContent.maybeFrontPublicationDate,
+    supportingCuratedContent => supportingCuratedContent.maybeFrontPublicationDate,
+    linkSnap => linkSnap.maybeFrontPublicationDate,
+    latestSnap => latestSnap.maybeFrontPublicationDate)
 }
