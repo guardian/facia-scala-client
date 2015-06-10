@@ -93,7 +93,6 @@ object Snap {
     case None =>
       Option(LinkSnap(
         trail.id,
-        Option(trail.frontPublicationDate),
         LinkType,
         trail.safeMeta.snapUri,
         trail.safeMeta.snapCss,
@@ -144,7 +143,6 @@ object Snap {
     case None =>
       Option(LinkSnap(
         supportingItem.id,
-        supportingItem.frontPublicationDate,
         LinkType,
         supportingItem.safeMeta.snapUri,
         supportingItem.safeMeta.snapCss,
