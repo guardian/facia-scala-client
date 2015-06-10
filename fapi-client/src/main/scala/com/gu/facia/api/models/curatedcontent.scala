@@ -69,26 +69,21 @@ object Snap {
       Option(LatestSnap.fromTrailAndContent(trail, None))
     case Some(snapType) =>
       val resolvedMetaData = ResolvedMetaData.fromTrailMetaData(trail.safeMeta)
+      val contentProperties = ContentProperties.fromResolvedMetaData(resolvedMetaData)
       Option(LinkSnap(
-      trail.id,
-      Option(trail.frontPublicationDate),
-      snapType,
-      trail.safeMeta.snapUri,
-      trail.safeMeta.snapCss,
-      trail.safeMeta.headline,
-      trail.safeMeta.href,
-      trail.safeMeta.trailText,
-      trail.safeMeta.group.getOrElse("0"),
-      FaciaImage.getFaciaImage(None, trail.safeMeta, resolvedMetaData),
-      trail.safeMeta.isBreaking.exists(identity),
-      trail.safeMeta.isBoosted.exists(identity),
-      trail.safeMeta.showMainVideo.exists(identity),
-      trail.safeMeta.showKickerTag.exists(identity),
-      trail.safeMeta.byline,
-      trail.safeMeta.showByline.exists(identity),
-      ItemKicker.fromTrailMetaData(trail.safeMeta),
-      trail.safeMeta.showBoostedHeadline.exists(identity),
-      trail.safeMeta.showQuotedHeadline.exists(identity)))
+        trail.id,
+        Option(trail.frontPublicationDate),
+        snapType,
+        trail.safeMeta.snapUri,
+        trail.safeMeta.snapCss,
+        trail.safeMeta.headline,
+        trail.safeMeta.href,
+        trail.safeMeta.trailText,
+        trail.safeMeta.group.getOrElse("0"),
+        FaciaImage.getFaciaImage(None, trail.safeMeta, resolvedMetaData),
+        contentProperties,
+        trail.safeMeta.byline,
+        ItemKicker.fromTrailMetaData(trail.safeMeta)))
     case _ => None
   }
 
@@ -97,27 +92,21 @@ object Snap {
       Option(LatestSnap.fromSupportingItemAndContent(supportingItem, None))
     case Some(snapType) =>
       val resolvedMetaData = ResolvedMetaData.fromTrailMetaData(supportingItem.safeMeta)
+      val contentProperties = ContentProperties.fromResolvedMetaData(resolvedMetaData)
       Option(LinkSnap(
-      supportingItem.id,
-      supportingItem.frontPublicationDate,
-      snapType,
-      supportingItem.safeMeta.snapUri,
-      supportingItem.safeMeta.snapCss,
-      supportingItem.safeMeta.headline,
-      supportingItem.safeMeta.href,
-      supportingItem.safeMeta.trailText,
-      supportingItem.safeMeta.group.getOrElse("0"),
-      FaciaImage.getFaciaImage(None, supportingItem.safeMeta, resolvedMetaData),
-      supportingItem.safeMeta.isBreaking.exists(identity),
-      supportingItem.safeMeta.isBoosted.exists(identity),
-      supportingItem.safeMeta.showMainVideo.exists(identity),
-      supportingItem.safeMeta.showKickerTag.exists(identity),
-      supportingItem.safeMeta.byline,
-      supportingItem.safeMeta.showByline.exists(identity),
-      ItemKicker.fromTrailMetaData(supportingItem.safeMeta),
-      supportingItem.safeMeta.showBoostedHeadline.exists(identity),
-      supportingItem.safeMeta.showQuotedHeadline.exists(identity)
-  ))
+        supportingItem.id,
+        supportingItem.frontPublicationDate,
+        snapType,
+        supportingItem.safeMeta.snapUri,
+        supportingItem.safeMeta.snapCss,
+        supportingItem.safeMeta.headline,
+        supportingItem.safeMeta.href,
+        supportingItem.safeMeta.trailText,
+        supportingItem.safeMeta.group.getOrElse("0"),
+        FaciaImage.getFaciaImage(None, supportingItem.safeMeta, resolvedMetaData),
+        contentProperties,
+        supportingItem.safeMeta.byline,
+        ItemKicker.fromTrailMetaData(supportingItem.safeMeta)))
     case _ => None
   }
 }
@@ -134,15 +123,9 @@ case class LinkSnap(
   trailText: Option[String],
   group: String,
   image: Option[FaciaImage],
-  isBreaking: Boolean,
-  isBoosted: Boolean,
-  showMainVideo: Boolean,
-  showKickerTag: Boolean,
+  properties: ContentProperties,
   byline: Option[String],
-  showByLine: Boolean,
-  kicker: Option[ItemKicker],
-  showBoostedHeadline: Boolean,
-  showQuotedHeadline: Boolean) extends Snap
+  kicker: Option[ItemKicker]) extends Snap
 
 case class LatestSnap(
   id: String,
