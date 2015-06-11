@@ -19,7 +19,7 @@ object FaciaImage {
           imageCutout(trailMeta) orElse fromContentTags(content, trailMeta)
         else None
       } orElse
-          imageSlideshow(trailMeta, resolvedMetadata) orElse imageReplace(trailMeta, resolvedMetadata)
+          imageSlideshow(trailMeta, resolvedMetadata) orElse imageCutout(trailMeta) orElse imageReplace(trailMeta, resolvedMetadata)
     }
   }
 
