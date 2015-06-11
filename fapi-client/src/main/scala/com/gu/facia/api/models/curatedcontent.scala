@@ -14,12 +14,13 @@ object FaciaImage {
   def getFaciaImage(maybeContent: Option[Content], trailMeta: MetaDataCommonFields, resolvedMetadata: ResolvedMetaData): Option[FaciaImage] = {
     if (resolvedMetadata.imageHide) None
     else {
-      maybeContent flatMap { content =>
-        if (resolvedMetadata.imageCutoutReplace)
-          imageCutout(trailMeta) orElse fromContentTags(content, trailMeta)
-        else None
-      } orElse
-          imageSlideshow(trailMeta, resolvedMetadata) orElse imageCutout(trailMeta) orElse imageReplace(trailMeta, resolvedMetadata)
+      if (resolvedMetadata.imageSlideshowReplace)
+        imageSlideshow(trailMeta, resolvedMetadata)
+      else if (resolvedMetadata.imageCutoutReplace)
+        imageCutout(trailMeta) orElse maybeContent.flatMap(fromContentTags(_, trailMeta))
+      else if (resolvedMetadata.imageReplace)
+        imageReplace(trailMeta, resolvedMetadata)
+      else None
     }
   }
 
