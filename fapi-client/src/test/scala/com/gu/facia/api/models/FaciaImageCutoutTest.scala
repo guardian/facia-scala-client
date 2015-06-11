@@ -84,6 +84,17 @@ class FaciaImageCutoutTest extends FreeSpec with Matchers {
       val imageCutout = FaciaImage.getFaciaImage(Some(contentWithContributor), trailMeta, resolvedMetaData)
       imageCutout should be (None)
     }
+
+    "should not return an Image of type cutout from a None content imageCutoutReplace is true" in {
+      val src = Option("src")
+      val width  = Option("width")
+      val height = Option("height")
+
+      val trailMeta = trailMetaDataWithImageCutout(true, src, width, height)
+      val resolvedMetaData = ResolvedMetaData.fromTrailMetaData(trailMeta)
+      val imageCutout = FaciaImage.getFaciaImage(None, trailMeta, resolvedMetaData)
+      imageCutout should be (Some(Cutout("src", width, height)))
+    }
   }
 
 }
