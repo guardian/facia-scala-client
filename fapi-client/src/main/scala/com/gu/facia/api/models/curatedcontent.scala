@@ -12,17 +12,15 @@ case class ImageSlideshow(assets: List[Replace]) extends FaciaImage
 object FaciaImage {
 
   def getFaciaImage(maybeContent: Option[Content], trailMeta: MetaDataCommonFields, resolvedMetadata: ResolvedMetaData): Option[FaciaImage] = {
-    if (resolvedMetadata.imageHide) None
-    else {
-      if (resolvedMetadata.imageSlideshowReplace)
-        imageSlideshow(trailMeta, resolvedMetadata)
-      else if (resolvedMetadata.imageCutoutReplace)
-        imageCutout(trailMeta) orElse maybeContent.flatMap(fromContentTags(_, trailMeta))
-      else if (resolvedMetadata.imageReplace)
-        imageReplace(trailMeta, resolvedMetadata)
-      else None
-    }
-  }
+    if (resolvedMetadata.imageHide)
+      None
+    else if (resolvedMetadata.imageSlideshowReplace)
+      imageSlideshow(trailMeta, resolvedMetadata)
+    else if (resolvedMetadata.imageCutoutReplace)
+      imageCutout(trailMeta) orElse maybeContent.flatMap(fromContentTags(_, trailMeta))
+    else if (resolvedMetadata.imageReplace)
+      imageReplace(trailMeta, resolvedMetadata)
+    else None}
 
   def fromContentTags(content: Content, trailMeta: MetaDataCommonFields): Option[FaciaImage] = {
     val contributorTags = content.tags.filter(_.`type` == "contributor")
@@ -40,21 +38,16 @@ object FaciaImage {
     height <- trailMeta.imageCutoutSrcHeight
   } yield Cutout(src, Option(width), Option(height))
 
-  def imageReplace(trailMeta: MetaDataCommonFields, resolvedMetaData: ResolvedMetaData): Option[FaciaImage] =
-    if (resolvedMetaData.imageReplace)
-      for {src <- trailMeta.imageSrc
-           width <- trailMeta.imageSrcWidth
-           height <- trailMeta.imageSrcHeight} yield Replace(src, width, height)
-    else
-      None
+  def imageReplace(trailMeta: MetaDataCommonFields, resolvedMetaData: ResolvedMetaData): Option[FaciaImage] = for{
+        src <- trailMeta.imageSrc
+        width <- trailMeta.imageSrcWidth
+        height <- trailMeta.imageSrcHeight}
+    yield Replace(src, width, height)
 
   def imageSlideshow(trailMeta: MetaDataCommonFields, resolvedMetaData: ResolvedMetaData): Option[FaciaImage] =
-    if (resolvedMetaData.imageSlideshowReplace) {
-      trailMeta.slideshow.map { assets =>
-        val slideshowAssets = assets.map(asset => Replace(asset.src, asset.width, asset.height))
-        ImageSlideshow(slideshowAssets)}}
-    else
-      None
+    trailMeta.slideshow.map { assets =>
+      val slideshowAssets = assets.map(asset => Replace(asset.src, asset.width, asset.height))
+      ImageSlideshow(slideshowAssets)}
 
 }
 
