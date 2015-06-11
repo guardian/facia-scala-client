@@ -39,6 +39,12 @@ object FaciaContentUtils {
     linkSnap => linkSnap.id,
     latestSnap => latestSnap.id)
 
+  def maybeContentId(fc: FaciaContent): Option[String] = fold(fc)(
+    curatedContent => Option(curatedContent.content.id),
+    supportingCuratedContent => Option(supportingCuratedContent.content.id),
+    linkSnap => None,
+    latestSnap => latestSnap.latestContent.map(_.id))
+
   def group(fc: FaciaContent): String = fold(fc)(
     curatedContent => curatedContent.group,
     supportingCuratedContent => supportingCuratedContent.group,
