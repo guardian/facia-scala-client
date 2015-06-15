@@ -141,25 +141,25 @@ object FaciaContentUtils {
   def isBoosted(fc: FaciaContent): Boolean = fold(fc)(
     curatedContent => curatedContent.properties.isBoosted,
     supportingCuratedContent => supportingCuratedContent.properties.isBoosted,
-    linkSnap => linkSnap.isBoosted,
+    linkSnap => linkSnap.properties.isBoosted,
     latestSnap => latestSnap.properties.isBoosted
   )
   def showBoostedHeadline(fc: FaciaContent): Boolean = fold(fc)(
     curatedContent => curatedContent.properties.showBoostedHeadline,
     supportingCuratedContent => supportingCuratedContent.properties.showBoostedHeadline,
-    linkSnap => linkSnap.showBoostedHeadline,
+    linkSnap => linkSnap.properties.showBoostedHeadline,
     latestSnap => latestSnap.properties.showBoostedHeadline
   )
   def showQuotedHeadline(fc: FaciaContent): Boolean = fold(fc)(
     curatedContent => curatedContent.properties.showQuotedHeadline,
     supportingCuratedContent => supportingCuratedContent.properties.showQuotedHeadline,
-    linkSnap => linkSnap.showQuotedHeadline,
+    linkSnap => linkSnap.properties.showQuotedHeadline,
     latestSnap => latestSnap.properties.showQuotedHeadline
   )
   def showMainVideo(fc: FaciaContent): Boolean = fold(fc)(
     curatedContent => curatedContent.properties.showMainVideo,
     supportingCuratedContent => supportingCuratedContent.properties.showMainVideo,
-    linkSnap => linkSnap.showMainVideo,
+    linkSnap => linkSnap.properties.showMainVideo,
     latestSnap => latestSnap.properties.showMainVideo
   )
 
@@ -186,7 +186,7 @@ object FaciaContentUtils {
   def showByline(fc: FaciaContent): Boolean = fold(fc)(
     curatedContent => curatedContent.properties.showByline,
     supportingCuratedContent => supportingCuratedContent.properties.showByline,
-    linkSnap => linkSnap.showByLine,
+    linkSnap => linkSnap.properties.showByline,
     latestSnap => latestSnap.properties.showByline)
 
   private def tagsOfType(fc: FaciaContent)(tagType: String): Seq[Tag] = tags(fc).filter(_.`type` == tagType)

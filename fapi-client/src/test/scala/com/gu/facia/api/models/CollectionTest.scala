@@ -43,16 +43,9 @@ class CollectionTest extends FreeSpec with ShouldMatchers with MockitoSugar with
     trailText: Option[String] = None,
     group: String = "0",
     image: Option[FaciaImage] = None,
-    imageHide: Boolean = false,
-    isBreaking: Boolean = false,
-    isBoosted: Boolean = false,
-    showMainVideo: Boolean = false,
-    showKickerTag: Boolean = false,
+    contentProperties: ContentProperties = ContentProperties.fromResolvedMetaData(ResolvedMetaData.Default),
     byline: Option[String] = None,
-    showByLine: Boolean = false,
-    kicker: Option[ItemKicker] = None,
-    showBoostedHeadline: Boolean = false,
-    showQuotedHeadline: Boolean = false): LatestSnap =
+    kicker: Option[ItemKicker] = None): LatestSnap =
     LatestSnap(
       id,
       maybeFrontPublicationDate,
@@ -65,7 +58,7 @@ class CollectionTest extends FreeSpec with ShouldMatchers with MockitoSugar with
       trailText,
       group,
       image,
-      ContentProperties.fromResolvedMetaData(ResolvedMetaData.Default),
+      contentProperties,
       byline,
       kicker)
 
@@ -80,15 +73,9 @@ class CollectionTest extends FreeSpec with ShouldMatchers with MockitoSugar with
     trailText: Option[String] = None,
     group: String = "0",
     image: Option[FaciaImage] = None,
-    isBreaking: Boolean = false,
-    isBoosted: Boolean = false,
-    showMainVideo: Boolean = false,
-    showKickerTag: Boolean = false,
+    contentProperties: ContentProperties = ContentProperties.fromResolvedMetaData(ResolvedMetaData.Default),
     byline: Option[String] = None,
-    showByLine: Boolean = false,
-    kicker: Option[ItemKicker] = None,
-    showBoostedHeadline: Boolean = false,
-    showQuotedHeadline: Boolean = false): LinkSnap =
+    kicker: Option[ItemKicker] = None): LinkSnap =
     LinkSnap(
       id,
       maybeFrontPublicationDate,
@@ -100,15 +87,9 @@ class CollectionTest extends FreeSpec with ShouldMatchers with MockitoSugar with
       trailText,
       group,
       image,
-      isBreaking,
-      isBoosted,
-      showMainVideo,
-      showKickerTag,
+      contentProperties,
       byline,
-      showByLine,
-      kicker,
-      showBoostedHeadline,
-      showQuotedHeadline)
+      kicker)
 
 
   "fromCollectionJson" - {

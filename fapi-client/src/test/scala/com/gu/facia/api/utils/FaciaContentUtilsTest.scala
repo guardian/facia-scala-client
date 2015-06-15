@@ -20,15 +20,9 @@ class FaciaContentUtilsTest extends FreeSpec with Matchers {
     trailText = None,
     group = "",
     image = None,
-    isBreaking = false,
-    isBoosted = false,
-    showMainVideo = false,
-    showKickerTag = false,
+    ContentProperties.fromResolvedMetaData(ResolvedMetaData.Default),
     byline = None,
-    showByLine = false,
-    kicker = None,
-    showBoostedHeadline = false,
-    showQuotedHeadline = false)
+    kicker = None)
 
   val staticDateTime = new DateTime().withYear(2015).withMonthOfYear(4).withDayOfMonth(22)
 
