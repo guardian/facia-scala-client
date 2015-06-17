@@ -80,7 +80,7 @@ object FaciaContentUtils {
     curatedContent => Option(curatedContent.headline),
     supportingCuratedContent => Option(supportingCuratedContent.headline),
     linkSnap => linkSnap.headline,
-    latestSnap => latestSnap.headline.orElse(latestSnap.latestContent.map(_.fields.get("headline"))))
+    latestSnap => latestSnap.headline)
 
   def headline(fc: FaciaContent): String = headlineOption(fc).getOrElse("Missing Headline")
 
@@ -99,7 +99,7 @@ object FaciaContentUtils {
     curatedContent => curatedContent.href,
     supportingCuratedContent => supportingCuratedContent.href,
     linkSnap => linkSnap.href.orElse(linkSnap.snapUri),
-    latestSnap => latestSnap.latestContent.map(_.id).orElse(latestSnap.snapUri))
+    latestSnap => latestSnap.href.orElse(latestSnap.snapUri))
 
   def mediaType(fc: FaciaContent): Option[MediaType] = {
     def mediaTypeFromContent(content: Content): Option[MediaType] =
@@ -181,7 +181,7 @@ object FaciaContentUtils {
     curatedContent => curatedContent.byline,
     supportingCuratedContent => supportingCuratedContent.byline,
     linkSnap => linkSnap.byline,
-    latestSnap => latestSnap.latestContent.flatMap(_.safeFields.get("byline")))
+    latestSnap => latestSnap.byline)
 
   def showByline(fc: FaciaContent): Boolean = fold(fc)(
     curatedContent => curatedContent.properties.showByline,
@@ -228,8 +228,8 @@ object FaciaContentUtils {
   def trailText(fc: FaciaContent): Option[String] = fold(fc)(
     curatedContent => curatedContent.trailText,
     supportingCuratedContent => supportingCuratedContent.trailText,
-    linkSnap => None,
-    latestSnap => None)
+    linkSnap => linkSnap.trailText,
+    latestSnap => latestSnap.trailText)
 
   def  maybeWebTitle(fc: FaciaContent): Option[String] = fold(fc)(
     curatedContent => Option(curatedContent.content.webTitle),
