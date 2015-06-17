@@ -171,13 +171,13 @@ object LatestSnap {
       supportingItem.safeMeta.snapUri,
       supportingItem.safeMeta.snapCss,
       maybeContent,
-      supportingItem.safeMeta.headline,
-      supportingItem.safeMeta.href,
-      supportingItem.safeMeta.trailText,
+      supportingItem.safeMeta.headline.orElse(maybeContent.flatMap(_.safeFields.get("headline"))).orElse(maybeContent.map(_.webTitle)),
+      supportingItem.safeMeta.href.orElse(maybeContent.flatMap(_.safeFields.get("href"))),
+      supportingItem.safeMeta.trailText.orElse(maybeContent.flatMap(_.safeFields.get("trailText"))),
       supportingItem.safeMeta.group.getOrElse("0"),
       FaciaImage.getFaciaImage(maybeContent, supportingItem.safeMeta, resolvedMetaData),
       ContentProperties.fromResolvedMetaData(resolvedMetaData),
-      supportingItem.safeMeta.byline,
+      supportingItem.safeMeta.byline.orElse(maybeContent.flatMap(_.safeFields.get("byline"))),
       ItemKicker.fromMaybeContentTrailMetaAndResolvedMetaData(maybeContent, supportingItem.safeMeta, resolvedMetaData)
     )
   }
