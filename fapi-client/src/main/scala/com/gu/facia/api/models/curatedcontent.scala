@@ -149,13 +149,13 @@ object LatestSnap {
       trail.safeMeta.snapUri,
       trail.safeMeta.snapCss,
       maybeContent,
-      trail.safeMeta.headline,
-      trail.safeMeta.href,
-      trail.safeMeta.trailText,
+      trail.safeMeta.headline.orElse(maybeContent.flatMap(_.safeFields.get("headline"))).orElse(maybeContent.map(_.webTitle)),
+      trail.safeMeta.href.orElse(maybeContent.flatMap(_.safeFields.get("href"))),
+      trail.safeMeta.trailText.orElse(maybeContent.flatMap(_.safeFields.get("trailText"))),
       trail.safeMeta.group.getOrElse("0"),
       FaciaImage.getFaciaImage(maybeContent, trail.safeMeta, resolvedMetaData),
       ContentProperties.fromResolvedMetaData(resolvedMetaData),
-      trail.safeMeta.byline,
+      trail.safeMeta.byline.orElse(maybeContent.flatMap(_.safeFields.get("byline"))),
       ItemKicker.fromMaybeContentTrailMetaAndResolvedMetaData(maybeContent, trail.safeMeta, resolvedMetaData)
     )
   }
