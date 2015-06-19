@@ -121,6 +121,5 @@ case class CollectionJson(
   updatedEmail: String,
   displayName: Option[String],
   href: Option[String],
-  previously: Option[List[Trail]],
-  description: Option[String]
+  previously: Option[List[Trail]]
 )
