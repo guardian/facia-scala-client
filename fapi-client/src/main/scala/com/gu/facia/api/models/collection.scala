@@ -45,7 +45,8 @@ object Collection {
       content.find(c => trail.id.endsWith("/" + c.safeFields.getOrElse("internalContentCode", throw new RuntimeException("No internal content code"))))
         .map { content =>
         trail.safeMeta.supporting
-          .map(_.flatMap(resolveSupportingContent)).map(supportingItems => CuratedContent.fromTrailAndContentWithSupporting(content, trail.safeMeta, Option(trail.frontPublicationDate), supportingItems, collection.collectionConfig))
+          .map(_.flatMap(resolveSupportingContent))
+          .map(supportingItems => CuratedContent.fromTrailAndContentWithSupporting(content, trail.safeMeta, Option(trail.frontPublicationDate), supportingItems, collection.collectionConfig))
           .getOrElse(CuratedContent.fromTrailAndContent(content, trail.safeMeta, Option(trail.frontPublicationDate), collection.collectionConfig))}
         .orElse {
           snapContent
