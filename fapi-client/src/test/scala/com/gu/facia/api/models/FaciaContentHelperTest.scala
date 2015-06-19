@@ -2,9 +2,12 @@ package com.gu.facia.api.models
 
 import com.gu.contentapi.client.model.Content
 import com.gu.facia.api.utils.{ContentProperties, DefaultCardstyle, FaciaContentUtils}
+import com.gu.facia.client.models.{TrailMetaData, Trail}
 import org.scalatest.{FreeSpec, Matchers}
 
 class FaciaContentHelperTest extends FreeSpec with Matchers {
+
+  val emptyTrail: Trail = Trail("no-id", 0, Option(TrailMetaData.empty))
 
   val emptyContentProperties =
     ContentProperties(
@@ -37,12 +40,12 @@ class FaciaContentHelperTest extends FreeSpec with Matchers {
 
   "should return a href for a LatestSnap" in {
     val snap = LatestSnap("myId", None, DefaultCardstyle, None, None, None, None, Some("The href"), None, "myGroup", None, emptyContentProperties, None, None)
-    FaciaContentUtils.href(snap) should equal(None)
+    FaciaContentUtils.href(snap) should equal(Some("The href"))
   }
 
   "should return a byline for a LatestSnap" in {
     val content = Content("myId", None, None, None, "myTitle", "myUrl", "myApi", Some(Map("byline" -> "myByline")), Nil, None, Nil, None)
-    val snap = LatestSnap("myId", None, DefaultCardstyle, None, None, Some(content), None, Some("The href"), None, "myGroup", None, emptyContentProperties, None, None)
+    val snap = LatestSnap.fromTrailAndContent(emptyTrail, Option(content))
     FaciaContentUtils.byline(snap) should equal(Some("myByline"))
   }
 

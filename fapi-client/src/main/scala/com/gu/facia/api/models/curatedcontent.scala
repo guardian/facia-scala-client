@@ -149,13 +149,13 @@ object LatestSnap {
       trail.safeMeta.snapUri,
       trail.safeMeta.snapCss,
       maybeContent,
-      trail.safeMeta.headline,
-      trail.safeMeta.href,
-      trail.safeMeta.trailText,
+      trail.safeMeta.headline.orElse(maybeContent.flatMap(_.safeFields.get("headline"))).orElse(maybeContent.map(_.webTitle)),
+      trail.safeMeta.href.orElse(maybeContent.map(_.id)),
+      trail.safeMeta.trailText.orElse(maybeContent.flatMap(_.safeFields.get("trailText"))),
       trail.safeMeta.group.getOrElse("0"),
       FaciaImage.getFaciaImage(maybeContent, trail.safeMeta, resolvedMetaData),
       ContentProperties.fromResolvedMetaData(resolvedMetaData),
-      trail.safeMeta.byline,
+      trail.safeMeta.byline.orElse(maybeContent.flatMap(_.safeFields.get("byline"))),
       ItemKicker.fromMaybeContentTrailMetaAndResolvedMetaData(maybeContent, trail.safeMeta, resolvedMetaData)
     )
   }
@@ -171,13 +171,13 @@ object LatestSnap {
       supportingItem.safeMeta.snapUri,
       supportingItem.safeMeta.snapCss,
       maybeContent,
-      supportingItem.safeMeta.headline,
-      supportingItem.safeMeta.href,
-      supportingItem.safeMeta.trailText,
+      supportingItem.safeMeta.headline.orElse(maybeContent.flatMap(_.safeFields.get("headline"))).orElse(maybeContent.map(_.webTitle)),
+      supportingItem.safeMeta.href.orElse(maybeContent.flatMap(_.safeFields.get("href"))),
+      supportingItem.safeMeta.trailText.orElse(maybeContent.flatMap(_.safeFields.get("trailText"))),
       supportingItem.safeMeta.group.getOrElse("0"),
       FaciaImage.getFaciaImage(maybeContent, supportingItem.safeMeta, resolvedMetaData),
       ContentProperties.fromResolvedMetaData(resolvedMetaData),
-      supportingItem.safeMeta.byline,
+      supportingItem.safeMeta.byline.orElse(maybeContent.flatMap(_.safeFields.get("byline"))),
       ItemKicker.fromMaybeContentTrailMetaAndResolvedMetaData(maybeContent, supportingItem.safeMeta, resolvedMetaData)
     )
   }

@@ -186,8 +186,22 @@ class CollectionTest extends FreeSpec with ShouldMatchers with MockitoSugar with
       faciaContent.length should be (4)
       faciaContent(0) should be (makeLinkSnap(id = "snap/1415985080061", maybeFrontPublicationDate = Option(1L), snapUri = Some("abc")))
       faciaContent(1) should be (makeLinkSnap(id = "snap/5345345215342", maybeFrontPublicationDate = Option(1L), snapCss = Some("css")))
-      faciaContent(2) should be (makeLatestSnap(id = "snap/8474745745660", maybeFrontPublicationDate = Option(1L), href = Some("uk"), latestContent = Some(snapContentOne)))
-      faciaContent(3) should be (makeLatestSnap(id = "snap/4324234234234", maybeFrontPublicationDate = Option(1L), href = Some("culture"), latestContent = Some(snapContentTwo)))
+      faciaContent(2) should be (makeLatestSnap(
+                                  id = "snap/8474745745660",
+                                  maybeFrontPublicationDate = Option(1L),
+                                  href = Some("uk"),
+                                  headline = Some("Content headline"),
+                                  byline = Some("Content byline"),
+                                  trailText = Some("Content trailtext"),
+                                  latestContent = Some(snapContentOne)))
+      faciaContent(3) should be (makeLatestSnap(
+                                  id = "snap/4324234234234",
+                                  maybeFrontPublicationDate = Option(1L),
+                                  href = Some("culture"),
+                                  headline = Some("Content headline"),
+                                  byline = Some("Content byline"),
+                                  trailText = Some("Content trailtext"),
+                                  latestContent = Some(snapContentTwo)))
     }
   }
 
