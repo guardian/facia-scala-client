@@ -22,7 +22,8 @@ class CollectionTest extends FreeSpec with ShouldMatchers with MockitoSugar with
     updatedEmail = "test@example.com",
     displayName = Some("displayName"),
     href = Some("collectionHref"),
-    None
+    previously = None,
+    description = Some("test desc")
   )
   val content = Content(
     "content-id", Some("section"), Some("Section Name"), None, "webTitle", "webUrl", "apiUrl",
@@ -102,7 +103,8 @@ class CollectionTest extends FreeSpec with ShouldMatchers with MockitoSugar with
         'lastUpdated(Some(new DateTime(1))),
         'updatedBy(Some("test")),
         'updatedEmail(Some("test@example.com")),
-        'displayName("displayName")
+        'displayName("displayName"),
+        'description(Some("test desc"))
       )
 
       collection.collectionConfig should have (
@@ -147,7 +149,9 @@ class CollectionTest extends FreeSpec with ShouldMatchers with MockitoSugar with
         updatedEmail = "test@example.com",
         displayName = Some("displayName"),
         href = Some("href"),
-        None
+        previously = None,
+        description = None
+
       )
       val curatedContent = Collection.liveContent(collection, contents)
       curatedContent.flatMap{

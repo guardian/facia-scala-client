@@ -5,6 +5,7 @@ import com.gu.facia.api.contentapi.LatestSnapsRequest
 import com.gu.facia.api.utils.IntegerString
 import com.gu.facia.client.models.{SupportingItem, Trail, CollectionJson}
 import org.joda.time.DateTime
+import org.json4s.reflect.Descriptor
 
 case class Collection(
   id: String,
@@ -16,6 +17,7 @@ case class Collection(
   lastUpdated: Option[DateTime],
   updatedBy: Option[String],
   updatedEmail: Option[String],
+  description: Option[String],
   collectionConfig: CollectionConfig
 )
 
@@ -31,6 +33,7 @@ object Collection {
       collectionJson.map(_.lastUpdated),
       collectionJson.map(_.updatedBy),
       collectionJson.map(_.updatedEmail),
+      collectionJson.flatMap(_.description),
       collectionConfig)
   }
 
