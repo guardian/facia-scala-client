@@ -5,7 +5,6 @@ import com.gu.facia.api.contentapi.LatestSnapsRequest
 import com.gu.facia.api.utils.IntegerString
 import com.gu.facia.client.models.{SupportingItem, Trail, CollectionJson}
 import org.joda.time.DateTime
-import org.json4s.reflect.Descriptor
 
 case class Collection(
   id: String,
