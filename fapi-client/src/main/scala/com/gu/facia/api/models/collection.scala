@@ -41,7 +41,10 @@ object Collection {
     // if content is not in the set it was most likely filtered out by the CAPI query, so exclude it
     // note that this does not currently deal with e.g. snaps
     def resolveTrail(trail: Trail): Option[FaciaContent] = {
-      content.find(c => trail.id.endsWith("/" + c.safeFields.getOrElse("internalContentCode", throw new RuntimeException("No internal content code"))))
+      content.find { c =>
+        trail.id.endsWith("/" + c.safeFields.getOrElse("internalContentCode", "missing internal content code")) ||
+        trail.id.endsWith("/" + c.safeFields.getOrElse("internalPageCode", throw new RuntimeException("No internal code")))
+      }
         .map { content =>
         trail.safeMeta.supporting
           .map(_.flatMap(resolveSupportingContent))
@@ -54,8 +57,10 @@ object Collection {
         .orElse{ Snap.maybeFromTrail(trail)}}
 
     def resolveSupportingContent(supportingItem: SupportingItem): Option[FaciaContent] = {
-      content
-        .find(c => supportingItem.id.endsWith("/" + c.safeFields.getOrElse("internalContentCode", throw new RuntimeException("No internal content code"))))
+      content.find { c =>
+        supportingItem.id.endsWith("/" + c.safeFields.getOrElse("internalContentCode", "missing internal content code")) ||
+        supportingItem.id.endsWith("/" + c.safeFields.getOrElse("internalPageCode", throw new RuntimeException("No internal code")))
+      }
         .map { content => SupportingCuratedContent.fromTrailAndContent(content, supportingItem.safeMeta, supportingItem.frontPublicationDate, collection.collectionConfig)}
         .orElse {
           snapContent

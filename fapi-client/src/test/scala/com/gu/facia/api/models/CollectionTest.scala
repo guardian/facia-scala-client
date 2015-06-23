@@ -7,8 +7,7 @@ import org.joda.time.DateTime
 import org.mockito.Mockito._
 import org.scalatest.{OneInstancePerTest, FreeSpec, ShouldMatchers}
 import org.scalatest.mock.MockitoSugar
-import play.api.libs.json.JsString
-
+import play.api.libs.json.{Json, JsArray, JsString}
 
 class CollectionTest extends FreeSpec with ShouldMatchers with MockitoSugar with OneInstancePerTest {
   val trailMetadata = spy(TrailMetaData.empty)
@@ -291,5 +290,73 @@ class CollectionTest extends FreeSpec with ShouldMatchers with MockitoSugar with
       collectionWithoutSnaps.draft.map(_.apply(0).id) should be (Some("internal-code/content/2"))
       collectionWithoutSnaps.draft.map(_.apply(1).id) should be (Some("internal-code/content/1"))
     }
+  }
+
+  "Internal code" - {
+    val contents = Set(Content(
+      "apple", Some("section"), Some("Section Name"), None, "webTitle", "webUrl", "apiUrl",
+      fields = Some(Map("internalContentCode" -> "1", "internalPageCode" -> "3", "headline" -> "red apple", "href" -> "Content href", "trailText" -> "Content trailtext", "byline" -> "Content byline")),
+      Nil, None, Nil, None
+    ), Content(
+      "banana", Some("section"), Some("Section Name"), None, "webTitle", "webUrl", "apiUrl",
+      fields = Some(Map("internalPageCode" -> "2", "headline" -> "straight banana", "href" -> "Content href", "trailText" -> "Content trailtext", "byline" -> "Content byline")),
+      Nil, None, Nil, None
+    ), Content(
+      "kiwi", Some("section"), Some("Section Name"), None, "webTitle", "webUrl", "apiUrl",
+      fields = Some(Map("internalContentCode" -> "5", "internalPageCode" -> "6", "headline" -> "hairy kiwi", "href" -> "Content href", "trailText" -> "Content trailtext", "byline" -> "Content byline")),
+      Nil, None, Nil, None
+    ), Content(
+      "berry", Some("section"), Some("Section Name"), None, "webTitle", "webUrl", "apiUrl",
+      fields = Some(Map("internalPageCode" -> "7", "headline" -> "straw berry", "href" -> "Content href", "trailText" -> "Content trailtext", "byline" -> "Content byline")),
+      Nil, None, Nil, None
+    ))
+    def makeTrail(id: String) =
+      Trail(id, 0, None)
+    def makeTrailWithSupporting(id: String, supporting: Trail*) =
+      Trail(id, 0, Some(TrailMetaData(Map("supporting" -> JsArray(supporting.map(Json.toJson(_)))))))
+    "trails with internalContentCode" in {
+      val trail = Trail("internal-code/content/1", 1, Some(trailMetadata))
+      val collectionJsonWithContentCode = collectionJson.copy(live = List(trail))
+      val collection = Collection.fromCollectionJsonConfigAndContent("id", Some(collectionJsonWithContentCode), collectionConfig)
+      val result = Collection.liveContent(collection, contents)
+      result.length should be (1)
+      result.head should have (
+        'headline("red apple")
+      )
     }
+    "trails with internalPageCode" in {
+      val trail = Trail("internal-code/page/2", 1, Some(trailMetadata))
+      val collectionJsonWithContentCode = collectionJson.copy(live = List(trail))
+      val collection = Collection.fromCollectionJsonConfigAndContent("id", Some(collectionJsonWithContentCode), collectionConfig)
+      val result = Collection.liveContent(collection, contents)
+      result.length should be (1)
+      result.head should have (
+        'headline("straight banana")
+      )
+    }
+    "supporting with internalContentCode" in {
+      val supporting = makeTrail("internal-code/content/1")
+      val trail = makeTrailWithSupporting("internal-code/content/5", supporting)
+      val collectionJsonWithContentCode = collectionJson.copy(live = List(trail))
+      val collection = Collection.fromCollectionJsonConfigAndContent("id", Some(collectionJsonWithContentCode), collectionConfig)
+      val result = Collection.liveContent(collection, contents)
+      result.length should be (1)
+      result.head should have (
+        'headline("hairy kiwi")
+      )
+      FaciaContentUtils.headline(FaciaContentUtils.supporting(result.head).head) should be ("red apple")
+    }
+    "supporting with internalPageCode" in {
+      val supporting = makeTrail("internal-code/page/2")
+      val trail = makeTrailWithSupporting("internal-code/page/7", supporting)
+      val collectionJsonWithContentCode = collectionJson.copy(live = List(trail))
+      val collection = Collection.fromCollectionJsonConfigAndContent("id", Some(collectionJsonWithContentCode), collectionConfig)
+      val result = Collection.liveContent(collection, contents)
+      result.length should be (1)
+      result.head should have (
+        'headline("straw berry")
+      )
+      FaciaContentUtils.headline(FaciaContentUtils.supporting(result.head).head) should be ("straight banana")
+    }
+  }
 }
