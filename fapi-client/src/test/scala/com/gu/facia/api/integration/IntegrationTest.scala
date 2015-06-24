@@ -24,7 +24,8 @@ class IntegrationTest extends FreeSpec with ShouldMatchers with ScalaFutures wit
     updatedEmail = "test@example.com",
     displayName = Some("displayName"),
     href = Some("href"),
-    previously = None)
+    previously = None
+  )
 
   def makeLatestTrailFor(id: String, uri: String) =
     Trail(id, 0, Some(TrailMetaData(Map("snapUri" -> JsString(uri), "snapType" -> JsString("latest")))))
@@ -317,7 +318,8 @@ class IntegrationTest extends FreeSpec with ShouldMatchers with ScalaFutures wit
       updatedEmail = "test@example.com",
       displayName = Some("displayName"),
       href = Some("href"),
-      previously = None)
+      previously = None
+    )
 
     val normalTrail = Trail("internal-code/content/445034105", 0, None)
     val normalTrailTwo = Trail("internal-code/content/445529464", 0, None)
@@ -384,7 +386,8 @@ class IntegrationTest extends FreeSpec with ShouldMatchers with ScalaFutures wit
       updatedEmail = "test@example.com",
       displayName = Some("displayName"),
       href = Some("href"),
-      previously = None)
+      previously = None
+    )
 
     val normalTrail = Trail("internal-code/content/445034105", 0, None)
     val normalTrailTwo = Trail("internal-code/content/445529464", 0, None)
