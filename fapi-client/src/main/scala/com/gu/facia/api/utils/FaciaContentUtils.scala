@@ -162,7 +162,12 @@ object FaciaContentUtils {
     linkSnap => linkSnap.properties.showMainVideo,
     latestSnap => latestSnap.properties.showMainVideo
   )
-
+  def showLivePlayable(fc: FaciaContent): Boolean = fold(fc)(
+    curatedContent => curatedContent.properties.showLivePlayable,
+    supportingCuratedContent => supportingCuratedContent.properties.showLivePlayable,
+    linkSnap => linkSnap.properties.showLivePlayable,
+    latestSnap => latestSnap.properties.showLivePlayable
+  )
   def sectionName(fc: FaciaContent): Option[String] = fold(fc)(
     curatedContent => curatedContent.content.sectionName,
     supportingCuratedContent => supportingCuratedContent.content.sectionName,

@@ -27,6 +27,7 @@ sealed trait MetaDataCommonFields {
   lazy val imageHide: Option[Boolean] = json.get("imageHide").flatMap(_.asOpt[Boolean])
   lazy val imageReplace: Option[Boolean] = json.get("imageReplace").flatMap(_.asOpt[Boolean])
   lazy val showMainVideo: Option[Boolean] = json.get("showMainVideo").flatMap(_.asOpt[Boolean])
+  lazy val showLivePlayable: Option[Boolean] = json.get("showLivePlayable").flatMap(_.asOpt[Boolean])
   lazy val showKickerTag: Option[Boolean] = json.get("showKickerTag").flatMap(_.asOpt[Boolean])
   lazy val showKickerSection: Option[Boolean] = json.get("showKickerSection").flatMap(_.asOpt[Boolean])
   lazy val byline: Option[String] = json.get("byline").flatMap(_.asOpt[String])
