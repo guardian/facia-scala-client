@@ -19,6 +19,7 @@ class FaciaContentHelperTest extends FreeSpec with Matchers {
       showKickerTag = false,
       showByline = false,
       showQuotedHeadline = false,
+      showLivePlayable = false,
       imageSlideshowReplace = false)
 
   "should return 'Missing Headline' when the headline is None in a Snaps" in {
