@@ -80,13 +80,18 @@ class ContentApiTest extends FreeSpec
         ContentApi.buildBackfillQuery(backfillWithFields).left.value.parameters.get("show-fields").value should equal ("headline,internalContentCode,internalPageCode")
       }
 
-      "will add editors picks if they aren't explicitly on the query" in {
+      "will add editors picks false if they aren't explicitly on the query" in {
         val backfill = "lifeandstyle/food-and-drink?show-most-viewed=true&hide-recent-content=true"
-        ContentApi.buildBackfillQuery(backfill).left.value.parameters.get("show-editors-picks").value should equal ("true")
+        ContentApi.buildBackfillQuery(backfill).left.value.parameters.get("show-editors-picks").value should equal ("false")
       }
 
-      "will not force editors picks to true if they are explicitly exluded on the query" in {
+      "will force editors picks to false if they are explicitly exluded on the query" in {
         val backfill = "lifeandstyle/food-and-drink?show-most-viewed=true&show-editors-picks=false&hide-recent-content=true"
+        ContentApi.buildBackfillQuery(backfill).left.value.parameters.get("show-editors-picks").value should equal ("false")
+      }
+
+      "will force editors picks to false if they are explicitly included on the query" in {
+        val backfill = "lifeandstyle/food-and-drink?show-most-viewed=true&show-editors-picks=true&hide-recent-content=true"
         ContentApi.buildBackfillQuery(backfill).left.value.parameters.get("show-editors-picks").value should equal ("false")
       }
     }
