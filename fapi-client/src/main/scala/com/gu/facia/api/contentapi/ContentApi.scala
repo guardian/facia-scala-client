@@ -90,7 +90,7 @@ object ContentApi {
                                  (implicit ec: ExecutionContext): Response[List[Content]] = {
     response.fold(
       _.map { itemResponse =>
-          itemResponse.editorsPicks ++ itemResponse.mostViewed ++ itemResponse.results
+          itemResponse.mostViewed ++ itemResponse.results
         },
       _.map { searchResponse =>
           searchResponse.results
