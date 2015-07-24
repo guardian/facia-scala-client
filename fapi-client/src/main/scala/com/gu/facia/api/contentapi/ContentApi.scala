@@ -56,11 +56,8 @@ object ContentApi {
         case ("show-fields", _) => true
         case _ => false
       }) rawParams else rawParams :+ ("show-fields" -> "internalContentCode,internalPageCode")
-    val paramsWithEditorsPicks =
-      if (paramsWithFields.exists {
-        case ("show-editors-picks", _) => true
-        case _ => false
-      }) paramsWithFields else paramsWithFields :+ ("show-editors-picks" -> "true")
+
+    val paramsWithEditorsPicks = paramsWithFields :+ ("show-editors-picks" -> "false")
 
     if (path.startsWith("search")) {
       val searchQuery = SearchQuery()
