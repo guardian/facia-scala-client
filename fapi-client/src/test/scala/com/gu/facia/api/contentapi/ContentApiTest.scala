@@ -117,18 +117,6 @@ class ContentApiTest extends FreeSpec
       )
     }
 
-    "includes editors picks in item query backfill" in {
-      val itemResponse = mock[ItemResponse]
-      when(itemResponse.results) thenReturn Nil
-      when(itemResponse.editorsPicks) thenReturn contents
-      when(itemResponse.mostViewed) thenReturn Nil
-      val response: Either[Response[ItemResponse], Response[SearchResponse]] = Left(Response.Right(itemResponse))
-      ContentApi.backfillContentFromResponse(response).asFuture.futureValue.fold(
-        err => fail(s"expected contents result, got error $err"),
-        result => result should be(contents)
-      )
-    }
-
     "includes most viewed in item query backfill" in {
       val itemResponse = mock[ItemResponse]
       when(itemResponse.results) thenReturn Nil
