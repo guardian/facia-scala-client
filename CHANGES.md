@@ -1,5 +1,11 @@
 
+#### 0.54
+
+  - Changes queries to not add editorsPicks to the head of the list of backfill by default
+
+
 #### 0.53
+
   - Adds showLivePlayable content meta
 
 
