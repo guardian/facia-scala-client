@@ -23,13 +23,9 @@ object ItemKicker {
       case Some(kicker)
         if trailMeta.snapType.exists(_.contains("latest")) &&
           metaDefaults.showKickerCustom &&
-          trailMeta.snapUri.isDefined => {
-            Some(FreeHtmlKickerWithLink(kicker, s"/${trailMeta.snapUri.get}"))
-        }
-      case Some(kicker) if metaDefaults.showKickerCustom =>
-        Some(FreeHtmlKicker(kicker))
-      case _ =>
-        if (trailMeta.isBreaking.exists(identity)) {
+          trailMeta.snapUri.isDefined => Some(FreeHtmlKickerWithLink(kicker, s"/${trailMeta.snapUri.get}"))
+      case Some(kicker) if metaDefaults.showKickerCustom => Some(FreeHtmlKicker(kicker))
+      case _ => if (trailMeta.isBreaking.exists(identity)) {
           Some(BreakingNewsKicker)
         } else if (!config.exists(_.hideKickers) && maybeContent.isDefined) {
           tonalKicker(maybeContent.get, trailMeta)
