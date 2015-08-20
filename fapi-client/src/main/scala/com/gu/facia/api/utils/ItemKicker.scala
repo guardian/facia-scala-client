@@ -31,7 +31,7 @@ object ItemKicker {
         tonalKicker(maybeContent.get, trailMeta)
       } else if (metaDefaults.showKickerTag && maybeTag.isDefined) {
         tagKicker
-      } else  if(metaDefaults.showKickerSection) {
+      } else if (metaDefaults.showKickerSection) {
         sectionKicker
       } else if (config.exists(_.showTags) && maybeTag.isDefined) {
         tagKicker
