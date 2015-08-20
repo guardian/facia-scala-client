@@ -1,4 +1,7 @@
+#### 0.55
 
+  - Shows the breaking news kicker even when tonal kickers are supressed
+  
 #### 0.54
 
   - Changes queries to not add editorsPicks to the head of the list of backfill by default

@@ -23,20 +23,26 @@ object ItemKicker {
       case Some(kicker)
         if trailMeta.snapType.exists(_.contains("latest")) &&
           metaDefaults.showKickerCustom &&
-          trailMeta.snapUri.isDefined => Some(FreeHtmlKickerWithLink(kicker, s"/${trailMeta.snapUri.get}"))
-      case Some(kicker) if metaDefaults.showKickerCustom => Some(FreeHtmlKicker(kicker))
-      case _ => if (metaDefaults.showKickerTag && maybeTag.isDefined) {
-        tagKicker
-      } else if (metaDefaults.showKickerSection) {
-        sectionKicker
-      } else if (config.exists(_.showTags) && maybeTag.isDefined) {
-        tagKicker
-      } else if (config.exists(_.showSections)) {
-        sectionKicker
-      } else if (!config.exists(_.hideKickers) && maybeContent.isDefined) {
-        tonalKicker(maybeContent.get, trailMeta)
-      } else {
-        None
+          trailMeta.snapUri.isDefined => {
+            Some(FreeHtmlKickerWithLink(kicker, s"/${trailMeta.snapUri.get}"))
+        }
+      case Some(kicker) if metaDefaults.showKickerCustom =>
+        Some(FreeHtmlKicker(kicker))
+      case _ =>
+        if (trailMeta.isBreaking.exists(identity)) {
+          Some(BreakingNewsKicker)
+        } else if (!config.exists(_.hideKickers) && maybeContent.isDefined) {
+          tonalKicker(maybeContent.get, trailMeta)
+        } else if (metaDefaults.showKickerTag && maybeTag.isDefined) {
+          tagKicker
+        } else  if (metaDefaults.showKickerSection) {
+          sectionKicker
+        } else if (config.exists(_.showTags) && maybeTag.isDefined) {
+          tagKicker
+        } else if (config.exists(_.showSections)) {
+          sectionKicker
+        } else {
+          None
       }
     }
   }
@@ -59,9 +65,7 @@ object ItemKicker {
     lazy val isPodcast = types.exists(_.id == Tags.Podcast) || content.tags.exists(_.podcast.isDefined)
     lazy val isCartoon = types.exists(_.id == Tags.Cartoon)
 
-    if (trailMeta.isBreaking.exists(identity)) {
-      Some(BreakingNewsKicker)
-    } else if (content.safeFields.get("liveBloggingNow").exists(_.toBoolean)) {
+    if (content.safeFields.get("liveBloggingNow").exists(_.toBoolean)) {
       Some(LiveKicker)
     } else if (isPodcast) {
       val series = content.tags.find(_.`type` == "series") map { seriesTag =>
