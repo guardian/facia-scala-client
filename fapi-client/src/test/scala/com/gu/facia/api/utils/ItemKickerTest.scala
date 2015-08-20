@@ -36,6 +36,14 @@ class ItemKickerTest extends FreeSpec with ShouldMatchers with MockitoSugar with
 
       ItemKicker.fromContentAndTrail(Option(content), trailMetadata, metaDataDefaultsWithShowKickerSection, Some(collectionConfig)).value shouldBe a [SectionKicker]
     }
+
+    "should show breaking news kicker even when hide kickers is set to true" in {
+        when(collectionConfig.showTags).thenReturn(true)
+        when(trailMetadata.showKickerCustom).thenReturn(None)
+        when(trailMetadata.isBreaking).thenReturn(Some(true))
+
+        ItemKicker.fromContentAndTrail(Option(content), trailMetadata, metaDataDefaults, Some(collectionConfig)) shouldBe Some(BreakingNewsKicker)
+    }
   }
 
   "kickerContents" - {

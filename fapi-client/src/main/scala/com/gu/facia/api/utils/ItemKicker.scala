@@ -27,7 +27,7 @@ object ItemKicker {
       case Some(kicker) if metaDefaults.showKickerCustom => Some(FreeHtmlKicker(kicker))
       case _ => if (trailMeta.isBreaking.exists(identity)) {
         Some(BreakingNewsKicker)
-      } else if (metaDefaults.showKickerTag && maybeTag.isDefined) {
+      } else  if (metaDefaults.showKickerTag && maybeTag.isDefined) {
         tagKicker
       } else if (metaDefaults.showKickerSection) {
         sectionKicker
