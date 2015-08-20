@@ -27,8 +27,6 @@ object ItemKicker {
       case Some(kicker) if metaDefaults.showKickerCustom => Some(FreeHtmlKicker(kicker))
       case _ => if (trailMeta.isBreaking.exists(identity)) {
         Some(BreakingNewsKicker)
-      } else if (!config.exists(_.hideKickers) && maybeContent.isDefined) {
-        tonalKicker(maybeContent.get, trailMeta)
       } else if (metaDefaults.showKickerTag && maybeTag.isDefined) {
         tagKicker
       } else if (metaDefaults.showKickerSection) {
@@ -37,6 +35,8 @@ object ItemKicker {
         tagKicker
       } else if (config.exists(_.showSections)) {
         sectionKicker
+      } else if (!config.exists(_.hideKickers) && maybeContent.isDefined) {
+        tonalKicker(maybeContent.get, trailMeta)
       } else {
         None
       }
