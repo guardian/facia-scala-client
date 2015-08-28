@@ -2,7 +2,7 @@ package com.gu.facia.api.utils
 
 import com.gu.contentapi.client.model.Content
 import com.gu.facia.api.utils.ContentApiUtils._
-import com.gu.facia.client.models.MetaDataCommonFields
+import com.gu.facia.client.models.{TrailMetaData, MetaDataCommonFields}
 
 object CardStyle {
   val specialReport = "special-report"
@@ -51,6 +51,8 @@ object CardStyle {
       DefaultCardstyle
     }
   }
+
+  def fromContent(content: Content) = apply(content, TrailMetaData.empty)
 }
 
 sealed trait CardStyle {
