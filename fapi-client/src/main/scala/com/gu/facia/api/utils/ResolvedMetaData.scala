@@ -55,7 +55,7 @@ object ResolvedMetaData {
       imageSlideshowReplace = trailMeta.imageSlideshowReplace.exists(identity)
   )
 
-  private[utils] def fromContent(content: Content, cardStyle: CardStyle): ResolvedMetaData =
+  def fromContent(content: Content, cardStyle: CardStyle): ResolvedMetaData =
     cardStyle match {
       case com.gu.facia.api.utils.Comment => Default.copy(
         showByline = true,
@@ -83,6 +83,39 @@ object ResolvedMetaData {
       imageCutoutReplace = trailMeta.imageCutoutReplace.getOrElse(metaDataFromContent.imageCutoutReplace),
       showQuotedHeadline = trailMeta.showQuotedHeadline.getOrElse(metaDataFromContent.showQuotedHeadline),
       imageSlideshowReplace = trailMeta.imageSlideshowReplace.getOrElse(metaDataFromContent.imageSlideshowReplace))}
+
+  def toMap(resolvedMetaData: ResolvedMetaData): Map[String, Boolean] = resolvedMetaData match {
+    case ResolvedMetaData(
+      isBreaking,
+      isBoosted,
+      imageHide,
+      imageReplace,
+      showKickerSection,
+      showKickerCustom,
+      showBoostedHeadline,
+      showMainVideo,
+      showLivePlayable,
+      showKickerTag,
+      showByline,
+      imageCutoutReplace,
+      showQuotedHeadline,
+      imageSlideshowReplace) =>
+      Map(
+        "isBreaking" -> isBreaking,
+        "isBoosted" -> isBoosted,
+        "imageHide" -> imageHide,
+        "imageReplace" -> imageReplace,
+        "showKickerSection" -> showKickerSection,
+        "showKickerCustom" -> showKickerCustom,
+        "showBoostedHeadline" -> showBoostedHeadline,
+        "showMainVideo" -> showMainVideo,
+        "showLivePlayable" -> showLivePlayable,
+        "showKickerTag" -> showKickerTag,
+        "showByline" -> showByline,
+        "imageCutoutReplace" -> imageCutoutReplace,
+        "showQuotedHeadline" -> showQuotedHeadline,
+        "imageSlideshowReplace" -> imageSlideshowReplace)
+  }
 }
 
 case class ResolvedMetaData(
