@@ -1,3 +1,9 @@
+#### 0.56
+
+  - Adds a convenience function: ResolvedMetaData.toMap
+  - Changes ResolvedMetaData.fromContent to a non-private methods
+  - Adds CardStyle.fromContent convenience method for CardStyle
+
 #### 0.55
 
   - Shows the breaking news kicker even when tonal kickers are supressed
