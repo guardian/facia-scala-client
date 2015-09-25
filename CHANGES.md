@@ -1,3 +1,7 @@
+#### 0.57
+
+  - Adds Front.group meta
+
 #### 0.56
 
   - Adds a convenience function: ResolvedMetaData.toMap
