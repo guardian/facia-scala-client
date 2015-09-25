@@ -9,7 +9,7 @@ class FrontTest extends FreeSpec with ShouldMatchers with MockitoSugar with OneI
     "when generating the canonical field" - {
       val frontJson = FrontJson(
         collections = List("collection1", "collection2", "collection3", "collection4"),
-        None, None, None, None, None, None, None, None, None, None, None, None
+        None, None, None, None, None, None, None, None, None, None, None, None, None
       )
 
       "uses the fronts config field if present" in {
