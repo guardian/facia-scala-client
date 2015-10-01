@@ -24,7 +24,8 @@ case class Front(
                   isImageDisplayed: Boolean,
                   priority: FrontPriority,
                   isHidden: Boolean,
-                  canonicalCollection: String)
+                  canonicalCollection: String,
+                  group: Option[String])
 
 object Front {
   private def getFrontPriority(frontJson: FrontJson): FrontPriority =
@@ -53,7 +54,8 @@ object Front {
       frontJson.isImageDisplayed.getOrElse(false),
       getFrontPriority(frontJson),
       frontJson.isHidden.getOrElse(false),
-      canonicalCollection(id, frontJson)
+      canonicalCollection(id, frontJson),
+      frontJson.group
     )
   }
 
