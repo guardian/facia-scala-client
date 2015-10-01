@@ -5,7 +5,7 @@ import play.api.libs.json.Json
 object CollectionConfigJson {
   implicit val jsonFormat = Json.format[CollectionConfigJson]
 
-  val emptyConfig: CollectionConfigJson = withDefaults(None, None, None, None, None, None, None, None, None, None, None)
+  val emptyConfig: CollectionConfigJson = withDefaults(None, None, None, None, None, None, None, None, None, None, None, None)
 
   def withDefaults(
     displayName: Option[String] = None,
@@ -21,7 +21,8 @@ object CollectionConfigJson {
     showDateHeader: Option[Boolean] = None,
     showLatestUpdate: Option[Boolean] = None,
     excludeFromRss: Option[Boolean] = None,
-    showTimestamps: Option[Boolean] = None
+    showTimestamps: Option[Boolean] = None,
+    hideShowMore: Option[Boolean] = None
   ): CollectionConfigJson
     = CollectionConfigJson(
     displayName,
@@ -37,7 +38,8 @@ object CollectionConfigJson {
     showDateHeader,
     showLatestUpdate,
     excludeFromRss,
-    showTimestamps
+    showTimestamps,
+    hideShowMore
   )
 }
 
@@ -55,7 +57,8 @@ case class CollectionConfigJson(
   showDateHeader: Option[Boolean],
   showLatestUpdate: Option[Boolean],
   excludeFromRss: Option[Boolean],
-  showTimestamps: Option[Boolean]
+  showTimestamps: Option[Boolean],
+  hideShowMore: Option[Boolean]
   ) {
   val collectionType = `type`
 }
