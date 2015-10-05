@@ -224,9 +224,9 @@ class IntegrationTest extends FreeSpec with ShouldMatchers with ScalaFutures wit
       Trail(id, 0, Some(TrailMetaData(Map("supporting" -> JsArray(supporting.map(Json.toJson(_)))))))
 
     val supportingTrailOne = makeTrail("internal-code/content/445034105")
-    val supportingTrailTwo = makeTrail("internal-code/content/445529464")
+    val supportingTrailTwo = makeTrail("internal-code/page/2383149")
 
-    val trailWithSupporting = makeTrailWithSupporting("internal-code/content/454695023", supportingTrailOne, supportingTrailTwo)
+    val trailWithSupporting = makeTrailWithSupporting("internal-code/page/2382509", supportingTrailOne, supportingTrailTwo)
 
     val collectionConfig = CollectionConfig.fromCollectionJson(CollectionConfigJson.withDefaults())
     val collectionJson = makeCollectionJson(trailWithSupporting)
@@ -234,7 +234,7 @@ class IntegrationTest extends FreeSpec with ShouldMatchers with ScalaFutures wit
     val dreamSnapOne = makeLatestTrailFor("snap/1281727", "uk/culture")
     val dreamSnapTwo = makeLatestTrailFor("snap/2372382", "technology")
     val plainSnapOne = makeLinkSnapFor("snap/347234723", "doesnotmatter")
-    val trailWithSupportingAndDreamSnaps = makeTrailWithSupporting("internal-code/content/454695023", supportingTrailOne, dreamSnapOne, dreamSnapTwo, supportingTrailTwo, plainSnapOne)
+    val trailWithSupportingAndDreamSnaps = makeTrailWithSupporting("internal-code/page/2381864", supportingTrailOne, dreamSnapOne, dreamSnapTwo, supportingTrailTwo, plainSnapOne)
     val collectionJsonSupportingWithDreamSnaps = makeCollectionJson(trailWithSupportingAndDreamSnaps)
 
     "should be filled correctly" in {
@@ -299,7 +299,7 @@ class IntegrationTest extends FreeSpec with ShouldMatchers with ScalaFutures wit
             c.supportingContent(0).asInstanceOf[SupportingCuratedContent].headline should be ("PM returns from holiday after video shows US reporter beheaded by Briton")
             c.supportingContent(1).asInstanceOf[LatestSnap].latestContent.get.sectionId should be (Some("culture"))
             c.supportingContent(2).asInstanceOf[LatestSnap].latestContent.get.sectionId should be (Some("technology"))
-            c.supportingContent(3).asInstanceOf[SupportingCuratedContent].headline should be ("Inside the 29 August edition")
+            c.supportingContent(3).asInstanceOf[SupportingCuratedContent].headline should be ("Abbey to offer unique new perspective on Battle of Hastings")
             c.supportingContent(4).asInstanceOf[LinkSnap].id should be ("snap/347234723")
 
           case somethingElse => fail(s"expected only CuratedContent, got ${somethingElse.getClass.getName}")
@@ -322,7 +322,7 @@ class IntegrationTest extends FreeSpec with ShouldMatchers with ScalaFutures wit
     )
 
     val normalTrail = Trail("internal-code/content/445034105", 0, None)
-    val normalTrailTwo = Trail("internal-code/content/445529464", 0, None)
+    val normalTrailTwo = Trail("internal-code/page/2383149", 0, None)
     val collectionConfig = CollectionConfig.fromCollectionJson(CollectionConfigJson.withDefaults())
 
     "should request normal item treats" in {
@@ -335,7 +335,7 @@ class IntegrationTest extends FreeSpec with ShouldMatchers with ScalaFutures wit
           treatsContents => {
             treatsContents.size should be(2)
             treatsContents.head.asInstanceOf[CuratedContent].headline should be ("PM returns from holiday after video shows US reporter beheaded by Briton")
-            treatsContents.apply(1).asInstanceOf[CuratedContent].headline should be ("Inside the 29 August edition")
+            treatsContents.apply(1).asInstanceOf[CuratedContent].headline should be ("Abbey to offer unique new perspective on Battle of Hastings")
           })
     }
 
@@ -369,7 +369,7 @@ class IntegrationTest extends FreeSpec with ShouldMatchers with ScalaFutures wit
           treatsContents.head.asInstanceOf[LatestSnap].latestContent.get.tags.exists(_.sectionId == Some("culture")) should be (true)
           treatsContents.apply(1).asInstanceOf[CuratedContent].headline should be ("PM returns from holiday after video shows US reporter beheaded by Briton")
           treatsContents.apply(2).asInstanceOf[LatestSnap].latestContent.get.tags.exists(_.sectionId == Some("technology")) should be (true)
-          treatsContents.apply(3).asInstanceOf[CuratedContent].headline should be ("Inside the 29 August edition")
+          treatsContents.apply(3).asInstanceOf[CuratedContent].headline should be ("Abbey to offer unique new perspective on Battle of Hastings")
 
         })
 
@@ -390,7 +390,7 @@ class IntegrationTest extends FreeSpec with ShouldMatchers with ScalaFutures wit
     )
 
     val normalTrail = Trail("internal-code/content/445034105", 0, None)
-    val normalTrailTwo = Trail("internal-code/content/445529464", 0, None)
+    val normalTrailTwo = Trail("internal-code/page/2383149", 0, None)
     val collectionConfig = CollectionConfig.fromCollectionJson(CollectionConfigJson.withDefaults())
 
     "should request draft items" in {
@@ -403,7 +403,7 @@ class IntegrationTest extends FreeSpec with ShouldMatchers with ScalaFutures wit
         contents => {
           contents.size should be(2)
           contents.head.asInstanceOf[CuratedContent].headline should be ("PM returns from holiday after video shows US reporter beheaded by Briton")
-          contents.apply(1).asInstanceOf[CuratedContent].headline should be ("Inside the 29 August edition")
+          contents.apply(1).asInstanceOf[CuratedContent].headline should be ("Abbey to offer unique new perspective on Battle of Hastings")
         })
     }
 
@@ -445,7 +445,7 @@ class IntegrationTest extends FreeSpec with ShouldMatchers with ScalaFutures wit
         faciaContent.asFuture.futureValue.fold(err => fail(s"expected 2 results, got $err", err.cause), contents => {
           contents.size should be(2)
           contents.head.asInstanceOf[CuratedContent].headline should be("PM returns from holiday after video shows US reporter beheaded by Briton")
-          contents.apply(1).asInstanceOf[CuratedContent].headline should be("Inside the 29 August edition")
+          contents.apply(1).asInstanceOf[CuratedContent].headline should be("Abbey to offer unique new perspective on Battle of Hastings")
         })
       }
 
@@ -460,7 +460,7 @@ class IntegrationTest extends FreeSpec with ShouldMatchers with ScalaFutures wit
         faciaContent.asFuture.futureValue.fold(err => fail(s"expected 4 results, got $err", err.cause), contents => {
           contents.size should be(4)
           contents.head.asInstanceOf[CuratedContent].headline should be("PM returns from holiday after video shows US reporter beheaded by Briton")
-          contents.apply(1).asInstanceOf[CuratedContent].headline should be("Inside the 29 August edition")
+          contents.apply(1).asInstanceOf[CuratedContent].headline should be("Abbey to offer unique new perspective on Battle of Hastings")
           contents.apply(2).asInstanceOf[LatestSnap].latestContent.get.tags.exists(_.sectionId == Some("culture")) should be(true)
           contents.apply(3).asInstanceOf[LatestSnap].latestContent.get.tags.exists(_.sectionId == Some("technology")) should be(true)
         })
@@ -468,7 +468,7 @@ class IntegrationTest extends FreeSpec with ShouldMatchers with ScalaFutures wit
     }
 
     "Should request a mix of both" - {
-      val normalTrailThree = Trail("internal-code/content/454695023", 0, None)
+      val normalTrailThree = Trail("internal-code/page/2379309", 0, None)
       val dreamSnapOne = makeLatestTrailFor("snap/1281727", "uk/culture")
       val dreamSnapTwo = makeLatestTrailFor("snap/2372382", "technology")
       val collectionJson = makeCollectionJsonWithDraft(List(dreamSnapOne, normalTrail, dreamSnapTwo, normalTrailTwo), normalTrailThree)
@@ -481,14 +481,14 @@ class IntegrationTest extends FreeSpec with ShouldMatchers with ScalaFutures wit
           contents.head.asInstanceOf[LatestSnap].latestContent.get.tags.exists(_.sectionId == Some("culture")) should be(true)
           contents.apply(1).asInstanceOf[CuratedContent].headline should be("PM returns from holiday after video shows US reporter beheaded by Briton")
           contents.apply(2).asInstanceOf[LatestSnap].latestContent.get.tags.exists(_.sectionId == Some("technology")) should be(true)
-          contents.apply(3).asInstanceOf[CuratedContent].headline should be("Inside the 29 August edition")})
+          contents.apply(3).asInstanceOf[CuratedContent].headline should be("Abbey to offer unique new perspective on Battle of Hastings")})
       }
 
       "for live" in {
         val faciaContentLive = FAPI.liveCollectionContentWithoutSnaps(collection, adjustSearchQuery = searchQuery => searchQuery.showTags("all"))
         faciaContentLive.asFuture.futureValue.fold(err => fail(s"expected 1 results, got $err", err.cause), contents => {
           contents.size should be(1)
-          contents.head.asInstanceOf[CuratedContent].headline should be("Pope Francis greeted by huge crowds in the Philippines – video")})
+          contents.head.asInstanceOf[CuratedContent].headline should be("Simone Lia on making new friends")})
       }
     }
   }
