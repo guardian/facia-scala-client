@@ -44,6 +44,7 @@ sealed trait MetaDataCommonFields {
   lazy val slideshow: Option[List[SlideshowAsset]] =
     json.get("slideshow").flatMap(_.asOpt[List[SlideshowAsset]]).filter(_.nonEmpty)
   lazy val showLivePlayable: Option[Boolean] = json.get("showLivePlayable").flatMap(_.asOpt[Boolean])
+  lazy val hideShowMore: Option[Boolean] = json.get("hideShowMore").flatMap(_.asOpt[Boolean])
 }
 
 object SupportingItemMetaData {

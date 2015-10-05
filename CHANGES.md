@@ -1,3 +1,7 @@
+#### 0.58
+
+  - Adds Collections.hideShowMore
+
 #### 0.57
 
   - Adds Front.group meta
