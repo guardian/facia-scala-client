@@ -1,3 +1,7 @@
+#### 0.59
+
+  - Adds a publishedBy to Trail
+
 #### 0.58
 
   - Adds Collections.hideShowMore
@@ -16,7 +20,7 @@
 #### 0.55
 
   - Shows the breaking news kicker even when tonal kickers are supressed
-  
+
 #### 0.54
 
   - Changes queries to not add editorsPicks to the head of the list of backfill by default

@@ -104,6 +104,7 @@ object Trail {
 case class Trail(
   id: String,
   frontPublicationDate: Long,
+  publishedBy: Option[String],
   meta: Option[TrailMetaData]
 ) {
   val isSnap: Boolean = id.startsWith("snap/")
