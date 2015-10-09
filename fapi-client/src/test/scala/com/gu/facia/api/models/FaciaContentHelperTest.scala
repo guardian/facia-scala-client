@@ -7,7 +7,7 @@ import org.scalatest.{FreeSpec, Matchers}
 
 class FaciaContentHelperTest extends FreeSpec with Matchers {
 
-  val emptyTrail: Trail = Trail("no-id", 0, Option(TrailMetaData.empty))
+  val emptyTrail: Trail = Trail("no-id", 0, None, Option(TrailMetaData.empty))
 
   val emptyContentProperties =
     ContentProperties(

@@ -28,9 +28,9 @@ class IntegrationTest extends FreeSpec with ShouldMatchers with ScalaFutures wit
   )
 
   def makeLatestTrailFor(id: String, uri: String) =
-    Trail(id, 0, Some(TrailMetaData(Map("snapUri" -> JsString(uri), "snapType" -> JsString("latest")))))
+    Trail(id, 0, None, Some(TrailMetaData(Map("snapUri" -> JsString(uri), "snapType" -> JsString("latest")))))
   def makeLinkSnapFor(id: String, uri: String) =
-    Trail(id, 0, Some(TrailMetaData(Map("snapUri" -> JsString(uri), "snapType" -> JsString("link")))))
+    Trail(id, 0, None, Some(TrailMetaData(Map("snapUri" -> JsString(uri), "snapType" -> JsString("link")))))
 
   "getFronts" - {
     "should return a set of Front instances from the fronts JSON" in {
@@ -99,7 +99,7 @@ class IntegrationTest extends FreeSpec with ShouldMatchers with ScalaFutures wit
 
       val plainSnapOne = makeLinkSnapFor("snap/347234723", "doesnotmatter")
 
-      val normalTrail = Trail("internal-code/content/445034105", 0, None)
+      val normalTrail = Trail("internal-code/content/445034105", 0, None, None)
 
       val collectionConfig = CollectionConfig.fromCollectionJson(CollectionConfigJson.withDefaults())
 
@@ -219,9 +219,9 @@ class IntegrationTest extends FreeSpec with ShouldMatchers with ScalaFutures wit
 
   "Supporting Items" - {
     def makeTrail(id: String) =
-      Trail(id, 0, None)
+      Trail(id, 0, None, None)
     def makeTrailWithSupporting(id: String, supporting: Trail*) =
-      Trail(id, 0, Some(TrailMetaData(Map("supporting" -> JsArray(supporting.map(Json.toJson(_)))))))
+      Trail(id, 0, None, Some(TrailMetaData(Map("supporting" -> JsArray(supporting.map(Json.toJson(_)))))))
 
     val supportingTrailOne = makeTrail("internal-code/content/445034105")
     val supportingTrailTwo = makeTrail("internal-code/page/2383149")
@@ -321,8 +321,8 @@ class IntegrationTest extends FreeSpec with ShouldMatchers with ScalaFutures wit
       previously = None
     )
 
-    val normalTrail = Trail("internal-code/content/445034105", 0, None)
-    val normalTrailTwo = Trail("internal-code/page/2383149", 0, None)
+    val normalTrail = Trail("internal-code/content/445034105", 0, None, None)
+    val normalTrailTwo = Trail("internal-code/page/2383149", 0, None, None)
     val collectionConfig = CollectionConfig.fromCollectionJson(CollectionConfigJson.withDefaults())
 
     "should request normal item treats" in {
@@ -389,8 +389,8 @@ class IntegrationTest extends FreeSpec with ShouldMatchers with ScalaFutures wit
       previously = None
     )
 
-    val normalTrail = Trail("internal-code/content/445034105", 0, None)
-    val normalTrailTwo = Trail("internal-code/page/2383149", 0, None)
+    val normalTrail = Trail("internal-code/content/445034105", 0, None, None)
+    val normalTrailTwo = Trail("internal-code/page/2383149", 0, None, None)
     val collectionConfig = CollectionConfig.fromCollectionJson(CollectionConfigJson.withDefaults())
 
     "should request draft items" in {
@@ -468,7 +468,7 @@ class IntegrationTest extends FreeSpec with ShouldMatchers with ScalaFutures wit
     }
 
     "Should request a mix of both" - {
-      val normalTrailThree = Trail("internal-code/page/2379309", 0, None)
+      val normalTrailThree = Trail("internal-code/page/2379309", 0, None, None)
       val dreamSnapOne = makeLatestTrailFor("snap/1281727", "uk/culture")
       val dreamSnapTwo = makeLatestTrailFor("snap/2372382", "technology")
       val collectionJson = makeCollectionJsonWithDraft(List(dreamSnapOne, normalTrail, dreamSnapTwo, normalTrailTwo), normalTrailThree)

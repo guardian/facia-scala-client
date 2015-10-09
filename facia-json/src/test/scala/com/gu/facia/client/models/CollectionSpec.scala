@@ -72,7 +72,7 @@ class CollectionSpec extends Specification with ResourcesHelper {
 
       "be able to serialize and deserialize the same object" in {
         val collectionJson = CollectionJson(
-          live = List(Trail("id-123", DateTime.now.getMillis, None)),
+          live = List(Trail("id-123", DateTime.now.getMillis, None, None)),
           draft = None,
           treats = None,
           lastUpdated = DateTime.now(),
