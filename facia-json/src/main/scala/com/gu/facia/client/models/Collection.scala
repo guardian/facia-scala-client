@@ -70,6 +70,7 @@ object SupportingItem {
 case class SupportingItem(
   id: String,
   frontPublicationDate: Option[Long],
+  publishedBy: Option[String],
   meta: Option[SupportingItemMetaData]
 ) {
   val isSnap: Boolean = id.startsWith("snap/")
