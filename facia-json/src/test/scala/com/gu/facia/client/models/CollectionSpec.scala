@@ -60,6 +60,7 @@ class CollectionSpec extends Specification with ResourcesHelper {
 
           supportingContent.lift(1) must beSome.which({ item =>
             item.id mustEqual "internal-code/content/442568601"
+            item.publishedBy mustEqual Some("user1")
 
             item.meta must beSome.which({ meta =>
               meta.group mustEqual Some("2")
