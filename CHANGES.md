@@ -1,3 +1,7 @@
+#### 0.60
+
+  - Fix the batching so that it does not request more than 50 at a time in a search query. There is a restriction in CAPI of 50 items in a search query.
+
 #### 0.59
 
   - Adds a publishedBy to Trail
