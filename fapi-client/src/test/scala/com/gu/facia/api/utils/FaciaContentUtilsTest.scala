@@ -29,7 +29,7 @@ class FaciaContentUtilsTest extends FreeSpec with Matchers {
   val content = Content(
     "content-id", Some("section"), Some("Section Name"), Option(staticDateTime), "webTitle", "webUrl", "apiUrl",
     fields = Some(Map("internalContentCode" -> "CODE", "headline" -> "Content headline", "href" -> "Content href", "trailText" -> "Content trailtext", "byline" -> "Content byline")),
-    Nil, None, Nil, None)
+    Nil, None, Nil, None, None, None)
 
   def makeLatestSnap(latestSnapId: String, content: Content = content) = LatestSnap(
     id = latestSnapId,
@@ -103,7 +103,7 @@ class FaciaContentUtilsTest extends FreeSpec with Matchers {
     val contentWithNoDatetime = Content(
       "content-id", Some("section"), Some("Section Name"), None, "webTitle", "webUrl", "apiUrl",
       fields = Some(Map("internalContentCode" -> "CODE", "headline" -> "Content headline", "href" -> "Content href", "trailText" -> "Content trailtext", "byline" -> "Content byline")),
-      Nil, None, Nil, None)
+      Nil, None, Nil, None, None, None)
 
     val now = DateTime.now()
 
@@ -148,7 +148,7 @@ class FaciaContentUtilsTest extends FreeSpec with Matchers {
     def contentWithTagIds(tagIds: String*) = Content(
       "content-id", Some("section"), Some("Section Name"), Option(staticDateTime), "webTitle", "webUrl", "apiUrl",
       fields = Some(Map("internalContentCode" -> "CODE", "headline" -> "Content headline", "href" -> "Content href", "trailText" -> "Content trailtext", "byline" -> "Content byline")),
-      tagIds.toList.map(tagId => Tag(tagId, "type", None, None, "", "", "")), None, Nil, None)
+      tagIds.toList.map(tagId => Tag(tagId, "type", None, None, "", "", "")), None, Nil, None, None, None)
 
     "should return a None for a LinkSnap" in {
       val linkSnap = makeLinkSnap("some-link-snap")
@@ -205,7 +205,7 @@ class FaciaContentUtilsTest extends FreeSpec with Matchers {
     def contentWithFields(fields: Map[String, String]) = Content(
       "content-id", Some("section"), Some("Section Name"), Option(staticDateTime), "webTitle", "webUrl", "apiUrl",
       fields = Option(fields),
-      Nil, None, Nil, None)
+      Nil, None, Nil, None, None, None)
 
     "should return a false for a LinkSnap" in {
       val linkSnap = makeLinkSnap("some-link-snap")
@@ -269,7 +269,7 @@ class FaciaContentUtilsTest extends FreeSpec with Matchers {
     def contentWithFields(fields: Map[String, String]) = Content(
       "content-id", Some("section"), Some("Section Name"), Option(staticDateTime), "webTitle", "webUrl", "apiUrl",
       fields = Option(fields),
-      Nil, None, Nil, None)
+      Nil, None, Nil, None, None, None)
 
     "should return a false for a LinkSnap" in {
       val linkSnap = makeLinkSnap("some-link-snap")
@@ -332,7 +332,7 @@ class FaciaContentUtilsTest extends FreeSpec with Matchers {
     def contentWithShortUrl(shortUrl: String) = Content(
       "content-id", Some("section"), Some("Section Name"), Option(staticDateTime), "webTitle", "webUrl", "apiUrl",
       fields = Option(Map("shortUrl" -> shortUrl)),
-      Nil, None, Nil, None)
+      Nil, None, Nil, None, None, None)
 
     val contentWithNoShortUrl = content
 

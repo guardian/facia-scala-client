@@ -26,7 +26,7 @@ class CollectionTest extends FreeSpec with ShouldMatchers with MockitoSugar with
   val content = Content(
     "content-id", Some("section"), Some("Section Name"), None, "webTitle", "webUrl", "apiUrl",
     fields = Some(Map("internalContentCode" -> "CODE", "headline" -> "Content headline", "href" -> "Content href", "trailText" -> "Content trailtext", "byline" -> "Content byline")),
-    Nil, None, Nil, None
+    Nil, None, Nil, None, None, None
   )
   val contents = Set(content)
   val collectionConfig = CollectionConfig.fromCollectionJson(CollectionConfigJson.withDefaults(href = Some("collectionConfigHref")))
@@ -164,11 +164,11 @@ class CollectionTest extends FreeSpec with ShouldMatchers with MockitoSugar with
       val snapContentOne = Content(
         "content-id-one", Some("section"), Some("Section Name"), None, "webTitle", "webUrl", "apiUrl",
         fields = Some(Map("internalContentCode" -> "CODE", "headline" -> "Content headline", "href" -> "Content href", "trailText" -> "Content trailtext", "byline" -> "Content byline")),
-        Nil, None, Nil, None)
+        Nil, None, Nil, None, None, None)
       val snapContentTwo = Content(
         "content-id-two", Some("section"), Some("Section Name"), None, "webTitle", "webUrl", "apiUrl",
         fields = Some(Map("internalContentCode" -> "CODE", "headline" -> "Content headline", "href" -> "Content href", "trailText" -> "Content trailtext", "byline" -> "Content byline")),
-        Nil, None, Nil, None)
+        Nil, None, Nil, None, None, None)
 
       val snapContent = Map("snap/8474745745660" -> Some(snapContentOne), "snap/4324234234234" -> Some(snapContentTwo))
 
@@ -242,11 +242,11 @@ class CollectionTest extends FreeSpec with ShouldMatchers with MockitoSugar with
         val snapContentOne = Content(
           "content-id-one", Some("section"), Some("Section Name"), None, "webTitle", "webUrl", "apiUrl",
           fields = Some(Map("internalContentCode" -> "CODE", "headline" -> "Content headline", "href" -> "Content href", "trailText" -> "Content trailtext", "byline" -> "Content byline")),
-          Nil, None, Nil, None)
+          Nil, None, Nil, None, None, None)
         val snapContentTwo = Content(
           "content-id-two", Some("section"), Some("Section Name"), None, "webTitle", "webUrl", "apiUrl",
           fields = Some(Map("internalContentCode" -> "CODE", "headline" -> "Content headline", "href" -> "Content href", "trailText" -> "Content trailtext", "byline" -> "Content byline")),
-          Nil, None, Nil, None)
+          Nil, None, Nil, None, None, None)
 
         val snapContent = Map("snap/8474745745660" -> Some(snapContentOne), "snap/4324234234234" -> Some(snapContentTwo))
 
@@ -272,11 +272,11 @@ class CollectionTest extends FreeSpec with ShouldMatchers with MockitoSugar with
       val snapContentOne = Content(
         "content-id-one", Some("section"), Some("Section Name"), None, "webTitle", "webUrl", "apiUrl",
         fields = Some(Map("internalContentCode" -> "CODE", "headline" -> "Content headline", "href" -> "Content href", "trailText" -> "Content trailtext", "byline" -> "Content byline")),
-        Nil, None, Nil, None)
+        Nil, None, Nil, None, None, None)
       val snapContentTwo = Content(
         "content-id-two", Some("section"), Some("Section Name"), None, "webTitle", "webUrl", "apiUrl",
         fields = Some(Map("internalContentCode" -> "CODE", "headline" -> "Content headline", "href" -> "Content href", "trailText" -> "Content trailtext", "byline" -> "Content byline")),
-        Nil, None, Nil, None)
+        Nil, None, Nil, None, None, None)
 
       val snapContent = Map("snap/8474745745660" -> Some(snapContentOne), "snap/4324234234234" -> Some(snapContentTwo))
 
