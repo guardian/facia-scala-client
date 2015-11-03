@@ -11,7 +11,7 @@ import play.api.libs.json.{Json, JsArray, JsString}
 
 class CollectionTest extends FreeSpec with ShouldMatchers with MockitoSugar with OneInstancePerTest {
   val trailMetadata = spy(TrailMetaData.empty)
-  val trail = Trail("internal-code/content/CODE", 1, None, Some(trailMetadata))
+  val trail = Trail("internal-code/page/123", 1, None, Some(trailMetadata))
   val collectionJson = CollectionJson(
     live = List(trail),
     draft = None,
@@ -25,7 +25,7 @@ class CollectionTest extends FreeSpec with ShouldMatchers with MockitoSugar with
   )
   val content = Content(
     "content-id", Some("section"), Some("Section Name"), None, "webTitle", "webUrl", "apiUrl",
-    fields = Some(Map("internalContentCode" -> "CODE", "headline" -> "Content headline", "href" -> "Content href", "trailText" -> "Content trailtext", "byline" -> "Content byline")),
+    fields = Some(Map("internalPageCode" -> "123", "headline" -> "Content headline", "href" -> "Content href", "trailText" -> "Content trailtext", "byline" -> "Content byline")),
     Nil, None, Nil, None
   )
   val contents = Set(content)
@@ -163,11 +163,11 @@ class CollectionTest extends FreeSpec with ShouldMatchers with MockitoSugar with
 
       val snapContentOne = Content(
         "content-id-one", Some("section"), Some("Section Name"), None, "webTitle", "webUrl", "apiUrl",
-        fields = Some(Map("internalContentCode" -> "CODE", "headline" -> "Content headline", "href" -> "Content href", "trailText" -> "Content trailtext", "byline" -> "Content byline")),
+        fields = Some(Map("internalPageCode" -> "123", "headline" -> "Content headline", "href" -> "Content href", "trailText" -> "Content trailtext", "byline" -> "Content byline")),
         Nil, None, Nil, None)
       val snapContentTwo = Content(
         "content-id-two", Some("section"), Some("Section Name"), None, "webTitle", "webUrl", "apiUrl",
-        fields = Some(Map("internalContentCode" -> "CODE", "headline" -> "Content headline", "href" -> "Content href", "trailText" -> "Content trailtext", "byline" -> "Content byline")),
+        fields = Some(Map("internalPageCode" -> "123", "headline" -> "Content headline", "href" -> "Content href", "trailText" -> "Content trailtext", "byline" -> "Content byline")),
         Nil, None, Nil, None)
 
       val snapContent = Map("snap/8474745745660" -> Some(snapContentOne), "snap/4324234234234" -> Some(snapContentTwo))
@@ -201,8 +201,8 @@ class CollectionTest extends FreeSpec with ShouldMatchers with MockitoSugar with
   }
 
   "liveIdsWithoutSnaps" - {
-    val trailOne = Trail("internal-code/content/1", 1, None, Some(trailMetadata))
-    val trailTwo = Trail("internal-code/content/2", 1, None, Some(trailMetadata))
+    val trailOne = Trail("internal-code/page/1", 1, None, Some(trailMetadata))
+    val trailTwo = Trail("internal-code/page/2", 1, None, Some(trailMetadata))
     val trailThree = Trail("artanddesign/gallery/2014/feb/28/beyond-basquiat-black-artists", 1, None, Some(trailMetadata))
     val snapOne = Trail("snap/1415985080061", 1, None, Some(trailMetadata))
     val snapTwo = Trail("snap/5345345215342", 1, None, Some(trailMetadata))
@@ -217,8 +217,8 @@ class CollectionTest extends FreeSpec with ShouldMatchers with MockitoSugar with
 
     "Removes snaps from a collection and returns the ids to query" in {
       Collection.liveIdsWithoutSnaps(collection) should be
-        List("internal-code/content/1",
-          "internal-code/content/2",
+        List("internal-code/page/1",
+          "internal-code/page/2",
           "artanddesign/gallery/2014/feb/28/beyond-basquiat-black-artists")
     }
 
@@ -232,8 +232,8 @@ class CollectionTest extends FreeSpec with ShouldMatchers with MockitoSugar with
 
   "Collection" - {
     "filter out the snaps in live" in {
-        val trailOne = Trail("internal-code/content/1", 1, None, Some(trailMetadata))
-        val trailTwo = Trail("internal-code/content/2", 1, None, Some(trailMetadata))
+        val trailOne = Trail("internal-code/page/1", 1, None, Some(trailMetadata))
+        val trailTwo = Trail("internal-code/page/2", 1, None, Some(trailMetadata))
         val snapOne = Trail("snap/1415985080061", 1, None, Some(TrailMetaData(Map("snapType" -> JsString("link"), "snapUri" -> JsString("abc")))))
         val snapTwo = Trail("snap/5345345215342", 1, None, Some(TrailMetaData(Map("snapType" -> JsString("link"), "snapCss" -> JsString("css")))))
         val snapLatestOne = Trail("snap/8474745745660", 1, None, Some(TrailMetaData(Map("snapType" -> JsString("latest"), "href" -> JsString("uk")))))
@@ -241,11 +241,11 @@ class CollectionTest extends FreeSpec with ShouldMatchers with MockitoSugar with
 
         val snapContentOne = Content(
           "content-id-one", Some("section"), Some("Section Name"), None, "webTitle", "webUrl", "apiUrl",
-          fields = Some(Map("internalContentCode" -> "CODE", "headline" -> "Content headline", "href" -> "Content href", "trailText" -> "Content trailtext", "byline" -> "Content byline")),
+          fields = Some(Map("internalPageCode" -> "123", "headline" -> "Content headline", "href" -> "Content href", "trailText" -> "Content trailtext", "byline" -> "Content byline")),
           Nil, None, Nil, None)
         val snapContentTwo = Content(
           "content-id-two", Some("section"), Some("Section Name"), None, "webTitle", "webUrl", "apiUrl",
-          fields = Some(Map("internalContentCode" -> "CODE", "headline" -> "Content headline", "href" -> "Content href", "trailText" -> "Content trailtext", "byline" -> "Content byline")),
+          fields = Some(Map("internalPageCode" -> "123", "headline" -> "Content headline", "href" -> "Content href", "trailText" -> "Content trailtext", "byline" -> "Content byline")),
           Nil, None, Nil, None)
 
         val snapContent = Map("snap/8474745745660" -> Some(snapContentOne), "snap/4324234234234" -> Some(snapContentTwo))
@@ -257,13 +257,13 @@ class CollectionTest extends FreeSpec with ShouldMatchers with MockitoSugar with
         val collectionWithoutSnaps = Collection.withoutSnaps(collection)
 
         collectionWithoutSnaps.live.length should be (2)
-        collectionWithoutSnaps.live(0).id should be ("internal-code/content/1")
-        collectionWithoutSnaps.live(1).id should be ("internal-code/content/2")
+        collectionWithoutSnaps.live(0).id should be ("internal-code/page/1")
+        collectionWithoutSnaps.live(1).id should be ("internal-code/page/2")
       }
 
     "filter out the snaps in draft" in {
-      val trailOne = Trail("internal-code/content/1", 1, None, Some(trailMetadata))
-      val trailTwo = Trail("internal-code/content/2", 1, None, Some(trailMetadata))
+      val trailOne = Trail("internal-code/page/1", 1, None, Some(trailMetadata))
+      val trailTwo = Trail("internal-code/page/2", 1, None, Some(trailMetadata))
       val snapOne = Trail("snap/1415985080061", 1, None, Some(TrailMetaData(Map("snapType" -> JsString("link"), "snapUri" -> JsString("abc")))))
       val snapTwo = Trail("snap/5345345215342", 1, None, Some(TrailMetaData(Map("snapType" -> JsString("link"), "snapCss" -> JsString("css")))))
       val snapLatestOne = Trail("snap/8474745745660", 1, None, Some(TrailMetaData(Map("snapType" -> JsString("latest"), "href" -> JsString("uk")))))
@@ -287,8 +287,8 @@ class CollectionTest extends FreeSpec with ShouldMatchers with MockitoSugar with
       val collectionWithoutSnaps = Collection.withoutSnaps(collection)
 
       collectionWithoutSnaps.draft.map(_.length) should be (Some(2))
-      collectionWithoutSnaps.draft.map(_.apply(0).id) should be (Some("internal-code/content/2"))
-      collectionWithoutSnaps.draft.map(_.apply(1).id) should be (Some("internal-code/content/1"))
+      collectionWithoutSnaps.draft.map(_.apply(0).id) should be (Some("internal-code/page/2"))
+      collectionWithoutSnaps.draft.map(_.apply(1).id) should be (Some("internal-code/page/1"))
     }
   }
 
@@ -314,16 +314,6 @@ class CollectionTest extends FreeSpec with ShouldMatchers with MockitoSugar with
       Trail(id, 0, None, None)
     def makeTrailWithSupporting(id: String, supporting: Trail*) =
       Trail(id, 0, None, Some(TrailMetaData(Map("supporting" -> JsArray(supporting.map(Json.toJson(_)))))))
-    "trails with internalContentCode" in {
-      val trail = Trail("internal-code/content/1", 1, None, Some(trailMetadata))
-      val collectionJsonWithContentCode = collectionJson.copy(live = List(trail))
-      val collection = Collection.fromCollectionJsonConfigAndContent("id", Some(collectionJsonWithContentCode), collectionConfig)
-      val result = Collection.liveContent(collection, contents)
-      result.length should be (1)
-      result.head should have (
-        'headline("red apple")
-      )
-    }
     "trails with internalPageCode" in {
       val trail = Trail("internal-code/page/2", 1, None, Some(trailMetadata))
       val collectionJsonWithContentCode = collectionJson.copy(live = List(trail))
@@ -333,18 +323,6 @@ class CollectionTest extends FreeSpec with ShouldMatchers with MockitoSugar with
       result.head should have (
         'headline("straight banana")
       )
-    }
-    "supporting with internalContentCode" in {
-      val supporting = makeTrail("internal-code/content/1")
-      val trail = makeTrailWithSupporting("internal-code/content/5", supporting)
-      val collectionJsonWithContentCode = collectionJson.copy(live = List(trail))
-      val collection = Collection.fromCollectionJsonConfigAndContent("id", Some(collectionJsonWithContentCode), collectionConfig)
-      val result = Collection.liveContent(collection, contents)
-      result.length should be (1)
-      result.head should have (
-        'headline("hairy kiwi")
-      )
-      FaciaContentUtils.headline(FaciaContentUtils.supporting(result.head).head) should be ("red apple")
     }
     "supporting with internalPageCode" in {
       val supporting = makeTrail("internal-code/page/2")

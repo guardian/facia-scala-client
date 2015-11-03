@@ -21,7 +21,7 @@ object ContentApi {
     def queryForIds(ids: Seq[String]) = adjustSearchQuery(client.search
       .ids(ids mkString ",")
       .pageSize(ids.size)
-      .showFields("internalContentCode,internalPageCode"))
+      .showFields("internalPageCode"))
 
     Try(IdsSearchQueries.makeBatches(ids)(ids => client.getUrl(queryForIds(ids)))) match {
         case Success(Some(batches)) =>
@@ -48,14 +48,14 @@ object ContentApi {
       // makes it possible to safely append additional tags
       case (k, v) if k == "tag" => (k, s"($v)")
       // ensure internalContentCode and internalPageCode are present on queries
-      case (k, v) if k == "show-fields" => (k, s"$v,internalContentCode,internalPageCode")
+      case (k, v) if k == "show-fields" => (k, s"$v,internalPageCode")
       case param => param
     }
     val paramsWithFields =
       if (rawParams.exists {
         case ("show-fields", _) => true
         case _ => false
-      }) rawParams else rawParams :+ ("show-fields" -> "internalContentCode,internalPageCode")
+      }) rawParams else rawParams :+ ("show-fields" -> "internalPageCode")
 
     val paramsWithEditorsPicks = paramsWithFields :+ ("show-editors-picks" -> "false")
 
@@ -106,7 +106,7 @@ object ContentApi {
   def latestContentFromLatestSnaps(capiClient: GuardianContentClient, latestSnapsRequest: LatestSnapsRequest, adjustItemQuery: AdjustItemQuery)
                                   (implicit ec: ExecutionContext): Response[Map[String, Option[Content]]] = {
     def itemQueryFromSnapUri(uri: String): ItemQuery =
-      adjustItemQuery(capiClient.item(uri).pageSize(1).showFields("internalContentCode,internalPageCode"))
+      adjustItemQuery(capiClient.item(uri).pageSize(1).showFields("internalPageCode"))
 
     Response.Async.Right(
       Future.traverse(latestSnapsRequest.snaps) { case (id, uri) =>

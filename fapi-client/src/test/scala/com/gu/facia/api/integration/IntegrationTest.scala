@@ -99,7 +99,7 @@ class IntegrationTest extends FreeSpec with ShouldMatchers with ScalaFutures wit
 
       val plainSnapOne = makeLinkSnapFor("snap/347234723", "doesnotmatter")
 
-      val normalTrail = Trail("internal-code/content/445034105", 0, None, None)
+      val normalTrail = Trail("internal-code/page/2144828", 0, None, None)
 
       val collectionConfig = CollectionConfig.fromCollectionJson(CollectionConfigJson.withDefaults())
 
@@ -223,7 +223,7 @@ class IntegrationTest extends FreeSpec with ShouldMatchers with ScalaFutures wit
     def makeTrailWithSupporting(id: String, supporting: Trail*) =
       Trail(id, 0, None, Some(TrailMetaData(Map("supporting" -> JsArray(supporting.map(Json.toJson(_)))))))
 
-    val supportingTrailOne = makeTrail("internal-code/content/445034105")
+    val supportingTrailOne = makeTrail("internal-code/page/2144828")
     val supportingTrailTwo = makeTrail("internal-code/page/2383149")
 
     val trailWithSupporting = makeTrailWithSupporting("internal-code/page/2382509", supportingTrailOne, supportingTrailTwo)
@@ -321,7 +321,7 @@ class IntegrationTest extends FreeSpec with ShouldMatchers with ScalaFutures wit
       previously = None
     )
 
-    val normalTrail = Trail("internal-code/content/445034105", 0, None, None)
+    val normalTrail = Trail("internal-code/page/2144828", 0, None, None)
     val normalTrailTwo = Trail("internal-code/page/2383149", 0, None, None)
     val collectionConfig = CollectionConfig.fromCollectionJson(CollectionConfigJson.withDefaults())
 
@@ -389,7 +389,7 @@ class IntegrationTest extends FreeSpec with ShouldMatchers with ScalaFutures wit
       previously = None
     )
 
-    val normalTrail = Trail("internal-code/content/445034105", 0, None, None)
+    val normalTrail = Trail("internal-code/page/2144828", 0, None, None)
     val normalTrailTwo = Trail("internal-code/page/2383149", 0, None, None)
     val collectionConfig = CollectionConfig.fromCollectionJson(CollectionConfigJson.withDefaults())
 
