@@ -23,7 +23,7 @@ object FaciaImage {
     else None}
 
   def fromContentTags(content: Content, trailMeta: MetaDataCommonFields): Option[FaciaImage] = {
-    val contributorTags = content.tags.filter(_.`type` == "contributor")
+    val contributorTags = content.tags.filter(_.`type` == TagType.Contributor)
     if (contributorTags.length == 1)
       for {
         tag <- contributorTags.find(_.bylineLargeImageUrl.isDefined)

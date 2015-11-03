@@ -85,7 +85,7 @@ object ItemKicker {
 
   def seriesOrBlogKicker(item: Content) =
     item.tags.find({ tag =>
-      Set("series", "blog").contains(tag.`type`) && !TagsThatDoNotAutoKicker.contains(tag.id)
+      Set(TagType.Series: TagType, TagType.Blog).contains(tag.`type`) && !TagsThatDoNotAutoKicker.contains(tag.id)
     }).map(TagKicker.fromTag)
 
   /** Used for de-duping bylines */

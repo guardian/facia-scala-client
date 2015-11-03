@@ -5,16 +5,16 @@ import com.gu.contentapi.client.model.v1.{TagType, Tag, Content}
 object ContentApiUtils {
 
   implicit class RichContent(content: Content) {
-    private def tagsOfType(tagType: String): Seq[Tag] = content.tags.filter(_.`type` == tagType)
+    private def tagsOfType(tagType: TagType): Seq[Tag] = content.tags.filter(_.`type` == tagType)
 
-    lazy val keywords: Seq[Tag] = tagsOfType("keyword")
+    lazy val keywords: Seq[Tag] = tagsOfType(TagType.Keyword)
     lazy val nonKeywordTags: Seq[Tag] = content.tags.filterNot(_.`type` == "keyword")
-    lazy val contributors: Seq[Tag] = tagsOfType("contributor")
+    lazy val contributors: Seq[Tag] = tagsOfType(TagType.Contributor)
     lazy val isContributorPage: Boolean = contributors.nonEmpty
-    lazy val series: Seq[Tag] = tagsOfType("series")
-    lazy val blogs: Seq[Tag] = tagsOfType("blog")
-    lazy val tones: Seq[Tag] = tagsOfType("tone")
-    lazy val types: Seq[Tag] = tagsOfType("type")
+    lazy val series: Seq[Tag] = tagsOfType(TagType.Series)
+    lazy val blogs: Seq[Tag] = tagsOfType(TagType.Blog)
+    lazy val tones: Seq[Tag] = tagsOfType(TagType.Tone)
+    lazy val types: Seq[Tag] = tagsOfType(TagType.Type)
 
     lazy val isLiveBlog: Boolean = tones.exists(t => Tags.liveMappings.contains(t.id))
     lazy val isComment = tones.exists(t => Tags.commentMappings.contains(t.id))
