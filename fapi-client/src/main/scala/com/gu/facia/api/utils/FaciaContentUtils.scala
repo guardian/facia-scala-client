@@ -26,10 +26,10 @@ object FaciaContentUtils {
     maybeContent(fc).map(_.tags.toList).getOrElse(Nil)
 
   def webPublicationDateOption(fc: FaciaContent): Option[DateTime] = fold(fc)(
-    curatedContent => curatedContent.content.webPublicationDateOption,
-    supportingCuratedContent => supportingCuratedContent.content.webPublicationDateOption,
+    curatedContent => curatedContent.content.webPublicationDate.map(d => new DateTime(d.dateTime)),
+    supportingCuratedContent => supportingCuratedContent.content.webPublicationDate.map(d => new DateTime(d.dateTime)),
     _ => None,
-    latestSnap => latestSnap.latestContent.flatMap(_.webPublicationDateOption))
+    latestSnap => latestSnap.latestContent.flatMap(_.webPublicationDate.map(d => new DateTime(d.dateTime))))
 
   def webPublicationDate(fc: FaciaContent): DateTime = webPublicationDateOption(fc).getOrElse(DateTime.now)
 
