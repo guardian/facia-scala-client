@@ -20,7 +20,7 @@ object CardStyle {
   val news = "news"
 
   def apply(content: Content, trailMetaData: MetaDataCommonFields): CardStyle = {
-    val href = trailMetaData.href.orElse(content.safeFields.get("href"))
+    val href = trailMetaData.href
     if (trailMetaData.snapType == Some("link") && href.exists(ExternalLinks.external)) {
       ExternalLink
     } else if (content.tags.exists(_.id == "news/series/hsbc-files")
