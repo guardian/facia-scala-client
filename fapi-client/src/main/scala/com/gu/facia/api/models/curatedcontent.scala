@@ -149,13 +149,13 @@ object LatestSnap {
       trail.safeMeta.snapUri,
       trail.safeMeta.snapCss,
       maybeContent,
-      trail.safeMeta.headline.orElse(maybeContent.flatMap(_.safeFields.get("headline"))).orElse(maybeContent.map(_.webTitle)),
+      trail.safeMeta.headline.orElse(maybeContent.flatMap(_.fields.flatMap(_.headline))).orElse(maybeContent.map(_.webTitle)),
       trail.safeMeta.href.orElse(maybeContent.map(_.id)),
-      trail.safeMeta.trailText.orElse(maybeContent.flatMap(_.safeFields.get("trailText"))),
+      trail.safeMeta.trailText.orElse(maybeContent.flatMap(_.fields.flatMap(_.trailText))),
       trail.safeMeta.group.getOrElse("0"),
       FaciaImage.getFaciaImage(maybeContent, trail.safeMeta, resolvedMetaData),
       ContentProperties.fromResolvedMetaData(resolvedMetaData),
-      trail.safeMeta.byline.orElse(maybeContent.flatMap(_.safeFields.get("byline"))),
+      trail.safeMeta.byline.orElse(maybeContent.flatMap(_.fields.flatMap(_.byline))),
       ItemKicker.fromMaybeContentTrailMetaAndResolvedMetaData(maybeContent, trail.safeMeta, resolvedMetaData)
     )
   }
@@ -171,13 +171,13 @@ object LatestSnap {
       supportingItem.safeMeta.snapUri,
       supportingItem.safeMeta.snapCss,
       maybeContent,
-      supportingItem.safeMeta.headline.orElse(maybeContent.flatMap(_.safeFields.get("headline"))).orElse(maybeContent.map(_.webTitle)),
-      supportingItem.safeMeta.href.orElse(maybeContent.flatMap(_.safeFields.get("href"))),
-      supportingItem.safeMeta.trailText.orElse(maybeContent.flatMap(_.safeFields.get("trailText"))),
+      supportingItem.safeMeta.headline.orElse(maybeContent.flatMap(_.fields.flatMap(_.headline))).orElse(maybeContent.map(_.webTitle)),
+      supportingItem.safeMeta.href,
+      supportingItem.safeMeta.trailText.orElse(maybeContent.flatMap(_.fields.flatMap(_.trailText))),
       supportingItem.safeMeta.group.getOrElse("0"),
       FaciaImage.getFaciaImage(maybeContent, supportingItem.safeMeta, resolvedMetaData),
       ContentProperties.fromResolvedMetaData(resolvedMetaData),
-      supportingItem.safeMeta.byline.orElse(maybeContent.flatMap(_.safeFields.get("byline"))),
+      supportingItem.safeMeta.byline.orElse(maybeContent.flatMap(_.fields.flatMap(_.byline))),
       ItemKicker.fromMaybeContentTrailMetaAndResolvedMetaData(maybeContent, supportingItem.safeMeta, resolvedMetaData)
     )
   }
@@ -220,7 +220,6 @@ object CuratedContent {
                                         maybeFrontPublicationDate: Option[Long],
                                         supportingContent: List[FaciaContent],
                                         collectionConfig: CollectionConfig) = {
-    val contentFields: Map[String, String] = content.safeFields
     val cardStyle = CardStyle(content, trailMetaData)
     val resolvedMetaData = ResolvedMetaData.fromContentAndTrailMetaData(content, trailMetaData, cardStyle)
 
@@ -229,13 +228,13 @@ object CuratedContent {
       maybeFrontPublicationDate,
       supportingContent,
       cardStyle,
-      trailMetaData.headline.orElse(content.safeFields.get("headline")).getOrElse(content.webTitle),
+      trailMetaData.headline.orElse(content.fields.flatMap(_.headline)).getOrElse(content.webTitle),
       trailMetaData.href,
-      trailMetaData.trailText.orElse(contentFields.get("trailText")),
+      trailMetaData.trailText.orElse(content.fields.flatMap(_.trailText)),
       trailMetaData.group.getOrElse("0"),
       FaciaImage.getFaciaImage(Some(content), trailMetaData, resolvedMetaData),
       ContentProperties.fromResolvedMetaData(resolvedMetaData),
-      trailMetaData.byline.orElse(contentFields.get("byline")),
+      trailMetaData.byline.orElse(content.fields.flatMap(_.byline)),
       ItemKicker.fromContentAndTrail(Option(content), trailMetaData, resolvedMetaData, Some(collectionConfig)),
       embedType = trailMetaData.snapType,
       embedUri = trailMetaData.snapUri,
@@ -246,7 +245,6 @@ object CuratedContent {
                           maybeFrontPublicationDate: Option[Long],
                           collectionConfig: CollectionConfig): CuratedContent = {
 
-    val contentFields: Map[String, String] = content.safeFields
     val cardStyle = CardStyle(content, trailMetaData)
     val resolvedMetaData = ResolvedMetaData.fromContentAndTrailMetaData(content, trailMetaData, cardStyle)
 
@@ -255,13 +253,13 @@ object CuratedContent {
       maybeFrontPublicationDate,
       supportingContent = Nil,
       cardStyle = cardStyle,
-      trailMetaData.headline.orElse(content.safeFields.get("headline")).getOrElse(content.webTitle),
+      trailMetaData.headline.orElse(content.fields.flatMap(_.headline)).getOrElse(content.webTitle),
       trailMetaData.href,
-      trailMetaData.trailText.orElse(contentFields.get("trailText")),
+      trailMetaData.trailText.orElse(content.fields.flatMap(_.trailText)),
       trailMetaData.group.getOrElse("0"),
       FaciaImage.getFaciaImage(Some(content), trailMetaData, resolvedMetaData),
       ContentProperties.fromResolvedMetaData(resolvedMetaData),
-      trailMetaData.byline.orElse(contentFields.get("byline")),
+      trailMetaData.byline.orElse(content.fields.flatMap(_.byline)),
       ItemKicker.fromContentAndTrail(Option(content), trailMetaData, resolvedMetaData, Some(collectionConfig)),
       embedType = trailMetaData.snapType,
       embedUri = trailMetaData.snapUri,
@@ -273,7 +271,6 @@ object SupportingCuratedContent {
                           trailMetaData: MetaDataCommonFields,
                           maybeFrontPublicationDate: Option[Long],
                           collectionConfig: CollectionConfig): SupportingCuratedContent = {
-    val contentFields: Map[String, String] = content.safeFields
     val cardStyle = CardStyle(content, trailMetaData)
     val resolvedMetaData = ResolvedMetaData.fromContentAndTrailMetaData(content, trailMetaData, cardStyle)
 
@@ -281,13 +278,13 @@ object SupportingCuratedContent {
       content,
       maybeFrontPublicationDate,
       cardStyle,
-      trailMetaData.headline.orElse(content.safeFields.get("headline")).getOrElse(content.webTitle),
+      trailMetaData.headline.orElse(content.fields.flatMap(_.headline)).getOrElse(content.webTitle),
       trailMetaData.href,
-      trailMetaData.trailText.orElse(contentFields.get("trailText")),
+      trailMetaData.trailText.orElse(content.fields.flatMap(_.trailText)),
       trailMetaData.group.getOrElse("0"),
       FaciaImage.getFaciaImage(Some(content), trailMetaData, resolvedMetaData),
       ContentProperties.fromResolvedMetaData(resolvedMetaData),
-      trailMetaData.byline.orElse(contentFields.get("byline")),
+      trailMetaData.byline.orElse(content.fields.flatMap(_.byline)),
       ItemKicker.fromContentAndTrail(Option(content), trailMetaData, resolvedMetaData, None)
     )
   }

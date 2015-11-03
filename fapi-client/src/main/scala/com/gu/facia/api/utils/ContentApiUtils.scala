@@ -37,6 +37,6 @@ object ContentApiUtils {
     lazy val isImageContent: Boolean = content.tags.exists { tag => List("type/cartoon", "type/picture", "type/graphic").contains(tag.id) }
     lazy val isInteractive: Boolean = content.tags.exists { _.id == Tags.Interactive }
 
-    lazy val isLive: Boolean = content.safeFields.get("liveBloggingNow").exists(_.toBoolean)
+    lazy val isLive: Boolean = content.fields.flatMap(_.liveBloggingNow).exists(identity)
   }
 }

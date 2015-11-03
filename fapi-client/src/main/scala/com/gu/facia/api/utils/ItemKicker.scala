@@ -61,7 +61,7 @@ object ItemKicker {
     lazy val isPodcast = types.exists(_.id == Tags.Podcast) || content.tags.exists(_.podcast.isDefined)
     lazy val isCartoon = types.exists(_.id == Tags.Cartoon)
 
-    if (content.safeFields.get("liveBloggingNow").exists(_.toBoolean)) {
+    if (content.fields.flatMap(_.liveBloggingNow).exists(identity)) {
       Some(LiveKicker)
     } else if (isPodcast) {
       val series = content.tags.find(_.`type` == "series") map { seriesTag =>
