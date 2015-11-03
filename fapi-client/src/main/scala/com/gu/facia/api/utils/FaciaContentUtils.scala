@@ -1,6 +1,6 @@
 package com.gu.facia.api.utils
 
-import com.gu.contentapi.client.model.{Element, Tag, Content}
+import com.gu.contentapi.client.model.v1.{ContentFields, Element, Tag, Content}
 import com.gu.facia.api.models._
 import org.joda.time.DateTime
 

@@ -1,7 +1,7 @@
 package com.gu.facia.api
 
 import com.gu.contentapi.client.GuardianContentClient
-import com.gu.contentapi.client.model.Content
+import com.gu.contentapi.client.model.v1.Content
 import com.gu.facia.api.contentapi.ContentApi.{AdjustItemQuery, AdjustSearchQuery}
 import com.gu.facia.api.contentapi.{ContentApi, LatestSnapsRequest}
 import com.gu.facia.api.models._

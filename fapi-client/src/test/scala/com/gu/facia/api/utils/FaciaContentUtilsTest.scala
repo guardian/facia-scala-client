@@ -1,6 +1,6 @@
 package com.gu.facia.api.utils
 
-import com.gu.contentapi.client.model.{Tag, Content}
+import com.gu.contentapi.client.model.v1._
 import com.gu.facia.api.models.{SupportingCuratedContent, CuratedContent, LatestSnap, LinkSnap}
 import org.joda.time.DateTime
 import org.scalatest.{FreeSpec, Matchers}

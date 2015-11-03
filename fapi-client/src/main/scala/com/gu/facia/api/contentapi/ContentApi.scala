@@ -3,6 +3,7 @@ package com.gu.facia.api.contentapi
 import java.net.URI
 
 import com.gu.contentapi.client.{GuardianContentClient, ContentApiClientLogic}
+import com.gu.contentapi.client.model.v1._
 import com.gu.contentapi.client.model._
 import com.gu.facia.api.{UrlConstructError, CapiError, Response}
 

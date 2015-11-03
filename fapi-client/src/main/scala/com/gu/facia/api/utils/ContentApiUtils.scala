@@ -1,6 +1,6 @@
 package com.gu.facia.api.utils
 
-import com.gu.contentapi.client.model.{Tag, Content}
+import com.gu.contentapi.client.model.v1.{TagType, Tag, Content}
 
 object ContentApiUtils {
 

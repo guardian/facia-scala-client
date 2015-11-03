@@ -1,7 +1,8 @@
 package com.gu.facia.api.contentapi
 
 import com.gu.contentapi.client.GuardianContentClient
-import com.gu.contentapi.client.model.{ItemResponse, Content, SearchResponse}
+import com.gu.contentapi.client.model.{ItemResponse, SearchResponse}
+import com.gu.contentapi.client.model.v1.Content
 import com.gu.facia.api.Response
 import lib.ExecutionContext
 import org.scalatest.concurrent.ScalaFutures

@@ -1,6 +1,6 @@
 package com.gu.facia.api.models
 
-import com.gu.contentapi.client.model.{Tag, Content}
+import com.gu.contentapi.client.model.v1.{TagType, ContentFields, Tag, Content}
 import com.gu.facia.api.utils.{TagKicker, SectionKicker}
 import com.gu.facia.client.models.{CollectionConfigJson, TrailMetaData}
 import org.scalatest.{FreeSpec, Matchers}

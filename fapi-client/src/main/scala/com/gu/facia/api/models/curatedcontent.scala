@@ -1,6 +1,6 @@
 package com.gu.facia.api.models
 
-import com.gu.contentapi.client.model.{Tag, Content}
+import com.gu.contentapi.client.model.v1.{TagType, Tag, Content}
 import com.gu.facia.api.utils._
 import com.gu.facia.client.models.{SupportingItem, MetaDataCommonFields, Trail, TrailMetaData}
 

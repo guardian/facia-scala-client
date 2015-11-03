@@ -1,6 +1,6 @@
 package com.gu.facia.api.models
 
-import com.gu.contentapi.client.model.Content
+import com.gu.contentapi.client.model.v1.Content
 import com.gu.facia.api.contentapi.LatestSnapsRequest
 import com.gu.facia.api.utils.IntegerString
 import com.gu.facia.client.models.{SupportingItem, Trail, CollectionJson}

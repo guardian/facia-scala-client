@@ -1,6 +1,6 @@
 package com.gu.facia.api.models
 
-import com.gu.contentapi.client.model.Content
+import com.gu.contentapi.client.model.v1.{ContentFields, Content}
 import com.gu.facia.api.utils.{ContentProperties, DefaultCardstyle, FaciaContentUtils}
 import com.gu.facia.client.models.{TrailMetaData, Trail}
 import org.scalatest.{FreeSpec, Matchers}

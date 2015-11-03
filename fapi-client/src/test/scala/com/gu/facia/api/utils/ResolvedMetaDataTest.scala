@@ -1,6 +1,6 @@
 package com.gu.facia.api.utils
 
-import com.gu.contentapi.client.model.{Content, Tag}
+import com.gu.contentapi.client.model.v1.{TagType, ContentType, Content, Tag}
 import com.gu.facia.client.models.TrailMetaData
 import org.scalatest.{FreeSpec, Matchers}
 import play.api.libs.json.JsBoolean
