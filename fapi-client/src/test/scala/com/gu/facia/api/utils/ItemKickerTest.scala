@@ -109,7 +109,7 @@ class ItemKickerTest extends FreeSpec with ShouldMatchers with MockitoSugar with
       when(content.sectionId).thenReturn(Some("section"))
       when(content.sectionName).thenReturn(Some("Section"))
       when(content.tags).thenReturn(Nil)
-      when(content.safeFields).thenReturn(Map.empty[String, String])
+      when(content.fields).thenReturn(Some(ContentFields()))
 
       ItemKicker.fromContentAndTrail(Option(content), trailMetadata, metaDataDefaultsWithShowKickerSection, None) should be (None)
     }

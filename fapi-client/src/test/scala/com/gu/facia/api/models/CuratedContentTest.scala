@@ -3,24 +3,18 @@ package com.gu.facia.api.models
 import com.gu.contentapi.client.model.v1.{TagType, ContentFields, Tag, Content}
 import com.gu.facia.api.utils.{TagKicker, SectionKicker}
 import com.gu.facia.client.models.{CollectionConfigJson, TrailMetaData}
+import lib.TestContent
 import org.scalatest.{FreeSpec, Matchers}
 import play.api.libs.json.{JsBoolean, JsString}
 import org.scalatest.OptionValues._
 
-class CuratedContentTest extends FreeSpec with Matchers {
+class CuratedContentTest extends FreeSpec with Matchers with TestContent {
 
   "CuratedContent headline" - {
     val collectionConfig = CollectionConfig.fromCollectionJson(CollectionConfigJson.withDefaults())
 
-    val contentWithFieldHeadline = Content(
-      "content-id", Some("section"), Some("Section Name"), None, "webTitle", "webUrl", "apiUrl",
-      fields = Some(Map("internalContentCode" -> "CODE", "headline" -> "Content headline", "href" -> "Content href", "trailText" -> "Content trailtext", "byline" -> "Content byline")),
-      Nil, None, Nil, None)
-
-    val contentWithoutFieldHeadline = Content(
-      "content-id", Some("section"), Some("Section Name"), None, "contentWithoutFieldHeadlineHeadline", "webUrl", "apiUrl",
-      fields = Some(Map("internalContentCode" -> "CODE", "href" -> "Content href", "trailText" -> "Content trailtext", "byline" -> "Content byline")),
-      Nil, None, Nil, None)
+    val contentWithFieldHeadline = baseContent.copy(fields = Some(ContentFields(headline = Some("Content headline"), trailText = Some("Content trailtext"), byline = Some("Content byline"))))
+    val contentWithoutFieldHeadline = baseContent.copy(webTitle = "contentWithoutFieldHeadlineHeadline", fields = Some(ContentFields(trailText = Some("Content trailtext"), byline = Some("Content byline"))))
 
     val trailMetaDataWithHeadline = TrailMetaData(Map("headline" -> JsString("trailMetaDataHeadline")))
     val trailMetaDataWithoutHeadline = TrailMetaData(Map.empty)
@@ -41,10 +35,11 @@ class CuratedContentTest extends FreeSpec with Matchers {
   }
 
   "CuratedContent itemKicker" - {
-    val emptyContent = Content(
-      "content-id", Some("section"), Some("Section Name"), None, "webTitle", "webUrl", "apiUrl",
-      fields = Some(Map("internalContentCode" -> "CODE", "headline" -> "Content headline", "href" -> "Content href", "trailText" -> "Content trailtext", "byline" -> "Content byline")),
-      List(Tag("id", "type", None, None, "", "", "")), None, Nil, None)
+    val emptyContent = baseContent.copy(
+      fields = Some(ContentFields(headline = Some("Content headline"), trailText = Some("Content trailtext"), byline = Some("Content byline"))),
+      tags = List(Tag("id", TagType.Keyword, None, None, "", "", ""))
+    )
+
     val emptyTrailMetaData = TrailMetaData(Map.empty)
     val collectionConfig = CollectionConfig.fromCollectionJson(CollectionConfigJson.withDefaults())
     val collectionConfigShowSections = CollectionConfig.fromCollectionJson(CollectionConfigJson.withDefaults(showSections = Option(true)))
@@ -80,10 +75,16 @@ class CuratedContentTest extends FreeSpec with Matchers {
   }
 
   "SupportingCuratedContent itemKicker" - {
-    val emptyContent = Content(
-      "content-id", Some("section"), Some("Section Name"), None, "webTitle", "webUrl", "apiUrl",
-      fields = Some(Map("internalContentCode" -> "CODE", "headline" -> "Content headline", "href" -> "Content href", "trailText" -> "Content trailtext", "byline" -> "Content byline")),
-      List(Tag("id", "type", None, None, "", "", "")), None, Nil, None)
+    val emptyContent = baseContent.copy(
+      fields = Some(ContentFields(
+        headline = Some("Content headline"),
+        trailText = Some("Content trailtext"),
+        byline = Some("Content byline"),
+        internalPageCode = Some(123)
+      )),
+      tags = Seq(Tag("id", TagType.Keyword, None, None, "", "", ""))
+    )
+
     val emptyTrailMetaData = TrailMetaData(Map.empty)
     val collectionConfig = CollectionConfig.fromCollectionJson(CollectionConfigJson.withDefaults())
     val collectionConfigShowSections = CollectionConfig.fromCollectionJson(CollectionConfigJson.withDefaults(showSections = Option(true)))

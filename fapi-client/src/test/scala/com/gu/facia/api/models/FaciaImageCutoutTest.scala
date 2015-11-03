@@ -7,7 +7,7 @@ import lib.TestContent
 import org.scalatest.{Matchers, FreeSpec}
 import play.api.libs.json.{JsString, JsBoolean}
 
-class FaciaImageCutoutTest extends FreeSpec with Matchers {
+class FaciaImageCutoutTest extends FreeSpec with Matchers with TestContent {
 
   def trailMetaDataWithImageCutout(
     imageCutoutReplace: Boolean = false,
@@ -20,14 +20,11 @@ class FaciaImageCutoutTest extends FreeSpec with Matchers {
     ++ imageCutoutSrcHeight.map("imageCutoutSrcHeight" -> JsString(_)))
 
   val emptyContent =
-    Content(
-      "id", None, None, None,
-      "webTitle", "webUrl", "apiUrl", None,
-      Nil, None, Nil, None)
+    baseContent.copy(fields = Some(ContentFields(headline = Some("webTitle"), trailText = Some("Content trailtext"), byline = Some("Content byline"))))
 
   def contentWithContributorTag(bylineLargeImageUrl: String): Content =
     emptyContent.copy(tags = List(Tag(
-      "tagid", "contributor", None, None, "webTitle",
+      "tagid", TagType.Contributor, None, None, "webTitle",
       "webUrl", "apiUrl", Nil, None, None, bylineImageUrl = None,
       Option(bylineLargeImageUrl), None, None, None, None)))
 
@@ -75,7 +72,6 @@ class FaciaImageCutoutTest extends FreeSpec with Matchers {
       val trailMeta = trailMetaDataWithImageCutout(true, None, None, None)
       val resolvedMetaData = ResolvedMetaData.fromTrailMetaData(trailMeta)
       val imageCutout = FaciaImage.getFaciaImage(Some(contentWithContributor), trailMeta, resolvedMetaData)
-      imageCutout.isDefined should be (true)
       imageCutout should be (Some(Cutout(bylineImageUrl, None, None)))
     }
 

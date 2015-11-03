@@ -24,10 +24,29 @@ class CollectionTest extends FreeSpec with ShouldMatchers with MockitoSugar with
     previously = None
   )
   val content = Content(
-    "content-id", Some("section"), Some("Section Name"), None, "webTitle", "webUrl", "apiUrl",
-    fields = Some(Map("internalPageCode" -> "123", "headline" -> "Content headline", "href" -> "Content href", "trailText" -> "Content trailtext", "byline" -> "Content byline")),
-    Nil, None, Nil, None
+    id = "content-id",
+    `type` = ContentType.Article,
+    sectionId = Some("section-id"),
+    sectionName = Some("Section Name"),
+    webPublicationDate = None,
+    webTitle = "webTitle",
+    webUrl = "webUrl",
+    apiUrl = "apiUrl",
+    fields = Some(ContentFields(
+      headline = Some("Content headline"),
+      trailText = Some("Content trailtext"),
+      byline = Some("Content byline"),
+      internalPageCode = Some(123)
+    )),
+    tags = Nil,
+    elements = None,
+    references = Nil,
+    isExpired = None,
+    blocks = None,
+    rights = None,
+    crossword = None
   )
+
   val contents = Set(content)
   val collectionConfig = CollectionConfig.fromCollectionJson(CollectionConfigJson.withDefaults(href = Some("collectionConfigHref")))
 
@@ -161,13 +180,42 @@ class CollectionTest extends FreeSpec with ShouldMatchers with MockitoSugar with
       val snapLatestTwo = Trail("snap/4324234234234", 1, None, Some(TrailMetaData(Map("snapType" -> JsString("latest"), "href" -> JsString("culture")))))
 
       val snapContentOne = Content(
-        "content-id-one", Some("section"), Some("Section Name"), None, "webTitle", "webUrl", "apiUrl",
-        fields = Some(Map("internalPageCode" -> "123", "headline" -> "Content headline", "href" -> "Content href", "trailText" -> "Content trailtext", "byline" -> "Content byline")),
-        Nil, None, Nil, None)
+        id = "content-id-one",
+        `type` = ContentType.Article,
+        sectionId = Some("section-id"),
+        sectionName = Some("Section Name"),
+        webPublicationDate = None,
+        webTitle = "webTitle",
+        webUrl = "webUrl",
+        apiUrl = "apiUrl",
+        fields = Some(ContentFields(headline = Some("Content headline"), trailText = Some("Content trailtext"), byline = Some("Content byline"))),
+        tags = Nil,
+        elements = None,
+        references = Nil,
+        isExpired = None,
+        blocks = None,
+        rights = None,
+        crossword = None
+      )
+
       val snapContentTwo = Content(
-        "content-id-two", Some("section"), Some("Section Name"), None, "webTitle", "webUrl", "apiUrl",
-        fields = Some(Map("internalPageCode" -> "123", "headline" -> "Content headline", "href" -> "Content href", "trailText" -> "Content trailtext", "byline" -> "Content byline")),
-        Nil, None, Nil, None)
+        id = "content-id-two",
+        `type` = ContentType.Article,
+        sectionId = Some("section-id"),
+        sectionName = Some("Section Name"),
+        webPublicationDate = None,
+        webTitle = "webTitle",
+        webUrl = "webUrl",
+        apiUrl = "apiUrl",
+        fields = Some(ContentFields(headline = Some("Content headline"), trailText = Some("Content trailtext"), byline = Some("Content byline"))),
+        tags = Nil,
+        elements = None,
+        references = Nil,
+        isExpired = None,
+        blocks = None,
+        rights = None,
+        crossword = None
+      )
 
       val snapContent = Map("snap/8474745745660" -> Some(snapContentOne), "snap/4324234234234" -> Some(snapContentTwo))
 
@@ -239,13 +287,42 @@ class CollectionTest extends FreeSpec with ShouldMatchers with MockitoSugar with
         val snapLatestTwo = Trail("snap/4324234234234", 1, None, Some(TrailMetaData(Map("snapType" -> JsString("latest"), "href" -> JsString("culture")))))
 
         val snapContentOne = Content(
-          "content-id-one", Some("section"), Some("Section Name"), None, "webTitle", "webUrl", "apiUrl",
-          fields = Some(Map("internalPageCode" -> "123", "headline" -> "Content headline", "href" -> "Content href", "trailText" -> "Content trailtext", "byline" -> "Content byline")),
-          Nil, None, Nil, None)
+          id = "content-id-one",
+          `type` = ContentType.Article,
+          sectionId = Some("section-id"),
+          sectionName = Some("Section Name"),
+          webPublicationDate = None,
+          webTitle = "webTitle",
+          webUrl = "webUrl",
+          apiUrl = "apiUrl",
+          fields = Some(ContentFields(headline = Some("Content headline"), trailText = Some("Content trailtext"), byline = Some("Content byline"))),
+          tags = Nil,
+          elements = None,
+          references = Nil,
+          isExpired = None,
+          blocks = None,
+          rights = None,
+          crossword = None
+        )
+
         val snapContentTwo = Content(
-          "content-id-two", Some("section"), Some("Section Name"), None, "webTitle", "webUrl", "apiUrl",
-          fields = Some(Map("internalPageCode" -> "123", "headline" -> "Content headline", "href" -> "Content href", "trailText" -> "Content trailtext", "byline" -> "Content byline")),
-          Nil, None, Nil, None)
+          id = "content-id-two",
+          `type` = ContentType.Article,
+          sectionId = Some("section-id"),
+          sectionName = Some("Section Name"),
+          webPublicationDate = None,
+          webTitle = "webTitle",
+          webUrl = "webUrl",
+          apiUrl = "apiUrl",
+          fields = Some(ContentFields(headline = Some("Content headline"), trailText = Some("Content trailtext"), byline = Some("Content byline"))),
+          tags = Nil,
+          elements = None,
+          references = Nil,
+          isExpired = None,
+          blocks = None,
+          rights = None,
+          crossword = None
+        )
 
         val snapContent = Map("snap/8474745745660" -> Some(snapContentOne), "snap/4324234234234" -> Some(snapContentTwo))
 
@@ -269,13 +346,42 @@ class CollectionTest extends FreeSpec with ShouldMatchers with MockitoSugar with
       val snapLatestTwo = Trail("snap/4324234234234", 1, None, Some(TrailMetaData(Map("snapType" -> JsString("latest"), "href" -> JsString("culture")))))
 
       val snapContentOne = Content(
-        "content-id-one", Some("section"), Some("Section Name"), None, "webTitle", "webUrl", "apiUrl",
-        fields = Some(Map("internalContentCode" -> "CODE", "headline" -> "Content headline", "href" -> "Content href", "trailText" -> "Content trailtext", "byline" -> "Content byline")),
-        Nil, None, Nil, None)
+        id = "content-id-one",
+        `type` = ContentType.Article,
+        sectionId = Some("section-id"),
+        sectionName = Some("Section Name"),
+        webPublicationDate = None,
+        webTitle = "webTitle",
+        webUrl = "webUrl",
+        apiUrl = "apiUrl",
+        fields = Some(ContentFields(headline = Some("Content headline"), trailText = Some("Content trailtext"), byline = Some("Content byline"))),
+        tags = Nil,
+        elements = None,
+        references = Nil,
+        isExpired = None,
+        blocks = None,
+        rights = None,
+        crossword = None
+      )
+
       val snapContentTwo = Content(
-        "content-id-two", Some("section"), Some("Section Name"), None, "webTitle", "webUrl", "apiUrl",
-        fields = Some(Map("internalContentCode" -> "CODE", "headline" -> "Content headline", "href" -> "Content href", "trailText" -> "Content trailtext", "byline" -> "Content byline")),
-        Nil, None, Nil, None)
+        id = "content-id-two",
+        `type` = ContentType.Article,
+        sectionId = Some("section-id"),
+        sectionName = Some("Section Name"),
+        webPublicationDate = None,
+        webTitle = "webTitle",
+        webUrl = "webUrl",
+        apiUrl = "apiUrl",
+        fields = Some(ContentFields(headline = Some("Content headline"), trailText = Some("Content trailtext"), byline = Some("Content byline"))),
+        tags = Nil,
+        elements = None,
+        references = Nil,
+        isExpired = None,
+        blocks = None,
+        rights = None,
+        crossword = None
+      )
 
       val snapContent = Map("snap/8474745745660" -> Some(snapContentOne), "snap/4324234234234" -> Some(snapContentTwo))
 
@@ -292,23 +398,32 @@ class CollectionTest extends FreeSpec with ShouldMatchers with MockitoSugar with
   }
 
   "Internal code" - {
-    val contents = Set(Content(
-      "apple", Some("section"), Some("Section Name"), None, "webTitle", "webUrl", "apiUrl",
-      fields = Some(Map("internalContentCode" -> "1", "internalPageCode" -> "3", "headline" -> "red apple", "href" -> "Content href", "trailText" -> "Content trailtext", "byline" -> "Content byline")),
-      Nil, None, Nil, None
-    ), Content(
-      "banana", Some("section"), Some("Section Name"), None, "webTitle", "webUrl", "apiUrl",
-      fields = Some(Map("internalPageCode" -> "2", "headline" -> "straight banana", "href" -> "Content href", "trailText" -> "Content trailtext", "byline" -> "Content byline")),
-      Nil, None, Nil, None
-    ), Content(
-      "kiwi", Some("section"), Some("Section Name"), None, "webTitle", "webUrl", "apiUrl",
-      fields = Some(Map("internalContentCode" -> "5", "internalPageCode" -> "6", "headline" -> "hairy kiwi", "href" -> "Content href", "trailText" -> "Content trailtext", "byline" -> "Content byline")),
-      Nil, None, Nil, None
-    ), Content(
-      "berry", Some("section"), Some("Section Name"), None, "webTitle", "webUrl", "apiUrl",
-      fields = Some(Map("internalPageCode" -> "7", "headline" -> "straw berry", "href" -> "Content href", "trailText" -> "Content trailtext", "byline" -> "Content byline")),
-      Nil, None, Nil, None
-    ))
+    val baseContent = Content(
+      id = "content-id-one",
+      `type` = ContentType.Article,
+      sectionId = Some("section-id"),
+      sectionName = Some("Section Name"),
+      webPublicationDate = None,
+      webTitle = "webTitle",
+      webUrl = "webUrl",
+      apiUrl = "apiUrl",
+      fields = None,
+      tags = Nil,
+      elements = None,
+      references = Nil,
+      isExpired = None,
+      blocks = None,
+      rights = None,
+      crossword = None
+    )
+
+    val contents = Set(
+      baseContent.copy(fields = Some(ContentFields(internalPageCode = Some(3), headline = Some("red apple"), trailText = Some("Content trailtext"), byline = Some("Content byline")))),
+      baseContent.copy(fields = Some(ContentFields(internalPageCode = Some(2), headline = Some("straight banana"), trailText = Some("Content trailtext"), byline = Some("Content byline")))),
+      baseContent.copy(fields = Some(ContentFields(internalPageCode = Some(6), headline = Some("hairy kiwi"), trailText = Some("Content trailtext"), byline = Some("Content byline")))),
+      baseContent.copy(fields = Some(ContentFields(internalPageCode = Some(7), headline = Some("straw berry"), trailText = Some("Content trailtext"), byline = Some("Content byline"))))
+    )
+
     def makeTrail(id: String) =
       Trail(id, 0, None, None)
     def makeTrailWithSupporting(id: String, supporting: Trail*) =

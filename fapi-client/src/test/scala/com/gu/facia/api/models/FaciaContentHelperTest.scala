@@ -3,9 +3,10 @@ package com.gu.facia.api.models
 import com.gu.contentapi.client.model.v1.{ContentFields, Content}
 import com.gu.facia.api.utils.{ContentProperties, DefaultCardstyle, FaciaContentUtils}
 import com.gu.facia.client.models.{TrailMetaData, Trail}
+import lib.TestContent
 import org.scalatest.{FreeSpec, Matchers}
 
-class FaciaContentHelperTest extends FreeSpec with Matchers {
+class FaciaContentHelperTest extends FreeSpec with Matchers with TestContent {
 
   val emptyTrail: Trail = Trail("no-id", 0, None, Option(TrailMetaData.empty))
 
@@ -28,13 +29,13 @@ class FaciaContentHelperTest extends FreeSpec with Matchers {
   }
 
   "should return the headline for a CuratedContent" in {
-    val content = Content("myId", None, None, None, "myTitle", "myUrl", "myApi", Some(Map("byline" -> "myByline")), Nil, None, Nil, None)
+    val content = baseContent.copy(fields = Some(ContentFields(headline = Some("myTitle"), trailText = Some("Content trailtext"), byline = Some("Content byline"))))
     val cc = CuratedContent(content, None, Nil, DefaultCardstyle, "The headline", None, None, "myGroup", None, emptyContentProperties, None, None, None, None, None)
     FaciaContentUtils.headlineOption(cc) should equal(Some("The headline"))
   }
 
   "should return 'Missing href' when the href is None in a CuratedContent" in {
-    val content = Content("myId", None, None, None, "myTitle", "myUrl", "myApi", Some(Map("byline" -> "myByline")), Nil, None, Nil, None)
+    val content = baseContent.copy(fields = Some(ContentFields(headline = Some("myTitle"), trailText = Some("Content trailtext"), byline = Some("Content byline"))))
     val cc = CuratedContent(content, None, Nil, DefaultCardstyle, "The headline", None, None, "myGroup", None, emptyContentProperties, None, None, None, None, None)
     FaciaContentUtils.href(cc) should equal(None)
   }
@@ -45,7 +46,7 @@ class FaciaContentHelperTest extends FreeSpec with Matchers {
   }
 
   "should return a byline for a LatestSnap" in {
-    val content = Content("myId", None, None, None, "myTitle", "myUrl", "myApi", Some(Map("byline" -> "myByline")), Nil, None, Nil, None)
+    val content = baseContent.copy(fields = Some(ContentFields(headline = Some("myTitle"), trailText = Some("Content trailtext"), byline = Some("myByline"))))
     val snap = LatestSnap.fromTrailAndContent(emptyTrail, Option(content))
     FaciaContentUtils.byline(snap) should equal(Some("myByline"))
   }

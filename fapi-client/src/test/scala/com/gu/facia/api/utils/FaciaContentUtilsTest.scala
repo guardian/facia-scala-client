@@ -2,10 +2,11 @@ package com.gu.facia.api.utils
 
 import com.gu.contentapi.client.model.v1._
 import com.gu.facia.api.models.{SupportingCuratedContent, CuratedContent, LatestSnap, LinkSnap}
+import lib.TestContent
 import org.joda.time.DateTime
 import org.scalatest.{FreeSpec, Matchers}
 
-class FaciaContentUtilsTest extends FreeSpec with Matchers {
+class FaciaContentUtilsTest extends FreeSpec with Matchers with TestContent {
 
   val emptyProperties = ContentProperties.fromResolvedMetaData(ResolvedMetaData.Default)
 
@@ -26,10 +27,7 @@ class FaciaContentUtilsTest extends FreeSpec with Matchers {
 
   val staticDateTime = new DateTime().withYear(2015).withMonthOfYear(4).withDayOfMonth(22)
 
-  val content = Content(
-    "content-id", Some("section"), Some("Section Name"), Option(staticDateTime), "webTitle", "webUrl", "apiUrl",
-    fields = Some(Map("internalContentCode" -> "CODE", "headline" -> "Content headline", "href" -> "Content href", "trailText" -> "Content trailtext", "byline" -> "Content byline")),
-    Nil, None, Nil, None)
+  val content = baseContent.copy(webPublicationDate = Option(CapiDateTime(staticDateTime.getMillis)))
 
   def makeLatestSnap(latestSnapId: String, content: Content = content) = LatestSnap(
     id = latestSnapId,
@@ -100,10 +98,8 @@ class FaciaContentUtilsTest extends FreeSpec with Matchers {
   }
 
   "webPublicationDate" - {
-    val contentWithNoDatetime = Content(
-      "content-id", Some("section"), Some("Section Name"), None, "webTitle", "webUrl", "apiUrl",
-      fields = Some(Map("internalContentCode" -> "CODE", "headline" -> "Content headline", "href" -> "Content href", "trailText" -> "Content trailtext", "byline" -> "Content byline")),
-      Nil, None, Nil, None)
+    val contentWithNoDatetime =
+      baseContent.copy(webPublicationDate = None, fields = Some(ContentFields(headline = Some("Content headline"), trailText = Some("Content trailtext"), byline = Some("Content byline"))))
 
     val now = DateTime.now()
 
@@ -145,10 +141,12 @@ class FaciaContentUtilsTest extends FreeSpec with Matchers {
   }
 
   "mediaType" - {
-    def contentWithTagIds(tagIds: String*) = Content(
-      "content-id", Some("section"), Some("Section Name"), Option(staticDateTime), "webTitle", "webUrl", "apiUrl",
-      fields = Some(Map("internalContentCode" -> "CODE", "headline" -> "Content headline", "href" -> "Content href", "trailText" -> "Content trailtext", "byline" -> "Content byline")),
-      tagIds.toList.map(tagId => Tag(tagId, "type", None, None, "", "", "")), None, Nil, None)
+    def contentWithTagIds(tagIds: String*) =
+      baseContent.copy(
+        webPublicationDate = None,
+        fields = Some(ContentFields(headline = Some("Content headline"), trailText = Some("Content trailtext"), byline = Some("Content byline"))),
+        tags = tagIds.toList.map(tagId => Tag(tagId, TagType.Type, None, None, "", "", ""))
+      )
 
     "should return a None for a LinkSnap" in {
       val linkSnap = makeLinkSnap("some-link-snap")
@@ -202,10 +200,7 @@ class FaciaContentUtilsTest extends FreeSpec with Matchers {
   }
 
   "isLive" - {
-    def contentWithFields(fields: Map[String, String]) = Content(
-      "content-id", Some("section"), Some("Section Name"), Option(staticDateTime), "webTitle", "webUrl", "apiUrl",
-      fields = Option(fields),
-      Nil, None, Nil, None)
+    def contentWithFields(fields: ContentFields) = baseContent.copy(fields = Some(fields))
 
     "should return a false for a LinkSnap" in {
       val linkSnap = makeLinkSnap("some-link-snap")
@@ -214,34 +209,34 @@ class FaciaContentUtilsTest extends FreeSpec with Matchers {
 
     "should return" - {
       "true on inner content with liveBloggingNow true for LatestSnap" in {
-        val latestSnap = makeLatestSnap("some-latest-snap", contentWithFields(Map("liveBloggingNow" -> "true")))
+        val latestSnap = makeLatestSnap("some-latest-snap", contentWithFields(ContentFields(liveBloggingNow = Some(true))))
         FaciaContentUtils.isLive(latestSnap) should be(true)
       }
 
       "false on inner content with with liveBloggingNow false for LatestSnap" in {
-        val latestSnap2 = makeLatestSnap("some-latest-snap", contentWithFields(Map("liveBloggingNow" -> "false")))
+        val latestSnap2 = makeLatestSnap("some-latest-snap", contentWithFields(ContentFields(liveBloggingNow = Some(false))))
         FaciaContentUtils.isLive(latestSnap2) should be(false)
       }
 
       "false on inner content with no fields for LatestSnap" in {
-        val latestSnap3 = makeLatestSnap("some-latest-snap", contentWithFields(Map.empty))
+        val latestSnap3 = makeLatestSnap("some-latest-snap", contentWithFields(ContentFields()))
         FaciaContentUtils.isLive(latestSnap3) should be(false)
       }
     }
 
     "should return" - {
       "true on inner content with liveBloggingNow true for CuratedContent" in {
-        val curatedContent = makeCuratedContent("some-curated-content", contentWithFields(Map("liveBloggingNow" -> "true")))
+        val curatedContent = makeCuratedContent("some-curated-content", contentWithFields(ContentFields(liveBloggingNow = Some(true))))
         FaciaContentUtils.isLive(curatedContent) should be(true)
       }
 
       "false on inner content with liveBloggingNow false for CuratedContent" in {
-        val curatedContent2 = makeCuratedContent("some-curated-content", contentWithFields(Map("liveBloggingNow" -> "false")))
+        val curatedContent2 = makeCuratedContent("some-curated-content", contentWithFields(ContentFields(liveBloggingNow = Some(false))))
         FaciaContentUtils.isLive(curatedContent2) should be(false)
       }
 
       "false on inner content with no fields for CuratedContent" in {
-        val curatedContent3 = makeCuratedContent("some-curated-content", contentWithFields(Map.empty))
+        val curatedContent3 = makeCuratedContent("some-curated-content", contentWithFields(ContentFields()))
         FaciaContentUtils.isLive(curatedContent3) should be(false)
       }
     }
@@ -249,27 +244,24 @@ class FaciaContentUtilsTest extends FreeSpec with Matchers {
     "should return true and false on inner content for SupportingCuratedContent" - {
 
       "true on inner content with liveBloggingNow true for SupportingCuratedContent" in {
-        val supportingCuratedContent = makeSupportingCuratedContent("some-supporting-curated-content", contentWithFields(Map("liveBloggingNow" -> "true")))
+        val supportingCuratedContent = makeSupportingCuratedContent("some-supporting-curated-content", contentWithFields(ContentFields(liveBloggingNow = Some(true))))
         FaciaContentUtils.isLive(supportingCuratedContent) should be(true)
       }
 
       "false on inner content with liveBloggingNow false for SupportingCuratedContent" in {
-        val supportingCuratedContent = makeSupportingCuratedContent("some-supporting-curated-content", contentWithFields(Map("liveBloggingNow" -> "false")))
+        val supportingCuratedContent = makeSupportingCuratedContent("some-supporting-curated-content", contentWithFields(ContentFields(liveBloggingNow = Some(false))))
         FaciaContentUtils.isLive(supportingCuratedContent) should be(false)
       }
 
       "false on inner content with no fields for SupportingCuratedContent" in {
-        val supportingCuratedContent = makeSupportingCuratedContent("some-supporting-curated-content", contentWithFields(Map.empty))
+        val supportingCuratedContent = makeSupportingCuratedContent("some-supporting-curated-content", contentWithFields(ContentFields()))
         FaciaContentUtils.isLive(supportingCuratedContent) should be(false)
       }
     }
   }
 
   "isCommentable" - {
-    def contentWithFields(fields: Map[String, String]) = Content(
-      "content-id", Some("section"), Some("Section Name"), Option(staticDateTime), "webTitle", "webUrl", "apiUrl",
-      fields = Option(fields),
-      Nil, None, Nil, None)
+    def contentWithFields(fields: ContentFields) = baseContent.copy(fields = Some(fields))
 
     "should return a false for a LinkSnap" in {
       val linkSnap = makeLinkSnap("some-link-snap")
@@ -278,61 +270,58 @@ class FaciaContentUtilsTest extends FreeSpec with Matchers {
 
     "should return" - {
       "true on inner content with commentable true for LatestSnap" in {
-        val latestSnap = makeLatestSnap("some-latest-snap", contentWithFields(Map("commentable" -> "true")))
+        val latestSnap = makeLatestSnap("some-latest-snap", contentWithFields(ContentFields(commentable = Some(true))))
         FaciaContentUtils.isCommentable(latestSnap) should be(true)
       }
 
       "false on inner content with commentable false for LatestSnap" in {
-        val latestSnap = makeLatestSnap("some-latest-snap", contentWithFields(Map("commentable" -> "false")))
+        val latestSnap = makeLatestSnap("some-latest-snap", contentWithFields(ContentFields(commentable = Some(false))))
         FaciaContentUtils.isCommentable(latestSnap) should be(false)
       }
 
       "true on inner content with no fields for LatestSnap" in {
-        val latestSnap = makeLatestSnap("some-latest-snap", contentWithFields(Map.empty))
+        val latestSnap = makeLatestSnap("some-latest-snap", contentWithFields(ContentFields()))
         FaciaContentUtils.isCommentable(latestSnap) should be(false)
       }
     }
 
     "should return" - {
       "true on inner content with commentable true for CuratedContent" in {
-        val curatedContent = makeCuratedContent("some-curated-content", contentWithFields(Map("commentable" -> "true")))
+        val curatedContent = makeCuratedContent("some-curated-content", contentWithFields(ContentFields(commentable = Some(true))))
         FaciaContentUtils.isCommentable(curatedContent) should be(true)
       }
 
       "false on inner content with commentable false for CuratedContent" in {
-        val curatedContent = makeCuratedContent("some-curated-content", contentWithFields(Map("commentable" -> "false")))
+        val curatedContent = makeCuratedContent("some-curated-content", contentWithFields(ContentFields(commentable = Some(false))))
         FaciaContentUtils.isCommentable(curatedContent) should be(false)
       }
 
       "false on inner content with no fields for CuratedContent" in {
-        val curatedContent = makeCuratedContent("some-curated-content", contentWithFields(Map.empty))
+        val curatedContent = makeCuratedContent("some-curated-content", contentWithFields(ContentFields()))
         FaciaContentUtils.isCommentable(curatedContent) should be(false)
       }
     }
 
     "should return" - {
       "true on inner content with commentable true for SupportingCuratedContent" in {
-        val supportingCuratedContent = makeSupportingCuratedContent("some-supporting-curated-content", contentWithFields(Map("commentable" -> "true")))
+        val supportingCuratedContent = makeSupportingCuratedContent("some-supporting-curated-content", contentWithFields(ContentFields(commentable = Some(true))))
         FaciaContentUtils.isCommentable(supportingCuratedContent) should be(true)
       }
 
       "false on inner content with commentable false for SupportingCuratedContent" in {
-        val supportingCuratedContent2 = makeSupportingCuratedContent("some-supporting-curated-content", contentWithFields(Map("commentable" -> "false")))
+        val supportingCuratedContent2 = makeSupportingCuratedContent("some-supporting-curated-content", contentWithFields(ContentFields(commentable = Some(false))))
         FaciaContentUtils.isCommentable(supportingCuratedContent2) should be(false)
       }
 
       "false on inner content with no fields for SupportingCuratedContent" in {
-        val supportingCuratedContent3 = makeSupportingCuratedContent("some-supporting-curated-content", contentWithFields(Map.empty))
+        val supportingCuratedContent3 = makeSupportingCuratedContent("some-supporting-curated-content", contentWithFields(ContentFields()))
         FaciaContentUtils.isCommentable(supportingCuratedContent3) should be(false)
       }
     }
   }
 
   "shortUrl" - {
-    def contentWithShortUrl(shortUrl: String) = Content(
-      "content-id", Some("section"), Some("Section Name"), Option(staticDateTime), "webTitle", "webUrl", "apiUrl",
-      fields = Option(Map("shortUrl" -> shortUrl)),
-      Nil, None, Nil, None)
+    def contentWithShortUrl(shortUrl: String) = baseContent.copy(fields = Some(ContentFields(shortUrl = Some(shortUrl))))
 
     val contentWithNoShortUrl = content
 
