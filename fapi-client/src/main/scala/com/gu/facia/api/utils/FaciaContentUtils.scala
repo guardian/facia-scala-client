@@ -8,6 +8,7 @@ import scala.util.Try
 
 object FaciaContentUtils {
   import ContentApiUtils._
+  import com.gu.contentapi.client.utils.CapiModelEnrichment.RichCapiDateTime
 
   def fold[T](fc: FaciaContent)(c: (CuratedContent) => T, scc: (SupportingCuratedContent) => T,
     ls: (LinkSnap) => T, las: (LatestSnap) => T): T = fc match {
@@ -26,10 +27,10 @@ object FaciaContentUtils {
     maybeContent(fc).map(_.tags.toList).getOrElse(Nil)
 
   def webPublicationDateOption(fc: FaciaContent): Option[DateTime] = fold(fc)(
-    curatedContent => curatedContent.content.webPublicationDate.map(d => new DateTime(d.dateTime)),
-    supportingCuratedContent => supportingCuratedContent.content.webPublicationDate.map(d => new DateTime(d.dateTime)),
+    curatedContent => curatedContent.content.webPublicationDate,
+    supportingCuratedContent => supportingCuratedContent.content.webPublicationDate,
     _ => None,
-    latestSnap => latestSnap.latestContent.flatMap(_.webPublicationDate.map(d => new DateTime(d.dateTime))))
+    latestSnap => latestSnap.latestContent.flatMap(_.webPublicationDate)).map(_.toJodaDateTime)
 
   def webPublicationDate(fc: FaciaContent): DateTime = webPublicationDateOption(fc).getOrElse(DateTime.now)
 
@@ -264,7 +265,7 @@ object FaciaContentUtils {
     linkSnap => linkSnap.image,
     latestSnap => latestSnap.image)
 
-  def isClosedForComments (fc: FaciaContent) = fieldsExists(fc)(!_.flatMap(_.commentCloseDate).exists(new DateTime(_).isAfterNow))
+  def isClosedForComments (fc: FaciaContent) = fieldsExists(fc)(!_.flatMap(_.commentCloseDate).exists(_.toJodaDateTime.isAfterNow))
 
   def properties(fc: FaciaContent): Option[ContentProperties] = fold(fc)(
     curatedContent => Option(curatedContent.properties),
