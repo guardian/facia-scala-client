@@ -22,8 +22,8 @@ object FaciaContentUtils {
     linkSnap => None,
     latestSnap => latestSnap.latestContent)
 
-  def tags(fc: FaciaContent): List[com.gu.contentapi.client.model.Tag] =
-    maybeContent(fc).map(_.tags).getOrElse(Nil)
+  def tags(fc: FaciaContent): List[com.gu.contentapi.client.model.v1.Tag] =
+    maybeContent(fc).map(_.tags.toList).getOrElse(Nil)
 
   def webPublicationDateOption(fc: FaciaContent): Option[DateTime] = fold(fc)(
     curatedContent => curatedContent.content.webPublicationDateOption,
@@ -247,10 +247,10 @@ object FaciaContentUtils {
   def linkText(fc: FaciaContent) = maybeWebTitle(fc)
 
   def elements(fc: FaciaContent): List[Element] = fold(fc)(
-    curatedContent => curatedContent.content.elements.getOrElse(Nil),
-    supportingCuratedContent => supportingCuratedContent.content.elements.getOrElse(Nil),
+    curatedContent => curatedContent.content.elements.map(_.toList).getOrElse(Nil),
+    supportingCuratedContent => supportingCuratedContent.content.elements.map(_.toList).getOrElse(Nil),
     linkSnap => Nil,
-    latestSnap => latestSnap.latestContent.flatMap(_.elements).getOrElse(Nil))
+    latestSnap => latestSnap.latestContent.flatMap(_.elements.map(_.toList)).getOrElse(Nil))
 
   def cardStyle(fc: FaciaContent): CardStyle = fold(fc)(
     curatedContent => curatedContent.cardStyle,
