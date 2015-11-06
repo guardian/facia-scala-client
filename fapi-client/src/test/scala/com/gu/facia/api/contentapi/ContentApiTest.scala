@@ -1,7 +1,8 @@
 package com.gu.facia.api.contentapi
 
 import com.gu.contentapi.client.GuardianContentClient
-import com.gu.contentapi.client.model.{ItemResponse, Content, SearchResponse}
+import com.gu.contentapi.client.model.{ItemResponse, SearchResponse}
+import com.gu.contentapi.client.model.v1.Content
 import com.gu.facia.api.Response
 import lib.ExecutionContext
 import org.scalatest.concurrent.ScalaFutures
@@ -50,13 +51,13 @@ class ContentApiTest extends FreeSpec
         tagParam should endWith(")")
       }
 
-      "adds the internalContentCode field" in {
-        ContentApi.buildBackfillQuery(backfill).right.value.parameters.get("show-fields").value should equal ("internalContentCode,internalPageCode")
+      "adds the internalPageCode field" in {
+        ContentApi.buildBackfillQuery(backfill).right.value.parameters.get("show-fields").value should equal ("internalPageCode")
       }
 
-      "preserves existing show-fields when adding internalContentCode" in {
+      "preserves existing show-fields when adding internaPageCode" in {
         val backfillWithFields = s"$backfill&show-fields=headline"
-        ContentApi.buildBackfillQuery(backfillWithFields).right.value.parameters.get("show-fields").value should equal ("headline,internalContentCode,internalPageCode")
+        ContentApi.buildBackfillQuery(backfillWithFields).right.value.parameters.get("show-fields").value should equal ("headline,internalPageCode")
       }
     }
 
@@ -71,13 +72,13 @@ class ContentApiTest extends FreeSpec
         ContentApi.buildBackfillQuery(backfill).left.value.id should equal("lifeandstyle/food-and-drink")
       }
 
-      "adds the internalContentCode field" in {
-        ContentApi.buildBackfillQuery(backfill).left.value.parameters.get("show-fields").value should equal ("internalContentCode,internalPageCode")
+      "adds the internalPageCode field" in {
+        ContentApi.buildBackfillQuery(backfill).left.value.parameters.get("show-fields").value should equal ("internalPageCode")
       }
 
-      "preserves existing show-fields when adding internalContentCode" in {
+      "preserves existing show-fields when adding internalPageCode" in {
         val backfillWithFields = s"$backfill&show-fields=headline"
-        ContentApi.buildBackfillQuery(backfillWithFields).left.value.parameters.get("show-fields").value should equal ("headline,internalContentCode,internalPageCode")
+        ContentApi.buildBackfillQuery(backfillWithFields).left.value.parameters.get("show-fields").value should equal ("headline,internalPageCode")
       }
 
       "will add editors picks false if they aren't explicitly on the query" in {

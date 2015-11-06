@@ -1,6 +1,6 @@
 package com.gu.facia.api.utils
 
-import com.gu.contentapi.client.model.Content
+import com.gu.contentapi.client.model.v1.{ContentFields, Content}
 import com.gu.facia.api.models.CollectionConfig
 import com.gu.facia.client.models.{CollectionConfigJson, TrailMetaData}
 import org.mockito.Mockito
@@ -109,7 +109,7 @@ class ItemKickerTest extends FreeSpec with ShouldMatchers with MockitoSugar with
       when(content.sectionId).thenReturn(Some("section"))
       when(content.sectionName).thenReturn(Some("Section"))
       when(content.tags).thenReturn(Nil)
-      when(content.safeFields).thenReturn(Map.empty[String, String])
+      when(content.fields).thenReturn(Some(ContentFields()))
 
       ItemKicker.fromContentAndTrail(Option(content), trailMetadata, metaDataDefaultsWithShowKickerSection, None) should be (None)
     }

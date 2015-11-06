@@ -1,6 +1,6 @@
 package com.gu.facia.api.utils
 
-import com.gu.contentapi.client.model.Content
+import com.gu.contentapi.client.model.v1.Content
 import com.gu.facia.client.models.MetaDataCommonFields
 import play.api.libs.json.{Format, Json}
 

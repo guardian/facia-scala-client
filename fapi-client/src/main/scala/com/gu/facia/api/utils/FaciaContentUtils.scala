@@ -1,6 +1,6 @@
 package com.gu.facia.api.utils
 
-import com.gu.contentapi.client.model.{Element, Tag, Content}
+import com.gu.contentapi.client.model.v1.{ContentFields, Element, Tag, Content}
 import com.gu.facia.api.models._
 import org.joda.time.DateTime
 
@@ -8,6 +8,7 @@ import scala.util.Try
 
 object FaciaContentUtils {
   import ContentApiUtils._
+  import com.gu.contentapi.client.utils.CapiModelEnrichment.RichCapiDateTime
 
   def fold[T](fc: FaciaContent)(c: (CuratedContent) => T, scc: (SupportingCuratedContent) => T,
     ls: (LinkSnap) => T, las: (LatestSnap) => T): T = fc match {
@@ -22,14 +23,14 @@ object FaciaContentUtils {
     linkSnap => None,
     latestSnap => latestSnap.latestContent)
 
-  def tags(fc: FaciaContent): List[com.gu.contentapi.client.model.Tag] =
-    maybeContent(fc).map(_.tags).getOrElse(Nil)
+  def tags(fc: FaciaContent): List[com.gu.contentapi.client.model.v1.Tag] =
+    maybeContent(fc).map(_.tags.toList).getOrElse(Nil)
 
   def webPublicationDateOption(fc: FaciaContent): Option[DateTime] = fold(fc)(
-    curatedContent => curatedContent.content.webPublicationDateOption,
-    supportingCuratedContent => supportingCuratedContent.content.webPublicationDateOption,
+    curatedContent => curatedContent.content.webPublicationDate,
+    supportingCuratedContent => supportingCuratedContent.content.webPublicationDate,
     _ => None,
-    latestSnap => latestSnap.latestContent.flatMap(_.webPublicationDateOption))
+    latestSnap => latestSnap.latestContent.flatMap(_.webPublicationDate)).map(_.toJodaDateTime)
 
   def webPublicationDate(fc: FaciaContent): DateTime = webPublicationDateOption(fc).getOrElse(DateTime.now)
 
@@ -84,9 +85,9 @@ object FaciaContentUtils {
 
   def headline(fc: FaciaContent): String = headlineOption(fc).getOrElse("Missing Headline")
 
-  def standfirst(fc: FaciaContent): Option[String] = fieldsGet(fc)(_.get("standfirst"))
+  def standfirst(fc: FaciaContent): Option[String] = fieldsGet(fc)(_.flatMap(_.standfirst))
 
-  def body(fc: FaciaContent): Option[String] = fieldsGet(fc)(_.get("body"))
+  def body(fc: FaciaContent): Option[String] = fieldsGet(fc)(_.flatMap(_.body))
 
   def webUrl(fc: FaciaContent): Option[String] = fold(fc)(
     curatedContent => Option(curatedContent.content.webUrl),
@@ -114,26 +115,26 @@ object FaciaContentUtils {
       latestSnap => latestSnap.latestContent.flatMap(mediaTypeFromContent))}
 
   def isLive(fc: FaciaContent): Boolean = fold(fc)(
-    curatedContent => curatedContent.content.safeFields.get("liveBloggingNow").exists(_.toBoolean),
-    supportingCuratedContent => supportingCuratedContent.content.safeFields.get("liveBloggingNow").exists(_.toBoolean),
+    curatedContent => curatedContent.content.fields.flatMap(_.liveBloggingNow).exists(identity),
+    supportingCuratedContent => supportingCuratedContent.content.fields.flatMap(_.liveBloggingNow).exists(identity),
     linkSnap => false,
-    latestSnap => latestSnap.latestContent.exists(_.safeFields.get("liveBloggingNow").exists(_.toBoolean)))
+    latestSnap => latestSnap.latestContent.exists(_.fields.flatMap(_.liveBloggingNow).exists(identity)))
 
-  private def fieldsExists(fc: FaciaContent)(f: (Map[String, String]) => Boolean): Boolean = fold(fc)(
-    curatedContent => f(curatedContent.content.safeFields),
-    supportingCuratedContent => f(supportingCuratedContent.content.safeFields),
+  private def fieldsExists(fc: FaciaContent)(f: (Option[ContentFields]) => Boolean): Boolean = fold(fc)(
+    curatedContent => f(curatedContent.content.fields),
+    supportingCuratedContent => f(supportingCuratedContent.content.fields),
     _ => false,
-    latestSnap => latestSnap.latestContent.exists(c => f(c.safeFields))
+    latestSnap => latestSnap.latestContent.exists(c => f(c.fields))
   )
-  def isCommentable(fc: FaciaContent) = fieldsExists(fc)(_.get("commentable").exists(_.toBoolean))
-  def commentCloseDate(fc: FaciaContent) = fieldsGet(fc)(_.get("commentCloseDate"))
-  private def fieldsGet(fc: FaciaContent)(f: (Map[String, String]) => Option[String]): Option[String] = fold(fc)(
-    curatedContent => f(curatedContent.content.safeFields),
-    supportingCuratedContent => f(supportingCuratedContent.content.safeFields),
+  def isCommentable(fc: FaciaContent) = fieldsExists(fc)(_.flatMap(_.commentable).exists(identity))
+  def commentCloseDate(fc: FaciaContent) = fieldsGet(fc)(_.flatMap(_.commentCloseDate))
+  private def fieldsGet[T](fc: FaciaContent)(f: (Option[ContentFields]) => Option[T]): Option[T] = fold(fc)(
+    curatedContent => f(curatedContent.content.fields),
+    supportingCuratedContent => f(supportingCuratedContent.content.fields),
     linkSnap => None,
-    latestSnap => latestSnap.latestContent.flatMap(c => f(c.safeFields))
+    latestSnap => latestSnap.latestContent.flatMap(c => f(c.fields))
   )
-  def maybeShortUrl(fc: FaciaContent) = fieldsGet(fc)(_.get("shortUrl"))
+  def maybeShortUrl(fc: FaciaContent) = fieldsGet(fc)(_.flatMap(_.shortUrl))
   def shortUrl(fc: FaciaContent): String = maybeShortUrl(fc).getOrElse("")
   def shortUrlPath(fc: FaciaContent) = maybeShortUrl(fc).map(_.replace("http://gu.com", ""))
   def discussionId(fc: FaciaContent) = shortUrlPath(fc)
@@ -228,7 +229,7 @@ object FaciaContentUtils {
     linkSnap => Nil,
     latestSnap => Nil)
 
-  def starRating(fc: FaciaContent): Option[Int] = Try(fieldsGet(fc)(_.get("starRating")).map(_.toInt)).toOption.flatten
+  def starRating(fc: FaciaContent): Option[Int] = Try(fieldsGet(fc)(_.flatMap(_.starRating))).toOption.flatten
 
   def trailText(fc: FaciaContent): Option[String] = fold(fc)(
     curatedContent => curatedContent.trailText,
@@ -247,10 +248,10 @@ object FaciaContentUtils {
   def linkText(fc: FaciaContent) = maybeWebTitle(fc)
 
   def elements(fc: FaciaContent): List[Element] = fold(fc)(
-    curatedContent => curatedContent.content.elements.getOrElse(Nil),
-    supportingCuratedContent => supportingCuratedContent.content.elements.getOrElse(Nil),
+    curatedContent => curatedContent.content.elements.map(_.toList).getOrElse(Nil),
+    supportingCuratedContent => supportingCuratedContent.content.elements.map(_.toList).getOrElse(Nil),
     linkSnap => Nil,
-    latestSnap => latestSnap.latestContent.flatMap(_.elements).getOrElse(Nil))
+    latestSnap => latestSnap.latestContent.flatMap(_.elements.map(_.toList)).getOrElse(Nil))
 
   def cardStyle(fc: FaciaContent): CardStyle = fold(fc)(
     curatedContent => curatedContent.cardStyle,
@@ -264,7 +265,7 @@ object FaciaContentUtils {
     linkSnap => linkSnap.image,
     latestSnap => latestSnap.image)
 
-  def isClosedForComments (fc: FaciaContent) = fieldsExists(fc)(!_.get("commentCloseDate").exists(new DateTime(_).isAfterNow))
+  def isClosedForComments (fc: FaciaContent) = fieldsExists(fc)(!_.flatMap(_.commentCloseDate).exists(_.toJodaDateTime.isAfterNow))
 
   def properties(fc: FaciaContent): Option[ContentProperties] = fold(fc)(
     curatedContent => Option(curatedContent.properties),

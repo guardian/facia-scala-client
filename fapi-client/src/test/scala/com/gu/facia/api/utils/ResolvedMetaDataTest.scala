@@ -1,22 +1,22 @@
 package com.gu.facia.api.utils
 
-import com.gu.contentapi.client.model.{Content, Tag}
+import com.gu.contentapi.client.model.v1.{TagType, ContentType, Content, Tag}
 import com.gu.facia.client.models.TrailMetaData
 import org.scalatest.{FreeSpec, Matchers}
 import play.api.libs.json.JsBoolean
+import lib.TestContent
 
-class ResolvedMetaDataTest extends FreeSpec with Matchers {
+class ResolvedMetaDataTest extends FreeSpec with Matchers with TestContent {
 
   def tagWithId(id: String) = Tag(
     id = id,
-    `type` = "",
+    `type` = TagType.Keyword,
     webTitle = "",
     webUrl = "",
     apiUrl = "")
 
-  def contentWithTags(tags: Tag*): Content = Content(
-    "content-id", Some("section"), Some("Section Name"), None, "webTitle", "webUrl", "apiUrl",
-    fields = Option(Map.empty), tags.toList, None, Nil, None)
+
+  def contentWithTags(tags: Tag*): Content = baseContent.copy(tags = tags.toList)
 
   val contentWithCartoon = contentWithTags(tagWithId("type/cartoon"))
   val contentWithComment = contentWithTags(tagWithId("tone/comment"))

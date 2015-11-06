@@ -1,6 +1,6 @@
 package com.gu.facia.api.utils
 
-import com.gu.contentapi.client.model.Content
+import com.gu.contentapi.client.model.v1.Content
 import com.gu.facia.api.utils.ContentApiUtils._
 import com.gu.facia.client.models.{TrailMetaData, MetaDataCommonFields}
 
@@ -20,7 +20,7 @@ object CardStyle {
   val news = "news"
 
   def apply(content: Content, trailMetaData: MetaDataCommonFields): CardStyle = {
-    val href = trailMetaData.href.orElse(content.safeFields.get("href"))
+    val href = trailMetaData.href
     if (trailMetaData.snapType == Some("link") && href.exists(ExternalLinks.external)) {
       ExternalLink
     } else if (content.tags.exists(_.id == "news/series/hsbc-files")
