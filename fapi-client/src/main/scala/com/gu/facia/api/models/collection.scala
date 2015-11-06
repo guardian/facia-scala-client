@@ -42,7 +42,7 @@ object Collection {
     // note that this does not currently deal with e.g. snaps
     def resolveTrail(trail: Trail): Option[FaciaContent] = {
       content.find { c =>
-        trail.id.endsWith("/" + c.fields.flatMap(_.internalPageCode).getOrElse(throw new RuntimeException("No internal code")))
+        trail.id.endsWith("/" + c.fields.flatMap(_.internalPageCode).getOrElse(throw new RuntimeException("No internal page code")))
       }
         .map { content =>
         trail.safeMeta.supporting
@@ -57,7 +57,7 @@ object Collection {
 
     def resolveSupportingContent(supportingItem: SupportingItem): Option[FaciaContent] = {
       content.find { c =>
-        supportingItem.id.endsWith("/" + c.fields.flatMap(_.internalPageCode).getOrElse(throw new RuntimeException("No internal code")))
+        supportingItem.id.endsWith("/" + c.fields.flatMap(_.internalPageCode).getOrElse(throw new RuntimeException("No internal page code")))
       }
         .map { content => SupportingCuratedContent.fromTrailAndContent(content, supportingItem.safeMeta, supportingItem.frontPublicationDate, collection.collectionConfig)}
         .orElse {

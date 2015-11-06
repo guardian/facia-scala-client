@@ -430,8 +430,8 @@ class CollectionTest extends FreeSpec with ShouldMatchers with MockitoSugar with
       Trail(id, 0, None, Some(TrailMetaData(Map("supporting" -> JsArray(supporting.map(Json.toJson(_)))))))
     "trails with internalPageCode" in {
       val trail = Trail("internal-code/page/2", 1, None, Some(trailMetadata))
-      val collectionJsonWithContentCode = collectionJson.copy(live = List(trail))
-      val collection = Collection.fromCollectionJsonConfigAndContent("id", Some(collectionJsonWithContentCode), collectionConfig)
+      val collectionJsonWithPageCode = collectionJson.copy(live = List(trail))
+      val collection = Collection.fromCollectionJsonConfigAndContent("id", Some(collectionJsonWithPageCode), collectionConfig)
       val result = Collection.liveContent(collection, contents)
       result.length should be (1)
       result.head should have (
@@ -441,8 +441,8 @@ class CollectionTest extends FreeSpec with ShouldMatchers with MockitoSugar with
     "supporting with internalPageCode" in {
       val supporting = makeTrail("internal-code/page/2")
       val trail = makeTrailWithSupporting("internal-code/page/7", supporting)
-      val collectionJsonWithContentCode = collectionJson.copy(live = List(trail))
-      val collection = Collection.fromCollectionJsonConfigAndContent("id", Some(collectionJsonWithContentCode), collectionConfig)
+      val collectionJsonWithPageCode = collectionJson.copy(live = List(trail))
+      val collection = Collection.fromCollectionJsonConfigAndContent("id", Some(collectionJsonWithPageCode), collectionConfig)
       val result = Collection.liveContent(collection, contents)
       result.length should be (1)
       result.head should have (

@@ -48,7 +48,6 @@ object ContentApi {
       // wrap backfill tags in parentheses in case the editors wrote a raw OR query
       // makes it possible to safely append additional tags
       case (k, v) if k == "tag" => (k, s"($v)")
-      // ensure internalContentCode and internalPageCode are present on queries
       case (k, v) if k == "show-fields" => (k, s"$v,internalPageCode")
       case param => param
     }
