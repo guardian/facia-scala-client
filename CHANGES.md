@@ -1,3 +1,8 @@
+#### 0.66
+
+  - Add `backfill` in collectiong config. This is meant to replace `apiQuery` in future releases.
+  - The method `FAPI.backfill(apiQuery: String, collection: Collection)` has been deprecated, `FAPI.backfillFromConfig(collection: Collection)` should be used instead as it automatically handles the backfill query and returns an empty list in case no backfill is set.
+
 #### 0.65
 
   - Add This Is The NHS Tag to Special Report
