@@ -4,7 +4,7 @@ import com.gu.contentapi.client.model.v1.TagType
 import com.gu.facia.api.FAPI
 import com.gu.facia.api.contentapi.ContentApi.{AdjustItemQuery, AdjustSearchQuery}
 import com.gu.facia.api.models._
-import com.gu.facia.api.utils.SectionKicker
+import com.gu.facia.api.utils.{InvalidBackfillConfiguration, SectionKicker}
 import com.gu.facia.client.models._
 import lib.IntegrationTestConfig
 import org.joda.time.DateTime
@@ -169,7 +169,7 @@ class IntegrationTest extends FreeSpec with ShouldMatchers with ScalaFutures wit
     }
   }
 
-  // TODO this should be remove once deprecation ends
+  // TODO this should be removed once deprecation ends
   "backfill - deprecated capi query" - {
     val collection = Collection(
       "uk/business/regular-stories",
@@ -219,7 +219,7 @@ class IntegrationTest extends FreeSpec with ShouldMatchers with ScalaFutures wit
     }
   }
 
-  // TODO this should be remove once deprecation ends
+  // TODO this should be removed once deprecation ends
   "backfill - fallback to collection string" - {
     val collection = Collection(
       "uk/business/regular-stories",
@@ -446,6 +446,32 @@ class IntegrationTest extends FreeSpec with ShouldMatchers with ScalaFutures wit
           backfillContents.head.asInstanceOf[CuratedContent].headline should equal("Our weather pages are now bringing you real sunshine | Chris Elliott: Open door")
         }
       )
+    }
+  }
+
+  "backfill - invalid configuration" - {
+    val collection = Collection(
+      "uk/business/regular-stories",
+      "economy",
+      None,
+      Nil,
+      None,
+      Nil,
+      Some(new DateTime(1)),
+      Some("updatedBy"),
+      Some("updatedBy@example.com"),
+      CollectionConfig.empty.copy(
+        backfill = Some(Backfill(
+          `type` = "invalid-backfill-configuration",
+          query = "any"
+        ))
+      )
+    )
+
+    "throws an error" in {
+      intercept[InvalidBackfillConfiguration] {
+        FAPI.backfillFromConfig(collection)
+      }
     }
   }
 

@@ -10,17 +10,19 @@ import com.gu.facia.client.models.{CollectionJson, Backfill, TrailMetaData}
 
 import scala.concurrent.ExecutionContext
 
+case class InvalidBackfillConfiguration(msg: String) extends Error(msg)
+
 object BackfillContent {
   def resolveFromConfig(collectionConfig: CollectionConfig): BackfillResolver = {
     collectionConfig.backfill match {
       case Some(backfill: Backfill) => backfill.`type` match {
         case "capi" => CapiBackfill(backfill.query, collectionConfig)
         case "collection" => CollectionBackfill(backfill.query)
-        case _ => throw new Error(s"Invalid backfill type ${backfill.`type`}")
+        case _ => throw new InvalidBackfillConfiguration(s"Invalid backfill type ${backfill.`type`}")
       }
       case None => collectionConfig.apiQuery match {
         case Some(query: String) => CapiBackfill(query, collectionConfig)
-        case None => EmptyBackfill()
+        case None => EmptyBackfill
       }
     }
   }
@@ -57,7 +59,7 @@ case class CollectionBackfill(parentCollectionId: String) extends BackfillResolv
   }
 }
 
-case class EmptyBackfill() extends BackfillResolver {
+case object EmptyBackfill extends BackfillResolver {
   def backfill(adjustSearchQuery: AdjustSearchQuery = identity, adjustItemQuery: AdjustItemQuery = identity)
               (implicit capiClient: GuardianContentClient, faciaClient: ApiClient, ec: ExecutionContext): Response[List[FaciaContent]] = Response.Right(Nil)
 }
