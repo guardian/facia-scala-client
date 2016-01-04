@@ -1,12 +1,12 @@
 package com.gu.facia.api.utils
 
 import com.gu.contentapi.client.GuardianContentClient
-import com.gu.facia.api.{FAPI, Response}
 import com.gu.facia.api.contentapi.ContentApi
 import com.gu.facia.api.contentapi.ContentApi._
-import com.gu.facia.api.models.{FaciaContent, CollectionConfig, CuratedContent}
+import com.gu.facia.api.models.{CollectionConfig, CuratedContent, FaciaContent}
+import com.gu.facia.api.{FAPI, Response}
 import com.gu.facia.client.ApiClient
-import com.gu.facia.client.models.{CollectionJson, Backfill, TrailMetaData}
+import com.gu.facia.client.models.{Backfill, TrailMetaData}
 
 import scala.concurrent.ExecutionContext
 
@@ -15,11 +15,10 @@ case class InvalidBackfillConfiguration(msg: String) extends Error(msg)
 object BackfillContent {
   def resolveFromConfig(collectionConfig: CollectionConfig): BackfillResolver = {
     collectionConfig.backfill match {
-      case Some(backfill: Backfill) => backfill.`type` match {
-        case "capi" => CapiBackfill(backfill.query, collectionConfig)
-        case "collection" => CollectionBackfill(backfill.query)
-        case _ => throw new InvalidBackfillConfiguration(s"Invalid backfill type ${backfill.`type`}")
-      }
+      case Some(Backfill("capi", query: String)) => CapiBackfill(query, collectionConfig)
+      case Some(Backfill("collection", query: String)) => CollectionBackfill(query)
+      case Some(Backfill(backFillType, _)) => throw new InvalidBackfillConfiguration(s"Invalid backfill type $backFillType")
+      // TODO once the deprecated `apiQuery` is removed, the case None should simply return EmptyBackfill
       case None => collectionConfig.apiQuery match {
         case Some(query: String) => CapiBackfill(query, collectionConfig)
         case None => EmptyBackfill
