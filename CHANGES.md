@@ -1,3 +1,11 @@
+#### 0.62
+
+  - Upgrade capi client to v7.11
+
+#### 0.61
+
+  - Upgrade capi client to v7.3
+
 #### 0.60
 
   - Fix the batching so that it does not request more than 50 at a time in a search query. There is a restriction in CAPI of 50 items in a search query.
