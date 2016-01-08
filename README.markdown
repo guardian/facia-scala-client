@@ -13,7 +13,7 @@ easily-used types.
 
 Add the following line to your [SBT build file] (http://www.scala-sbt.org/0.13.5/docs/Getting-Started/Basic-Def.html):
 
-    libraryDependencies += "com.gu" %% "fapi-client" % "0.64"
+    libraryDependencies += "com.gu" %% "fapi-client" % "0.65"
 
 ### Using the library
 
@@ -35,7 +35,7 @@ This library provides underlying behaviour for the main Fronts API client.
 
 Add the following line to your [SBT build file] (http://www.scala-sbt.org/0.13.5/docs/Getting-Started/Basic-Def.html):
 
-    libraryDependencies += "com.gu" %% "facia-json" % "0.64"
+    libraryDependencies += "com.gu" %% "facia-json" % "0.65"
 
 ### Making calls to the API
 

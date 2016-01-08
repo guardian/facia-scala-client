@@ -1,3 +1,7 @@
+#### 0.65
+
+  - Add This Is The NHS Tag to Special Report
+  
 #### 0.64
 
   - Upgrade capi client to v7.13
