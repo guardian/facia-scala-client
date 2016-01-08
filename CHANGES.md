@@ -1,3 +1,7 @@
+#### 0.64
+
+  - Upgrade capi client to v7.13
+
 #### 0.63
 
   - Upgrade capi client to v7.12
