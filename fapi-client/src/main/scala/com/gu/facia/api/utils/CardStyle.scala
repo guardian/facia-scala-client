@@ -25,7 +25,8 @@ object CardStyle {
       ExternalLink
     } else if (content.tags.exists(_.id == "news/series/hsbc-files")
       || content.tags.exists(_.id == "us-news/series/counted-us-police-killings")
-      || content.tags.exists(_.id == "australia-news/series/healthcare-in-detention")) {
+      || content.tags.exists(_.id == "australia-news/series/healthcare-in-detention")
+      || content.tags.exists(_.id == "society/series/this-is-the-nhs")) {
       SpecialReport
     } else if (content.isLiveBlog) {
       if (content.isLive) {
