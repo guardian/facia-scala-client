@@ -5,7 +5,7 @@ import com.gu.contentapi.client.model.v1.Content
 import com.gu.facia.api.contentapi.ContentApi.{AdjustItemQuery, AdjustSearchQuery}
 import com.gu.facia.api.contentapi.{ContentApi, LatestSnapsRequest}
 import com.gu.facia.api.models._
-import com.gu.facia.api.utils.BackfillContent
+import com.gu.facia.api.utils.{BackfillResolver, BackfillContent}
 import com.gu.facia.client.ApiClient
 import com.gu.facia.client.models.TrailMetaData
 
@@ -182,7 +182,7 @@ object FAPI {
                          adjustSearchQuery: AdjustSearchQuery = identity, adjustItemQuery: AdjustItemQuery = identity)
                         (implicit capiClient: GuardianContentClient, faciaClient: ApiClient, ec: ExecutionContext): Response[List[FaciaContent]] = {
 
-    BackfillContent.resolveFromConfig(collection.collectionConfig)
-    .backfill(adjustSearchQuery, adjustItemQuery)
+    val resolver = BackfillContent.resolveFromConfig(collection.collectionConfig)
+    BackfillResolver.backfill(resolver, adjustSearchQuery, adjustItemQuery)
   }
 }

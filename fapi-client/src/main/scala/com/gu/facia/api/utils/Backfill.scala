@@ -27,38 +27,29 @@ object BackfillContent {
   }
 }
 
-sealed trait BackfillResolver {
-  def backfill(adjustSearchQuery: AdjustSearchQuery, adjustItemQuery: AdjustItemQuery)
-              (implicit capiClient: GuardianContentClient, faciaClient: ApiClient, ec: ExecutionContext): Response[List[FaciaContent]]
-}
+sealed trait BackfillResolver
+case class CapiBackfill(query: String, collectionConfig: CollectionConfig) extends BackfillResolver
+case class CollectionBackfill(parentCollectionId: String) extends BackfillResolver
+case object EmptyBackfill extends BackfillResolver
 
-case class CapiBackfill(query: String, collectionConfig: CollectionConfig) extends BackfillResolver {
-  def backfill(adjustSearchQuery: AdjustSearchQuery = identity, adjustItemQuery: AdjustItemQuery = identity)
+object BackfillResolver {
+  def backfill(resolver: BackfillResolver, adjustSearchQuery: AdjustSearchQuery = identity, adjustItemQuery: AdjustItemQuery = identity)
               (implicit capiClient: GuardianContentClient, faciaClient: ApiClient, ec: ExecutionContext): Response[List[FaciaContent]] = {
-
-    val capiQuery = ContentApi.buildBackfillQuery(query)
-      .right.map(adjustSearchQuery)
-      .left.map(adjustItemQuery)
-    val backfillResponse = ContentApi.getBackfillResponse(capiClient, capiQuery)
-    for {
-      backfillContent <- ContentApi.backfillContentFromResponse(backfillResponse)
-    } yield {
-      backfillContent.map(CuratedContent.fromTrailAndContent(_, TrailMetaData.empty, None, collectionConfig))
-    }
-  }
-}
-
-case class CollectionBackfill(parentCollectionId: String) extends BackfillResolver {
-  def backfill(adjustSearchQuery: AdjustSearchQuery = identity, adjustItemQuery: AdjustItemQuery = identity)
-              (implicit capiClient: GuardianContentClient, faciaClient: ApiClient, ec: ExecutionContext): Response[List[FaciaContent]] = {
-    for {
-      collection <- FAPI.getCollection(parentCollectionId)
-      curatedCollection <- FAPI.liveCollectionContentWithSnaps(collection, adjustSearchQuery, adjustItemQuery)
-    } yield curatedCollection
-  }
-}
-
-case object EmptyBackfill extends BackfillResolver {
-  def backfill(adjustSearchQuery: AdjustSearchQuery = identity, adjustItemQuery: AdjustItemQuery = identity)
-              (implicit capiClient: GuardianContentClient, faciaClient: ApiClient, ec: ExecutionContext): Response[List[FaciaContent]] = Response.Right(Nil)
+    resolver match {
+      case CapiBackfill(query, collectionConfig) =>
+        val capiQuery = ContentApi.buildBackfillQuery(query)
+          .right.map(adjustSearchQuery)
+          .left.map(adjustItemQuery)
+        val backfillResponse = ContentApi.getBackfillResponse(capiClient, capiQuery)
+        for {
+          backfillContent <- ContentApi.backfillContentFromResponse(backfillResponse)
+        } yield {
+          backfillContent.map(CuratedContent.fromTrailAndContent(_, TrailMetaData.empty, None, collectionConfig))
+        }
+      case CollectionBackfill(parentCollectionId) =>
+        for {
+          collection <- FAPI.getCollection(parentCollectionId)
+          curatedCollection <- FAPI.liveCollectionContentWithSnaps(collection, adjustSearchQuery, adjustItemQuery)
+        } yield curatedCollection
+      case EmptyBackfill => Response.Right(Nil)}}
 }
