@@ -12,7 +12,12 @@ import scala.concurrent.ExecutionContext
 
 case class InvalidBackfillConfiguration(msg: String) extends Error(msg)
 
-object BackfillContent {
+sealed trait BackfillResolver
+case class CapiBackfill(query: String, collectionConfig: CollectionConfig) extends BackfillResolver
+case class CollectionBackfill(parentCollectionId: String) extends BackfillResolver
+case object EmptyBackfill extends BackfillResolver
+
+object BackfillResolver {
   def resolveFromConfig(collectionConfig: CollectionConfig): BackfillResolver = {
     collectionConfig.backfill match {
       case Some(Backfill("capi", query: String)) => CapiBackfill(query, collectionConfig)
@@ -25,14 +30,7 @@ object BackfillContent {
       }
     }
   }
-}
 
-sealed trait BackfillResolver
-case class CapiBackfill(query: String, collectionConfig: CollectionConfig) extends BackfillResolver
-case class CollectionBackfill(parentCollectionId: String) extends BackfillResolver
-case object EmptyBackfill extends BackfillResolver
-
-object BackfillResolver {
   def backfill(resolver: BackfillResolver, adjustSearchQuery: AdjustSearchQuery = identity, adjustItemQuery: AdjustItemQuery = identity)
               (implicit capiClient: GuardianContentClient, faciaClient: ApiClient, ec: ExecutionContext): Response[List[FaciaContent]] = {
     resolver match {
