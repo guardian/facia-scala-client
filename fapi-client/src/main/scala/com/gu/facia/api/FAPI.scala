@@ -182,7 +182,7 @@ object FAPI {
                          adjustSearchQuery: AdjustSearchQuery = identity, adjustItemQuery: AdjustItemQuery = identity)
                         (implicit capiClient: GuardianContentClient, faciaClient: ApiClient, ec: ExecutionContext): Response[List[FaciaContent]] = {
 
-    val resolver = BackfillResolver.resolveFromConfig(collection.collectionConfig)
-    BackfillResolver.backfill(resolver, adjustSearchQuery, adjustItemQuery)
+    val backfillRequest = BackfillResolver.resolveFromConfig(collection.collectionConfig)
+    BackfillResolver.backfill(backfillRequest, adjustSearchQuery, adjustItemQuery)
   }
 }

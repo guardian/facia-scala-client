@@ -10,7 +10,7 @@ import com.gu.facia.client.models.{Backfill, TrailMetaData}
 
 import scala.concurrent.ExecutionContext
 
-case class InvalidBackfillConfiguration(msg: String) extends Error(msg)
+case class InvalidBackfillConfiguration(msg: String) extends Exception(msg)
 
 sealed trait BackfillResolver
 case class CapiBackfill(query: String, collectionConfig: CollectionConfig) extends BackfillResolver
