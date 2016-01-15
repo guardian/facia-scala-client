@@ -2,14 +2,23 @@ package com.gu.facia.client.models
 
 import play.api.libs.json.Json
 
+object Backfill {
+  implicit val jsonFormat = Json.format[Backfill]
+}
+case class Backfill(
+  `type`: String,
+  query: String
+)
+
 object CollectionConfigJson {
   implicit val jsonFormat = Json.format[CollectionConfigJson]
 
-  val emptyConfig: CollectionConfigJson = withDefaults(None, None, None, None, None, None, None, None, None, None, None, None)
+  val emptyConfig: CollectionConfigJson = withDefaults(None, None, None, None, None, None, None, None, None, None, None, None, None)
 
   def withDefaults(
     displayName: Option[String] = None,
     apiQuery: Option[String] = None,
+    backfill: Option[Backfill] = None,
     `type`: Option[String] = None,
     href: Option[String] = None,
     description: Option[String] = None,
@@ -27,6 +36,7 @@ object CollectionConfigJson {
     = CollectionConfigJson(
     displayName,
     apiQuery,
+    backfill,
     `type`,
     href,
     description,
@@ -46,6 +56,7 @@ object CollectionConfigJson {
 case class CollectionConfigJson(
   displayName: Option[String],
   apiQuery: Option[String],
+  backfill: Option[Backfill],
   `type`: Option[String],
   href: Option[String],
   description: Option[String],

@@ -4,8 +4,8 @@ import com.gu.contentapi.client.model.v1.TagType
 import com.gu.facia.api.FAPI
 import com.gu.facia.api.contentapi.ContentApi.{AdjustItemQuery, AdjustSearchQuery}
 import com.gu.facia.api.models._
-import com.gu.facia.api.utils.SectionKicker
-import com.gu.facia.client.models.{CollectionConfigJson, CollectionJson, TrailMetaData, Trail}
+import com.gu.facia.api.utils.{InvalidBackfillConfiguration, SectionKicker}
+import com.gu.facia.client.models._
 import lib.IntegrationTestConfig
 import org.joda.time.DateTime
 import org.scalatest.concurrent.ScalaFutures
@@ -169,7 +169,8 @@ class IntegrationTest extends FreeSpec with ShouldMatchers with ScalaFutures wit
     }
   }
 
-  "backfill" - {
+  // TODO this should be removed once deprecation ends
+  "backfill - deprecated capi query" - {
     val collection = Collection(
       "uk/business/regular-stories",
       "economy",
@@ -215,6 +216,262 @@ class IntegrationTest extends FreeSpec with ShouldMatchers with ScalaFutures wit
         err => fail(s"expected backfill results, got $err", err.cause),
         backfillContents => backfillContents.head.content.tags.exists(_.id.contains("sustainable-business/series/finance")) should equal(true)
       )
+    }
+  }
+
+  // TODO this should be removed once deprecation ends
+  "backfill - fallback to collection string" - {
+    val collection = Collection(
+      "uk/business/regular-stories",
+      "economy",
+      None,
+      Nil,
+      None,
+      Nil,
+      Some(new DateTime(1)),
+      Some("updatedBy"),
+      Some("updatedBy@example.com"),
+      CollectionConfig.empty.copy(apiQuery = Some("business?edition=uk"))
+    )
+
+    "can get the backfill for a collection" in {
+      FAPI.backfillFromConfig(collection).asFuture.futureValue.fold(
+        err => fail(s"expected backfill results, got $err", err.cause),
+        backfillContents => backfillContents.size should be > 0
+      )
+    }
+
+    "collection metadata is resolved on backfill content" in {
+      FAPI.backfillFromConfig(collection.copy(collectionConfig = collection.collectionConfig.copy(showSections = true))).asFuture.futureValue.fold(
+        err => fail(s"expected backfill results, got $err", err.cause),
+        backfillContents => backfillContents.head.asInstanceOf[CuratedContent].kicker.value shouldBe a [SectionKicker]
+      )
+    }
+
+    "item query can be adjusted" in {
+      val adjust: AdjustItemQuery = q => q.showTags("all")
+      FAPI.backfillFromConfig(collection.copy(collectionConfig = collection.collectionConfig.copy(showSections = true)), adjustItemQuery = adjust).asFuture.futureValue.fold(
+        err => fail(s"expected backfill results, got $err", err.cause),
+        backfillContents => backfillContents.head.asInstanceOf[CuratedContent].content.tags.exists(_.id.contains("business")) should equal(true)
+      )
+    }
+
+    "search query can be adjusted" in {
+      val testCollection = collection.copy(collectionConfig = CollectionConfig.empty.copy(
+        apiQuery = Some("search?tag=sustainable-business/series/finance&use-date=published"),
+        showSections = true))
+      val adjust: AdjustSearchQuery = q => q.showTags("series")
+      FAPI.backfillFromConfig(testCollection, adjustSearchQuery = adjust).asFuture.futureValue.fold(
+        err => fail(s"expected backfill results, got $err", err.cause),
+        backfillContents => backfillContents.head.asInstanceOf[CuratedContent].content.tags.exists(_.id.contains("sustainable-business/series/finance")) should equal(true)
+      )
+    }
+  }
+
+  "backfill - capi query in backfill object" - {
+    val collection = Collection(
+      "uk/business/regular-stories",
+      "economy",
+      None,
+      Nil,
+      None,
+      Nil,
+      Some(new DateTime(1)),
+      Some("updatedBy"),
+      Some("updatedBy@example.com"),
+      CollectionConfig.empty.copy(backfill = Some(Backfill(
+        `type` = "capi",
+        query = "business?edition=uk")))
+    )
+
+    "can get the backfill for a collection" in {
+      FAPI.backfillFromConfig(collection).asFuture.futureValue.fold(
+        err => fail(s"expected backfill results, got $err", err.cause),
+        backfillContents => backfillContents.size should be > 0
+      )
+    }
+
+    "collection metadata is resolved on backfill content" in {
+      FAPI.backfillFromConfig(collection.copy(collectionConfig = collection.collectionConfig.copy(showSections = true))).asFuture.futureValue.fold(
+        err => fail(s"expected backfill results, got $err", err.cause),
+        backfillContents => backfillContents.head.asInstanceOf[CuratedContent].kicker.value shouldBe a [SectionKicker]
+      )
+    }
+
+    "item query can be adjusted" in {
+      val adjust: AdjustItemQuery = q => q.showTags("all")
+      FAPI.backfillFromConfig(collection.copy(collectionConfig = collection.collectionConfig.copy(showSections = true)), adjustItemQuery = adjust).asFuture.futureValue.fold(
+        err => fail(s"expected backfill results, got $err", err.cause),
+        backfillContents => backfillContents.head.asInstanceOf[CuratedContent].content.tags.exists(_.id.contains("business")) should equal(true)
+      )
+    }
+
+    "search query can be adjusted" in {
+      val testCollection = collection.copy(collectionConfig = CollectionConfig.empty.copy(
+        backfill = Some(Backfill(
+          `type` = "capi",
+          query = "search?tag=sustainable-business/series/finance&use-date=published")),
+        showSections = true))
+      val adjust: AdjustSearchQuery = q => q.showTags("series")
+      FAPI.backfillFromConfig(testCollection, adjustSearchQuery = adjust).asFuture.futureValue.fold(
+        err => fail(s"expected backfill results, got $err", err.cause),
+        backfillContents => backfillContents.head.asInstanceOf[CuratedContent].content.tags.exists(_.id.contains("sustainable-business/series/finance")) should equal(true)
+      )
+    }
+  }
+
+  "backfill - empty" - {
+    val collection = Collection(
+      "uk/business/regular-stories",
+      "economy",
+      None,
+      Nil,
+      None,
+      Nil,
+      Some(new DateTime(1)),
+      Some("updatedBy"),
+      Some("updatedBy@example.com"),
+      CollectionConfig.empty
+    )
+
+    "returns empty list" in {
+      FAPI.backfillFromConfig(collection).asFuture.futureValue.fold(
+        err => fail(s"expected backfill results, got $err", err.cause),
+        backfillContents => backfillContents.size should be (0)
+      )
+    }
+  }
+
+  // TODO this should be remove once deprecation ends
+  "backfill - priority" - {
+    val collection = Collection(
+      "uk/business/regular-stories",
+      "economy",
+      None,
+      Nil,
+      None,
+      Nil,
+      Some(new DateTime(1)),
+      Some("updatedBy"),
+      Some("updatedBy@example.com"),
+      CollectionConfig.empty.copy(
+        apiQuery = Some("business?edition=uk"),
+        backfill = Some(Backfill(
+          `type` = "capi",
+          query = "search?tag=sustainable-business/series/finance&use-date=published"))
+      )
+    )
+
+    "results taken from backfill object" in {
+      val adjust: AdjustSearchQuery = q => q.showTags("series")
+      FAPI.backfillFromConfig(collection, adjust).asFuture.futureValue.fold(
+        err => fail(s"expected backfill results, got $err", err.cause),
+        backfillContents => backfillContents.head.asInstanceOf[CuratedContent].content.tags.exists(_.id.contains("sustainable-business/series/finance")) should equal(true)
+      )
+    }
+  }
+
+  "backfill - from collection" - {
+    val collection = Collection(
+      "us/business",
+      "economy",
+      None,
+      Nil,
+      None,
+      Nil,
+      Some(new DateTime(1)),
+      Some("updatedBy"),
+      Some("updatedBy@example.com"),
+      CollectionConfig.empty
+    )
+
+    "inheriting from a non existing collection" in {
+      val child = collection.copy(
+        collectionConfig = CollectionConfig.empty.copy(
+          backfill = Some(Backfill(
+            `type` = "collection",
+            query = "this-collection-id-does-not-exist")))
+      )
+
+      FAPI.backfillFromConfig(child).asFuture.futureValue.fold(
+        err => err.message should equal("Collection config not found for this-collection-id-does-not-exist"),
+        backfillContents => fail(s"expecting an empty collection to fail")
+      )
+    }
+
+    "inheriting from an empty collection" in {
+      val child = collection.copy(
+        collectionConfig = CollectionConfig.empty.copy(
+          backfill = Some(Backfill(
+            `type` = "collection",
+            query = "au/commentisfree/feature-stories")))
+      )
+
+      FAPI.backfillFromConfig(child).asFuture.futureValue.fold(
+        err => fail(s"expected backfill results, got $err", err.cause),
+        backfillContents => backfillContents.size should be (0)
+      )
+    }
+
+    "inheriting from a valid collection" in {
+      val child = collection.copy(
+        collectionConfig = CollectionConfig.empty.copy(
+          backfill = Some(Backfill(
+            `type` = "collection",
+            query = "au/money/feature-stories")))
+      )
+
+      FAPI.backfillFromConfig(child).asFuture.futureValue.fold(
+        err => fail(s"expected backfill results, got $err", err.cause),
+        backfillContents => {
+          backfillContents.size should be (2)
+          backfillContents(0).asInstanceOf[CuratedContent].headline should equal("Life in North Korea – the early years")
+          backfillContents(1).asInstanceOf[CuratedContent].headline should equal("Strictly Come Dancing 2015 – Custom headline")
+        }
+      )
+    }
+
+    "inheriting from a valid collection but ignore parent backfill" in {
+      val child = collection.copy(
+        collectionConfig = CollectionConfig.empty.copy(
+          backfill = Some(Backfill(
+            `type` = "collection",
+            query = "uk/business/feature-stories")))
+      )
+
+      FAPI.backfillFromConfig(child).asFuture.futureValue.fold(
+        err => fail(s"expected backfill results, got $err", err.cause),
+        backfillContents => {
+          backfillContents.size should be (4)
+          backfillContents.head.asInstanceOf[CuratedContent].headline should equal("Our weather pages are now bringing you real sunshine | Chris Elliott: Open door")
+        }
+      )
+    }
+  }
+
+  "backfill - invalid configuration" - {
+    val collection = Collection(
+      "uk/business/regular-stories",
+      "economy",
+      None,
+      Nil,
+      None,
+      Nil,
+      Some(new DateTime(1)),
+      Some("updatedBy"),
+      Some("updatedBy@example.com"),
+      CollectionConfig.empty.copy(
+        backfill = Some(Backfill(
+          `type` = "invalid-backfill-configuration",
+          query = "any"
+        ))
+      )
+    )
+
+    "throws an error" in {
+      intercept[InvalidBackfillConfiguration] {
+        FAPI.backfillFromConfig(collection)
+      }
     }
   }
 

@@ -5,6 +5,7 @@ import com.gu.contentapi.client.model.v1.Content
 import com.gu.facia.api.contentapi.ContentApi.{AdjustItemQuery, AdjustSearchQuery}
 import com.gu.facia.api.contentapi.{ContentApi, LatestSnapsRequest}
 import com.gu.facia.api.models._
+import com.gu.facia.api.utils.BackfillResolver
 import com.gu.facia.client.ApiClient
 import com.gu.facia.client.models.TrailMetaData
 
@@ -156,6 +157,7 @@ object FAPI {
    * requirements by providing adjustment functions. The results then have their facia metadata
    * resolved using the collection information.
    */
+  @deprecated
   def backfill(backfillQuery: String, collection: Collection,
                adjustSearchQuery: AdjustSearchQuery = identity, adjustItemQuery: AdjustItemQuery = identity)
               (implicit capiClient: GuardianContentClient, faciaClient: ApiClient, ec: ExecutionContext): Response[List[CuratedContent]] = {
@@ -169,5 +171,18 @@ object FAPI {
     } yield {
       backfillContent.map(CuratedContent.fromTrailAndContent(_, TrailMetaData.empty, None, collection.collectionConfig))
     }
+  }
+
+  /**
+    * Fetches content for the configured backfill query. The query can be manipulated for different
+    * requirements by providing adjustment functions. The results then have their facia metadata
+    * resolved using the collection information.
+    */
+  def backfillFromConfig(collection: Collection,
+                         adjustSearchQuery: AdjustSearchQuery = identity, adjustItemQuery: AdjustItemQuery = identity)
+                        (implicit capiClient: GuardianContentClient, faciaClient: ApiClient, ec: ExecutionContext): Response[List[FaciaContent]] = {
+
+    val backfillRequest = BackfillResolver.resolveFromConfig(collection.collectionConfig)
+    BackfillResolver.backfill(backfillRequest, adjustSearchQuery, adjustItemQuery)
   }
 }
