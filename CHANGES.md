@@ -1,3 +1,7 @@
+#### 0.68
+
+  - Change the signature of `FAPI.backfillFromConfig` to `FAPI.backfillFromConfig(collectionConfig: CollectionConfig)`
+
 #### 0.67
 
   - Add `backfill` in collectiong config. This is meant to replace `apiQuery` in future releases.
