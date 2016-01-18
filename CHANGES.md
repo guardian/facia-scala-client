@@ -1,6 +1,6 @@
 #### 0.68
 
-  - Change the signature of `FAPI.backfillFromConfig` to `FAPI.backfillFromConfig(collectionConfig: CollectionConfig)`
+  - Change the signature of `FAPI.backfillFromConfig` from ~~`FAPI.backfillFromConfig(collection: Collection)`~~ to `FAPI.backfillFromConfig(collectionConfig: CollectionConfig)`
 
 #### 0.67
 
