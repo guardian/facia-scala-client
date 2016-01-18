@@ -235,14 +235,14 @@ class IntegrationTest extends FreeSpec with ShouldMatchers with ScalaFutures wit
     )
 
     "can get the backfill for a collection" in {
-      FAPI.backfillFromConfig(collection).asFuture.futureValue.fold(
+      FAPI.backfillFromConfig(collection.collectionConfig).asFuture.futureValue.fold(
         err => fail(s"expected backfill results, got $err", err.cause),
         backfillContents => backfillContents.size should be > 0
       )
     }
 
     "collection metadata is resolved on backfill content" in {
-      FAPI.backfillFromConfig(collection.copy(collectionConfig = collection.collectionConfig.copy(showSections = true))).asFuture.futureValue.fold(
+      FAPI.backfillFromConfig(collection.collectionConfig.copy(showSections = true)).asFuture.futureValue.fold(
         err => fail(s"expected backfill results, got $err", err.cause),
         backfillContents => backfillContents.head.asInstanceOf[CuratedContent].kicker.value shouldBe a [SectionKicker]
       )
@@ -250,7 +250,7 @@ class IntegrationTest extends FreeSpec with ShouldMatchers with ScalaFutures wit
 
     "item query can be adjusted" in {
       val adjust: AdjustItemQuery = q => q.showTags("all")
-      FAPI.backfillFromConfig(collection.copy(collectionConfig = collection.collectionConfig.copy(showSections = true)), adjustItemQuery = adjust).asFuture.futureValue.fold(
+      FAPI.backfillFromConfig(collection.collectionConfig.copy(showSections = true), adjustItemQuery = adjust).asFuture.futureValue.fold(
         err => fail(s"expected backfill results, got $err", err.cause),
         backfillContents => backfillContents.head.asInstanceOf[CuratedContent].content.tags.exists(_.id.contains("business")) should equal(true)
       )
@@ -261,7 +261,7 @@ class IntegrationTest extends FreeSpec with ShouldMatchers with ScalaFutures wit
         apiQuery = Some("search?tag=sustainable-business/series/finance&use-date=published"),
         showSections = true))
       val adjust: AdjustSearchQuery = q => q.showTags("series")
-      FAPI.backfillFromConfig(testCollection, adjustSearchQuery = adjust).asFuture.futureValue.fold(
+      FAPI.backfillFromConfig(testCollection.collectionConfig, adjustSearchQuery = adjust).asFuture.futureValue.fold(
         err => fail(s"expected backfill results, got $err", err.cause),
         backfillContents => backfillContents.head.asInstanceOf[CuratedContent].content.tags.exists(_.id.contains("sustainable-business/series/finance")) should equal(true)
       )
@@ -285,14 +285,14 @@ class IntegrationTest extends FreeSpec with ShouldMatchers with ScalaFutures wit
     )
 
     "can get the backfill for a collection" in {
-      FAPI.backfillFromConfig(collection).asFuture.futureValue.fold(
+      FAPI.backfillFromConfig(collection.collectionConfig).asFuture.futureValue.fold(
         err => fail(s"expected backfill results, got $err", err.cause),
         backfillContents => backfillContents.size should be > 0
       )
     }
 
     "collection metadata is resolved on backfill content" in {
-      FAPI.backfillFromConfig(collection.copy(collectionConfig = collection.collectionConfig.copy(showSections = true))).asFuture.futureValue.fold(
+      FAPI.backfillFromConfig(collection.collectionConfig.copy(showSections = true)).asFuture.futureValue.fold(
         err => fail(s"expected backfill results, got $err", err.cause),
         backfillContents => backfillContents.head.asInstanceOf[CuratedContent].kicker.value shouldBe a [SectionKicker]
       )
@@ -300,7 +300,7 @@ class IntegrationTest extends FreeSpec with ShouldMatchers with ScalaFutures wit
 
     "item query can be adjusted" in {
       val adjust: AdjustItemQuery = q => q.showTags("all")
-      FAPI.backfillFromConfig(collection.copy(collectionConfig = collection.collectionConfig.copy(showSections = true)), adjustItemQuery = adjust).asFuture.futureValue.fold(
+      FAPI.backfillFromConfig(collection.collectionConfig.copy(showSections = true), adjustItemQuery = adjust).asFuture.futureValue.fold(
         err => fail(s"expected backfill results, got $err", err.cause),
         backfillContents => backfillContents.head.asInstanceOf[CuratedContent].content.tags.exists(_.id.contains("business")) should equal(true)
       )
@@ -313,7 +313,7 @@ class IntegrationTest extends FreeSpec with ShouldMatchers with ScalaFutures wit
           query = "search?tag=sustainable-business/series/finance&use-date=published")),
         showSections = true))
       val adjust: AdjustSearchQuery = q => q.showTags("series")
-      FAPI.backfillFromConfig(testCollection, adjustSearchQuery = adjust).asFuture.futureValue.fold(
+      FAPI.backfillFromConfig(testCollection.collectionConfig, adjustSearchQuery = adjust).asFuture.futureValue.fold(
         err => fail(s"expected backfill results, got $err", err.cause),
         backfillContents => backfillContents.head.asInstanceOf[CuratedContent].content.tags.exists(_.id.contains("sustainable-business/series/finance")) should equal(true)
       )
@@ -335,7 +335,7 @@ class IntegrationTest extends FreeSpec with ShouldMatchers with ScalaFutures wit
     )
 
     "returns empty list" in {
-      FAPI.backfillFromConfig(collection).asFuture.futureValue.fold(
+      FAPI.backfillFromConfig(collection.collectionConfig).asFuture.futureValue.fold(
         err => fail(s"expected backfill results, got $err", err.cause),
         backfillContents => backfillContents.size should be (0)
       )
@@ -364,7 +364,7 @@ class IntegrationTest extends FreeSpec with ShouldMatchers with ScalaFutures wit
 
     "results taken from backfill object" in {
       val adjust: AdjustSearchQuery = q => q.showTags("series")
-      FAPI.backfillFromConfig(collection, adjust).asFuture.futureValue.fold(
+      FAPI.backfillFromConfig(collection.collectionConfig, adjust).asFuture.futureValue.fold(
         err => fail(s"expected backfill results, got $err", err.cause),
         backfillContents => backfillContents.head.asInstanceOf[CuratedContent].content.tags.exists(_.id.contains("sustainable-business/series/finance")) should equal(true)
       )
@@ -393,7 +393,7 @@ class IntegrationTest extends FreeSpec with ShouldMatchers with ScalaFutures wit
             query = "this-collection-id-does-not-exist")))
       )
 
-      FAPI.backfillFromConfig(child).asFuture.futureValue.fold(
+      FAPI.backfillFromConfig(child.collectionConfig).asFuture.futureValue.fold(
         err => err.message should equal("Collection config not found for this-collection-id-does-not-exist"),
         backfillContents => fail(s"expecting an empty collection to fail")
       )
@@ -407,7 +407,7 @@ class IntegrationTest extends FreeSpec with ShouldMatchers with ScalaFutures wit
             query = "au/commentisfree/feature-stories")))
       )
 
-      FAPI.backfillFromConfig(child).asFuture.futureValue.fold(
+      FAPI.backfillFromConfig(child.collectionConfig).asFuture.futureValue.fold(
         err => fail(s"expected backfill results, got $err", err.cause),
         backfillContents => backfillContents.size should be (0)
       )
@@ -421,7 +421,7 @@ class IntegrationTest extends FreeSpec with ShouldMatchers with ScalaFutures wit
             query = "au/money/feature-stories")))
       )
 
-      FAPI.backfillFromConfig(child).asFuture.futureValue.fold(
+      FAPI.backfillFromConfig(child.collectionConfig).asFuture.futureValue.fold(
         err => fail(s"expected backfill results, got $err", err.cause),
         backfillContents => {
           backfillContents.size should be (2)
@@ -439,7 +439,7 @@ class IntegrationTest extends FreeSpec with ShouldMatchers with ScalaFutures wit
             query = "uk/business/feature-stories")))
       )
 
-      FAPI.backfillFromConfig(child).asFuture.futureValue.fold(
+      FAPI.backfillFromConfig(child.collectionConfig).asFuture.futureValue.fold(
         err => fail(s"expected backfill results, got $err", err.cause),
         backfillContents => {
           backfillContents.size should be (4)
@@ -470,7 +470,7 @@ class IntegrationTest extends FreeSpec with ShouldMatchers with ScalaFutures wit
 
     "throws an error" in {
       intercept[InvalidBackfillConfiguration] {
-        FAPI.backfillFromConfig(collection)
+        FAPI.backfillFromConfig(collection.collectionConfig)
       }
     }
   }

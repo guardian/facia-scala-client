@@ -178,11 +178,11 @@ object FAPI {
     * requirements by providing adjustment functions. The results then have their facia metadata
     * resolved using the collection information.
     */
-  def backfillFromConfig(collection: Collection,
+  def backfillFromConfig(collectionConfig: CollectionConfig,
                          adjustSearchQuery: AdjustSearchQuery = identity, adjustItemQuery: AdjustItemQuery = identity)
                         (implicit capiClient: GuardianContentClient, faciaClient: ApiClient, ec: ExecutionContext): Response[List[FaciaContent]] = {
 
-    val backfillRequest = BackfillResolver.resolveFromConfig(collection.collectionConfig)
+    val backfillRequest = BackfillResolver.resolveFromConfig(collectionConfig)
     BackfillResolver.backfill(backfillRequest, adjustSearchQuery, adjustItemQuery)
   }
 }
