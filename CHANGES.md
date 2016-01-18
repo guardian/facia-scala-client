@@ -1,3 +1,8 @@
+#### 0.69
+
+  - Update aws to v1.10.47
+  - Update capi client to v.7.16
+
 #### 0.68
 
   - Change the signature of `FAPI.backfillFromConfig` from ~~`FAPI.backfillFromConfig(collection: Collection)`~~ to `FAPI.backfillFromConfig(collectionConfig: CollectionConfig)`
