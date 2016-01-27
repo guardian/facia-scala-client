@@ -1,3 +1,8 @@
+#### 0.70
+
+  - Update aws to v1.10.49
+  - Update capi client to v.7.22
+
 #### 0.69
 
   - Update aws to v1.10.47
