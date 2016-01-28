@@ -404,7 +404,7 @@ class IntegrationTest extends FreeSpec with ShouldMatchers with ScalaFutures wit
         collectionConfig = CollectionConfig.empty.copy(
           backfill = Some(Backfill(
             `type` = "collection",
-            query = "au/commentisfree/feature-stories")))
+            query = "15ce06c4-c082-4b3b-9971-88cc0ad15c87")))
       )
 
       FAPI.backfillFromConfig(child.collectionConfig).asFuture.futureValue.fold(
@@ -418,7 +418,7 @@ class IntegrationTest extends FreeSpec with ShouldMatchers with ScalaFutures wit
         collectionConfig = CollectionConfig.empty.copy(
           backfill = Some(Backfill(
             `type` = "collection",
-            query = "au/money/feature-stories")))
+            query = "db6b8256-f9d1-43d1-bf3f-1c245b094e57")))
       )
 
       FAPI.backfillFromConfig(child.collectionConfig).asFuture.futureValue.fold(
@@ -436,14 +436,14 @@ class IntegrationTest extends FreeSpec with ShouldMatchers with ScalaFutures wit
         collectionConfig = CollectionConfig.empty.copy(
           backfill = Some(Backfill(
             `type` = "collection",
-            query = "uk/business/feature-stories")))
+            query = "15d5ef63-dc8c-4ad0-a89e-bb414449cddc")))
       )
 
       FAPI.backfillFromConfig(child.collectionConfig).asFuture.futureValue.fold(
         err => fail(s"expected backfill results, got $err", err.cause),
         backfillContents => {
-          backfillContents.size should be (4)
-          backfillContents.head.asInstanceOf[CuratedContent].headline should equal("Our weather pages are now bringing you real sunshine | Chris Elliott: Open door")
+          backfillContents.size should be (1)
+          backfillContents.head.asInstanceOf[CuratedContent].headline should equal("Italy’s naked statues and other great diplomatic cover-ups")
         }
       )
     }
