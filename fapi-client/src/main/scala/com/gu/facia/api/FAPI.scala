@@ -7,7 +7,6 @@ import com.gu.facia.api.contentapi.{ContentApi, LatestSnapsRequest}
 import com.gu.facia.api.models._
 import com.gu.facia.api.utils.BackfillResolver
 import com.gu.facia.client.ApiClient
-import com.gu.facia.client.models.TrailMetaData
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -151,27 +150,6 @@ object FAPI {
       setOfContent <- getDraftContentForCollection(collection, adjustSearchQuery)
       snapContent <- getDraftLatestSnapContentForCollection(collection, adjustSnapItemQuery)}
     yield Collection.draftContent(collection, setOfContent, snapContent)}
-
-  /**
-   * Fetches content for the given backfill query. The query can be manipulated for different
-   * requirements by providing adjustment functions. The results then have their facia metadata
-   * resolved using the collection information.
-   */
-  @deprecated
-  def backfill(backfillQuery: String, collection: Collection,
-               adjustSearchQuery: AdjustSearchQuery = identity, adjustItemQuery: AdjustItemQuery = identity)
-              (implicit capiClient: GuardianContentClient, faciaClient: ApiClient, ec: ExecutionContext): Response[List[CuratedContent]] = {
-
-    val query = ContentApi.buildBackfillQuery(backfillQuery)
-      .right.map(adjustSearchQuery)
-      .left.map(adjustItemQuery)
-    val backfillResponse = ContentApi.getBackfillResponse(capiClient, query)
-    for {
-      backfillContent <- ContentApi.backfillContentFromResponse(backfillResponse)
-    } yield {
-      backfillContent.map(CuratedContent.fromTrailAndContent(_, TrailMetaData.empty, None, collection.collectionConfig))
-    }
-  }
 
   /**
     * Fetches content for the configured backfill query. The query can be manipulated for different

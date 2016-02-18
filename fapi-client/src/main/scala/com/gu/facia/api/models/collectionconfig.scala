@@ -6,7 +6,6 @@ case class Groups(groups: List[String])
 
 case class CollectionConfig(
     displayName: Option[String],
-    apiQuery: Option[String],
     backfill: Option[Backfill],
     collectionType: String,
     href: Option[String],
@@ -27,7 +26,6 @@ object CollectionConfig {
 
   val empty = CollectionConfig(
     displayName = None,
-    apiQuery = None,
     backfill = None,
     collectionType = DefaultCollectionType,
     href = None,
@@ -46,7 +44,6 @@ object CollectionConfig {
   def fromCollectionJson(collectionJson: CollectionConfigJson): CollectionConfig =
     CollectionConfig(
       collectionJson.displayName,
-      collectionJson.apiQuery,
       collectionJson.backfill,
       collectionJson.collectionType getOrElse DefaultCollectionType,
       collectionJson.href,
