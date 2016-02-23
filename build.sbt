@@ -1,4 +1,3 @@
-
 import sbtrelease._
 import ReleaseStateTransformations._
 import Dependencies._
@@ -7,13 +6,13 @@ organization := "com.gu"
 
 name := "facia-api-client"
 
-scalaVersion := "2.11.4"
+scalaVersion := "2.11.7"
 
-scalaVersion in ThisBuild := "2.11.4"
+scalaVersion in ThisBuild := "2.11.7"
 
 description := "Scala client for The Guardian's Facia JSON API"
 
-val sonatypeReleaseSettings = releaseSettings ++ sonatypeSettings ++ Seq(
+val sonatypeReleaseSettings = Seq(
   licenses := Seq("Apache V2" -> url("http://www.apache.org/licenses/LICENSE-2.0.html")),
   scmInfo := Some(ScmInfo(
     url("https://github.com/guardian/facia-scala-client"),
@@ -39,8 +38,8 @@ val sonatypeReleaseSettings = releaseSettings ++ sonatypeSettings ++ Seq(
         </developer>
       </developers>
     ),
-  ReleaseKeys.crossBuild := true,
-  ReleaseKeys.releaseProcess := Seq[ReleaseStep](
+  releaseCrossBuild := true,
+  releaseProcess := Seq[ReleaseStep](
     checkSnapshotDependencies,
     inquireVersions,
     runClean,
@@ -58,10 +57,7 @@ val sonatypeReleaseSettings = releaseSettings ++ sonatypeSettings ++ Seq(
     ),
     setNextVersion,
     commitNextVersion,
-    ReleaseStep(
-      action = state => Project.extract(state).runTask(SonatypeKeys.sonatypeReleaseAll, state)._1,
-      enableCrossBuild = false
-    ),
+    releaseStepCommand("sonatypeReleaseAll"),
     pushChanges
   )
 )
@@ -69,7 +65,7 @@ val sonatypeReleaseSettings = releaseSettings ++ sonatypeSettings ++ Seq(
 lazy val root = (project in file("."))
   .aggregate(faciaJson, fapiClient)
   .settings(publishArtifact := false)
-  .settings(crossScalaVersions := Seq("2.10.4", "2.11.4"))
+  .settings(crossScalaVersions := Seq("2.10.4", "2.11.7"))
   .settings(sonatypeReleaseSettings: _*)
 
 lazy val faciaJson = project.in(file("facia-json"))
