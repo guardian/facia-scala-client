@@ -1,7 +1,6 @@
 package com.gu.facia.api.models
 
-import com.gu.facia.client.models.CollectionConfigJson
-import com.gu.facia.client.models.Backfill
+import com.gu.facia.client.models.{Backfill, CollectionConfigJson}
 
 case class Groups(groups: List[String])
 
