@@ -1,3 +1,13 @@
+#### 1.0.0
+
+  __Non backward compatible release__
+
+  - Stop cross compiling, the client is now only available on scala 2.11
+  - Remove `backfill` deprecated in 0.67
+  - Update to play 2.4.6
+  - Update aws to v1.10.58
+  - Update capi client to v.7.29
+
 #### 0.70
 
   - Update aws to v1.10.49
