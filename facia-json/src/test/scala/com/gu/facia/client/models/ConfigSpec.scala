@@ -13,8 +13,10 @@ class ConfigSpec extends Specification with ResourcesHelper {
         (collection.displayName must beSome.which(_ == "Most popular")) and
           (collection.`type` must beSome.which(_ == "news/most-popular")) and
           (collection.uneditable must beSome.which(identity)) and
-          (collection.apiQuery must beSome.which(_ ==
-            "uk/commentisfree?show-most-viewed=true&show-editors-picks=false&hide-recent-content=true"))
+          (collection.backfill must beSome.which({ backfill =>
+            (backfill.`type` == "capi") and
+            (backfill.query == "uk/commentisfree?show-most-viewed=true&show-editors-picks=false&hide-recent-content=true")
+          }))
       })
 
       config.fronts.get("lifeandstyle/home-and-garden") must beSome.which({ front =>

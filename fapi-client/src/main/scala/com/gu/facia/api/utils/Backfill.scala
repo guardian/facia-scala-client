@@ -23,11 +23,7 @@ object BackfillResolver {
       case Some(Backfill("capi", query: String)) => CapiBackfill(query, collectionConfig)
       case Some(Backfill("collection", query: String)) => CollectionBackfill(query)
       case Some(Backfill(backFillType, _)) => throw new InvalidBackfillConfiguration(s"Invalid backfill type $backFillType")
-      // TODO once the deprecated `apiQuery` is removed, the case None should simply return EmptyBackfill
-      case None => collectionConfig.apiQuery match {
-        case Some(query: String) => CapiBackfill(query, collectionConfig)
-        case None => EmptyBackfill
-      }
+      case None => EmptyBackfill
     }
   }
 
