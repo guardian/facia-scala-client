@@ -38,7 +38,6 @@ val sonatypeReleaseSettings = Seq(
         </developer>
       </developers>
     ),
-  releaseCrossBuild := true,
   releaseProcess := Seq[ReleaseStep](
     checkSnapshotDependencies,
     inquireVersions,
@@ -52,8 +51,7 @@ val sonatypeReleaseSettings = Seq(
         val extracted = Project.extract(state)
         val ref = extracted.get(Keys.thisProjectRef)
         extracted.runAggregated(PgpKeys.publishSigned in Global in ref, state)
-      },
-      enableCrossBuild = true
+      }
     ),
     setNextVersion,
     commitNextVersion,
@@ -65,7 +63,6 @@ val sonatypeReleaseSettings = Seq(
 lazy val root = (project in file("."))
   .aggregate(faciaJson, fapiClient)
   .settings(publishArtifact := false)
-  .settings(crossScalaVersions := Seq("2.10.4", "2.11.7"))
   .settings(sonatypeReleaseSettings: _*)
 
 lazy val faciaJson = project.in(file("facia-json"))
