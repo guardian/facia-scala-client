@@ -18,17 +18,19 @@ case object Special extends Metadata
 
 case object Breaking extends Metadata
 
+
 object Metadata {
 
-  val tags = List("Canonical", "Breaking", "Special")
+  val tags: Map[String, Metadata] = Map(("Canonical", Canonical), ("Special", Special), ("Breaking", Breaking))
 
   implicit object MetadataFormat extends Format[Metadata] {
     def reads(json: JsValue) = {
       (json \ "type").transform[JsString](Reads.JsStringReads) match {
-        case JsSuccess(JsString("Canonical"), _) => JsSuccess(Canonical)
-        case JsSuccess(JsString("Special"), _) => JsSuccess(Special)
-        case JsSuccess(JsString("Breaking"), _) => JsSuccess(Breaking)
-        case _ => JsError("Could not convert CollectionTag")
+        case JsSuccess(JsString(string), _) => tags.get(string) match {
+          case Some(result) => JsSuccess(result)
+          case _ => JsError("Could not convert CollectionTag: string is of unknown type")
+        }
+        case _ => JsError("Could not convert CollectionTag: type is not a string")
       }
     }
 
