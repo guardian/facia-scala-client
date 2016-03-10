@@ -1,6 +1,6 @@
 package com.gu.facia.client.models
 
-import play.api.libs.json.Json
+import play.api.libs.json._
 
 object Backfill {
   implicit val jsonFormat = Json.format[Backfill]
@@ -9,6 +9,37 @@ case class Backfill(
   `type`: String,
   query: String
 )
+
+sealed trait Metadata
+
+case object Canonical extends Metadata
+
+case object Special extends Metadata
+
+case object Breaking extends Metadata
+
+object Metadata {
+
+  val tags = List("Canonical", "Breaking", "Special")
+
+  implicit object MetadataFormat extends Format[Metadata] {
+    def reads(json: JsValue) = {
+      (json \ "type").transform[JsString](Reads.JsStringReads) match {
+        case JsSuccess(JsString("Canonical"), _) => JsSuccess(Canonical)
+        case JsSuccess(JsString("Special"), _) => JsSuccess(Special)
+        case JsSuccess(JsString("Breaking"), _) => JsSuccess(Breaking)
+        case _ => JsError("Could not convert CollectionTag")
+      }
+    }
+
+    def writes(cardStyle: Metadata) = cardStyle match {
+      case Canonical => JsObject(Seq("type" -> JsString("Canonical")))
+      case Special => JsObject(Seq("type" -> JsString("Special")))
+      case Breaking => JsObject(Seq("type" -> JsString("Breaking")))
+    }
+  }
+}
+
 
 object CollectionConfigJson {
   implicit val jsonFormat = Json.format[CollectionConfigJson]
@@ -19,6 +50,7 @@ object CollectionConfigJson {
     displayName: Option[String] = None,
     apiQuery: Option[String] = None,
     backfill: Option[Backfill] = None,
+    metadata: Option[List[Metadata]] = None,
     `type`: Option[String] = None,
     href: Option[String] = None,
     description: Option[String] = None,
@@ -37,6 +69,7 @@ object CollectionConfigJson {
     displayName,
     apiQuery,
     backfill,
+    metadata,
     `type`,
     href,
     description,
@@ -57,6 +90,7 @@ case class CollectionConfigJson(
   displayName: Option[String],
   apiQuery: Option[String],
   backfill: Option[Backfill],
+  metadata: Option[List[Metadata]],
   `type`: Option[String],
   href: Option[String],
   description: Option[String],
