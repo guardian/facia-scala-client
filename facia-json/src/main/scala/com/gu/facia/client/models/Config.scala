@@ -1,6 +1,6 @@
 package com.gu.facia.client.models
 
-import play.api.libs.json.Json
+import play.api.libs.json._
 
 object Backfill {
   implicit val jsonFormat = Json.format[Backfill]
@@ -10,6 +10,39 @@ case class Backfill(
   query: String
 )
 
+sealed trait Metadata
+
+case object Canonical extends Metadata
+
+case object Special extends Metadata
+
+case object Breaking extends Metadata
+
+
+object Metadata {
+
+  val tags: Map[String, Metadata] = Map(("Canonical", Canonical), ("Special", Special), ("Breaking", Breaking))
+
+  implicit object MetadataFormat extends Format[Metadata] {
+    def reads(json: JsValue) = {
+      (json \ "type").transform[JsString](Reads.JsStringReads) match {
+        case JsSuccess(JsString(string), _) => tags.get(string) match {
+          case Some(result) => JsSuccess(result)
+          case _ => JsError("Could not convert CollectionTag: string is of unknown type")
+        }
+        case _ => JsError("Could not convert CollectionTag: type is not a string")
+      }
+    }
+
+    def writes(cardStyle: Metadata) = cardStyle match {
+      case Canonical => JsObject(Seq("type" -> JsString("Canonical")))
+      case Special => JsObject(Seq("type" -> JsString("Special")))
+      case Breaking => JsObject(Seq("type" -> JsString("Breaking")))
+    }
+  }
+}
+
+
 object CollectionConfigJson {
   implicit val jsonFormat = Json.format[CollectionConfigJson]
 
@@ -18,6 +51,7 @@ object CollectionConfigJson {
   def withDefaults(
     displayName: Option[String] = None,
     backfill: Option[Backfill] = None,
+    metadata: Option[List[Metadata]] = None,
     `type`: Option[String] = None,
     href: Option[String] = None,
     description: Option[String] = None,
@@ -35,6 +69,7 @@ object CollectionConfigJson {
     = CollectionConfigJson(
     displayName,
     backfill,
+    metadata,
     `type`,
     href,
     description,
@@ -54,6 +89,7 @@ object CollectionConfigJson {
 case class CollectionConfigJson(
   displayName: Option[String],
   backfill: Option[Backfill],
+  metadata: Option[List[Metadata]],
   `type`: Option[String],
   href: Option[String],
   description: Option[String],
