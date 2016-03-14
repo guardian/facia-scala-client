@@ -22,7 +22,7 @@ object BackfillResolver {
     collectionConfig.backfill match {
       case Some(Backfill("capi", query: String)) => CapiBackfill(query, collectionConfig)
       case Some(Backfill("collection", query: String)) => CollectionBackfill(query)
-      case Some(Backfill(backFillType, _)) => throw new InvalidBackfillConfiguration(s"Invalid backfill type $backFillType")
+      case Some(Backfill(backFillType, _)) => EmptyBackfill
       case None => EmptyBackfill
     }
   }
