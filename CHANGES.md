@@ -1,3 +1,13 @@
+#### 1.2.0
+
+  - Returns an empty list of backfill collections if collection backfill id is invalid
+  - Return an empty backfill if backfill type is invalid
+  - Returns the api query of a parent backfill collections
+
+#### 1.1.0
+
+  - Add metadata to collections
+
 #### 1.0.0
 
   __Non backward compatible release__
@@ -35,7 +45,7 @@
 #### 0.65
 
   - Add This Is The NHS Tag to Special Report
-  
+
 #### 0.64
 
   - Upgrade capi client to v7.13
