@@ -303,7 +303,7 @@ class IntegrationTest extends FreeSpec with ShouldMatchers with ScalaFutures wit
       )
     }
 
-    "inheriting from a valid collection but ignore parent backfill" in {
+    "inheriting from a valid collection but don't ignore parent backfill if capi" in {
       val child = collection.copy(
         collectionConfig = CollectionConfig.empty.copy(
           backfill = Some(Backfill(
@@ -314,7 +314,7 @@ class IntegrationTest extends FreeSpec with ShouldMatchers with ScalaFutures wit
       FAPI.backfillFromConfig(child.collectionConfig).asFuture.futureValue.fold(
         err => fail(s"expected backfill results, got $err", err.cause),
         backfillContents => {
-          backfillContents.size should be (1)
+          backfillContents.size should be > 1
           backfillContents.head.asInstanceOf[CuratedContent].headline should equal("Italy’s naked statues and other great diplomatic cover-ups")
         }
       )

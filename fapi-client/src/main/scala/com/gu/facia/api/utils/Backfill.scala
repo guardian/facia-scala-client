@@ -40,16 +40,23 @@ object BackfillResolver {
         } yield {
           backfillContent.map(CuratedContent.fromTrailAndContent(_, TrailMetaData.empty, None, collectionConfig))
         }
-      case CollectionBackfill(parentCollectionId) => {
-       val collectionBackfillResult =
-         for {
-          collection <- FAPI.getCollection(parentCollectionId)
-          curatedCollection <- FAPI.liveCollectionContentWithSnaps(collection, adjustSearchQuery, adjustItemQuery)
-        } yield curatedCollection
+      case CollectionBackfill(parentCollectionId) =>
+        val collectionBackfillResult =
+          for {
+            parentCollection <- FAPI.getCollection(parentCollectionId)
+            curatedCollection <- FAPI.liveCollectionContentWithSnaps(parentCollection, adjustSearchQuery, adjustItemQuery)
+            nestedBackfill <- parentCollection.collectionConfig.backfill match {
+              case Some(Backfill("capi", query)) =>
+                backfill(CapiBackfill(query, parentCollection.collectionConfig))
+              case _ => backfill(EmptyBackfill)
+            }
+          } yield {
+            (curatedCollection ++ nestedBackfill).distinct
+          }
 
-        collectionBackfillResult recover {
-          err => List()
-        }
-      }
+          collectionBackfillResult recover {
+            err => List()
+          }
+
       case EmptyBackfill => Response.Right(Nil)}}
 }
