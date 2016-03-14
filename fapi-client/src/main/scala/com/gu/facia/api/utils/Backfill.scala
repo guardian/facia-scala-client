@@ -22,7 +22,7 @@ object BackfillResolver {
     collectionConfig.backfill match {
       case Some(Backfill("capi", query: String)) => CapiBackfill(query, collectionConfig)
       case Some(Backfill("collection", query: String)) => CollectionBackfill(query)
-      case Some(Backfill(backFillType, _)) => throw new InvalidBackfillConfiguration(s"Invalid backfill type $backFillType")
+      case Some(Backfill(backFillType, _)) => EmptyBackfill
       case None => EmptyBackfill
     }
   }
@@ -40,10 +40,16 @@ object BackfillResolver {
         } yield {
           backfillContent.map(CuratedContent.fromTrailAndContent(_, TrailMetaData.empty, None, collectionConfig))
         }
-      case CollectionBackfill(parentCollectionId) =>
-        for {
+      case CollectionBackfill(parentCollectionId) => {
+       val collectionBackfillResult =
+         for {
           collection <- FAPI.getCollection(parentCollectionId)
           curatedCollection <- FAPI.liveCollectionContentWithSnaps(collection, adjustSearchQuery, adjustItemQuery)
         } yield curatedCollection
+
+        collectionBackfillResult recover {
+          err => List()
+        }
+      }
       case EmptyBackfill => Response.Right(Nil)}}
 }

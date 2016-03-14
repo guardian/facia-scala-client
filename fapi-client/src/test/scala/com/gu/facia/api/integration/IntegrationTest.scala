@@ -267,7 +267,7 @@ class IntegrationTest extends FreeSpec with ShouldMatchers with ScalaFutures wit
 
       FAPI.backfillFromConfig(child.collectionConfig).asFuture.futureValue.fold(
         err => err.message should equal("Collection config not found for this-collection-id-does-not-exist"),
-        backfillContents => fail(s"expecting an empty collection to fail")
+        backfillContents => backfillContents.size should be (0)
       )
     }
 
@@ -340,10 +340,11 @@ class IntegrationTest extends FreeSpec with ShouldMatchers with ScalaFutures wit
       )
     )
 
-    "throws an error" in {
-      intercept[InvalidBackfillConfiguration] {
-        FAPI.backfillFromConfig(collection.collectionConfig)
-      }
+    "returns an empty list" in {
+      FAPI.backfillFromConfig(collection.collectionConfig).asFuture.futureValue.fold(
+        err => fail(s"expected backfill results, got $err", err.cause),
+        backfillContents => backfillContents.size should be (0)
+      )
     }
   }
 
