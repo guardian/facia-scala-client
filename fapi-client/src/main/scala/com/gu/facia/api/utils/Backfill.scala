@@ -40,10 +40,16 @@ object BackfillResolver {
         } yield {
           backfillContent.map(CuratedContent.fromTrailAndContent(_, TrailMetaData.empty, None, collectionConfig))
         }
-      case CollectionBackfill(parentCollectionId) =>
-        for {
+      case CollectionBackfill(parentCollectionId) => {
+       val collectionBackfillResult =
+         for {
           collection <- FAPI.getCollection(parentCollectionId)
           curatedCollection <- FAPI.liveCollectionContentWithSnaps(collection, adjustSearchQuery, adjustItemQuery)
         } yield curatedCollection
+
+        collectionBackfillResult recover {
+          err => List()
+        }
+      }
       case EmptyBackfill => Response.Right(Nil)}}
 }
