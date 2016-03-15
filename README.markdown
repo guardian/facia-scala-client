@@ -57,7 +57,8 @@ Returns the collection with the given ID.
 
 ## Running the tests
 
-To run the tests you need to pass a content api key to the library via your environment.
- 
+To run the tests you need to pass a content api key and facia client target url to the library via your environment.
+
     export CONTENT_API_KEY="<api-key>"
+    export FACIA_CLIENT_TARGET_URL="<target-url>"
     sbt test
