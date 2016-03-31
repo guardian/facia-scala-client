@@ -3,6 +3,8 @@ package com.gu.facia.api.utils
 import com.gu.contentapi.client.model.v1.Content
 import com.gu.facia.api.utils.ContentApiUtils._
 import com.gu.facia.client.models.{TrailMetaData, MetaDataCommonFields}
+import java.security.MessageDigest
+import java.math.BigInteger
 
 object CardStyle {
   val specialReport = "special-report"
@@ -19,14 +21,34 @@ object CardStyle {
   val external = "external"
   val news = "news"
 
+  private val salt = "a-public-salt3W#ywHav!p+?r+W2$E6="
+  private val digest = MessageDigest.getInstance("MD5")
+
+  private def md5(input: String): Option[String] = {
+    try {
+      digest.update(input.getBytes(), 0, input.length)
+
+      Option(new BigInteger(1, digest.digest()).toString(16))
+    } catch {
+      case _: Throwable => None
+    }
+  }
+
   def apply(content: Content, trailMetaData: MetaDataCommonFields): CardStyle = {
     val href = trailMetaData.href
+
+    val hashedTagIds: Seq[String] = content.tags.flatMap { id =>
+      md5(salt + id)
+    }
+
     if (trailMetaData.snapType == Some("link") && href.exists(ExternalLinks.external)) {
       ExternalLink
-    } else if (content.tags.exists(_.id == "news/series/hsbc-files")
-      || content.tags.exists(_.id == "us-news/series/counted-us-police-killings")
-      || content.tags.exists(_.id == "australia-news/series/healthcare-in-detention")
-      || content.tags.exists(_.id == "society/series/this-is-the-nhs")) {
+    } else if (hashedTagIds.contains("344ce3383665e23496bedd160675780c") // news/series/hsbc-files
+      || hashedTagIds.contains("d36fa10d66bf5ff85894829d3829d9e1")
+      || hashedTagIds.contains("ae4bd9f302c420d242a8da91a47a9ddd")
+      || hashedTagIds.contains("9d89e70b7d99e776ffb741c0b9ab8854")      // us-news/series/counted-us-police-killings
+      || hashedTagIds.contains("7037b49de72275eb72b73a111da31849")      // australia-news/series/healthcare-in-detention
+      || hashedTagIds.contains("efb4e63b9a3a926314724b45764a5a5a") ) {  // society/series/this-is-the-nhs
       SpecialReport
     } else if (content.isLiveBlog) {
       if (content.isLive) {
