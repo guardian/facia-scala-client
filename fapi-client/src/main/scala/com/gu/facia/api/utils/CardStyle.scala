@@ -37,8 +37,8 @@ object CardStyle {
   def apply(content: Content, trailMetaData: MetaDataCommonFields): CardStyle = {
     val href = trailMetaData.href
 
-    val hashedTagIds: Seq[String] = content.tags.flatMap { id =>
-      md5(salt + id)
+    val hashedTagIds: Seq[String] = content.tags.flatMap { tag =>
+      md5(salt + tag.id)
     }
 
     if (trailMetaData.snapType == Some("link") && href.exists(ExternalLinks.external)) {
