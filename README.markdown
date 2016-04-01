@@ -1,4 +1,4 @@
-Facia Scala Client
+Facia Scala Client [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.gu/fapi-client_2.11/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.gu/fapi-client_2.11)
 ==================
 
 Facia's Scala client is split into two parts.
@@ -13,7 +13,7 @@ easily-used types.
 
 Add the following line to your [SBT build file] (http://www.scala-sbt.org/0.13.5/docs/Getting-Started/Basic-Def.html):
 
-    libraryDependencies += "com.gu" %% "fapi-client" % "0.65"
+    libraryDependencies += "com.gu" %% "fapi-client" % "1.4.0"
 
 ### Using the library
 
