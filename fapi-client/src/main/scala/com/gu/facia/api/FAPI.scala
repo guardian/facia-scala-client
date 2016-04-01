@@ -7,6 +7,7 @@ import com.gu.facia.api.contentapi.{ContentApi, LatestSnapsRequest}
 import com.gu.facia.api.models._
 import com.gu.facia.api.utils.BackfillResolver
 import com.gu.facia.client.ApiClient
+import com.gu.facia.client.models.CollectionConfigJson
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -61,6 +62,26 @@ object FAPI {
       (collectionIds, collectionsJsons, collectionConfigs).zipped.toList.map { case (collectionId, collectionJson, collectionConfig) =>
         Collection.fromCollectionJsonConfigAndContent(collectionId, collectionJson, collectionConfig)
       }
+    }
+  }
+
+  def getFrontCollectionWithMetadataId(frontId: String, tagName: String)
+                                     (implicit capiClient: GuardianContentClient, faciaClient: ApiClient, ec: ExecutionContext): Response[Option[String]] = {
+
+    for {
+      configJson <- Response.Async.Right(faciaClient.config)
+      frontJson <- Response.fromOption(configJson.fronts.get(frontId), NotFound(s"No front found for $frontId"))
+      collectionIds = frontJson.collections
+      collectionConfigJsons <- Response.traverse(
+        collectionIds.map(id => Response.fromOption(configJson.collections.get(id), NotFound(s"Collection config not found for $id")))
+      )
+    } yield {
+      collectionConfigJsons.zip(collectionIds).find { case (configJson, _)  =>
+        configJson.metadata match {
+          case Some(metadata) => metadata.exists(_.toString == tagName)
+          case None => false
+        }
+      }.map { case (_, id) => id }
     }
   }
 
