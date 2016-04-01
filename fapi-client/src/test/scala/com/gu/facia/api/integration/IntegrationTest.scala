@@ -243,6 +243,103 @@ class IntegrationTest extends FreeSpec with ShouldMatchers with ScalaFutures wit
     }
   }
 
+  "backfill - from front" - {
+    val collection = Collection(
+      "us/business",
+      "economy",
+      None,
+      Nil,
+      None,
+      Nil,
+      Some(new DateTime(1)),
+      Some("updatedBy"),
+      Some("updatedBy@example.com"),
+      CollectionConfig.empty
+    )
+
+    "inheriting from a non existing front" in {
+      val child = collection.copy(
+        collectionConfig = CollectionConfig.empty.copy(
+          backfill = Some(Backfill(
+            `type` = "front-metadata",
+            query = "this-front-id-does-not-exist|Canonical")))
+      )
+
+      FAPI.backfillFromConfig(child.collectionConfig).asFuture.futureValue.fold(
+        err => err.message should equal("No front found for this-front-id-does-not-exist"),
+        backfillContents => backfillContents.size should be (0)
+      )
+    }
+
+    "inheriting from a front that does not have tagged collection" in {
+      val child = collection.copy(
+        collectionConfig = CollectionConfig.empty.copy(
+          backfill = Some(Backfill(
+            `type` = "front-metadata",
+            query = "front-backfill-no-meta-test|Canonical")))
+      )
+
+      FAPI.backfillFromConfig(child.collectionConfig).asFuture.futureValue.fold(
+        err => fail(s"expected backfill results, got $err", err.cause),
+        backfillContents => backfillContents.size should be(0)
+      )
+    }
+
+    "inheriting from a front with valid tag with curated content" in {
+      val child = collection.copy(
+        collectionConfig = CollectionConfig.empty.copy(
+          backfill = Some(Backfill(
+            `type` = "front-metadata",
+            query = "front-backfill-test|Canonical")))
+      )
+
+      FAPI.backfillFromConfig(child.collectionConfig).asFuture.futureValue.fold(
+        err => fail(s"expected backfill results, got $err", err.cause),
+        backfillContents => {
+          backfillContents.size should be(1)
+          backfillContents(0).asInstanceOf[CuratedContent].headline should equal("April Fools’ Day 2016: best " +
+            "jokes from around the world")
+        }
+      )
+    }
+
+    "inheriting from a front with valid tag with capi backfill" in {
+      val child = collection.copy(
+        collectionConfig = CollectionConfig.empty.copy(
+          backfill = Some(Backfill(
+            `type` = "front-metadata",
+            query = "front-backfill-test|Special")))
+      )
+
+      FAPI.backfillFromConfig(child.collectionConfig).asFuture.futureValue.fold(
+        err => fail(s"expected backfill results, got $err", err.cause),
+        backfillContents => {
+          backfillContents.size should be > 1
+          backfillContents(0).asInstanceOf[CuratedContent].headline should equal("Nine ways to support the rights of " +
+            "indigenous people")
+        }
+      )
+    }
+
+    "inheriting from a front with valid tag with collection backfill" in {
+      val child = collection.copy(
+        collectionConfig = CollectionConfig.empty.copy(
+          backfill = Some(Backfill(
+            `type` = "front-metadata",
+            query = "front-backfill-test|Breaking")))
+      )
+
+      FAPI.backfillFromConfig(child.collectionConfig).asFuture.futureValue.fold(
+        err => fail(s"expected backfill results, got $err", err.cause),
+        backfillContents => {
+          backfillContents.size should be(1)
+          backfillContents(0).asInstanceOf[CuratedContent].headline should equal("What student life is really like at" +
+            " a Spanish university")
+        }
+      )
+    }
+  }
+
   "backfill - from collection" - {
     val collection = Collection(
       "us/business",
