@@ -1,3 +1,7 @@
+#### 1.3.0
+
+  - Use hashed strings to check for special report card style
+
 #### 1.2.0
 
   - Returns an empty list of backfill collections if collection backfill id is invalid
