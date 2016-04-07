@@ -1,8 +1,7 @@
 package com.gu.facia.api.contentapi
 
 import com.gu.contentapi.client.GuardianContentClient
-import com.gu.contentapi.client.model.{ItemResponse, SearchResponse}
-import com.gu.contentapi.client.model.v1.Content
+import com.gu.contentapi.client.model.v1.{ItemResponse, SearchResponse, Content}
 import com.gu.facia.api.Response
 import lib.ExecutionContext
 import org.scalatest.concurrent.ScalaFutures
@@ -100,6 +99,7 @@ class ContentApiTest extends FreeSpec
 
   "backfillContentFromResponse" - {
     val contents = List(mock[Content], mock[Content])
+    val someContents = Some(contents)
 
     "will extract backfill content from search response" in {
       val searchResponse = mock[SearchResponse]
@@ -113,9 +113,9 @@ class ContentApiTest extends FreeSpec
 
     "will extract backfill items from item response" in {
       val itemResponse = mock[ItemResponse]
-      when(itemResponse.results) thenReturn contents
-      when(itemResponse.editorsPicks) thenReturn Nil
-      when(itemResponse.mostViewed) thenReturn Nil
+      when(itemResponse.results) thenReturn someContents
+      when(itemResponse.editorsPicks) thenReturn Some(Nil)
+      when(itemResponse.mostViewed) thenReturn Some(Nil)
       val response: Either[Response[ItemResponse], Response[SearchResponse]] = Left(Response.Right(itemResponse))
       ContentApi.backfillContentFromResponse(response).asFuture.futureValue.fold(
         err => fail(s"expected contents result, got error $err"),
@@ -125,9 +125,9 @@ class ContentApiTest extends FreeSpec
 
     "includes most viewed in item query backfill" in {
       val itemResponse = mock[ItemResponse]
-      when(itemResponse.results) thenReturn Nil
-      when(itemResponse.editorsPicks) thenReturn Nil
-      when(itemResponse.mostViewed) thenReturn contents
+      when(itemResponse.results) thenReturn Some(Nil)
+      when(itemResponse.editorsPicks) thenReturn Some(Nil)
+      when(itemResponse.mostViewed) thenReturn someContents
       val response: Either[Response[ItemResponse], Response[SearchResponse]] = Left(Response.Right(itemResponse))
       ContentApi.backfillContentFromResponse(response).asFuture.futureValue.fold(
         err => fail(s"expected contents result, got error $err"),
