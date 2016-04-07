@@ -1,3 +1,7 @@
+#### 1.4.0
+
+  - Update capi client to v.8.2
+
 #### 1.3.0
 
   - Use hashed strings to check for special report card style
