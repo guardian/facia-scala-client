@@ -3,8 +3,8 @@ package com.gu.facia.api.contentapi
 import java.net.URI
 
 import com.gu.contentapi.client.{GuardianContentClient, ContentApiClientLogic}
-import com.gu.contentapi.client.model.v1._
-import com.gu.contentapi.client.model._
+import com.gu.contentapi.client.model.v1.{SearchResponse, ItemResponse, Content}
+import com.gu.contentapi.client.model.{SearchQuery, ItemQuery}
 import com.gu.facia.api.{UrlConstructError, CapiError, Response}
 
 import scala.concurrent.{Future, ExecutionContext}
@@ -87,11 +87,11 @@ object ContentApi {
                                  (implicit ec: ExecutionContext): Response[List[Content]] = {
     response.fold(
       _.map { itemResponse =>
-          itemResponse.mostViewed ++ itemResponse.results
-        },
+        (itemResponse.mostViewed.getOrElse(Nil) ++ itemResponse.results.getOrElse(Nil)).toList
+      },
       _.map { searchResponse =>
-          searchResponse.results
-        }
+        searchResponse.results.toList
+      }
     )
   }
 
@@ -111,7 +111,7 @@ object ContentApi {
     Response.Async.Right(
       Future.traverse(latestSnapsRequest.snaps) { case (id, uri) =>
         capiClient.getResponse(itemQueryFromSnapUri(uri))
-          .map(_.results.headOption).map(id -> _)
+          .map(_.results.getOrElse(Nil).headOption).map(id -> _)
       }.map(_.toMap))
   }
 }
