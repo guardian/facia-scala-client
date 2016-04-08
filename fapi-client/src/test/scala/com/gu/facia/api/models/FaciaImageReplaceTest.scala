@@ -3,7 +3,7 @@ package com.gu.facia.api.models
 import com.gu.facia.api.utils.ResolvedMetaData
 import com.gu.facia.client.models.TrailMetaData
 import org.scalatest.{Matchers, FlatSpec}
-import play.api.libs.json.{JsString, JsBoolean}
+import play.api.libs.json.{JsObject, JsString, JsBoolean}
 
 class FaciaImageReplaceTest extends FlatSpec with Matchers {
   val trailMetaDataWithoutImageReplace =
@@ -20,6 +20,21 @@ class FaciaImageReplaceTest extends FlatSpec with Matchers {
       "imageSrcWidth" -> JsString("theImageSrcWidth"),
       "imageSrcHeight" -> JsString("theImageSrcHeight")))
 
+  val imageSourceAsset = JsObject(List(
+    "src" -> JsString("theImageSrc"),
+    "origin" -> JsString("theImageSrcOrigin")
+  ))
+
+  val trailMetaDataWithImageSource =
+    TrailMetaData(Map(
+      "imageReplace" -> JsBoolean(value = true),
+      "imageSrc" -> JsString("theImageSrc"),
+      "imageSrcWidth" -> JsString("theImageSrcWidth"),
+      "imageSrcHeight" -> JsString("theImageSrcHeight"),
+      "imageSource" -> imageSourceAsset
+    ))
+
+
   "Image" should "give an Image of type default when it is not set" in {
     val resolvedMetaData =  ResolvedMetaData.fromTrailMetaData(trailMetaDataWithoutImageReplace)
     FaciaImage.getFaciaImage(None, trailMetaDataWithoutImageReplace, resolvedMetaData) should be (None)
@@ -28,5 +43,10 @@ class FaciaImageReplaceTest extends FlatSpec with Matchers {
   it should "give back an Image when true" in {
     val resolvedMetaData =  ResolvedMetaData.fromTrailMetaData(trailMetaDataWithImageReplace)
     FaciaImage.getFaciaImage(None, trailMetaDataWithImageReplace, resolvedMetaData) should be (Some(Replace("theImageSrc", "theImageSrcWidth", "theImageSrcHeight")))
+  }
+
+  it should "give back an ImageSource when imageSource present in metadata" in {
+    val resolvedMetaData =  ResolvedMetaData.fromTrailMetaData(trailMetaDataWithImageSource)
+    FaciaImage.getFaciaImage(None, trailMetaDataWithImageSource, resolvedMetaData) should be (Some(ImageReplace("theImageSrc")))
   }
 }

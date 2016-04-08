@@ -9,6 +9,11 @@ object SlideshowAsset {
   implicit val slideshowAssetFormat = Json.format[SlideshowAsset]
 }
 
+case class ImageSourceAsset(src: String, origin: String)
+object ImageSourceAsset {
+  implicit val imageSourceAssetFormat = Json.format[ImageSourceAsset]
+}
+
 sealed trait MetaDataCommonFields {
   val json: Map[String, JsValue]
 
@@ -44,6 +49,7 @@ sealed trait MetaDataCommonFields {
   lazy val slideshow: Option[List[SlideshowAsset]] =
     json.get("slideshow").flatMap(_.asOpt[List[SlideshowAsset]]).filter(_.nonEmpty)
   lazy val showLivePlayable: Option[Boolean] = json.get("showLivePlayable").flatMap(_.asOpt[Boolean])
+  lazy val imageSource: Option[ImageSourceAsset] = json.get("imageSource").flatMap(_.asOpt[ImageSourceAsset])
   lazy val hideShowMore: Option[Boolean] = json.get("hideShowMore").flatMap(_.asOpt[Boolean])
 }
 
