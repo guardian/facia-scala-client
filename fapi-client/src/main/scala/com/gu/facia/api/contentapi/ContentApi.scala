@@ -2,7 +2,7 @@ package com.gu.facia.api.contentapi
 
 import java.net.URI
 
-import com.gu.contentapi.client.{GuardianContentClient, ContentApiClientLogic}
+import com.gu.contentapi.client.ContentApiClientLogic
 import com.gu.contentapi.client.model.v1.{SearchResponse, ItemResponse, Content}
 import com.gu.contentapi.client.model.{SearchQuery, ItemQuery}
 import com.gu.facia.api.{UrlConstructError, CapiError, Response}
@@ -103,7 +103,7 @@ object ContentApi {
     }
   }
 
-  def latestContentFromLatestSnaps(capiClient: GuardianContentClient, latestSnapsRequest: LatestSnapsRequest, adjustItemQuery: AdjustItemQuery)
+  def latestContentFromLatestSnaps(capiClient: ContentApiClientLogic, latestSnapsRequest: LatestSnapsRequest, adjustItemQuery: AdjustItemQuery)
                                   (implicit ec: ExecutionContext): Response[Map[String, Option[Content]]] = {
     def itemQueryFromSnapUri(uri: String): ItemQuery =
       adjustItemQuery(capiClient.item(uri).pageSize(1).showFields("internalPageCode"))

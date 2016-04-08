@@ -1,3 +1,7 @@
+#### 1.5.1
+
+  - Changed FAPI object methods with implicit content api parameter to use ContentApiClientLogic instead of GuardianContentClient
+
 #### 1.5.0
 
   - Update capi client to v.8.2
