@@ -1,6 +1,6 @@
 package com.gu.facia.api
 
-import com.gu.contentapi.client.GuardianContentClient
+import com.gu.contentapi.client.ContentApiClientLogic
 import com.gu.contentapi.client.model.v1.Content
 import com.gu.facia.api.contentapi.ContentApi.{AdjustItemQuery, AdjustSearchQuery}
 import com.gu.facia.api.contentapi.{ContentApi, LatestSnapsRequest}
@@ -12,13 +12,13 @@ import scala.concurrent.{ExecutionContext, Future}
 
 
 object FAPI {
-  def getFronts()(implicit capiClient: GuardianContentClient, faciaClient: ApiClient, ec: ExecutionContext): Response[Set[Front]] = {
+  def getFronts()(implicit capiClient: ContentApiClientLogic, faciaClient: ApiClient, ec: ExecutionContext): Response[Set[Front]] = {
     for {
       config <- Response.Async.Right(faciaClient.config)
     } yield Front.frontsFromConfig(config)
   }
 
-  def frontForPath(path: String)(implicit capiClient: GuardianContentClient, faciaClient: ApiClient, ec: ExecutionContext): Response[Front] = {
+  def frontForPath(path: String)(implicit capiClient: ContentApiClientLogic, faciaClient: ApiClient, ec: ExecutionContext): Response[Front] = {
     for {
       fronts <- getFronts
       front <- Response.fromOption(fronts.find(_.id == path), NotFound(s"Not front found for $path"))
@@ -30,7 +30,7 @@ object FAPI {
    * and the collection's own config JSON.
    */
   def getCollection(collectionId: String)
-                   (implicit capiClient: GuardianContentClient, faciaClient: ApiClient, ec: ExecutionContext): Response[Collection] = {
+                   (implicit capiClient: ContentApiClientLogic, faciaClient: ApiClient, ec: ExecutionContext): Response[Collection] = {
     val fCollectionJson = faciaClient.collection(collectionId)
     val fConfigJson = faciaClient.config
     for {
@@ -47,7 +47,7 @@ object FAPI {
    * Fetch all the collections for a front in one go
    */
   def frontCollections(frontId: String)
-                      (implicit capiClient: GuardianContentClient, faciaClient: ApiClient, ec: ExecutionContext): Response[List[Collection]] = {
+                      (implicit capiClient: ContentApiClientLogic, faciaClient: ApiClient, ec: ExecutionContext): Response[List[Collection]] = {
     for {
       configJson <- Response.Async.Right(faciaClient.config)
       frontJson <- Response.fromOption(configJson.fronts.get(frontId), NotFound(s"No front found for $frontId"))
@@ -65,7 +65,7 @@ object FAPI {
   }
 
   private def getLiveContentForCollection(collection: Collection, adjustSearchQuery: AdjustSearchQuery = identity)
-                                   (implicit capiClient: GuardianContentClient, ec: ExecutionContext): Response[Set[Content]] = {
+                                   (implicit capiClient: ContentApiClientLogic, ec: ExecutionContext): Response[Set[Content]] = {
     val itemIdsForRequest = Collection.liveIdsWithoutSnaps(collection)
     val supportingIdsForRequest = Collection.liveSupportingIdsWithoutSnaps(collection)
     val allItemIdsForRequest = itemIdsForRequest ::: supportingIdsForRequest
@@ -77,7 +77,7 @@ object FAPI {
   }
 
   private def getDraftContentForCollection(collection: Collection, adjustSearchQuery: AdjustSearchQuery = identity)
-                                   (implicit capiClient: GuardianContentClient, ec: ExecutionContext): Response[Set[Content]] = {
+                                   (implicit capiClient: ContentApiClientLogic, ec: ExecutionContext): Response[Set[Content]] = {
     val itemIdsForRequest =
       Collection.draftIdsWithoutSnaps(collection)
         .getOrElse(Collection.liveIdsWithoutSnaps(collection))
@@ -93,7 +93,7 @@ object FAPI {
   }
 
   private def getLiveLatestSnapContentForCollection(collection: Collection, adjustItemQuery: AdjustItemQuery)
-                      (implicit capiClient: GuardianContentClient, ec: ExecutionContext) = {
+                      (implicit capiClient: ContentApiClientLogic, ec: ExecutionContext) = {
     val latestSnapsRequest: LatestSnapsRequest = Collection.liveLatestSnapsRequestFor(collection)
     val latestSupportingSnaps: LatestSnapsRequest = Collection.liveSupportingSnaps(collection)
     val allSnaps = latestSnapsRequest.join(latestSupportingSnaps)
@@ -101,7 +101,7 @@ object FAPI {
       yield snapContent}
 
   private def getDraftLatestSnapContentForCollection(collection: Collection, adjustItemQuery: AdjustItemQuery)
-                      (implicit capiClient: GuardianContentClient, ec: ExecutionContext) = {
+                      (implicit capiClient: ContentApiClientLogic, ec: ExecutionContext) = {
     val latestSnapsRequest: LatestSnapsRequest =
       Collection.draftLatestSnapsRequestFor(collection)
         .getOrElse(Collection.liveLatestSnapsRequestFor(collection))
@@ -113,7 +113,7 @@ object FAPI {
       yield snapContent}
 
   def getTreatsForCollection(collection: Collection, adjustSearchQuery: AdjustSearchQuery = identity, adjustItemQuery: AdjustItemQuery = identity)
-                            (implicit capiClient: GuardianContentClient, ec: ExecutionContext) = {
+                            (implicit capiClient: ContentApiClientLogic, ec: ExecutionContext) = {
     val (treatIds, treatsSnapsRequest) = Collection.treatsRequestFor(collection)
       for {
         hydrateQueries <- ContentApi.buildHydrateQueries(capiClient, treatIds, adjustSearchQuery)
@@ -124,28 +124,28 @@ object FAPI {
   }
 
   def liveCollectionContentWithoutSnaps(collection: Collection, adjustSearchQuery: AdjustSearchQuery = identity)
-                                (implicit capiClient: GuardianContentClient, ec: ExecutionContext): Response[List[FaciaContent]] = {
+                                (implicit capiClient: ContentApiClientLogic, ec: ExecutionContext): Response[List[FaciaContent]] = {
     val collectionWithoutSnaps = Collection.withoutSnaps(collection)
     for(setOfContent <- getLiveContentForCollection(collection, adjustSearchQuery))
       yield Collection.liveContent(collectionWithoutSnaps, setOfContent)
   }
 
   def liveCollectionContentWithSnaps(collection: Collection, adjustSearchQuery: AdjustSearchQuery = identity, adjustSnapItemQuery: AdjustItemQuery = identity)
-                                   (implicit capiClient: GuardianContentClient, ec: ExecutionContext): Response[List[FaciaContent]] = {
+                                   (implicit capiClient: ContentApiClientLogic, ec: ExecutionContext): Response[List[FaciaContent]] = {
     for {
       setOfContent <- getLiveContentForCollection(collection, adjustSearchQuery)
       snapContent <- getLiveLatestSnapContentForCollection(collection, adjustSnapItemQuery)}
     yield Collection.liveContent(collection, setOfContent, snapContent)}
 
   def draftCollectionContentWithoutSnaps(collection: Collection, adjustSearchQuery: AdjustSearchQuery = identity)
-                                (implicit capiClient: GuardianContentClient, ec: ExecutionContext): Response[List[FaciaContent]] = {
+                                (implicit capiClient: ContentApiClientLogic, ec: ExecutionContext): Response[List[FaciaContent]] = {
     val collectionWithoutSnaps = Collection.withoutSnaps(collection)
     for(setOfContent <- getDraftContentForCollection(collection, adjustSearchQuery))
       yield Collection.draftContent(collectionWithoutSnaps, setOfContent)
   }
 
   def draftCollectionContentWithSnaps(collection: Collection, adjustSearchQuery: AdjustSearchQuery = identity, adjustSnapItemQuery: AdjustItemQuery = identity)
-                                   (implicit capiClient: GuardianContentClient, ec: ExecutionContext): Response[List[FaciaContent]] = {
+                                   (implicit capiClient: ContentApiClientLogic, ec: ExecutionContext): Response[List[FaciaContent]] = {
     for {
       setOfContent <- getDraftContentForCollection(collection, adjustSearchQuery)
       snapContent <- getDraftLatestSnapContentForCollection(collection, adjustSnapItemQuery)}
@@ -158,7 +158,7 @@ object FAPI {
     */
   def backfillFromConfig(collectionConfig: CollectionConfig,
                          adjustSearchQuery: AdjustSearchQuery = identity, adjustItemQuery: AdjustItemQuery = identity)
-                        (implicit capiClient: GuardianContentClient, faciaClient: ApiClient, ec: ExecutionContext): Response[List[FaciaContent]] = {
+                        (implicit capiClient: ContentApiClientLogic, faciaClient: ApiClient, ec: ExecutionContext): Response[List[FaciaContent]] = {
 
     val backfillRequest = BackfillResolver.resolveFromConfig(collectionConfig)
     BackfillResolver.backfill(backfillRequest, adjustSearchQuery, adjustItemQuery)

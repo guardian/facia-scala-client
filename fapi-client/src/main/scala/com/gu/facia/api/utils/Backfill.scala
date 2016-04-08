@@ -1,6 +1,6 @@
 package com.gu.facia.api.utils
 
-import com.gu.contentapi.client.GuardianContentClient
+import com.gu.contentapi.client.ContentApiClientLogic
 import com.gu.facia.api.contentapi.ContentApi
 import com.gu.facia.api.contentapi.ContentApi._
 import com.gu.facia.api.models.{CollectionConfig, CuratedContent, FaciaContent}
@@ -28,7 +28,7 @@ object BackfillResolver {
   }
 
   def backfill(resolver: BackfillResolver, adjustSearchQuery: AdjustSearchQuery = identity, adjustItemQuery: AdjustItemQuery = identity)
-              (implicit capiClient: GuardianContentClient, faciaClient: ApiClient, ec: ExecutionContext): Response[List[FaciaContent]] = {
+              (implicit capiClient: ContentApiClientLogic, faciaClient: ApiClient, ec: ExecutionContext): Response[List[FaciaContent]] = {
     resolver match {
       case CapiBackfill(query, collectionConfig) =>
         val capiQuery = ContentApi.buildBackfillQuery(query)
