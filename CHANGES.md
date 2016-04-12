@@ -1,3 +1,7 @@
+#### 1.5.2
+
+  - Add homan-square tag to special report card style
+
 #### 1.5.1
 
   - Changed FAPI object methods with implicit content api parameter to use ContentApiClientLogic instead of GuardianContentClient
