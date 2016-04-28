@@ -9,6 +9,7 @@
 #### 1.5.0
 
   - Update capi client to v.8.2
+  - Added ImageReplace to FaciaImage
 
 #### 1.3.0
 
