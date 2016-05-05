@@ -13,7 +13,7 @@ easily-used types.
 
 Add the following line to your [SBT build file] (http://www.scala-sbt.org/0.13.5/docs/Getting-Started/Basic-Def.html):
 
-    libraryDependencies += "com.gu" %% "fapi-client" % "1.5.2"
+    libraryDependencies += "com.gu" %% "fapi-client" % "1.5.3"
 
 ### Using the library
 
