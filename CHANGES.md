@@ -1,3 +1,7 @@
+#### 1.5.3
+
+  - Add sbt project that compiles against play-json 2.5.x
+  
 #### 1.5.2
 
   - Add homan-square tag to special report card style
