@@ -61,7 +61,7 @@ val sonatypeReleaseSettings = Seq(
 )
 
 lazy val root = (project in file("."))
-  .aggregate(faciaJson, fapiClient)
+  .aggregate(faciaJson, faciaJson_play25, fapiClient, fapiClient_play25)
   .settings(publishArtifact := false)
   .settings(sonatypeReleaseSettings: _*)
 
@@ -84,6 +84,26 @@ lazy val faciaJson = project.in(file("facia-json"))
   )
   .settings(sonatypeReleaseSettings: _*)
 
+lazy val faciaJson_play25 = project.in(file("facia-json-play25"))
+  .settings(sonatypeReleaseSettings: _*)
+  .settings(
+    organization := "com.gu",
+    name := "facia-json-play25",
+    sourceDirectory := baseDirectory.value / "../facia-json/src",
+    resolvers ++= Seq(
+      Resolver.file("Local", file( Path.userHome.absolutePath + "/.ivy2/local"))(Resolver.ivyStylePatterns),
+      "Typesafe Repository" at "http://repo.typesafe.com/typesafe/releases/"
+    ),
+    libraryDependencies ++= Seq(
+      awsSdk,
+      commonsIo,
+      specs2,
+      playJson25
+    ),
+    publishArtifact := true
+  )
+  .settings(sonatypeReleaseSettings: _*)
+
 lazy val fapiClient = project.in(file("fapi-client"))
   .settings(sonatypeReleaseSettings: _*)
   .settings(
@@ -101,3 +121,22 @@ lazy val fapiClient = project.in(file("fapi-client"))
     publishArtifact := true
   )
   .dependsOn(faciaJson)
+
+lazy val fapiClient_play25 = project.in(file("fapi-client-play25"))
+  .settings(sonatypeReleaseSettings: _*)
+  .settings(
+    organization := "com.gu",
+    name := "fapi-client-play25",
+    sourceDirectory := baseDirectory.value / "../fapi-client/src",
+    resolvers ++= Seq(
+      Resolver.file("Local", file( Path.userHome.absolutePath + "/.ivy2/local"))(Resolver.ivyStylePatterns),
+      "Typesafe Repository" at "http://repo.typesafe.com/typesafe/releases/"
+    ),
+    libraryDependencies ++= Seq(
+      contentApi,
+      scalaTest,
+      mockito
+    ),
+    publishArtifact := true
+  )
+  .dependsOn(faciaJson_play25)
