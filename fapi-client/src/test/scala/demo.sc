@@ -1,15 +1,27 @@
-import com.amazonaws.auth.BasicAWSCredentials
+import com.amazonaws.auth.profile.ProfileCredentialsProvider
+import com.amazonaws.auth.{AWSCredentialsProviderChain, EnvironmentVariableCredentialsProvider, SystemPropertiesCredentialsProvider}
 import com.amazonaws.services.s3.AmazonS3Client
 import com.gu.contentapi.client.GuardianContentClient
 import com.gu.facia.api.FAPI
 import com.gu.facia.client.{AmazonSdkS3Client, ApiClient}
-import concurrent.duration._
 
 import scala.concurrent.Await
+import scala.concurrent.duration._
 
 // demo config
-implicit val capiClient = new GuardianContentClient(apiKey = "API_KEY")
-private val amazonS3Client = new AmazonS3Client(new BasicAWSCredentials("ACCESS_KEY", "SECRET_KEY"))
+implicit val capiClient = {
+  val apiKey: String = scala.sys.env.getOrElse("CONTENT_API_KEY", "")
+  new GuardianContentClient(apiKey)
+}
+private val amazonS3Client = {
+  val awsProfileName = scala.sys.env.get("AWS_PROFILE_NAME")
+  val credentialsProvider = new AWSCredentialsProviderChain(
+    new EnvironmentVariableCredentialsProvider(),
+    new SystemPropertiesCredentialsProvider(),
+    new ProfileCredentialsProvider(awsProfileName.getOrElse(""))
+  )
+  new AmazonS3Client(credentialsProvider)
+}
 implicit val apiClient: ApiClient = ApiClient("aws-frontend-store", "DEV", AmazonSdkS3Client(amazonS3Client))
 implicit val executionContext = scala.concurrent.ExecutionContext.global
 
