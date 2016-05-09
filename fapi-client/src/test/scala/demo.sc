@@ -9,8 +9,8 @@ import scala.concurrent.Await
 import scala.concurrent.duration._
 
 // demo config
-val apiKey = "CONTENT_API_KEY"
-val awsProfileName = Some("AWS_PROFILE_NAME")
+val apiKey = "INSERT_CONTENT_API_KEY_HERE"
+val awsProfileName = "cmsFronts"
 
 implicit val capiClient =  new GuardianContentClient(apiKey)
 implicit val apiClient: ApiClient = {
@@ -18,9 +18,7 @@ implicit val apiClient: ApiClient = {
     val credentialsProvider = new AWSCredentialsProviderChain(
       new EnvironmentVariableCredentialsProvider(),
       new SystemPropertiesCredentialsProvider(),
-      awsProfileName map {
-        new ProfileCredentialsProvider(_)
-      } getOrElse new ProfileCredentialsProvider()
+      new ProfileCredentialsProvider(awsProfileName)
     )
     new AmazonS3Client(credentialsProvider)
   }
