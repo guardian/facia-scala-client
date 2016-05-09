@@ -18,10 +18,14 @@ case object Special extends Metadata
 
 case object Breaking extends Metadata
 
+case object Branded extends Metadata
+
 
 object Metadata {
 
-  val tags: Map[String, Metadata] = Map(("Canonical", Canonical), ("Special", Special), ("Breaking", Breaking))
+  val tags: Map[String, Metadata] = Map(
+    ("Canonical", Canonical), ("Special", Special), ("Breaking", Breaking), ("Branded", Branded)
+  )
 
   implicit object MetadataFormat extends Format[Metadata] {
     def reads(json: JsValue) = {
@@ -38,6 +42,7 @@ object Metadata {
       case Canonical => JsObject(Seq("type" -> JsString("Canonical")))
       case Special => JsObject(Seq("type" -> JsString("Special")))
       case Breaking => JsObject(Seq("type" -> JsString("Breaking")))
+      case Branded => JsObject(Seq("type" -> JsString("Branded")))
     }
   }
 }
