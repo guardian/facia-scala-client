@@ -11,20 +11,23 @@ private case class TestContentApiClient(override val apiKey: String, override va
 
 trait IntegrationTestConfig extends ExecutionContext {
 
+  private val apiKey: String = scala.sys.env.getOrElse("CONTENT_API_KEY", "")
+  private val targetUrl: Option[String] = scala.sys.env.get("FACIA_CLIENT_TARGET_URL")
+  private val awsProfileName: Option[String] = scala.sys.env.get("AWS_PROFILE_NAME")
+
   implicit val capiClient: GuardianContentClient = {
-    val apiKey: String = scala.sys.env.getOrElse("CONTENT_API_KEY", "")
-    val targetUrl: Option[String] = scala.sys.env.get("FACIA_CLIENT_TARGET_URL")
     targetUrl.fold(ifEmpty = new GuardianContentClient(apiKey)) { targetUrl =>
       new TestContentApiClient(apiKey, targetUrl)
     }
   }
 
   implicit val apiClient: ApiClient = {
-    val awsProfileName: Option[String] = scala.sys.env.get("AWS_PROFILE_NAME")
     val credentialsProvider = new AWSCredentialsProviderChain(
       new EnvironmentVariableCredentialsProvider(),
       new SystemPropertiesCredentialsProvider(),
-      new ProfileCredentialsProvider(awsProfileName.getOrElse(""))
+      awsProfileName map {
+        new ProfileCredentialsProvider(_)
+      } getOrElse new ProfileCredentialsProvider()
     )
     val amazonS3Client = new AmazonS3Client(credentialsProvider)
     ApiClient("aws-frontend-store", "DEV", AmazonSdkS3Client(amazonS3Client))
