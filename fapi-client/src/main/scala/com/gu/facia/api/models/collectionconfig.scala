@@ -1,6 +1,6 @@
 package com.gu.facia.api.models
 
-import com.gu.facia.client.models.{Backfill, CollectionConfigJson}
+import com.gu.facia.client.models.{Metadata, Backfill, CollectionConfigJson}
 
 case class Groups(groups: List[String])
 
@@ -10,6 +10,7 @@ case class CollectionConfig(
     collectionType: String,
     href: Option[String],
     description: Option[String],
+    metadata: Option[List[Metadata]],
     groups: Option[Groups],
     uneditable: Boolean,
     showTags: Boolean,
@@ -30,6 +31,7 @@ object CollectionConfig {
     collectionType = DefaultCollectionType,
     href = None,
     description = None,
+    metadata = None,
     groups = None,
     uneditable = false,
     showTags = false,
@@ -48,6 +50,7 @@ object CollectionConfig {
       collectionJson.collectionType getOrElse DefaultCollectionType,
       collectionJson.href,
       collectionJson.description,
+      collectionJson.metadata,
       collectionJson.groups.map(Groups),
       collectionJson.uneditable.exists(identity),
       collectionJson.showTags.exists(identity),
