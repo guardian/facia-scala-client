@@ -1,12 +1,13 @@
 package com.gu.facia.api.models
 
-import com.gu.facia.client.models.{Backfill, CollectionConfigJson}
+import com.gu.facia.client.models.{Backfill, CollectionConfigJson, Metadata}
 
 case class Groups(groups: List[String])
 
 case class CollectionConfig(
     displayName: Option[String],
     backfill: Option[Backfill],
+    metadata: Option[List[Metadata]],
     collectionType: String,
     href: Option[String],
     description: Option[String],
@@ -27,6 +28,7 @@ object CollectionConfig {
   val empty = CollectionConfig(
     displayName = None,
     backfill = None,
+    metadata = None,
     collectionType = DefaultCollectionType,
     href = None,
     description = None,
@@ -45,6 +47,7 @@ object CollectionConfig {
     CollectionConfig(
       collectionJson.displayName,
       collectionJson.backfill,
+      collectionJson.metadata,
       collectionJson.collectionType getOrElse DefaultCollectionType,
       collectionJson.href,
       collectionJson.description,

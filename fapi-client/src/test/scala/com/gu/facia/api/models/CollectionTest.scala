@@ -1,13 +1,13 @@
 package com.gu.facia.api.models
 
-import com.gu.contentapi.client.model.v1.{ContentFields, ContentType, Tag, Content}
+import com.gu.contentapi.client.model.v1.{Content, ContentFields, ContentType}
 import com.gu.facia.api.utils._
-import com.gu.facia.client.models.{CollectionConfigJson, CollectionJson, Trail, TrailMetaData}
+import com.gu.facia.client.models.{Branded, CollectionConfigJson, CollectionJson, Trail, TrailMetaData}
 import org.joda.time.DateTime
 import org.mockito.Mockito._
-import org.scalatest.{OneInstancePerTest, FreeSpec, ShouldMatchers}
 import org.scalatest.mock.MockitoSugar
-import play.api.libs.json.{Json, JsArray, JsString}
+import org.scalatest.{FreeSpec, OneInstancePerTest, ShouldMatchers}
+import play.api.libs.json.{JsArray, JsString, Json}
 
 class CollectionTest extends FreeSpec with ShouldMatchers with MockitoSugar with OneInstancePerTest {
   val trailMetadata = spy(TrailMetaData.empty)
@@ -48,7 +48,10 @@ class CollectionTest extends FreeSpec with ShouldMatchers with MockitoSugar with
   )
 
   val contents = Set(content)
-  val collectionConfig = CollectionConfig.fromCollectionJson(CollectionConfigJson.withDefaults(href = Some("collectionConfigHref")))
+  val collectionConfig = CollectionConfig.fromCollectionJson(CollectionConfigJson.withDefaults(
+    metadata = Some(List(Branded)),
+    href = Some("collectionConfigHref")
+  ))
 
   def makeLatestSnap(
     id: String = "id",
@@ -111,8 +114,10 @@ class CollectionTest extends FreeSpec with ShouldMatchers with MockitoSugar with
 
 
   "fromCollectionJson" - {
+
+    val collection = Collection.fromCollectionJsonConfigAndContent("id", Some(collectionJson), collectionConfig)
+
     "creates a Facia collection from the collection JSON and provided config" in {
-      val collection = Collection.fromCollectionJsonConfigAndContent("id", Some(collectionJson), collectionConfig)
       collection should have(
         'id("id"),
         'draft(None),
@@ -125,6 +130,12 @@ class CollectionTest extends FreeSpec with ShouldMatchers with MockitoSugar with
 
       collection.collectionConfig should have (
         'href(Some("collectionConfigHref"))
+      )
+    }
+
+    "creates metadata from provided config JSON" in {
+      collection.collectionConfig should have(
+        'metadata (Some(List(Branded)))
       )
     }
   }
