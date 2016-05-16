@@ -1,3 +1,7 @@
+#### 1.6.0
+
+  - Support the marking of collections to indicate that they should have commercial branding.
+  
 #### 1.5.3
 
   - Add sbt project that compiles against play-json 2.5.x
