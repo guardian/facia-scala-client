@@ -78,7 +78,8 @@ lazy val faciaJson = project.in(file("facia-json"))
       awsSdk,
       commonsIo,
       specs2,
-      playJson
+      playJson,
+      scalaLogging
     ),
     publishArtifact := true
   )
@@ -98,7 +99,8 @@ lazy val faciaJson_play25 = project.in(file("facia-json-play25"))
       awsSdk,
       commonsIo,
       specs2,
-      playJson25
+      playJson25,
+      scalaLogging
     ),
     publishArtifact := true
   )
