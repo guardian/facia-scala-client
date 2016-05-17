@@ -1,3 +1,7 @@
+#### 1.6.1
+
+  - Expose branding metadata in CollectionConfig.
+  
 #### 1.6.0
 
   - Support the marking of collections to indicate that they should have commercial branding.
