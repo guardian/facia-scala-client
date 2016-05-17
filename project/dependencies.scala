@@ -9,4 +9,5 @@ object Dependencies {
   val playJson25 = "com.typesafe.play" %% "play-json" % "2.5.1"
   val scalaTest = "org.scalatest" %% "scalatest" % "2.2.5" % "test"
   val specs2 = "org.specs2" %% "specs2" % "3.7" % "test"
+  val scalaLogging = "com.typesafe.scala-logging" %% "scala-logging" % "3.4.0"
 }
