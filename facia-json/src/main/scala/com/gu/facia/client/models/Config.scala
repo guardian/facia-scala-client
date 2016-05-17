@@ -1,5 +1,6 @@
 package com.gu.facia.client.models
 
+import com.typesafe.scalalogging.StrictLogging
 import play.api.libs.json._
 
 object Backfill {
@@ -23,7 +24,7 @@ case object Branded extends Metadata
 case object UnknownMetadata extends Metadata
 
 
-object Metadata {
+object Metadata extends StrictLogging {
 
   val tags: Map[String, Metadata] = Map(
     ("Canonical", Canonical), ("Special", Special), ("Breaking", Breaking), ("Branded", Branded)
@@ -35,6 +36,7 @@ object Metadata {
         case JsSuccess(JsString(string), _) => tags.get(string) match {
           case Some(result) => JsSuccess(result)
           case None =>
+            logger.warn("Could not convert CollectionTag: string is of unknown type")
             JsSuccess(UnknownMetadata)
         }
         case _ => JsError("Could not convert CollectionTag: type is not a string")
