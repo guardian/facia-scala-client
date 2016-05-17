@@ -20,6 +20,8 @@ case object Breaking extends Metadata
 
 case object Branded extends Metadata
 
+case object UnknownMetadata extends Metadata
+
 
 object Metadata {
 
@@ -32,7 +34,8 @@ object Metadata {
       (json \ "type").transform[JsString](Reads.JsStringReads) match {
         case JsSuccess(JsString(string), _) => tags.get(string) match {
           case Some(result) => JsSuccess(result)
-          case _ => JsError("Could not convert CollectionTag: string is of unknown type")
+          case None =>
+            JsSuccess(UnknownMetadata)
         }
         case _ => JsError("Could not convert CollectionTag: type is not a string")
       }
