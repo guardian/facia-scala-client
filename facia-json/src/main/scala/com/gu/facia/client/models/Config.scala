@@ -37,7 +37,7 @@ object Metadata extends StrictLogging {
         case JsSuccess(JsString(string), _) => tags.get(string) match {
           case Some(result) => JsSuccess(result)
           case None =>
-            logger.warn("Could not convert CollectionTag: string is of unknown type")
+            logger.warn(s"Could not convert CollectionTag: $string is of unknown type")
             JsSuccess(UnknownMetadata)
         }
         case _ => JsError("Could not convert CollectionTag: type is not a string")
