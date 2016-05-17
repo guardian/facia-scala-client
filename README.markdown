@@ -62,3 +62,14 @@ To run the tests you need to pass a content api key and facia client target url 
     export CONTENT_API_KEY="<api-key>"
     export FACIA_CLIENT_TARGET_URL="<target-url>"
     sbt test
+
+## Building a release
+
+[This document](https://docs.google.com/document/d/1M_MiE8qntdDn97QIRnIUci5wdVQ8_defCqpeAwoKY8g/edit) is a good source of information about releasing Guardian artefacts generally.
+
+To release a new version of the client:  
+
+1. Ensure you have a GPG key listed on a public key server.
+0. Ensure you are registered on Sonatype for Guardian projects.
+0. Run the [sbt release](https://github.com/sbt/sbt-release) task.
+0. When the release process has completed successfully, update the [change log](CHANGES.md).
