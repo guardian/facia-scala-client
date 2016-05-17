@@ -1,5 +1,6 @@
 package com.gu.facia.client.models
 
+import com.sun.corba.se.spi.legacy.interceptor.UnknownType
 import com.typesafe.scalalogging.StrictLogging
 import play.api.libs.json._
 
@@ -48,6 +49,7 @@ object Metadata extends StrictLogging {
       case Special => JsObject(Seq("type" -> JsString("Special")))
       case Breaking => JsObject(Seq("type" -> JsString("Breaking")))
       case Branded => JsObject(Seq("type" -> JsString("Branded")))
+      case UnknownMetadata => JsObject(Seq("type" -> JsString("UnknownMetadata")))
     }
   }
 }
