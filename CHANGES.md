@@ -1,7 +1,7 @@
 #### 1.6.2
 
   - Add `UnknownMetadata` to `Metadata` ADT to handle cases of new future types in old libraries
-  - Add logging via `logback` and `scala-logging`
+  - Add logging via `SLF4J` and `scala-logging`
 
 #### 1.6.1
 
