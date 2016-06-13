@@ -6,9 +6,9 @@ organization := "com.gu"
 
 name := "facia-api-client"
 
-scalaVersion := "2.11.7"
+scalaVersion := "2.11.8"
 
-scalaVersion in ThisBuild := "2.11.7"
+scalaVersion in ThisBuild := "2.11.8"
 
 description := "Scala client for The Guardian's Facia JSON API"
 
