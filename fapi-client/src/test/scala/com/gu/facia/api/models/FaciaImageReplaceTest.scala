@@ -21,8 +21,10 @@ class FaciaImageReplaceTest extends FlatSpec with Matchers {
       "imageSrcHeight" -> JsString("theImageSrcHeight")))
 
   val imageSourceAsset = JsObject(List(
-    "src" -> JsString("theImageSrc"),
-    "origin" -> JsString("theImageSrcOrigin")
+    "src" -> JsString("theImageSrcAsset"),
+    "origin" -> JsString("theImageSrcOrigin"),
+    "width" -> JsString("500"),
+    "height" -> JsString("300")
   ))
 
   val trailMetaDataWithImageSource =
@@ -47,6 +49,6 @@ class FaciaImageReplaceTest extends FlatSpec with Matchers {
 
   it should "give back an ImageSource when imageSource present in metadata" in {
     val resolvedMetaData =  ResolvedMetaData.fromTrailMetaData(trailMetaDataWithImageSource)
-    FaciaImage.getFaciaImage(None, trailMetaDataWithImageSource, resolvedMetaData) should be (Some(ImageReplace("theImageSrc")))
+    FaciaImage.getFaciaImage(None, trailMetaDataWithImageSource, resolvedMetaData) should be (Some(Replace("theImageSrcAsset", "500", "300")))
   }
 }
