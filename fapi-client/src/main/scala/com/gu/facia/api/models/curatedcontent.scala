@@ -8,7 +8,6 @@ sealed trait FaciaImage
 case class Cutout(imageSrc: String, imageSrcWidth: Option[String], imageSrcHeight: Option[String]) extends FaciaImage
 case class Replace(imageSrc: String, imageSrcWidth: String, imageSrcHeight: String) extends FaciaImage
 case class ImageSlideshow(assets: List[Replace]) extends FaciaImage
-case class ImageReplace(src: String) extends FaciaImage
 
 object FaciaImage {
 
@@ -42,7 +41,7 @@ object FaciaImage {
   def imageReplace(trailMeta: MetaDataCommonFields, resolvedMetaData: ResolvedMetaData): Option[FaciaImage] = {
     trailMeta.imageSource match {
       case Some(imageSource) =>
-        Some(ImageReplace(imageSource.src))
+        Some(Replace(imageSource.src, imageSource.width, imageSource.height))
       case None =>
         for {
           src <- trailMeta.imageSrc

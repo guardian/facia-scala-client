@@ -9,7 +9,7 @@ object SlideshowAsset {
   implicit val slideshowAssetFormat = Json.format[SlideshowAsset]
 }
 
-case class ImageSourceAsset(src: String, origin: String)
+case class ImageSourceAsset(src: String, origin: String, width: String, height: String)
 object ImageSourceAsset {
   implicit val imageSourceAssetFormat = Json.format[ImageSourceAsset]
 }
