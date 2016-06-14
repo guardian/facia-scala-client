@@ -1,9 +1,10 @@
 package com.gu.facia.api.utils
 
 import com.gu.contentapi.client.model.v1._
-import com.gu.facia.api.models.{SupportingCuratedContent, CuratedContent, LatestSnap, LinkSnap}
+import com.gu.facia.api.models.{CuratedContent, LatestSnap, LinkSnap, SupportingCuratedContent}
 import lib.TestContent
 import org.joda.time.DateTime
+import org.joda.time.format.ISODateTimeFormat
 import org.scalatest.{FreeSpec, Matchers}
 
 class FaciaContentUtilsTest extends FreeSpec with Matchers with TestContent {
@@ -27,7 +28,7 @@ class FaciaContentUtilsTest extends FreeSpec with Matchers with TestContent {
 
   val staticDateTime = new DateTime().withYear(2015).withMonthOfYear(4).withDayOfMonth(22)
 
-  val content = baseContent.copy(webPublicationDate = Option(CapiDateTime(staticDateTime.getMillis)))
+  val content = baseContent.copy(webPublicationDate = Option(CapiDateTime(staticDateTime.getMillis, staticDateTime.toString(ISODateTimeFormat.dateTime()))))
 
   def makeLatestSnap(latestSnapId: String, content: Content = content) = LatestSnap(
     id = latestSnapId,
