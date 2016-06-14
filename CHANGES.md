@@ -1,3 +1,9 @@
+#### 2.0.0
+
+  - Revert `ImageReplace` changes introduced to `FaciaImage`.
+  - Update capi client to v8.12
+  - Update aws to v1.11.7
+
 #### 1.6.2
 
   - Add `UnknownMetadata` to `Metadata` ADT to handle cases of new future types in old libraries
@@ -10,11 +16,11 @@
 #### 1.6.0
 
   - Support the marking of collections to indicate that they should have commercial branding.
-  
+
 #### 1.5.3
 
   - Add sbt project that compiles against play-json 2.5.x
-  
+
 #### 1.5.2
 
   - Add homan-square tag to special report card style
