@@ -136,7 +136,7 @@ object FaciaContentUtils {
   )
   def maybeShortUrl(fc: FaciaContent) = fieldsGet(fc)(_.flatMap(_.shortUrl))
   def shortUrl(fc: FaciaContent): String = maybeShortUrl(fc).getOrElse("")
-  def shortUrlPath(fc: FaciaContent) = maybeShortUrl(fc).map(_.replace("http://gu.com", ""))
+  def shortUrlPath(fc: FaciaContent) = maybeShortUrl(fc).map(_.replaceFirst("^[a-zA-Z]+://gu.com", ""))
   def discussionId(fc: FaciaContent) = shortUrlPath(fc)
 
   def isBoosted(fc: FaciaContent): Boolean = fold(fc)(
