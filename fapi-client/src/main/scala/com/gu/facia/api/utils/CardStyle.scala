@@ -46,8 +46,8 @@ object CardStyle {
     } else if (hashedTagIds.contains("344ce3383665e23496bedd160675780c") // news/series/hsbc-files
       || hashedTagIds.contains("d36fa10d66bf5ff85894829d3829d9e1")      // news/series/panama-papers
       || hashedTagIds.contains("2920a7e21dc9f6fd0c008b50709c042f")      // us-news/homan-square
-      || hashedTagIds.contains("ae4bd9f302c420d242a8da91a47a9ddd")
-      || hashedTagIds.contains("4dae5700e6b6fdf66d1567769b41c1c2")
+      || hashedTagIds.contains("ae4bd9f302c420d242a8da91a47a9ddd")      // ...
+      || hashedTagIds.contains("4dae5700e6b6fdf66d1567769b41c1c2")      // news/series/nauru-files
       || hashedTagIds.contains("9d89e70b7d99e776ffb741c0b9ab8854")      // us-news/series/counted-us-police-killings
       || hashedTagIds.contains("7037b49de72275eb72b73a111da31849")      // australia-news/series/healthcare-in-detention
       || hashedTagIds.contains("efb4e63b9a3a926314724b45764a5a5a") ) {  // society/series/this-is-the-nhs
