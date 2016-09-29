@@ -6,14 +6,12 @@ object IdsSearchQueries {
   type Id = String
   type Url = String
 
-  val MaxUrlSize = com.gu.contentapi.client.Limits.UrlSize
-  //Maximum size that can be requested from CAPI is 50.
   val MaxBatchSize = 50
 
   def makeBatches(ids: Seq[Id])(urlFromIds: Seq[Id] => Url): Option[Seq[Seq[Id]]] = {
     def batchAndRemaining(ids: Seq[Id]): Option[(Seq[Id], Seq[Id])] =
       ids.inits.find{ init =>
-        init.length <= MaxBatchSize && urlFromIds(init).length <= MaxUrlSize
+        init.length <= MaxBatchSize
       } map { batch =>
         (batch, ids.drop(batch.length))
       }
