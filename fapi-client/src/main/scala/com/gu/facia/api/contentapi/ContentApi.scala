@@ -24,7 +24,7 @@ object ContentApi {
       .pageSize(ids.size)
       .showFields("internalPageCode"))
 
-    Try(IdsSearchQueries.makeBatches(ids)(ids => client.getUrl(queryForIds(ids)))) match {
+    Try(IdsSearchQueries.makeBatches(ids)) match {
         case Success(Some(batches)) =>
           Response.Right(batches.map(queryForIds))
         case _ =>
