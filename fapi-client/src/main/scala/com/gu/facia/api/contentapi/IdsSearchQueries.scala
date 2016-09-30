@@ -8,7 +8,7 @@ object IdsSearchQueries {
 
   val MaxBatchSize = 50
 
-  def makeBatches(ids: Seq[Id])(urlFromIds: Seq[Id] => Url): Option[Seq[Seq[Id]]] = {
+  def makeBatches(ids: Seq[Id]): Option[Seq[Seq[Id]]] = {
     def batchAndRemaining(ids: Seq[Id]): Option[(Seq[Id], Seq[Id])] =
       ids.inits.find{ init =>
         init.length <= MaxBatchSize

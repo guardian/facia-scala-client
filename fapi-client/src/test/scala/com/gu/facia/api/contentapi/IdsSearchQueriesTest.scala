@@ -9,13 +9,11 @@ class IdsSearchQueriesTest extends FreeSpec with ShouldMatchers {
     val fiftyOne = fifty :+ "fiftyFirst"
 
     "leave batches under or equal to 50" in {
-      IdsSearchQueries.makeBatches(fifty) {
-        _.mkString("")
-      } should be(Some(Seq(fifty)))
+      IdsSearchQueries.makeBatches(fifty) should be(Some(Seq(fifty)))
     }
 
     "should limit batches over 50" in {
-      IdsSearchQueries.makeBatches(fiftyOne){_.mkString("")} should be (Some(
+      IdsSearchQueries.makeBatches(fiftyOne) should be (Some(
         Seq(fifty, Seq("fiftyFirst"))))
     }
   }
