@@ -1,3 +1,9 @@
+#### 2.0.4
+
+  - Upgrade CAPI client to 10.5
+  - Add better logging in ContentApi object
+  - Add type annotations in Backfill
+
 #### 2.0.0
 
   - Revert `ImageReplace` changes introduced to `FaciaImage`.
