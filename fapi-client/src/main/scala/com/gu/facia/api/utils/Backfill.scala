@@ -1,6 +1,8 @@
 package com.gu.facia.api.utils
 
 import com.gu.contentapi.client.ContentApiClientLogic
+import com.gu.contentapi.client.model.v1.{ItemResponse, SearchResponse}
+import com.gu.contentapi.client.model.{ItemQuery, SearchQuery}
 import com.gu.facia.api.contentapi.ContentApi
 import com.gu.facia.api.contentapi.ContentApi._
 import com.gu.facia.api.models.{CollectionConfig, CuratedContent, FaciaContent}
@@ -31,10 +33,10 @@ object BackfillResolver {
               (implicit capiClient: ContentApiClientLogic, faciaClient: ApiClient, ec: ExecutionContext): Response[List[FaciaContent]] = {
     resolver match {
       case CapiBackfill(query, collectionConfig) =>
-        val capiQuery = ContentApi.buildBackfillQuery(query)
+        val capiQuery: Either[ItemQuery, SearchQuery] = ContentApi.buildBackfillQuery(query)
           .right.map(adjustSearchQuery)
           .left.map(adjustItemQuery)
-        val backfillResponse = ContentApi.getBackfillResponse(capiClient, capiQuery)
+        val backfillResponse: Either[Response[ItemResponse], Response[SearchResponse]] = ContentApi.getBackfillResponse(capiClient, capiQuery)
         for {
           backfillContent <- ContentApi.backfillContentFromResponse(backfillResponse)
         } yield {
