@@ -6,6 +6,7 @@ import com.gu.contentapi.client.ContentApiClientLogic
 import com.gu.contentapi.client.model.v1.{SearchResponse, ItemResponse, Content}
 import com.gu.contentapi.client.model.{SearchQuery, ItemQuery}
 import com.gu.facia.api.{UrlConstructError, CapiError, Response}
+import com.typesafe.scalalogging.StrictLogging
 
 import scala.concurrent.{Future, ExecutionContext}
 import scala.util.{Success, Try}
@@ -14,7 +15,7 @@ case class LatestSnapsRequest(snaps: Map[String, String]) {
   def join(other: LatestSnapsRequest): LatestSnapsRequest = this.copy(snaps = this.snaps ++ other.snaps)
 }
 
-object ContentApi {
+object ContentApi extends StrictLogging {
   type AdjustSearchQuery = SearchQuery => SearchQuery
   type AdjustItemQuery = ItemQuery => ItemQuery
 
@@ -64,6 +65,10 @@ object ContentApi {
       val queryWithParams = searchQuery.withParameters(paramsWithEditorsPicks.map { case (k, v) => k -> searchQuery.StringParameter(k, Some(v)) }.toMap)
       Right(queryWithParams)
     } else {
+      if(path.contains("search")) {
+        logger.warn(s"You may be making a SearchQuery but expecting to make an ItemQuery which breaks the thrift models (Query: $path)")
+      }
+
       val itemQuery = ItemQuery(path)
       val queryWithParams = itemQuery.withParameters(paramsWithEditorsPicks.map { case (k, v) => k -> itemQuery.StringParameter(k, Some(v)) }.toMap)
       Left(queryWithParams)
@@ -72,13 +77,15 @@ object ContentApi {
 
   def getBackfillResponse(client: ContentApiClientLogic, query: Either[ItemQuery, SearchQuery])
                          (implicit ec: ExecutionContext): Either[Response[ItemResponse], Response[SearchResponse]] = {
-    query.right.map { itemQuery =>
-      Response.Async.Right(client.getResponse(itemQuery)) mapError { err =>
-        CapiError(s"Failed to get backfill response ${err.message}", err.cause)
-      }
-    }.left.map { searchQuery =>
+    query.right.map { searchQuery =>
       Response.Async.Right(client.getResponse(searchQuery)) mapError { err =>
-        CapiError(s"Failed to get backfill response ${err.message}", err.cause)
+        logger.warn(s"Failed to get a SearchResponse for a SearchQuery: ${err.message}", err.cause)
+        CapiError(s"Failed to get a SearchResponse for a SearchQuery: ${err.message}", err.cause)
+      }
+    }.left.map { itemQuery =>
+      Response.Async.Right(client.getResponse(itemQuery)) mapError { err =>
+        logger.warn(s"Failed to get an ItemResponse response for an ItemQuery: ${err.message}", err.cause)
+        CapiError(s"Failed to get an ItemResponse response for an ItemQuery: ${err.message}", err.cause)
       }
     }
   }
