@@ -1,6 +1,6 @@
 package com.gu.facia.api.utils
 
-import com.gu.contentapi.client.model.v1.Content
+import com.gu.contentapi.client.model.v1.{Content, Element, ElementType}
 import com.gu.facia.client.models.MetaDataCommonFields
 import play.api.libs.json.{Format, Json}
 
@@ -18,8 +18,12 @@ object ResolvedMetaData {
   def isCommentForContent(content: Content): Boolean =
     content.tags.exists(_.id == Comment)
 
-  def isVideoForContent(content: Content): Boolean =
-    content.tags.exists(_.id == Video)
+  def isVideoForContent(content: Content): Boolean = {
+    content.tags.exists(_.id == Video) &&  content.elements.flatMap(
+      _.find { element =>
+        element.`type` == ElementType.Video && element.relation == "main"
+      }).isDefined
+  }
 
   val Default = ResolvedMetaData(
     isBreaking = false,
