@@ -1,3 +1,7 @@
+##### 2.0.5
+
+  - Update capi client to v10.12
+
 #### 2.0.0
 
   - Revert `ImageReplace` changes introduced to `FaciaImage`.
