@@ -1,13 +1,23 @@
 package com.gu.facia.api.models
 
-import com.gu.contentapi.client.model.v1.{TagType, Tag, Content}
+import java.io.PrintWriter
+
+import com.gu.contentapi.client.model.v1.{Content, Tag, TagType}
 import com.gu.facia.api.utils._
-import com.gu.facia.client.models.{SupportingItem, MetaDataCommonFields, Trail, TrailMetaData}
+import com.gu.facia.client.models.{MetaDataCommonFields, SupportingItem, Trail, TrailMetaData}
 
 sealed trait FaciaImage
 case class Cutout(imageSrc: String, imageSrcWidth: Option[String], imageSrcHeight: Option[String]) extends FaciaImage
 case class Replace(imageSrc: String, imageSrcWidth: String, imageSrcHeight: String) extends FaciaImage
 case class ImageSlideshow(assets: List[Replace]) extends FaciaImage
+
+object write {
+
+  def apply(string: String) = {
+    Some(new PrintWriter("/etc/fapi-log.txt")).foreach{p => p.append(string); p.close}
+  }
+
+}
 
 object FaciaImage {
 
@@ -168,6 +178,7 @@ object LatestSnap {
   }
 
   def fromSupportingItemAndContent(supportingItem: SupportingItem, maybeContent: Option[Content]): LatestSnap = {
+    write("IN fromSupportingItemAndContent")
     val cardStyle: CardStyle = maybeContent.map(CardStyle.apply(_, supportingItem.safeMeta)).getOrElse(DefaultCardstyle)
     val resolvedMetaData: ResolvedMetaData =
       maybeContent.fold(ResolvedMetaData.fromTrailMetaData(supportingItem.safeMeta))(ResolvedMetaData.fromContentAndTrailMetaData(_, supportingItem.safeMeta, cardStyle))
@@ -227,6 +238,8 @@ object CuratedContent {
                                         maybeFrontPublicationDate: Option[Long],
                                         supportingContent: List[FaciaContent],
                                         collectionConfig: CollectionConfig) = {
+
+    write("IN fromTrailAndContentWithSupporting")
     val cardStyle = CardStyle(content, trailMetaData)
     val resolvedMetaData = ResolvedMetaData.fromContentAndTrailMetaData(content, trailMetaData, cardStyle)
 
@@ -251,11 +264,12 @@ object CuratedContent {
                           trailMetaData: MetaDataCommonFields,
                           maybeFrontPublicationDate: Option[Long],
                           collectionConfig: CollectionConfig): CuratedContent = {
+    write("IN fromTrailAndContent")
 
     val cardStyle = CardStyle(content, trailMetaData)
     val resolvedMetaData = ResolvedMetaData.fromContentAndTrailMetaData(content, trailMetaData, cardStyle)
 
-    CuratedContent(
+    val x = CuratedContent(
       content,
       maybeFrontPublicationDate,
       supportingContent = Nil,
@@ -270,7 +284,10 @@ object CuratedContent {
       ItemKicker.fromContentAndTrail(Option(content), trailMetaData, resolvedMetaData, Some(collectionConfig)),
       embedType = trailMetaData.snapType,
       embedUri = trailMetaData.snapUri,
-      embedCss = trailMetaData.snapCss)}
+      embedCss = trailMetaData.snapCss)
+  write(x.toString)
+    x
+  }
 }
 
 object SupportingCuratedContent {
@@ -278,6 +295,8 @@ object SupportingCuratedContent {
                           trailMetaData: MetaDataCommonFields,
                           maybeFrontPublicationDate: Option[Long],
                           collectionConfig: CollectionConfig): SupportingCuratedContent = {
+
+    write("IN fromTrailAndContent")
     val cardStyle = CardStyle(content, trailMetaData)
     val resolvedMetaData = ResolvedMetaData.fromContentAndTrailMetaData(content, trailMetaData, cardStyle)
 

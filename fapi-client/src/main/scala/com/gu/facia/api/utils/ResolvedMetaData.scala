@@ -1,11 +1,16 @@
 package com.gu.facia.api.utils
 
+import java.io.PrintWriter
+
 import com.gu.contentapi.client.model.v1.{Content, Element, ElementType}
 import com.gu.facia.client.models.MetaDataCommonFields
 import play.api.libs.json.{Format, Json}
 
 
 object ResolvedMetaData {
+  def writeToFile(string: String) = {
+    Some(new PrintWriter("/etc/fapi-log.txt")).foreach{p => p.append(string); p.close}
+  }
   implicit val resolvedMetaDataFormat: Format[ResolvedMetaData] = Json.format[ResolvedMetaData]
 
   val Cartoon = "type/cartoon"
@@ -19,9 +24,24 @@ object ResolvedMetaData {
     content.tags.exists(_.id == Comment)
 
   def isVideoForContent(content: Content): Boolean = {
-    content.tags.exists(_.id == Video) &&  content.elements.flatMap(
+    content.tags.exists(_.id == Video)
+  }
+
+  def isVideoElement(content: Content): Boolean = {
+    writeToFile("IN IS VIDEO ELEMENT")
+    content.tags.exists(_.id == Video) &&
+    content.elements.flatMap(
       _.find { element =>
         element.`type` == ElementType.Video && element.relation == "main"
+      }).isDefined
+  }
+
+
+  def isVideoAtom(content: Content): Boolean = {
+    content.tags.exists(_.id == Video) &&
+    content.elements.flatMap(
+      _.find { element =>
+        element.`type` == ElementType.Contentatom && element.relation == "main"
       }).isDefined
   }
 
@@ -66,13 +86,17 @@ object ResolvedMetaData {
         showQuotedHeadline = true,
         imageCutoutReplace = true)
       case _ if isCartoonForContent(content) => Default.copy(showByline = true)
-      case _ if isVideoForContent(content) => Default.copy(showMainVideo = true)
+      case _ if isVideoElement(content) => Default.copy(showMainVideo = false)
+      case _ if isVideoAtom(content) => Default.copy(showMainVideo = false)
       case _ => Default
     }
 
   def fromContentAndTrailMetaData(content: Content, trailMeta: MetaDataCommonFields, cardStyle: CardStyle): ResolvedMetaData = {
+
+
+    writeToFile("trailMeta.showMainVideo: " + trailMeta.showMainVideo.toString)
     val metaDataFromContent = fromContent(content, cardStyle)
-    metaDataFromContent.copy(
+    val x = metaDataFromContent.copy(
       isBreaking = trailMeta.isBreaking.getOrElse(metaDataFromContent.isBreaking),
       isBoosted = trailMeta.isBoosted.getOrElse(metaDataFromContent.isBoosted),
       imageHide = trailMeta.imageHide.getOrElse(metaDataFromContent.imageHide),
@@ -80,13 +104,23 @@ object ResolvedMetaData {
       showKickerSection = trailMeta.showKickerSection.getOrElse(metaDataFromContent.showKickerSection),
       showKickerCustom = trailMeta.showKickerCustom.getOrElse(metaDataFromContent.showKickerCustom),
       showBoostedHeadline = trailMeta.showBoostedHeadline.getOrElse(metaDataFromContent.showBoostedHeadline),
-      showMainVideo = trailMeta.showMainVideo.getOrElse(metaDataFromContent.showMainVideo),
+      showMainVideo = getShowMainVideo(trailMeta.showMainVideo, metaDataFromContent.showMainVideo, content),
       showLivePlayable = trailMeta.showLivePlayable.getOrElse(metaDataFromContent.showLivePlayable),
       showKickerTag = trailMeta.showKickerTag.getOrElse(metaDataFromContent.showKickerTag),
       showByline = trailMeta.showByline.getOrElse(metaDataFromContent.showByline),
       imageCutoutReplace = trailMeta.imageCutoutReplace.getOrElse(metaDataFromContent.imageCutoutReplace),
       showQuotedHeadline = trailMeta.showQuotedHeadline.getOrElse(metaDataFromContent.showQuotedHeadline),
-      imageSlideshowReplace = trailMeta.imageSlideshowReplace.getOrElse(metaDataFromContent.imageSlideshowReplace))}
+      imageSlideshowReplace = trailMeta.imageSlideshowReplace.getOrElse(metaDataFromContent.imageSlideshowReplace))
+    writeToFile("METADATA FROM CONTENT "+metaDataFromContent.toString)
+  writeToFile("fromContentAndTrailMetaData result " + x.toString)
+    x
+
+
+  }
+
+  def getShowMainVideo(trailShowVideo: Option[Boolean], default: Boolean, content: Content): Boolean = {
+    if (isVideoAtom(content)) false else trailShowVideo.getOrElse(default)
+  }
 
   def toMap(resolvedMetaData: ResolvedMetaData): Map[String, Boolean] = resolvedMetaData match {
     case ResolvedMetaData(

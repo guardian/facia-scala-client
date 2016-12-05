@@ -1,5 +1,7 @@
 package com.gu.facia.api
 
+import java.io.PrintWriter
+
 import com.gu.contentapi.client.ContentApiClientLogic
 import com.gu.contentapi.client.model.v1.Content
 import com.gu.facia.api.contentapi.ContentApi.{AdjustItemQuery, AdjustSearchQuery}
@@ -12,6 +14,10 @@ import scala.concurrent.{ExecutionContext, Future}
 
 
 object FAPI {
+
+
+
+
   def getFronts()(implicit capiClient: ContentApiClientLogic, faciaClient: ApiClient, ec: ExecutionContext): Response[Set[Front]] = {
     for {
       config <- Response.Async.Right(faciaClient.config)
