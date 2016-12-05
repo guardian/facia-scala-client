@@ -1,6 +1,6 @@
 package com.gu.facia.api.utils
 
-import com.gu.contentapi.client.model.v1.{TagType, ContentType, Content, Tag}
+import com.gu.contentapi.client.model.v1._
 import com.gu.facia.client.models.TrailMetaData
 import org.scalatest.{FreeSpec, Matchers}
 import play.api.libs.json.JsBoolean
@@ -21,6 +21,7 @@ class ResolvedMetaDataTest extends FreeSpec with Matchers with TestContent {
   val contentWithCartoon = contentWithTags(tagWithId("type/cartoon"))
   val contentWithComment = contentWithTags(tagWithId("tone/comment"))
   val contentWithVideo = contentWithTags(tagWithId("type/video"))
+  def contentWithAtom: Content = contentWithVideo.copy(elements = Some (Seq(Element(id = "foo", relation = "main",`type` = ElementType.Contentatom))))
 
   val emptyTrailMetaData = TrailMetaData(Map.empty)
 
@@ -132,6 +133,12 @@ class ResolvedMetaDataTest extends FreeSpec with Matchers with TestContent {
       val resolvedVideo = ResolvedMetaData.fromContentAndTrailMetaData(contentWithVideo, emptyTrailMetaData, DefaultCardstyle)
       resolvedVideo should have (
         'showMainVideo (true))
+    }
+
+    "should resolve correct for video with Atom" in {
+      val resolvedVideo = ResolvedMetaData.fromContentAndTrailMetaData(contentWithAtom, emptyTrailMetaData, DefaultCardstyle)
+      resolvedVideo should have (
+        'showMainVideo (false))
     }
 
     "should resolve correct for cartoon when trailMetaData IS set" in {

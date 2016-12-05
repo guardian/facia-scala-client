@@ -1,8 +1,8 @@
 package com.gu.facia.api.utils
 
-import com.gu.contentapi.client.model.v1.Content
 import com.gu.facia.client.models.MetaDataCommonFields
 import play.api.libs.json.{Format, Json}
+import com.gu.contentapi.client.model.v1.{Content, Element, ElementType}
 
 
 object ResolvedMetaData {
@@ -20,6 +20,20 @@ object ResolvedMetaData {
 
   def isVideoForContent(content: Content): Boolean =
     content.tags.exists(_.id == Video)
+
+  def isVideoAtom(content: Content): Boolean = {
+    isVideoForContent(content) &&
+      content.elements.flatMap(
+        _.find { element =>
+          element.`type` == ElementType.Contentatom && element.relation == "main"
+        }).isDefined
+  }
+
+  def getShowMainVideo(trailShowVideo: Option[Boolean], default: Boolean, content: Content): Boolean = {
+    if (isVideoAtom(content)) false else trailShowVideo.getOrElse(default)
+  }
+
+
 
   val Default = ResolvedMetaData(
     isBreaking = false,
@@ -76,7 +90,7 @@ object ResolvedMetaData {
       showKickerSection = trailMeta.showKickerSection.getOrElse(metaDataFromContent.showKickerSection),
       showKickerCustom = trailMeta.showKickerCustom.getOrElse(metaDataFromContent.showKickerCustom),
       showBoostedHeadline = trailMeta.showBoostedHeadline.getOrElse(metaDataFromContent.showBoostedHeadline),
-      showMainVideo = trailMeta.showMainVideo.getOrElse(metaDataFromContent.showMainVideo),
+      showMainVideo = getShowMainVideo(trailShowVideo = trailMeta.showMainVideo, default = metaDataFromContent.showMainVideo, content = content),
       showLivePlayable = trailMeta.showLivePlayable.getOrElse(metaDataFromContent.showLivePlayable),
       showKickerTag = trailMeta.showKickerTag.getOrElse(metaDataFromContent.showKickerTag),
       showByline = trailMeta.showByline.getOrElse(metaDataFromContent.showByline),
