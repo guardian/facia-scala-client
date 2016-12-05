@@ -23,10 +23,11 @@ object ResolvedMetaData {
 
   def isVideoAtom(content: Content): Boolean = {
     isVideoForContent(content) &&
-      content.elements.flatMap(
-        _.find { element =>
+      content.elements.exists(
+        _.exists { element =>
           element.`type` == ElementType.Contentatom && element.relation == "main"
-        }).isDefined
+        }
+      )
   }
 
   def getShowMainVideo(trailShowVideo: Option[Boolean], default: Boolean, content: Content): Boolean = {
