@@ -1,6 +1,6 @@
 ##### 2.0.5
 
-  - Update capi client to v10.12
+  - Update capi client to v10.17
 
 #### 2.0.0
 
