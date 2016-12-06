@@ -28,6 +28,6 @@ trait IntegrationTestConfig extends ExecutionContext {
       new ProfileCredentialsProvider(awsProfileName)
     )
     val amazonS3Client = new AmazonS3Client(credentialsProvider)
-    ApiClient("aws-frontend-store", "DEV", AmazonSdkS3Client(amazonS3Client))
+    ApiClient("facia-tool-store", "DEV", AmazonSdkS3Client(amazonS3Client))
   }
 }
