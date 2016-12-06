@@ -22,12 +22,14 @@ object ResolvedMetaData {
     content.tags.exists(_.id == Video)
 
   def isVideoAtom(content: Content): Boolean = {
-    isVideoForContent(content) &&
-      content.blocks.exists(
-        _.main.exists { block =>
-          block.elements.exists {element => element.`type` == ElementType.Contentatom }
-        }
-      )
+    val maybeAtom = for {
+      videoContentType <- content.tags.find(_.id == Video)
+      blocks <- content.blocks
+      main <- blocks.main
+      atomElement <- main.elements.find(e => e.`type` == ElementType.Contentatom)
+    } yield atomElement
+
+  maybeAtom.isDefined
   }
 
 
