@@ -67,7 +67,7 @@ object ResolvedMetaData {
       imageSlideshowReplace = trailMeta.imageSlideshowReplace.exists(identity)
   )
 
-  def fromContent(content: Content, cardStyle: CardStyle): ResolvedMetaData = {
+  def fromContent(content: Content, cardStyle: CardStyle): ResolvedMetaData =
       cardStyle match {
         case com.gu.facia.api.utils.Comment => Default.copy(
           showByline = true,
@@ -78,7 +78,6 @@ object ResolvedMetaData {
         case _ if isVideoForContent(content) => Default.copy(showMainVideo = true)
         case _ => Default
       }
-    }
 
   def fromContentAndTrailMetaData(content: Content, trailMeta: MetaDataCommonFields, cardStyle: CardStyle): ResolvedMetaData = {
     val metaDataFromContent = fromContent(content, cardStyle)
