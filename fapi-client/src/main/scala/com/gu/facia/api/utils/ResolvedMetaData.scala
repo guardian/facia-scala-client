@@ -23,17 +23,12 @@ object ResolvedMetaData {
 
   def isVideoAtom(content: Content): Boolean = {
     isVideoForContent(content) &&
-      content.elements.exists(
-        _.exists { element =>
-          element.`type` == ElementType.Contentatom && element.relation == "main"
+      content.blocks.exists(
+        _.main.exists { block =>
+          block.elements.exists {element => element.`type` == ElementType.Contentatom }
         }
       )
   }
-
-  def getShowMainVideo(trailShowVideo: Option[Boolean], default: Boolean, content: Content): Boolean = {
-    if (isVideoAtom(content)) false else trailShowVideo.getOrElse(default)
-  }
-
 
 
   val Default = ResolvedMetaData(
@@ -70,15 +65,17 @@ object ResolvedMetaData {
       imageSlideshowReplace = trailMeta.imageSlideshowReplace.exists(identity)
   )
 
-  def fromContent(content: Content, cardStyle: CardStyle): ResolvedMetaData =
-    cardStyle match {
-      case com.gu.facia.api.utils.Comment => Default.copy(
-        showByline = true,
-        showQuotedHeadline = true,
-        imageCutoutReplace = true)
-      case _ if isCartoonForContent(content) => Default.copy(showByline = true)
-      case _ if isVideoForContent(content) => Default.copy(showMainVideo = true)
-      case _ => Default
+  def fromContent(content: Content, cardStyle: CardStyle): ResolvedMetaData = {
+      cardStyle match {
+        case com.gu.facia.api.utils.Comment => Default.copy(
+          showByline = true,
+          showQuotedHeadline = true,
+          imageCutoutReplace = true)
+        case _ if isCartoonForContent(content) => Default.copy(showByline = true)
+        case _ if isVideoAtom(content) => Default.copy(showMainVideo = false)
+        case _ if isVideoForContent(content) => Default.copy(showMainVideo = true)
+        case _ => Default
+      }
     }
 
   def fromContentAndTrailMetaData(content: Content, trailMeta: MetaDataCommonFields, cardStyle: CardStyle): ResolvedMetaData = {
@@ -91,7 +88,7 @@ object ResolvedMetaData {
       showKickerSection = trailMeta.showKickerSection.getOrElse(metaDataFromContent.showKickerSection),
       showKickerCustom = trailMeta.showKickerCustom.getOrElse(metaDataFromContent.showKickerCustom),
       showBoostedHeadline = trailMeta.showBoostedHeadline.getOrElse(metaDataFromContent.showBoostedHeadline),
-      showMainVideo = getShowMainVideo(trailShowVideo = trailMeta.showMainVideo, default = metaDataFromContent.showMainVideo, content = content),
+      showMainVideo =  trailMeta.showMainVideo.getOrElse(metaDataFromContent.showMainVideo),
       showLivePlayable = trailMeta.showLivePlayable.getOrElse(metaDataFromContent.showLivePlayable),
       showKickerTag = trailMeta.showKickerTag.getOrElse(metaDataFromContent.showKickerTag),
       showByline = trailMeta.showByline.getOrElse(metaDataFromContent.showByline),
