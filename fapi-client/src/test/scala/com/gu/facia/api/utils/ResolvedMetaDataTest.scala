@@ -21,7 +21,16 @@ class ResolvedMetaDataTest extends FreeSpec with Matchers with TestContent {
   val contentWithCartoon = contentWithTags(tagWithId("type/cartoon"))
   val contentWithComment = contentWithTags(tagWithId("tone/comment"))
   val contentWithVideo = contentWithTags(tagWithId("type/video"))
-  val contentWithAtom: Content = contentWithVideo.copy(blocks = Some(Blocks(main = Some(Block(id = "foo", bodyHtml = "foo", bodyTextSummary = "foo", title = None, attributes = BlockAttributes(), published = true, elements = Seq(BlockElement(`type` = ElementType.Contentatom)))))))
+  val atomBlock = Some(Block(
+    id = "foo",
+    bodyHtml = "foo",
+    bodyTextSummary = "foo",
+    attributes = BlockAttributes(),
+    published = true,
+    elements = Seq(BlockElement(`type` = ElementType.Contentatom))))
+
+  val contentWithAtom: Content = contentWithVideo.copy(blocks = Some(Blocks(atomBlock)))
+
   val emptyTrailMetaData = TrailMetaData(Map.empty)
   val trailMetaDataWithFieldsSetTrue = TrailMetaData(
     Map("showByline" -> JsBoolean(true),
