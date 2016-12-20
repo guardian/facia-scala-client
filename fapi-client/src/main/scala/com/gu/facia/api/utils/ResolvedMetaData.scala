@@ -2,7 +2,11 @@ package com.gu.facia.api.utils
 
 import com.gu.facia.client.models.MetaDataCommonFields
 import play.api.libs.json.{Format, Json}
-import com.gu.contentapi.client.model.v1.{Content, Element, ElementType}
+import com.gu.contentapi.client.model.v1.{Content, ElementType}
+import com.gu.contentatom.thrift.AtomData
+import com.gu.contentatom.thrift.atom.media.Platform
+
+import scala.util.Try
 
 
 object ResolvedMetaData {
@@ -18,17 +22,21 @@ object ResolvedMetaData {
   def isCommentForContent(content: Content): Boolean =
     content.tags.exists(_.id == Comment)
 
-  def isVideoForContent(content: Content): Boolean =
-    content.tags.exists(_.id == Video)
+  def isVideoElementForContent(content: Content): Boolean =
+    content.tags.exists(_.id == Video) && content.elements.exists(_.exists(_.`type` == ElementType.Video))
 
-  def isVideoAtom(content: Content): Boolean = {
-    val atomExists: Option[Boolean] = for {
+
+  def isYouTubeMediaAtomForContent(content: Content): Boolean = {
+    val youTubeAtomExists: Option[Boolean] = for {
       videoContentType <- content.tags.find(_.id == Video)
-      blocks <- content.blocks
-      main <- blocks.main
-    } yield main.elements.exists(e => e.`type` == ElementType.Contentatom)
+      atoms <- content.atoms
+      media <- atoms.media
+      firstMediaAtom <- media.headOption
+      mediaAtom <- Try(firstMediaAtom.data.asInstanceOf[AtomData.Media].media).toOption
+      firstAsset <- mediaAtom.assets.headOption
+    } yield firstAsset.platform == Platform.Youtube
 
-    atomExists.getOrElse(false)
+    youTubeAtomExists.getOrElse(false)
   }
 
 
@@ -73,8 +81,7 @@ object ResolvedMetaData {
           showQuotedHeadline = true,
           imageCutoutReplace = true)
         case _ if isCartoonForContent(content) => Default.copy(showByline = true)
-        case _ if isVideoAtom(content) => Default.copy(showMainVideo = false)
-        case _ if isVideoForContent(content) => Default.copy(showMainVideo = true)
+        case _ if isVideoElementForContent(content) || isYouTubeMediaAtomForContent(content) => Default.copy(showMainVideo = true)
         case _ => Default
       }
 

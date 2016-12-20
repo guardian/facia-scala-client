@@ -1,10 +1,15 @@
 package com.gu.facia.api.utils
 
 import com.gu.contentapi.client.model.v1._
+import com.gu.contentatom.thrift.{Tag => _, _}
+import com.gu.contentatom.thrift.User
+import com.gu.contentatom.thrift.atom.media.{AssetType, MediaAtom, Asset => MediaAsset, _}
 import com.gu.facia.client.models.TrailMetaData
+import lib.TestContent
 import org.scalatest.{FreeSpec, Matchers}
 import play.api.libs.json.JsBoolean
-import lib.TestContent
+
+
 
 class ResolvedMetaDataTest extends FreeSpec with Matchers with TestContent {
 
@@ -29,8 +34,38 @@ class ResolvedMetaDataTest extends FreeSpec with Matchers with TestContent {
     published = true,
     elements = Seq(BlockElement(`type` = ElementType.Contentatom))))
 
-  val contentWithAtom: Content = contentWithVideo.copy(blocks = Some(Blocks(atomBlock)))
+  val mediaAtom =
+    Atom(
+      id = "Pluto1234",
+      atomType = AtomType.Media,
 
+      defaultHtml = "<div></div>",
+      data = AtomData.Media(
+        MediaAtom(
+          assets = List(
+            MediaAsset(
+              assetType = AssetType.Video,
+              version = 1,
+              id = "https://www.youtube.com/watch?v=E8VHHf1YbFo",
+              platform = Platform.Youtube
+            )
+          ),
+          activeVersion = Some(1),
+          plutoProjectId = None,
+          title = "March of the penguins",
+          category = Category(Category.Documentary.value)
+        )
+
+      ),
+      contentChangeDetails =
+        ContentChangeDetails(
+          Some(ChangeRecord(1445256450717L, Some(User("example@guardian.co.uk", None, None)))),
+          Some(ChangeRecord(1445254646457L, Some(User("example@guardian.co.uk", None, None)))),
+          revision = 1)
+    )
+
+  val contentWithAtom: Content = contentWithVideo.copy(blocks = Some(Blocks(atomBlock)), atoms = Some(Atoms(media = Some(Seq(mediaAtom)))))
+  val contentWithVideoElement: Content = contentWithVideo.copy(elements = Some(Seq(Element(id="foo", relation="main", `type` = ElementType.Video))))
   val emptyTrailMetaData = TrailMetaData(Map.empty)
   val trailMetaDataWithFieldsSetTrue = TrailMetaData(
     Map("showByline" -> JsBoolean(true),
@@ -59,8 +94,8 @@ class ResolvedMetaDataTest extends FreeSpec with Matchers with TestContent {
         'imageCutoutReplace (true))
     }
 
-    "Content with type video should showMainVideo" in {
-      val resolvedMetaData = ResolvedMetaData.fromContent(contentWithVideo, DefaultCardstyle)
+    "Content with type video and video element should showMainVideo" in {
+      val resolvedMetaData = ResolvedMetaData.fromContent(contentWithVideoElement, DefaultCardstyle)
       resolvedMetaData should have (
         'showMainVideo (true))
     }
@@ -136,7 +171,7 @@ class ResolvedMetaDataTest extends FreeSpec with Matchers with TestContent {
     }
 
     "should resolve correct for video when trailMetaData is not set" in {
-      val resolvedVideo = ResolvedMetaData.fromContentAndTrailMetaData(contentWithVideo, emptyTrailMetaData, DefaultCardstyle)
+      val resolvedVideo = ResolvedMetaData.fromContentAndTrailMetaData(contentWithVideoElement, emptyTrailMetaData, DefaultCardstyle)
       resolvedVideo should have (
         'showMainVideo (true))
     }
@@ -144,7 +179,7 @@ class ResolvedMetaDataTest extends FreeSpec with Matchers with TestContent {
     "should resolve correct for video with Atom" in {
       val resolvedVideo = ResolvedMetaData.fromContentAndTrailMetaData(contentWithAtom, emptyTrailMetaData, DefaultCardstyle)
       resolvedVideo should have(
-        'showMainVideo (false))
+        'showMainVideo (true))
     }
 
     "should resolve correct for cartoon when trailMetaData IS set" in {
@@ -162,7 +197,7 @@ class ResolvedMetaDataTest extends FreeSpec with Matchers with TestContent {
     }
 
     "should resolve correct for video when trailMetaData IS set" in {
-      val resolvedVideo = ResolvedMetaData.fromContentAndTrailMetaData(contentWithVideo, trailMetaDataWithFieldsSetFalse, DefaultCardstyle)
+      val resolvedVideo = ResolvedMetaData.fromContentAndTrailMetaData(contentWithVideoElement, trailMetaDataWithFieldsSetFalse, DefaultCardstyle)
       resolvedVideo should have (
         'showMainVideo (false))
     }
