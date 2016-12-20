@@ -1,3 +1,6 @@
+##### 2.0.7
+  - set `showMainVideo` to `true` for Video Atoms
+
 ##### 2.0.6
 
   - set `showMainVideo` to `false` for Video Atoms
