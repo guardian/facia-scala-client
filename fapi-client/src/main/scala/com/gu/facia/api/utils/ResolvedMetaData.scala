@@ -21,17 +21,6 @@ object ResolvedMetaData {
   def isVideoForContent(content: Content): Boolean =
     content.tags.exists(_.id == Video)
 
-  def isVideoAtom(content: Content): Boolean = {
-    val atomExists: Option[Boolean] = for {
-      videoContentType <- content.tags.find(_.id == Video)
-      blocks <- content.blocks
-      main <- blocks.main
-    } yield main.elements.exists(e => e.`type` == ElementType.Contentatom)
-
-    atomExists.getOrElse(false)
-  }
-
-
   val Default = ResolvedMetaData(
     isBreaking = false,
     isBoosted = false,
