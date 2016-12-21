@@ -144,7 +144,7 @@ class ResolvedMetaDataTest extends FreeSpec with Matchers with TestContent {
     "should resolve correct for video with Atom" in {
       val resolvedVideo = ResolvedMetaData.fromContentAndTrailMetaData(contentWithAtom, emptyTrailMetaData, DefaultCardstyle)
       resolvedVideo should have(
-        'showMainVideo (false))
+        'showMainVideo (true))
     }
 
     "should resolve correct for cartoon when trailMetaData IS set" in {
