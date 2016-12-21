@@ -73,7 +73,6 @@ object ResolvedMetaData {
           showQuotedHeadline = true,
           imageCutoutReplace = true)
         case _ if isCartoonForContent(content) => Default.copy(showByline = true)
-        case _ if isVideoAtom(content) => Default.copy(showMainVideo = false)
         case _ if isVideoForContent(content) => Default.copy(showMainVideo = true)
         case _ => Default
       }

@@ -1,3 +1,7 @@
+##### 2.0.7
+
+  - set `showMainVideo` default to `true` for all video content type
+
 ##### 2.0.6
 
   - set `showMainVideo` to `false` for Video Atoms
