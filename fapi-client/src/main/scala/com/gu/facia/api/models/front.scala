@@ -6,6 +6,7 @@ sealed trait FrontPriority
 object EditorialPriority extends FrontPriority
 object CommercialPriority extends FrontPriority
 object TrainingPriority extends FrontPriority
+object EmailPriority extends FrontPriority
 
 case class FrontImage(
                        imageUrl: String,
@@ -32,6 +33,7 @@ object Front {
     frontJson.priority match {
       case Some("commercial") => CommercialPriority
       case Some("training") => TrainingPriority
+      case Some("email") => EmailPriority
       case _ => EditorialPriority}
 
   private def getImageUrl(frontJson: FrontJson): Option[FrontImage] =
