@@ -1,3 +1,7 @@
+##### 2.0.8
+
+  - adds `EmailPriority` to `FrontPriority`
+
 ##### 2.0.7
 
   - set `showMainVideo` default to `true` for all video content type
