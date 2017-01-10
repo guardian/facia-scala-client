@@ -237,7 +237,10 @@ object FaciaContentUtils {
     linkSnap => linkSnap.trailText,
     latestSnap => latestSnap.trailText)
 
-  def  maybeWebTitle(fc: FaciaContent): Option[String] = fold(fc)(
+  def wordCount(fc: FaciaContent): Option[Int] =
+    fieldsGet(fc)(_.flatMap(_.wordcount))
+
+  def maybeWebTitle(fc: FaciaContent): Option[String] = fold(fc)(
     curatedContent => Option(curatedContent.content.webTitle),
     supportingCuratedContent => Option(supportingCuratedContent.content.webTitle),
     linkSnap => None,
