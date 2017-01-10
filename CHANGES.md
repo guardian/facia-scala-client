@@ -1,3 +1,7 @@
+##### 2.0.9
+
+  - adds `wordCount` to `FaciaContentUtils`
+
 ##### 2.0.8
 
   - adds `EmailPriority` to `FrontPriority`
