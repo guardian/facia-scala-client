@@ -76,7 +76,8 @@ object CollectionConfigJson {
     showLatestUpdate: Option[Boolean] = None,
     excludeFromRss: Option[Boolean] = None,
     showTimestamps: Option[Boolean] = None,
-    hideShowMore: Option[Boolean] = None
+    hideShowMore: Option[Boolean] = None,
+    backfillLimit: Option[Int] = None
   ): CollectionConfigJson
     = CollectionConfigJson(
     displayName,
@@ -94,7 +95,8 @@ object CollectionConfigJson {
     showLatestUpdate,
     excludeFromRss,
     showTimestamps,
-    hideShowMore
+    hideShowMore,
+    backfillLimit
   )
 }
 
@@ -114,7 +116,8 @@ case class CollectionConfigJson(
   showLatestUpdate: Option[Boolean],
   excludeFromRss: Option[Boolean],
   showTimestamps: Option[Boolean],
-  hideShowMore: Option[Boolean]
+  hideShowMore: Option[Boolean],
+  backfillLimit: Option[Int]
   ) {
   val collectionType = `type`
 }
