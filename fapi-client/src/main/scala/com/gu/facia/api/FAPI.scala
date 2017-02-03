@@ -52,7 +52,7 @@ object FAPI {
       configJson <- Response.Async.Right(faciaClient.config)
       frontJson <- Response.fromOption(configJson.fronts.get(frontId), NotFound(s"No front found for $frontId"))
       collectionIds = frontJson.collections
-      collectionsJsons <- Response.Async.Right(Future.traverse(collectionIds)(faciaClient.collection))
+      collectionsJsons <- Response.Async.Right(Future.sequence(collectionIds.map(faciaClient.collection)))
       collectionConfigJsons <- Response.traverse(
         collectionIds.map(id => Response.fromOption(configJson.collections.get(id), NotFound(s"Collection config not found for $id")))
       )
