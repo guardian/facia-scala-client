@@ -1,3 +1,7 @@
+##### 2.0.10
+
+  - adds `displayHint:maxItemsToDisplay` to `CollectionConfigJson`
+
 ##### 2.0.9
 
   - adds `wordCount` to `FaciaContentUtils`
