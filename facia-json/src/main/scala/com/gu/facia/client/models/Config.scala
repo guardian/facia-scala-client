@@ -54,6 +54,11 @@ object Metadata extends StrictLogging {
   }
 }
 
+object DisplayHints {
+  implicit val jsonFormat = Json.format[DisplayHints]
+}
+
+case class DisplayHints(maxItemsToDisplay: Option[Int])
 
 object CollectionConfigJson {
   implicit val jsonFormat = Json.format[CollectionConfigJson]
@@ -77,7 +82,7 @@ object CollectionConfigJson {
     excludeFromRss: Option[Boolean] = None,
     showTimestamps: Option[Boolean] = None,
     hideShowMore: Option[Boolean] = None,
-    backfillLimit: Option[Int] = None
+    displayHints: Option[DisplayHints] = None
   ): CollectionConfigJson
     = CollectionConfigJson(
     displayName,
@@ -96,7 +101,7 @@ object CollectionConfigJson {
     excludeFromRss,
     showTimestamps,
     hideShowMore,
-    backfillLimit
+    displayHints
   )
 }
 
@@ -117,7 +122,7 @@ case class CollectionConfigJson(
   excludeFromRss: Option[Boolean],
   showTimestamps: Option[Boolean],
   hideShowMore: Option[Boolean],
-  backfillLimit: Option[Int]
+  displayHints: Option[DisplayHints] = None
   ) {
   val collectionType = `type`
 }
