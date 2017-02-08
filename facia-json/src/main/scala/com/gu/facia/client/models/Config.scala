@@ -122,7 +122,7 @@ case class CollectionConfigJson(
   excludeFromRss: Option[Boolean],
   showTimestamps: Option[Boolean],
   hideShowMore: Option[Boolean],
-  displayHints: Option[DisplayHints] = None
+  displayHints: Option[DisplayHints]
   ) {
   val collectionType = `type`
 }
