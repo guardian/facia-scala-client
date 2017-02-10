@@ -1,3 +1,7 @@
+##### 2.0.11
+
+  - Adds `displayHint:maxItemsToDisplay` to `CollectionConfigJson` and `CollectionConfig`
+
 ##### 2.0.10
 
   - adds `displayHint:maxItemsToDisplay` to `CollectionConfigJson`
