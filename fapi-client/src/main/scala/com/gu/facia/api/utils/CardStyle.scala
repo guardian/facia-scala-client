@@ -48,6 +48,7 @@ object CardStyle {
       || hashedTagIds.contains("2920a7e21dc9f6fd0c008b50709c042f")      // us-news/homan-square
       || hashedTagIds.contains("ae4bd9f302c420d242a8da91a47a9ddd")      // ...
       || hashedTagIds.contains("f336cb0e0941d3d3d275e6451babca89")      // uk-news/series/the-new-world-of-work
+      || hashedTagIds.contains("6f92a967c35b72ef4867f23ba88c95a1")      // world/series/the-new-arrivals
       || hashedTagIds.contains("4dae5700e6b6fdf66d1567769b41c1c2")      // news/series/nauru-files
       || hashedTagIds.contains("9d89e70b7d99e776ffb741c0b9ab8854")      // us-news/series/counted-us-police-killings
       || hashedTagIds.contains("7037b49de72275eb72b73a111da31849")      // australia-news/series/healthcare-in-detention
