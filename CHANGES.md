@@ -1,3 +1,11 @@
+##### 2.0.13
+  
+  - Update capi client to v11.12
+
+##### 2.0.12
+
+  - Add the special report tone to the tag the-new-arrivals.
+
 ##### 2.0.11
 
   - Adds `displayHint:maxItemsToDisplay` to `CollectionConfigJson` and `CollectionConfig`
