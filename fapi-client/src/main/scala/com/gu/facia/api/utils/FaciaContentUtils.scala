@@ -202,6 +202,7 @@ object FaciaContentUtils {
   def blogs(fc: FaciaContent): Seq[Tag] = tagsOfType(fc)("blog")
   def tones(fc: FaciaContent): Seq[Tag] = tagsOfType(fc)("tone")
   def types(fc: FaciaContent): Seq[Tag] = tagsOfType(fc)("type")
+  def paid(fc: FaciaContent): Seq[Tag] = tagsOfType(fc)("paid-content")
 
   def contributors(fc: FaciaContent): Seq[Tag] = maybeContent(fc).map(_.contributors).getOrElse(Nil)
   def isContributorPage(fc: FaciaContent): Boolean = maybeContent(fc).exists(_.contributors.nonEmpty)
@@ -220,8 +221,7 @@ object FaciaContentUtils {
   def isReview(fc: FaciaContent): Boolean = maybeContent(fc).exists(_.isReview)
   def isLetters(fc: FaciaContent): Boolean = maybeContent(fc).exists(_.isLetters)
   def isFeature(fc: FaciaContent): Boolean = maybeContent(fc).exists(_.isFeature)
-
-
+  def isPaid(fc: FaciaContent): Boolean = maybeContent(fc).exists(_.isPaid)
 
   def supporting(fc: FaciaContent): List[FaciaContent] = fold(fc)(
     curatedContent => curatedContent.supportingContent,

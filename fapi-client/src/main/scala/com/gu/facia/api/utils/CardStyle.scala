@@ -20,6 +20,7 @@ object CardStyle {
   val letters = "letters"
   val external = "external"
   val news = "news"
+  val paid = "paid"
 
   private val salt = "a-public-salt3W#ywHav!p+?r+W2$E6="
   private val digest = MessageDigest.getInstance("MD5")
@@ -74,6 +75,8 @@ object CardStyle {
       Letters
     } else if (content.isFeature) {
       Feature
+    } else if (content.isPaid) {
+      Paid
     } else {
       DefaultCardstyle
     }
@@ -128,6 +131,10 @@ case object Letters extends CardStyle {
 
 case object ExternalLink extends CardStyle {
   val toneString = CardStyle.external
+}
+
+case object Paid extends CardStyle {
+  val toneString = CardStyle.paid
 }
 
 case object DefaultCardstyle extends CardStyle {
