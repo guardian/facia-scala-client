@@ -55,6 +55,8 @@ object CardStyle {
       || hashedTagIds.contains("7037b49de72275eb72b73a111da31849")      // australia-news/series/healthcare-in-detention
       || hashedTagIds.contains("efb4e63b9a3a926314724b45764a5a5a") ) {  // society/series/this-is-the-nhs
       SpecialReport
+    } else if (content.isPaid) {
+      Paid
     } else if (content.isLiveBlog) {
       if (content.isLive) {
         LiveBlog
@@ -75,8 +77,6 @@ object CardStyle {
       Letters
     } else if (content.isFeature) {
       Feature
-    } else if (content.isPaid) {
-      Paid
     } else {
       DefaultCardstyle
     }
