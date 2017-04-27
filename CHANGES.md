@@ -1,3 +1,7 @@
+##### 2.0.14
+  
+  - Label paid content as `paid` instead of `news`
+
 ##### 2.0.13
   
   - Update capi client to v11.12
