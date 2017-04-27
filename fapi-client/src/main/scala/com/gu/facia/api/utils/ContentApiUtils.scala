@@ -15,6 +15,7 @@ object ContentApiUtils {
     lazy val blogs: Seq[Tag] = tagsOfType(TagType.Blog)
     lazy val tones: Seq[Tag] = tagsOfType(TagType.Tone)
     lazy val types: Seq[Tag] = tagsOfType(TagType.Type)
+    lazy val paid: Seq[Tag] = tagsOfType(TagType.PaidContent)
 
     lazy val isLiveBlog: Boolean = tones.exists(t => Tags.liveMappings.contains(t.id))
     lazy val isComment = tones.exists(t => Tags.commentMappings.contains(t.id))
@@ -28,6 +29,7 @@ object ContentApiUtils {
     lazy val isCartoon = types.exists(_.id == Tags.Cartoon)
     lazy val isLetters = tones.exists(_.id == Tags.Letters)
     lazy val isCrossword = types.exists(_.id == Tags.Crossword)
+    lazy val isPaid = paid.nonEmpty
 
     lazy val isArticle: Boolean = content.tags.exists { _.id == Tags.Article }
     lazy val isSudoku: Boolean = content.tags.exists { _.id == Tags.Sudoku } || content.tags.exists(t => t.id == "lifeandstyle/series/sudoku")
