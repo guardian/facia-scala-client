@@ -110,7 +110,9 @@ class CollectionTest extends FreeSpec with ShouldMatchers with MockitoSugar with
       image,
       contentProperties,
       byline,
-      kicker)
+      kicker,
+      Map.empty
+    )
 
 
   "fromCollectionJson" - {

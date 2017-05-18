@@ -1,6 +1,6 @@
-import sbtrelease._
-import ReleaseStateTransformations._
 import Dependencies._
+import sbtrelease.ReleaseStateTransformations._
+import sbtrelease._
 
 organization := "com.gu"
 
@@ -117,6 +117,7 @@ lazy val fapiClient = project.in(file("fapi-client"))
     ),
     libraryDependencies ++= Seq(
       contentApi,
+      commercialShared,
       scalaTest,
       mockito
     ),
@@ -136,6 +137,7 @@ lazy val fapiClient_play25 = project.in(file("fapi-client-play25"))
     ),
     libraryDependencies ++= Seq(
       contentApi,
+      commercialShared,
       scalaTest,
       mockito
     ),
