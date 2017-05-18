@@ -24,7 +24,22 @@ class FaciaContentHelperTest extends FreeSpec with Matchers with TestContent {
       imageSlideshowReplace = false)
 
   "should return 'Missing Headline' when the headline is None in a Snaps" in {
-    val snap = LatestSnap("myId", None, DefaultCardstyle, None, None, None, None, None, None, "myGroup", None, emptyContentProperties, None, None)
+    val snap = LatestSnap("myId",
+      None,
+      DefaultCardstyle,
+      None,
+      None,
+      None,
+      None,
+      None,
+      None,
+      "myGroup",
+      None,
+      emptyContentProperties,
+      None,
+      None,
+      Map.empty
+    )
     FaciaContentUtils.headlineOption(snap) should equal(None)
   }
 
@@ -41,7 +56,22 @@ class FaciaContentHelperTest extends FreeSpec with Matchers with TestContent {
   }
 
   "should return a href for a LatestSnap" in {
-    val snap = LatestSnap("myId", None, DefaultCardstyle, None, None, None, None, Some("The href"), None, "myGroup", None, emptyContentProperties, None, None)
+    val snap = LatestSnap("myId",
+      None,
+      DefaultCardstyle,
+      None,
+      None,
+      None,
+      None,
+      Some("The href"),
+      None,
+      "myGroup",
+      None,
+      emptyContentProperties,
+      None,
+      None,
+      Map.empty
+    )
     FaciaContentUtils.href(snap) should equal(Some("The href"))
   }
 

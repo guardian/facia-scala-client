@@ -159,13 +159,16 @@ case class LatestSnap(
   image: Option[FaciaImage],
   properties: ContentProperties,
   byline: Option[String],
-  kicker: Option[ItemKicker]) extends Snap
+  kicker: Option[ItemKicker],
+  override val brandingByEdition: BrandingByEdition
+) extends Snap
 
 object LatestSnap {
   def fromTrailAndContent(trail: Trail, maybeContent: Option[Content]): LatestSnap = {
     val cardStyle: CardStyle = maybeContent.map(CardStyle.apply(_, trail.safeMeta)).getOrElse(DefaultCardstyle)
     val resolvedMetaData: ResolvedMetaData =
       maybeContent.fold(ResolvedMetaData.fromTrailMetaData(trail.safeMeta))(ResolvedMetaData.fromContentAndTrailMetaData(_, trail.safeMeta, cardStyle))
+    val brandingByEdition = maybeContent map (_.brandingByEdition) getOrElse Map.empty
     LatestSnap(
       trail.id,
       Option(trail.frontPublicationDate),
@@ -180,7 +183,8 @@ object LatestSnap {
       FaciaImage.getFaciaImage(maybeContent, trail.safeMeta, resolvedMetaData),
       ContentProperties.fromResolvedMetaData(resolvedMetaData),
       trail.safeMeta.byline.orElse(maybeContent.flatMap(_.fields.flatMap(_.byline))),
-      ItemKicker.fromMaybeContentTrailMetaAndResolvedMetaData(maybeContent, trail.safeMeta, resolvedMetaData)
+      ItemKicker.fromMaybeContentTrailMetaAndResolvedMetaData(maybeContent, trail.safeMeta, resolvedMetaData),
+      brandingByEdition
     )
   }
 
@@ -188,6 +192,7 @@ object LatestSnap {
     val cardStyle: CardStyle = maybeContent.map(CardStyle.apply(_, supportingItem.safeMeta)).getOrElse(DefaultCardstyle)
     val resolvedMetaData: ResolvedMetaData =
       maybeContent.fold(ResolvedMetaData.fromTrailMetaData(supportingItem.safeMeta))(ResolvedMetaData.fromContentAndTrailMetaData(_, supportingItem.safeMeta, cardStyle))
+    val brandingByEdition = maybeContent map (_.brandingByEdition) getOrElse Map.empty
     LatestSnap(
       supportingItem.id,
       supportingItem.frontPublicationDate,
@@ -202,7 +207,8 @@ object LatestSnap {
       FaciaImage.getFaciaImage(maybeContent, supportingItem.safeMeta, resolvedMetaData),
       ContentProperties.fromResolvedMetaData(resolvedMetaData),
       supportingItem.safeMeta.byline.orElse(maybeContent.flatMap(_.fields.flatMap(_.byline))),
-      ItemKicker.fromMaybeContentTrailMetaAndResolvedMetaData(maybeContent, supportingItem.safeMeta, resolvedMetaData)
+      ItemKicker.fromMaybeContentTrailMetaAndResolvedMetaData(maybeContent, supportingItem.safeMeta, resolvedMetaData),
+      brandingByEdition
     )
   }
 }

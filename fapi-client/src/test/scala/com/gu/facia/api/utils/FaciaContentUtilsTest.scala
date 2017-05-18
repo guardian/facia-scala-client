@@ -46,7 +46,9 @@ class FaciaContentUtilsTest extends FreeSpec with Matchers with TestContent {
     image = None,
     properties = emptyProperties,
     byline = None,
-    kicker = None)
+    kicker = None,
+    brandingByEdition = Map.empty
+  )
 
   def makeCuratedContent(curatedContentId: String, content: Content = content) = CuratedContent(
     content = content,
