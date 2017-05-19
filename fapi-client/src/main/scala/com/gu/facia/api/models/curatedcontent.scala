@@ -59,11 +59,9 @@ object FaciaImage {
 
 }
 
-sealed trait BrandableContent {
+sealed trait FaciaContent {
   def brandingByEdition: BrandingByEdition = Map.empty
 }
-
-sealed trait FaciaContent extends BrandableContent
 
 object Snap {
   val LatestType = "latest"
