@@ -1,6 +1,8 @@
 #### 2.1.0
   
-  - Enable branding of `FaciaContent`.
+  - Enable branding of `FaciaContent`.  
+  __Breaking change:__
+      - This release has changes that require the addition of a field to implementations of `FaciaContent`.
 
 ##### 2.0.14
   
