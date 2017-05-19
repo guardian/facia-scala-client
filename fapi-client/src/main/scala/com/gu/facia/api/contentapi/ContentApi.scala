@@ -3,16 +3,20 @@ package com.gu.facia.api.contentapi
 import java.net.URI
 
 import com.gu.contentapi.client.ContentApiClientLogic
-import com.gu.contentapi.client.model.v1.{SearchResponse, ItemResponse, Content}
-import com.gu.contentapi.client.model.{SearchQuery, ItemQuery}
-import com.gu.facia.api.{UrlConstructError, CapiError, Response}
+import com.gu.contentapi.client.model.v1.{Content, ItemResponse, SearchResponse}
+import com.gu.contentapi.client.model.{ItemQuery, SearchQuery}
+import com.gu.facia.api.models.BrandingByEdition
+import com.gu.facia.api.utils.ContentApiUtils._
+import com.gu.facia.api.{CapiError, Response, UrlConstructError}
 
-import scala.concurrent.{Future, ExecutionContext}
+import scala.concurrent.{ExecutionContext, Future}
 import scala.util.{Success, Try}
 
 case class LatestSnapsRequest(snaps: Map[String, String]) {
   def join(other: LatestSnapsRequest): LatestSnapsRequest = this.copy(snaps = this.snaps ++ other.snaps)
 }
+
+case class LinkSnapsRequest(snaps: Map[String, String])
 
 object ContentApi {
   type AdjustSearchQuery = SearchQuery => SearchQuery
@@ -113,5 +117,21 @@ object ContentApi {
         capiClient.getResponse(itemQueryFromSnapUri(uri))
           .map(_.results.getOrElse(Nil).headOption).map(id -> _)
       }.map(_.toMap))
+  }
+
+  def linkSnapBrandingsByEdition(capiClient: ContentApiClientLogic, linkSnapsRequest: LinkSnapsRequest)
+    (implicit ec: ExecutionContext): Response[Map[String, BrandingByEdition]] = {
+
+    def itemQueryFromSnapUri(uri: String): ItemQuery = capiClient.item(uri).pageSize(1)
+
+    def brandingsFromResponse(response: ItemResponse): BrandingByEdition =
+      response.section.map(_.brandingByEdition) orElse response.tag.map(_.brandingByEdition) getOrElse Map.empty
+
+    Response.Async.Right(
+      Future.traverse(linkSnapsRequest.snaps) { case (id, uri) =>
+        capiClient.getResponse(itemQueryFromSnapUri(uri))
+        .map(brandingsFromResponse).map(id -> _)
+      }.map(_.toMap)
+    )
   }
 }

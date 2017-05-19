@@ -3,7 +3,7 @@ package com.gu.facia.api
 import com.gu.contentapi.client.ContentApiClientLogic
 import com.gu.contentapi.client.model.v1.Content
 import com.gu.facia.api.contentapi.ContentApi.{AdjustItemQuery, AdjustSearchQuery}
-import com.gu.facia.api.contentapi.{ContentApi, LatestSnapsRequest}
+import com.gu.facia.api.contentapi.{ContentApi, LatestSnapsRequest, LinkSnapsRequest}
 import com.gu.facia.api.models._
 import com.gu.facia.api.utils.BackfillResolver
 import com.gu.facia.client.ApiClient
@@ -101,7 +101,7 @@ object FAPI {
       yield snapContent}
 
   private def getDraftLatestSnapContentForCollection(collection: Collection, adjustItemQuery: AdjustItemQuery)
-                      (implicit capiClient: ContentApiClientLogic, ec: ExecutionContext) = {
+                      (implicit capiClient: ContentApiClientLogic, ec: ExecutionContext): Response[Map[String, Option[Content]]] = {
     val latestSnapsRequest: LatestSnapsRequest =
       Collection.draftLatestSnapsRequestFor(collection)
         .getOrElse(Collection.liveLatestSnapsRequestFor(collection))
@@ -111,6 +111,27 @@ object FAPI {
     val allSnaps = latestSnapsRequest.join(latestSupportingSnaps)
     for(snapContent <- ContentApi.latestContentFromLatestSnaps(capiClient, allSnaps, adjustItemQuery))
       yield snapContent}
+
+  private def getLiveLinkSnapBrandingsForCollection(collection: Collection)
+    (
+      implicit capiClient: ContentApiClientLogic,
+      ec: ExecutionContext
+    ): Response[Map[String, BrandingByEdition]] =
+    getLinkSnapBrandings(Collection.liveLinkSnapsRequestFor(collection))
+
+  private def getDraftLinkSnapBrandingsForCollection(collection: Collection)
+    (
+      implicit capiClient: ContentApiClientLogic,
+      ec: ExecutionContext
+    ): Response[Map[String, BrandingByEdition]] =
+    getLinkSnapBrandings(
+      Collection.draftLinkSnapsRequestFor(collection).getOrElse(Collection.liveLinkSnapsRequestFor(collection))
+    )
+
+  private def getLinkSnapBrandings(request: LinkSnapsRequest)(
+    implicit capiClient: ContentApiClientLogic, ec: ExecutionContext
+  ): Response[Map[String, BrandingByEdition]] =
+    for (snapContent <- ContentApi.linkSnapBrandingsByEdition(capiClient, request)) yield snapContent
 
   def getTreatsForCollection(collection: Collection, adjustSearchQuery: AdjustSearchQuery = identity, adjustItemQuery: AdjustItemQuery = identity)
                             (implicit capiClient: ContentApiClientLogic, ec: ExecutionContext) = {
@@ -134,8 +155,10 @@ object FAPI {
                                    (implicit capiClient: ContentApiClientLogic, ec: ExecutionContext): Response[List[FaciaContent]] = {
     for {
       setOfContent <- getLiveContentForCollection(collection, adjustSearchQuery)
-      snapContent <- getLiveLatestSnapContentForCollection(collection, adjustSnapItemQuery)}
-    yield Collection.liveContent(collection, setOfContent, snapContent)}
+      snapContent <- getLiveLatestSnapContentForCollection(collection, adjustSnapItemQuery)
+      linkSnapBrandingsByEdition <- getLiveLinkSnapBrandingsForCollection(collection)
+    } yield Collection.liveContent(collection, setOfContent, snapContent, linkSnapBrandingsByEdition)
+  }
 
   def draftCollectionContentWithoutSnaps(collection: Collection, adjustSearchQuery: AdjustSearchQuery = identity)
                                 (implicit capiClient: ContentApiClientLogic, ec: ExecutionContext): Response[List[FaciaContent]] = {
@@ -148,8 +171,10 @@ object FAPI {
                                    (implicit capiClient: ContentApiClientLogic, ec: ExecutionContext): Response[List[FaciaContent]] = {
     for {
       setOfContent <- getDraftContentForCollection(collection, adjustSearchQuery)
-      snapContent <- getDraftLatestSnapContentForCollection(collection, adjustSnapItemQuery)}
-    yield Collection.draftContent(collection, setOfContent, snapContent)}
+      snapContent <- getDraftLatestSnapContentForCollection(collection, adjustSnapItemQuery)
+      linkSnapBrandingsByEdition <- getDraftLinkSnapBrandingsForCollection(collection)
+    } yield Collection.draftContent(collection, setOfContent, snapContent, linkSnapBrandingsByEdition)
+  }
 
   /**
     * Fetches content for the configured backfill query. The query can be manipulated for different

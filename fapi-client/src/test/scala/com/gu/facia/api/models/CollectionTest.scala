@@ -1,6 +1,7 @@
 package com.gu.facia.api.models
 
 import com.gu.contentapi.client.model.v1.{Content, ContentFields, ContentType}
+import com.gu.facia.api.utils.ContentApiUtils._
 import com.gu.facia.api.utils._
 import com.gu.facia.client.models.{Branded, CollectionConfigJson, CollectionJson, Trail, TrailMetaData}
 import org.joda.time.DateTime
@@ -81,7 +82,9 @@ class CollectionTest extends FreeSpec with ShouldMatchers with MockitoSugar with
       image,
       contentProperties,
       byline,
-      kicker)
+      kicker,
+      latestContent map (_.brandingByEdition) getOrElse Map.empty
+    )
 
   def makeLinkSnap(
     id: String = "id",
@@ -110,7 +113,9 @@ class CollectionTest extends FreeSpec with ShouldMatchers with MockitoSugar with
       image,
       contentProperties,
       byline,
-      kicker)
+      kicker,
+      Map.empty
+    )
 
 
   "fromCollectionJson" - {

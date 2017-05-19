@@ -1,9 +1,9 @@
 package com.gu.facia.api.models
 
 import com.gu.contentapi.client.model.v1.Content
-import com.gu.facia.api.contentapi.LatestSnapsRequest
+import com.gu.facia.api.contentapi.{LatestSnapsRequest, LinkSnapsRequest}
 import com.gu.facia.api.utils.IntegerString
-import com.gu.facia.client.models.{SupportingItem, Trail, CollectionJson}
+import com.gu.facia.client.models.{CollectionJson, SupportingItem, Trail}
 import org.joda.time.DateTime
 
 case class Collection(
@@ -37,6 +37,7 @@ object Collection {
   def contentFrom(collection: Collection,
                   content: Set[Content],
                   snapContent: Map[String, Option[Content]] = Map.empty,
+                  linkSnapBrandingsByEdition: Map[String, BrandingByEdition],
                   from: Collection => List[Trail]): List[FaciaContent] = {
     // if content is not in the set it was most likely filtered out by the CAPI query, so exclude it
     // note that this does not currently deal with e.g. snaps
@@ -53,7 +54,16 @@ object Collection {
           snapContent
             .find{case (id, _) => trail.id == id}
             .map(c => LatestSnap.fromTrailAndContent(trail, c._2))}
-        .orElse{ Snap.maybeFromTrail(trail)}}
+        .orElse {
+          linkSnapBrandingsByEdition
+          .find {
+            case (id, _) => trail.id == id
+          }.flatMap {
+            case (_, brandingByEdition) => Snap.maybeFromTrailAndBrandings(trail, brandingByEdition)
+          }
+        .orElse { Snap.maybeFromTrail(trail) }
+      }
+    }
 
     def resolveSupportingContent(supportingItem: SupportingItem): Option[FaciaContent] = {
       content.find { c =>
@@ -70,10 +80,13 @@ object Collection {
   }
 
   /* Live Methods */
-  def liveContent(collection: Collection,
+  def liveContent(
+    collection: Collection,
     content: Set[Content],
-    snapContent: Map[String, Option[Content]] = Map.empty): List[FaciaContent] =
-    contentFrom(collection, content, snapContent, collection => collection.live)
+    snapContent: Map[String, Option[Content]] = Map.empty,
+    linkSnapBrandingsByEdition: Map[String, BrandingByEdition] = Map.empty
+  ): List[FaciaContent] =
+    contentFrom(collection, content, snapContent, linkSnapBrandingsByEdition, collection => collection.live)
 
   def liveIdsWithoutSnaps(collection: Collection): List[String] =
     collection.live.filterNot(_.isSnap).map(_.id)
@@ -88,7 +101,7 @@ object Collection {
     LatestSnapsRequest(
       allLiveSupportingItems(collection)
         .filter(_.isSnap)
-        .filter(_.safeMeta.snapType == Some("latest"))
+        .filter(_.safeMeta.snapType.contains("latest"))
         .flatMap(snap => snap.meta.flatMap(_.snapUri).map(uri => snap.id ->uri))
         .toMap)
 
@@ -96,15 +109,30 @@ object Collection {
     LatestSnapsRequest(
       collection.live
       .filter(_.isSnap)
-      .filter(_.safeMeta.snapType == Some("latest"))
+      .filter(_.safeMeta.snapType.contains("latest"))
       .flatMap(snap => snap.safeMeta.snapUri.map(uri => snap.id -> uri))
       .toMap)
 
+  private def linkSnapsRequestFor(trails: List[Trail]): LinkSnapsRequest = LinkSnapsRequest(
+    trails.filter(_.isSnap)
+    .filter(_.safeMeta.snapType.contains("link"))
+    .flatMap(snap => snap.safeMeta.href.map(uri => snap.id -> uri.stripPrefix("/")))
+    .toMap)
+
+  def liveLinkSnapsRequestFor(collection: Collection): LinkSnapsRequest = linkSnapsRequestFor(collection.live)
+
   /* Draft Methods */
-  def draftContent(collection: Collection,
+  def draftContent(
+    collection: Collection,
     content: Set[Content],
-    snapContent: Map[String, Option[Content]] = Map.empty): List[FaciaContent] =
-    contentFrom(collection, content, snapContent, collection => collection.draft.getOrElse(collection.live))
+    snapContent: Map[String, Option[Content]] = Map.empty,
+    linkSnapBrandingsByEdition: Map[String, BrandingByEdition] = Map.empty
+  ): List[FaciaContent] =
+    contentFrom(collection,
+      content,
+      snapContent,
+      linkSnapBrandingsByEdition,
+      collection => collection.draft.getOrElse(collection.live))
 
   def draftIdsWithoutSnaps(collection: Collection): Option[List[String]] =
     collection.draft.map(_.filterNot(_.isSnap).map(_.id))
@@ -120,7 +148,7 @@ object Collection {
         .map( listOfSupportingItems =>
           LatestSnapsRequest(
             listOfSupportingItems.filter(_.isSnap)
-              .filter(_.safeMeta.snapType == Some("latest"))
+              .filter(_.safeMeta.snapType.contains("latest"))
               .flatMap(snap => snap.meta.flatMap(_.snapUri).map(uri => snap.id ->uri))
               .toMap))
 
@@ -128,22 +156,29 @@ object Collection {
       collection.draft.map( listOfTrails =>
         LatestSnapsRequest(
           listOfTrails.filter(_.isSnap)
-          .filter(_.safeMeta.snapType == Some("latest"))
+          .filter(_.safeMeta.snapType.contains("latest"))
           .flatMap(snap => snap.safeMeta.snapUri.map(uri => snap.id -> uri))
           .toMap))
+
+  def draftLinkSnapsRequestFor(collection: Collection): Option[LinkSnapsRequest] =
+    collection.draft map linkSnapsRequestFor
 
   /* Treats */
   def treatContent(collection: Collection,
     content: Set[Content],
     snapContent: Map[String, Option[Content]] = Map.empty): List[FaciaContent] =
-    contentFrom(collection, content, snapContent, collection => collection.treats)
+    contentFrom(collection,
+      content,
+      snapContent,
+      linkSnapBrandingsByEdition = Map.empty,
+      collection => collection.treats)
 
   def treatsRequestFor(collection: Collection): (List[String], LatestSnapsRequest) = {
     val latestSnapsRequest =
       LatestSnapsRequest(
         collection.treats
           .filter(_.isSnap)
-          .filter(_.safeMeta.snapType == Some("latest"))
+          .filter(_.safeMeta.snapType.contains("latest"))
           .flatMap(snap => snap.safeMeta.snapUri.map(uri => snap.id -> uri))
           .toMap)
 

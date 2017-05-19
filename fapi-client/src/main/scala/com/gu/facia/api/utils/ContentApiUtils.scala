@@ -1,6 +1,8 @@
 package com.gu.facia.api.utils
 
-import com.gu.contentapi.client.model.v1.{TagType, Tag, Content}
+import com.gu.commercial.branding.{Brandable, BrandingFinder}
+import com.gu.contentapi.client.model.v1.{Content, Section, Tag, TagType}
+import com.gu.facia.api.models.BrandingByEdition
 
 object ContentApiUtils {
 
@@ -38,5 +40,22 @@ object ContentApiUtils {
     lazy val isInteractive: Boolean = content.tags.exists { _.id == Tags.Interactive }
 
     lazy val isLive: Boolean = content.fields.flatMap(_.liveBloggingNow).exists(identity)
+
+    lazy val brandingByEdition: BrandingByEdition = findBranding(content)
+  }
+
+  implicit class RichSection(section: Section) {
+    lazy val brandingByEdition: BrandingByEdition = findBranding(section)
+  }
+
+  implicit class RichTag(tag: Tag) {
+    lazy val brandingByEdition: BrandingByEdition = findBranding(tag)
+  }
+
+  private def findBranding[T: Brandable](brandable: T): BrandingByEdition = {
+    val editions = Seq("uk", "us", "au", "int")
+    editions.map { edition =>
+      edition -> BrandingFinder.findBranding(edition)(brandable)
+    }.toMap
   }
 }

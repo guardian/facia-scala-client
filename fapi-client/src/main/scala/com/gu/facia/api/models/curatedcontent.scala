@@ -1,8 +1,9 @@
 package com.gu.facia.api.models
 
-import com.gu.contentapi.client.model.v1.{TagType, Tag, Content}
+import com.gu.contentapi.client.model.v1.{Content, TagType}
+import com.gu.facia.api.utils.ContentApiUtils._
 import com.gu.facia.api.utils._
-import com.gu.facia.client.models.{SupportingItem, MetaDataCommonFields, Trail, TrailMetaData}
+import com.gu.facia.client.models.{MetaDataCommonFields, SupportingItem, Trail, TrailMetaData}
 
 sealed trait FaciaImage
 case class Cutout(imageSrc: String, imageSrcWidth: Option[String], imageSrcHeight: Option[String]) extends FaciaImage
@@ -58,35 +59,45 @@ object FaciaImage {
 
 }
 
-sealed trait FaciaContent
+sealed trait FaciaContent {
+  def brandingByEdition: BrandingByEdition = Map.empty
+}
 
 object Snap {
   val LatestType = "latest"
   val LinkType = "link"
   val DefaultType = LinkType
 
-  def maybeFromTrail(trail: Trail): Option[Snap] = trail.safeMeta.snapType match {
-    case Some("latest") =>
-      Option(LatestSnap.fromTrailAndContent(trail, None))
-    case Some(snapType) =>
-      val resolvedMetaData = ResolvedMetaData.fromTrailMetaData(trail.safeMeta)
-      val contentProperties = ContentProperties.fromResolvedMetaData(resolvedMetaData)
-      Option(LinkSnap(
-        trail.id,
-        Option(trail.frontPublicationDate),
-        snapType,
-        trail.safeMeta.snapUri,
-        trail.safeMeta.snapCss,
-        trail.safeMeta.headline,
-        trail.safeMeta.href,
-        trail.safeMeta.trailText,
-        trail.safeMeta.group.getOrElse("0"),
-        FaciaImage.getFaciaImage(None, trail.safeMeta, resolvedMetaData),
-        contentProperties,
-        trail.safeMeta.byline,
-        ItemKicker.fromTrailMetaData(trail.safeMeta)))
-    case _ => None
-  }
+  def maybeFromTrail(trail: Trail): Option[Snap] = maybeFromTrailAndBrandings(trail, Map.empty)
+
+  def maybeFromTrailAndBrandings(
+    trail: Trail,
+    brandingByEdition: BrandingByEdition
+  ): Option[Snap] =
+    trail.safeMeta.snapType match {
+      case Some("latest") =>
+        Option(LatestSnap.fromTrailAndContent(trail, None))
+      case Some(snapType) =>
+        val resolvedMetaData = ResolvedMetaData.fromTrailMetaData(trail.safeMeta)
+        val contentProperties = ContentProperties.fromResolvedMetaData(resolvedMetaData)
+        Option(LinkSnap(
+          trail.id,
+          Option(trail.frontPublicationDate),
+          snapType,
+          trail.safeMeta.snapUri,
+          trail.safeMeta.snapCss,
+          trail.safeMeta.headline,
+          trail.safeMeta.href,
+          trail.safeMeta.trailText,
+          trail.safeMeta.group.getOrElse("0"),
+          FaciaImage.getFaciaImage(None, trail.safeMeta, resolvedMetaData),
+          contentProperties,
+          trail.safeMeta.byline,
+          ItemKicker.fromTrailMetaData(trail.safeMeta),
+          brandingByEdition
+        ))
+      case _ => None
+    }
 
   def maybeFromSupportingItem(supportingItem: SupportingItem): Option[Snap] = supportingItem.safeMeta.snapType match {
     case Some("latest") =>
@@ -107,7 +118,9 @@ object Snap {
         FaciaImage.getFaciaImage(None, supportingItem.safeMeta, resolvedMetaData),
         contentProperties,
         supportingItem.safeMeta.byline,
-        ItemKicker.fromTrailMetaData(supportingItem.safeMeta)))
+        ItemKicker.fromTrailMetaData(supportingItem.safeMeta),
+        Map.empty
+      ))
     case _ => None
   }
 }
@@ -126,7 +139,9 @@ case class LinkSnap(
   image: Option[FaciaImage],
   properties: ContentProperties,
   byline: Option[String],
-  kicker: Option[ItemKicker]) extends Snap
+  kicker: Option[ItemKicker],
+  override val brandingByEdition: BrandingByEdition
+) extends Snap
 
 case class LatestSnap(
   id: String,
@@ -142,13 +157,16 @@ case class LatestSnap(
   image: Option[FaciaImage],
   properties: ContentProperties,
   byline: Option[String],
-  kicker: Option[ItemKicker]) extends Snap
+  kicker: Option[ItemKicker],
+  override val brandingByEdition: BrandingByEdition
+) extends Snap
 
 object LatestSnap {
   def fromTrailAndContent(trail: Trail, maybeContent: Option[Content]): LatestSnap = {
     val cardStyle: CardStyle = maybeContent.map(CardStyle.apply(_, trail.safeMeta)).getOrElse(DefaultCardstyle)
     val resolvedMetaData: ResolvedMetaData =
       maybeContent.fold(ResolvedMetaData.fromTrailMetaData(trail.safeMeta))(ResolvedMetaData.fromContentAndTrailMetaData(_, trail.safeMeta, cardStyle))
+    val brandingByEdition = maybeContent map (_.brandingByEdition) getOrElse Map.empty
     LatestSnap(
       trail.id,
       Option(trail.frontPublicationDate),
@@ -163,7 +181,8 @@ object LatestSnap {
       FaciaImage.getFaciaImage(maybeContent, trail.safeMeta, resolvedMetaData),
       ContentProperties.fromResolvedMetaData(resolvedMetaData),
       trail.safeMeta.byline.orElse(maybeContent.flatMap(_.fields.flatMap(_.byline))),
-      ItemKicker.fromMaybeContentTrailMetaAndResolvedMetaData(maybeContent, trail.safeMeta, resolvedMetaData)
+      ItemKicker.fromMaybeContentTrailMetaAndResolvedMetaData(maybeContent, trail.safeMeta, resolvedMetaData),
+      brandingByEdition
     )
   }
 
@@ -171,6 +190,7 @@ object LatestSnap {
     val cardStyle: CardStyle = maybeContent.map(CardStyle.apply(_, supportingItem.safeMeta)).getOrElse(DefaultCardstyle)
     val resolvedMetaData: ResolvedMetaData =
       maybeContent.fold(ResolvedMetaData.fromTrailMetaData(supportingItem.safeMeta))(ResolvedMetaData.fromContentAndTrailMetaData(_, supportingItem.safeMeta, cardStyle))
+    val brandingByEdition = maybeContent map (_.brandingByEdition) getOrElse Map.empty
     LatestSnap(
       supportingItem.id,
       supportingItem.frontPublicationDate,
@@ -185,7 +205,8 @@ object LatestSnap {
       FaciaImage.getFaciaImage(maybeContent, supportingItem.safeMeta, resolvedMetaData),
       ContentProperties.fromResolvedMetaData(resolvedMetaData),
       supportingItem.safeMeta.byline.orElse(maybeContent.flatMap(_.fields.flatMap(_.byline))),
-      ItemKicker.fromMaybeContentTrailMetaAndResolvedMetaData(maybeContent, supportingItem.safeMeta, resolvedMetaData)
+      ItemKicker.fromMaybeContentTrailMetaAndResolvedMetaData(maybeContent, supportingItem.safeMeta, resolvedMetaData),
+      brandingByEdition
     )
   }
 }
@@ -205,7 +226,9 @@ case class CuratedContent(
   kicker: Option[ItemKicker],
   embedType: Option[String],
   embedUri: Option[String],
-  embedCss: Option[String]) extends FaciaContent
+  embedCss: Option[String],
+  override val brandingByEdition: BrandingByEdition
+) extends FaciaContent
 
 case class SupportingCuratedContent(
   content: Content,
@@ -245,7 +268,10 @@ object CuratedContent {
       ItemKicker.fromContentAndTrail(Option(content), trailMetaData, resolvedMetaData, Some(collectionConfig)),
       embedType = trailMetaData.snapType,
       embedUri = trailMetaData.snapUri,
-      embedCss = trailMetaData.snapCss)}
+      embedCss = trailMetaData.snapCss,
+      brandingByEdition = content.brandingByEdition
+    )
+  }
 
   def fromTrailAndContent(content: Content,
                           trailMetaData: MetaDataCommonFields,
@@ -270,7 +296,9 @@ object CuratedContent {
       ItemKicker.fromContentAndTrail(Option(content), trailMetaData, resolvedMetaData, Some(collectionConfig)),
       embedType = trailMetaData.snapType,
       embedUri = trailMetaData.snapUri,
-      embedCss = trailMetaData.snapCss)}
+      embedCss = trailMetaData.snapCss,
+      brandingByEdition = content.brandingByEdition
+    )}
 }
 
 object SupportingCuratedContent {
