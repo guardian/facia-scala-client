@@ -1,3 +1,7 @@
+#### 2.1.0
+  
+  - Enable branding of `FaciaContent`.
+
 ##### 2.0.14
   
   - Label paid content as `paid` instead of `news`
