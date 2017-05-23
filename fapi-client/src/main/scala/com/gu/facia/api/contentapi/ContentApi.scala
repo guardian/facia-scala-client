@@ -122,13 +122,18 @@ object ContentApi {
   def linkSnapBrandingsByEdition(capiClient: ContentApiClientLogic, linkSnapsRequest: LinkSnapsRequest)
     (implicit ec: ExecutionContext): Response[Map[String, BrandingByEdition]] = {
 
-    def itemQueryFromSnapUri(uri: String): ItemQuery = capiClient.item(uri).pageSize(1)
+    def toIdAndUri(snap: (String, String)): (String, URI) = snap._1 -> new URI(snap._2)
+
+    def itemQueryFromSnapUri(uri: URI): ItemQuery = capiClient.item(uri.getPath.stripPrefix("/")).pageSize(1)
+
+    def isPossibleSectionFrontOrTagPage(snap: (String, URI)): Boolean = !snap._2.isAbsolute
 
     def brandingsFromResponse(response: ItemResponse): BrandingByEdition =
       response.section.map(_.brandingByEdition) orElse response.tag.map(_.brandingByEdition) getOrElse Map.empty
 
     Response.Async.Right(
-      Future.traverse(linkSnapsRequest.snaps) { case (id, uri) =>
+      Future
+      .traverse(linkSnapsRequest.snaps.map(toIdAndUri).filter(isPossibleSectionFrontOrTagPage)) { case (id, uri) =>
         capiClient.getResponse(itemQueryFromSnapUri(uri))
         .map(brandingsFromResponse).map(id -> _)
       }.map(_.toMap)

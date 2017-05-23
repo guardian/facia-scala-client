@@ -116,7 +116,7 @@ object Collection {
   private def linkSnapsRequestFor(trails: List[Trail]): LinkSnapsRequest = LinkSnapsRequest(
     trails.filter(_.isSnap)
     .filter(_.safeMeta.snapType.contains("link"))
-    .flatMap(snap => snap.safeMeta.href.map(uri => snap.id -> uri.stripPrefix("/")))
+    .flatMap(snap => snap.safeMeta.href.map(uri => snap.id -> uri))
     .toMap)
 
   def liveLinkSnapsRequestFor(collection: Collection): LinkSnapsRequest = linkSnapsRequestFor(collection.live)

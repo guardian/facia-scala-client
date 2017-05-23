@@ -1,14 +1,16 @@
 package com.gu.facia.api.contentapi
 
-import com.gu.contentapi.client.GuardianContentClient
-import com.gu.contentapi.client.model.v1.{ItemResponse, SearchResponse, Content}
+import com.gu.contentapi.client.model.ItemQuery
+import com.gu.contentapi.client.model.v1.{Content, ItemResponse, SearchResponse, Tag}
+import com.gu.contentapi.client.{ContentApiClientLogic, GuardianContentClient}
 import com.gu.facia.api.Response
 import lib.ExecutionContext
+import org.mockito.Mockito._
+import org.scalatest._
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.mock.MockitoSugar
-import org.scalatest._
-import org.mockito.Mockito._
 
+import scala.concurrent.Future
 
 class ContentApiTest extends FreeSpec
   with ShouldMatchers
@@ -132,6 +134,60 @@ class ContentApiTest extends FreeSpec
       ContentApi.backfillContentFromResponse(response).asFuture.futureValue.fold(
         err => fail(s"expected contents result, got error $err"),
         result => result should be(contents)
+      )
+    }
+  }
+
+  "linkSnapBrandingsByEdition" - {
+
+    def capiClient(id: String): ContentApiClientLogic = {
+      val query = ItemQuery(id)
+
+      val tag = mock[Tag]
+      when(tag.activeSponsorships) thenReturn None
+
+      val response = mock[ItemResponse]
+      when(response.section) thenReturn None
+      when(response.tag) thenReturn Some(tag)
+
+      val capiClient = mock[ContentApiClientLogic]
+      when(capiClient.item(id)) thenReturn query
+      when(capiClient.getResponse(query.pageSize(1))) thenReturn Future.successful(response)
+
+      capiClient
+    }
+
+    "will give branding for a link to a sponsored tag page" in {
+      val request = LinkSnapsRequest(Map("trailId" -> "/sustainable-business/series/palm-oil-debate"))
+      ContentApi.linkSnapBrandingsByEdition(capiClient("sustainable-business/series/palm-oil-debate"), request).asFuture
+      .futureValue.fold(
+        err => fail(s"expected brandings result, got error $err"),
+        result => result.values.headOption should not be empty
+      )
+    }
+
+    "will give branding for a link to a sponsored section front" in {
+      val request = LinkSnapsRequest(Map("trailId" -> "/cities"))
+      ContentApi.linkSnapBrandingsByEdition(capiClient("cities"), request).asFuture.futureValue.fold(
+        err => fail(s"expected brandings result, got error $err"),
+        result => result.values.headOption should not be empty
+      )
+    }
+
+    "will give branding for a link to a sponsored section front with a query string" in {
+      val request = LinkSnapsRequest(Map("trailId" -> "/cities?a=1"))
+      ContentApi.linkSnapBrandingsByEdition(capiClient("cities"), request).asFuture.futureValue.fold(
+        err => fail(s"expected brandings result, got error $err"),
+        result => result.values.headOption should not be empty
+      )
+    }
+
+    "will not make capi request for an external link" in {
+      val capiClient = mock[ContentApiClientLogic]
+      val request = LinkSnapsRequest(Map("trailId" -> "http://www.bbc.co.uk/news/election-2017-39966615"))
+      ContentApi.linkSnapBrandingsByEdition(capiClient, request).asFuture.futureValue.fold(
+        err => fail(s"expected brandings result, got error $err"),
+        result => result should be(empty)
       )
     }
   }
