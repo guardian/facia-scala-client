@@ -1,3 +1,7 @@
+#### 2.1.2
+  
+  - Improvement: filter snap links pointing at tag-combiner pages to avoid unnecessary capi lookups
+
 #### 2.1.1
   
   - Bug fix: filter snap links to avoid unnecessary capi lookups (which can bring the frontend facia press down)
