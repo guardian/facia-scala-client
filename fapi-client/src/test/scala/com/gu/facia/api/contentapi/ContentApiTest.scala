@@ -199,5 +199,21 @@ class ContentApiTest extends FreeSpec
         result => result should be(empty)
       )
     }
+
+    "will use snap link stripped of '/all' to find branding" in {
+      val request = LinkSnapsRequest(Map("trailId" -> "/cities/all"))
+      ContentApi.linkSnapBrandingsByEdition(capiClient("cities"), request).asFuture.futureValue.fold(
+        err => fail(s"expected brandings result, got error $err"),
+        result => result.values.headOption should not be empty
+      )
+    }
+
+    "will use snap link stripped of '/latest' to find branding" in {
+      val request = LinkSnapsRequest(Map("trailId" -> "/cities/latest"))
+      ContentApi.linkSnapBrandingsByEdition(capiClient("cities"), request).asFuture.futureValue.fold(
+        err => fail(s"expected brandings result, got error $err"),
+        result => result.values.headOption should not be empty
+      )
+    }
   }
 }
