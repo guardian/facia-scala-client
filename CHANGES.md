@@ -1,3 +1,7 @@
+#### 2.1.1
+  
+  - Bug fix: filter snap links to avoid unnecessary capi lookups (which can bring the frontend facia press down)
+
 #### 2.1.0
   
   - Enable branding of `FaciaContent`.  
