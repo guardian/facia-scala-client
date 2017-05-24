@@ -190,5 +190,14 @@ class ContentApiTest extends FreeSpec
         result => result should be(empty)
       )
     }
+
+    "will not make capi request for a link to a tag combiner" in {
+      val capiClient = mock[ContentApiClientLogic]
+      val request = LinkSnapsRequest(Map("trailId" -> "/world/asia-pacific+world/south-and-central-asia"))
+      ContentApi.linkSnapBrandingsByEdition(capiClient, request).asFuture.futureValue.fold(
+        err => fail(s"expected brandings result, got error $err"),
+        result => result should be(empty)
+      )
+    }
   }
 }

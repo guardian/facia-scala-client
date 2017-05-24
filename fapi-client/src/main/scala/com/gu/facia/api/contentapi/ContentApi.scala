@@ -126,7 +126,10 @@ object ContentApi {
 
     def itemQueryFromSnapUri(uri: URI): ItemQuery = capiClient.item(uri.getPath.stripPrefix("/")).pageSize(1)
 
-    def isPossibleSectionFrontOrTagPage(snap: (String, URI)): Boolean = !snap._2.isAbsolute
+    def isPossibleSectionFrontOrTagPage(snap: (String, URI)): Boolean = {
+      val uri = snap._2
+      !uri.isAbsolute && !uri.getPath.contains('+')
+    }
 
     def brandingsFromResponse(response: ItemResponse): BrandingByEdition =
       response.section.map(_.brandingByEdition) orElse response.tag.map(_.brandingByEdition) getOrElse Map.empty
