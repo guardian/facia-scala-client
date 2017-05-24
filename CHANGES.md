@@ -1,3 +1,7 @@
+#### 2.1.3
+  
+  - Improvement: recover from failing capi lookup for link snaps
+
 #### 2.1.2
   
   - Improvement: filter snap links pointing at tag-combiner pages to avoid unnecessary capi lookups
