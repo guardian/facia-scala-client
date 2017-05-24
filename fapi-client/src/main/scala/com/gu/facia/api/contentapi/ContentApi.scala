@@ -8,8 +8,10 @@ import com.gu.contentapi.client.model.{ItemQuery, SearchQuery}
 import com.gu.facia.api.models.BrandingByEdition
 import com.gu.facia.api.utils.ContentApiUtils._
 import com.gu.facia.api.{CapiError, Response, UrlConstructError}
+import com.typesafe.scalalogging.StrictLogging
 
 import scala.concurrent.{ExecutionContext, Future}
+import scala.util.control.NonFatal
 import scala.util.{Success, Try}
 
 case class LatestSnapsRequest(snaps: Map[String, String]) {
@@ -18,7 +20,7 @@ case class LatestSnapsRequest(snaps: Map[String, String]) {
 
 case class LinkSnapsRequest(snaps: Map[String, String])
 
-object ContentApi {
+object ContentApi extends StrictLogging {
   type AdjustSearchQuery = SearchQuery => SearchQuery
   type AdjustItemQuery = ItemQuery => ItemQuery
 
@@ -124,7 +126,10 @@ object ContentApi {
 
     def toIdAndUri(snap: (String, String)): (String, URI) = snap._1 -> new URI(snap._2)
 
-    def itemQueryFromSnapUri(uri: URI): ItemQuery = capiClient.item(uri.getPath.stripPrefix("/")).pageSize(1)
+    def itemQueryFromSnapUri(uri: URI): ItemQuery = {
+      def cleaned(path: String) = path.stripPrefix("/").stripSuffix("/all").stripSuffix("/latest")
+      capiClient.item(cleaned(uri.getPath)).pageSize(1)
+    }
 
     def isPossibleSectionFrontOrTagPage(snap: (String, URI)): Boolean = {
       val uri = snap._2
@@ -134,12 +139,19 @@ object ContentApi {
     def brandingsFromResponse(response: ItemResponse): BrandingByEdition =
       response.section.map(_.brandingByEdition) orElse response.tag.map(_.brandingByEdition) getOrElse Map.empty
 
-    Response.Async.Right(
-      Future
-      .traverse(linkSnapsRequest.snaps.map(toIdAndUri).filter(isPossibleSectionFrontOrTagPage)) { case (id, uri) =>
-        capiClient.getResponse(itemQueryFromSnapUri(uri))
-        .map(brandingsFromResponse).map(id -> _)
+    Response.Async.Right {
+      Future.traverse(linkSnapsRequest.snaps.map(toIdAndUri).filter(isPossibleSectionFrontOrTagPage)) {
+        case (id, uri) =>
+          val query = itemQueryFromSnapUri(uri)
+          val response = capiClient.getResponse(query)
+          response.onFailure { case NonFatal(e) =>
+            logger.warn(s"Failed to get response for link snap query '$query'", e)
+          }
+          response.map(brandingsFromResponse).map(id -> _)
       }.map(_.toMap)
-    )
+      .recoverWith { case NonFatal(e) =>
+        Future.successful(Map.empty[String, BrandingByEdition])
+      }
+    }
   }
 }
