@@ -115,6 +115,7 @@ lazy val fapiClient = project.in(file("fapi-client"))
     name := "fapi-client",
     resolvers ++= Seq(
       Resolver.file("Local", file( Path.userHome.absolutePath + "/.ivy2/local"))(Resolver.ivyStylePatterns),
+      "Guardian Frontend Bintray" at "https://dl.bintray.com/guardian/frontend",
       "Typesafe Repository" at "http://repo.typesafe.com/typesafe/releases/"
     ),
     scalacOptions := Seq("-feature", "-deprecation"),
@@ -136,6 +137,7 @@ lazy val fapiClient_play25 = project.in(file("fapi-client-play25"))
     sourceDirectory := baseDirectory.value / "../fapi-client/src",
     resolvers ++= Seq(
       Resolver.file("Local", file( Path.userHome.absolutePath + "/.ivy2/local"))(Resolver.ivyStylePatterns),
+      "Guardian Frontend Bintray" at "https://dl.bintray.com/guardian/frontend",
       "Typesafe Repository" at "http://repo.typesafe.com/typesafe/releases/"
     ),
     scalacOptions := Seq("-feature", "-deprecation"),
