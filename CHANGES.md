@@ -1,3 +1,7 @@
+#### 2.3
+  
+  - Upgrade AWS dependency and use the new AmazonS3 API.
+
 #### 2.1.3
   
   - Improvement: recover from failing capi lookup for link snaps
