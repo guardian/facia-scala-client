@@ -1,4 +1,4 @@
-#### 2.3
+#### 2.2
   
   - Upgrade AWS dependency and use the new AmazonS3 API.
 
