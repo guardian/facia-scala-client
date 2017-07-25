@@ -6,9 +6,9 @@ organization := "com.gu"
 
 name := "facia-api-client"
 
-scalaVersion := "2.11.8"
+scalaVersion := "2.11.11"
 
-scalaVersion in ThisBuild := "2.11.8"
+scalaVersion in ThisBuild := "2.11.11"
 
 description := "Scala client for The Guardian's Facia JSON API"
 
@@ -74,6 +74,7 @@ lazy val faciaJson = project.in(file("facia-json"))
       Resolver.file("Local", file( Path.userHome.absolutePath + "/.ivy2/local"))(Resolver.ivyStylePatterns),
       "Typesafe Repository" at "http://repo.typesafe.com/typesafe/releases/"
     ),
+    scalacOptions := Seq("-feature", "-deprecation"),
     libraryDependencies ++= Seq(
       awsSdk,
       commonsIo,
@@ -95,6 +96,7 @@ lazy val faciaJson_play25 = project.in(file("facia-json-play25"))
       Resolver.file("Local", file( Path.userHome.absolutePath + "/.ivy2/local"))(Resolver.ivyStylePatterns),
       "Typesafe Repository" at "http://repo.typesafe.com/typesafe/releases/"
     ),
+    scalacOptions := Seq("-feature", "-deprecation"),
     libraryDependencies ++= Seq(
       awsSdk,
       commonsIo,
@@ -113,8 +115,10 @@ lazy val fapiClient = project.in(file("fapi-client"))
     name := "fapi-client",
     resolvers ++= Seq(
       Resolver.file("Local", file( Path.userHome.absolutePath + "/.ivy2/local"))(Resolver.ivyStylePatterns),
+      "Guardian Frontend Bintray" at "https://dl.bintray.com/guardian/frontend",
       "Typesafe Repository" at "http://repo.typesafe.com/typesafe/releases/"
     ),
+    scalacOptions := Seq("-feature", "-deprecation"),
     libraryDependencies ++= Seq(
       contentApi,
       commercialShared,
@@ -133,8 +137,10 @@ lazy val fapiClient_play25 = project.in(file("fapi-client-play25"))
     sourceDirectory := baseDirectory.value / "../fapi-client/src",
     resolvers ++= Seq(
       Resolver.file("Local", file( Path.userHome.absolutePath + "/.ivy2/local"))(Resolver.ivyStylePatterns),
+      "Guardian Frontend Bintray" at "https://dl.bintray.com/guardian/frontend",
       "Typesafe Repository" at "http://repo.typesafe.com/typesafe/releases/"
     ),
+    scalacOptions := Seq("-feature", "-deprecation"),
     libraryDependencies ++= Seq(
       contentApi,
       commercialShared,

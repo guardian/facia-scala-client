@@ -1,7 +1,7 @@
 package com.gu.facia.client
 
 import com.amazonaws.regions.{Region, Regions}
-import com.amazonaws.services.s3.AmazonS3Client
+import com.amazonaws.services.s3.{AmazonS3, AmazonS3ClientBuilder}
 import com.amazonaws.services.s3.model.AmazonS3Exception
 import org.apache.commons.io.IOUtils
 import scala.concurrent.{ExecutionContext, Future, blocking}
@@ -14,7 +14,7 @@ trait S3Client {
   def get(bucket: String, path: String): Future[FaciaResult]
 }
 
-case class AmazonSdkS3Client(client: AmazonS3Client)(implicit executionContext: ExecutionContext) extends S3Client {
+case class AmazonSdkS3Client(client: AmazonS3)(implicit executionContext: ExecutionContext) extends S3Client {
   def get(bucket: String, path: String): Future[FaciaResult] = Future {
     blocking {
       Try(IOUtils.toByteArray(client.getObject(bucket, path).getObjectContent))
@@ -33,8 +33,7 @@ case class AmazonSdkS3Client(client: AmazonS3Client)(implicit executionContext: 
 
 object AmazonSdkS3Client {
   def default(implicit executionContext: ExecutionContext) = {
-    val client = new AmazonS3Client()
-    client.setRegion(Region.getRegion(Regions.EU_WEST_1))
+    val client = AmazonS3ClientBuilder.standard().withRegion(Regions.EU_WEST_1).build()
     AmazonSdkS3Client(client)
   }
 }
