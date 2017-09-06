@@ -3,6 +3,7 @@ package com.gu.facia.client.models
 import play.api.libs.json._
 import org.joda.time.DateTime
 import play.api.libs.json.{JsValue, Json}
+import com.gu.facia.client.json.JodaFormat._
 
 case class SlideshowAsset(src: String, width: String, height: String)
 object SlideshowAsset {

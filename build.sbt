@@ -61,7 +61,7 @@ val sonatypeReleaseSettings = Seq(
 )
 
 lazy val root = (project in file("."))
-  .aggregate(faciaJson, faciaJson_play25, fapiClient, fapiClient_play25)
+  .aggregate(faciaJson, faciaJson_play25, faciaJson_play26, fapiClient, fapiClient_play25, fapiClient_play26)
   .settings(publishArtifact := false)
   .settings(sonatypeReleaseSettings: _*)
 
@@ -102,6 +102,28 @@ lazy val faciaJson_play25 = project.in(file("facia-json-play25"))
       commonsIo,
       specs2,
       playJson25,
+      scalaLogging
+    ),
+    publishArtifact := true
+  )
+  .settings(sonatypeReleaseSettings: _*)
+
+lazy val faciaJson_play26 = project.in(file("facia-json-play26"))
+  .settings(sonatypeReleaseSettings: _*)
+  .settings(
+    organization := "com.gu",
+    name := "facia-json-play26",
+    sourceDirectory := baseDirectory.value / "../facia-json/src",
+    resolvers ++= Seq(
+      Resolver.file("Local", file( Path.userHome.absolutePath + "/.ivy2/local"))(Resolver.ivyStylePatterns),
+      "Typesafe Repository" at "http://repo.typesafe.com/typesafe/releases/"
+    ),
+    scalacOptions := Seq("-feature", "-deprecation"),
+    libraryDependencies ++= Seq(
+      awsSdk,
+      commonsIo,
+      specs2,
+      playJson26,
       scalaLogging
     ),
     publishArtifact := true
@@ -150,3 +172,25 @@ lazy val fapiClient_play25 = project.in(file("fapi-client-play25"))
     publishArtifact := true
   )
   .dependsOn(faciaJson_play25)
+
+lazy val fapiClient_play26 = project.in(file("fapi-client-play26"))
+  .settings(sonatypeReleaseSettings: _*)
+  .settings(
+    organization := "com.gu",
+    name := "fapi-client-play26",
+    sourceDirectory := baseDirectory.value / "../fapi-client/src",
+    resolvers ++= Seq(
+      Resolver.file("Local", file( Path.userHome.absolutePath + "/.ivy2/local"))(Resolver.ivyStylePatterns),
+      "Guardian Frontend Bintray" at "https://dl.bintray.com/guardian/frontend",
+      "Typesafe Repository" at "http://repo.typesafe.com/typesafe/releases/"
+    ),
+    scalacOptions := Seq("-feature", "-deprecation"),
+    libraryDependencies ++= Seq(
+      contentApi,
+      commercialShared,
+      scalaTest,
+      mockito
+    ),
+    publishArtifact := true
+  )
+  .dependsOn(faciaJson_play26)
