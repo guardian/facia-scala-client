@@ -3,7 +3,8 @@ package com.gu.facia.client.json
 import org.joda.time.DateTime
 import org.joda.time.format.ISODateTimeFormat
 import play.api.libs.json._
-import scala.util.control.Exception.nonFatalCatch
+
+import scala.util.control.Exception.allCatch
 
 /*
   joda support has been removed from play-json in v2.6.
@@ -20,14 +21,15 @@ object JodaReads {
 
   implicit val JodaDateTimeReads : Reads[DateTime] = new Reads[DateTime] {
 
-    val dateFormat = ISODateTimeFormat.dateOptionalTimeParser
-    def parse(s: String) = nonFatalCatch[DateTime] opt (DateTime.parse(s, dateFormat))
+    val dateFormat = ISODateTimeFormat.dateTimeParser().withOffsetParsed()
+
+    def parse(s: String) = allCatch[DateTime] opt (DateTime.parse(s, dateFormat))
 
     def reads(json: JsValue): JsResult[DateTime] = json match {
       case JsNumber(d) => JsSuccess(new DateTime(d.toLong))
       case JsString(s) => parse(s) match {
         case Some(d) => JsSuccess(d)
-        case _ => JsError(JsPath(), s"error.expected.jodadate.format ${dateFormat.toString}")
+        case _ => JsError(JsPath(), s"error.unexpected.date.format. Date: '$s'")
       }
       case _ => JsError(JsPath(), "error.expected.date")
     }
