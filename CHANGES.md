@@ -1,3 +1,12 @@
+#### 2.4
+  
+  - Upgrade Content API dependency to `11.33`
+  - Remove deprecated `http` package
+#### 2.3
+  
+  - Correctly parse [timezone offset](https://github.com/guardian/facia-scala-client/pull/196) 
+
+
 #### 2.2
   
   - Upgrade AWS dependency and use the new AmazonS3 API.
