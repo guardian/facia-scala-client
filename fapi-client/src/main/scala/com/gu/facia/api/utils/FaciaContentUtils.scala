@@ -8,7 +8,7 @@ import scala.util.Try
 
 object FaciaContentUtils {
   import ContentApiUtils._
-  import com.gu.contentapi.client.utils.CapiModelEnrichment.RichCapiDateTime
+  import com.gu.facia.api.utils.CapiModelEnrichment.RichCapiDateTime
 
   def fold[T](fc: FaciaContent)(c: (CuratedContent) => T, scc: (SupportingCuratedContent) => T,
     ls: (LinkSnap) => T, las: (LatestSnap) => T): T = fc match {
