@@ -47,7 +47,7 @@ object BackfillResolver {
             curatedCollection <- FAPI.liveCollectionContentWithSnaps(parentCollection, adjustSearchQuery, adjustItemQuery)
             nestedBackfill <- parentCollection.collectionConfig.backfill match {
               case Some(Backfill("capi", query)) =>
-                backfill(CapiBackfill(query, parentCollection.collectionConfig))
+                backfill(CapiBackfill(query, parentCollection.collectionConfig), adjustSearchQuery, adjustItemQuery)
               case _ => backfill(EmptyBackfill)
             }
           } yield {
