@@ -1,0 +1,10 @@
+{
+  "id": "film/series/new-view-series",
+  "typeName": "series",
+  "sectionId": "theguardian",
+  "sectionName": "From the Guardian",
+  "webTitle": "New View series",
+  "webUrl": "https://www.theguardian.com/film/series/new-view-series",
+  "apiUrl": "https://content.guardianapis.com/film/series/new-view-series",
+  "description": "A series of videos commissioned and editorially controlled by Guardian Films, in association with Skoda "
+}

@@ -1,0 +1,176 @@
+{
+  "id": "cities/2017/jan/17/congo-rivalry-kinshasa-brazzaville-river-drc",
+  "typeName": "article",
+  "sectionId": "cities",
+  "sectionName": "Cities",
+  "webPublicationDate": "2017-01-17T07:15:32Z",
+  "webTitle": "Face-off over the Congo: the long rivalry between Kinshasa and Brazzaville",
+  "webUrl": "https://www.theguardian.com/cities/2017/jan/17/congo-rivalry-kinshasa-brazzaville-river-drc",
+  "apiUrl": "https://content.guardianapis.com/cities/2017/jan/17/congo-rivalry-kinshasa-brazzaville-river-drc",
+  "tags": [
+    {
+      "id": "cities/cities",
+      "typeName": "keyword",
+      "sectionId": "cities",
+      "sectionName": "Cities",
+      "webTitle": "Cities",
+      "webUrl": "https://www.theguardian.com/cities/cities",
+      "apiUrl": "https://content.guardianapis.com/cities/cities",
+      "references": [
+      ]
+    },
+    {
+      "id": "cities/series/border-cities",
+      "typeName": "series",
+      "sectionId": "cities",
+      "sectionName": "Cities",
+      "webTitle": "Border cities",
+      "webUrl": "https://www.theguardian.com/cities/series/border-cities",
+      "apiUrl": "https://content.guardianapis.com/cities/series/border-cities",
+      "references": [
+      ]
+    },
+    {
+      "id": "world/congo-brazzaville",
+      "typeName": "keyword",
+      "sectionId": "world",
+      "sectionName": "World news",
+      "webTitle": "Congo-Brazzaville",
+      "webUrl": "https://www.theguardian.com/world/congo-brazzaville",
+      "apiUrl": "https://content.guardianapis.com/world/congo-brazzaville",
+      "references": [
+      ]
+    },
+    {
+      "id": "world/congo",
+      "typeName": "keyword",
+      "sectionId": "world",
+      "sectionName": "World news",
+      "webTitle": "Democratic Republic of the Congo",
+      "webUrl": "https://www.theguardian.com/world/congo",
+      "apiUrl": "https://content.guardianapis.com/world/congo",
+      "references": [
+      ]
+    },
+    {
+      "id": "world/africa",
+      "typeName": "keyword",
+      "sectionId": "world",
+      "sectionName": "World news",
+      "webTitle": "Africa",
+      "webUrl": "https://www.theguardian.com/world/africa",
+      "apiUrl": "https://content.guardianapis.com/world/africa",
+      "references": [
+      ]
+    },
+    {
+      "id": "politics/politics",
+      "typeName": "keyword",
+      "sectionId": "politics",
+      "sectionName": "Politics",
+      "webTitle": "Politics",
+      "webUrl": "https://www.theguardian.com/politics/politics",
+      "apiUrl": "https://content.guardianapis.com/politics/politics",
+      "references": [
+      ]
+    },
+    {
+      "id": "world/world",
+      "typeName": "keyword",
+      "sectionId": "world",
+      "sectionName": "World news",
+      "webTitle": "World news",
+      "webUrl": "https://www.theguardian.com/world/world",
+      "apiUrl": "https://content.guardianapis.com/world/world",
+      "references": [
+      ]
+    },
+    {
+      "id": "global-development/conflict-and-development",
+      "typeName": "keyword",
+      "sectionId": "global-development",
+      "sectionName": "Global development",
+      "webTitle": "Conflict and development",
+      "webUrl": "https://www.theguardian.com/global-development/conflict-and-development",
+      "apiUrl": "https://content.guardianapis.com/global-development/conflict-and-development",
+      "references": [
+      ],
+      "description": "<p>News, comment and features on conflict, tribal conflict, war including civil war and violence in developing countries&nbsp;</p>"
+    },
+    {
+      "id": "type/article",
+      "typeName": "type",
+      "webTitle": "Article",
+      "webUrl": "https://www.theguardian.com/articles",
+      "apiUrl": "https://content.guardianapis.com/type/article",
+      "references": [
+      ]
+    },
+    {
+      "id": "tone/features",
+      "typeName": "tone",
+      "webTitle": "Features",
+      "webUrl": "https://www.theguardian.com/tone/features",
+      "apiUrl": "https://content.guardianapis.com/tone/features",
+      "references": [
+      ]
+    },
+    {
+      "id": "profile/jasonburke",
+      "typeName": "contributor",
+      "webTitle": "Jason Burke",
+      "webUrl": "https://www.theguardian.com/profile/jasonburke",
+      "apiUrl": "https://content.guardianapis.com/profile/jasonburke",
+      "references": [
+      ],
+      "bio": "<p>Jason is the Africa&nbsp; correspondent of the Guardian, based in<br>\nJohannesburg, and reporting from across the continent. In 20 years as<br>\na foreign correspondent, he has covered stories throughout the Middle<br>\nEast, Europe and South Asia. He has written extensively on Islamic<br>\nextremism and, among numerous other conflicts, covered the wars of<br>\n2001 in Afghanistan and 2003 in Iraq. Jason is the author of four<br>\nbooks, most recently <a href=\"http://bookshop.theguardian.com/catalog/product/view/id/320779/bookshop.theguardian.com/catalog/product/view/id/320779/\">The New Threat</a>.</p>",
+      "bylineImageUrl": "https://static.guim.co.uk/sys-images/Guardian/Pix/pictures/2010/3/2/1267538178716/Jason-Burke.jpg",
+      "firstName": "",
+      "lastName": "burke",
+      "rcsId": "GNL001549",
+      "r2ContributorId": "15798"
+    },
+    {
+      "id": "tracking/commissioningdesk/cities",
+      "typeName": "tracking",
+      "webTitle": "Cities",
+      "webUrl": "https://www.theguardian.com/tracking/commissioningdesk/cities",
+      "apiUrl": "https://content.guardianapis.com/tracking/commissioningdesk/cities",
+      "references": [
+      ]
+    }
+  ],
+  "section": {
+    "id": "cities",
+    "webTitle": "Cities",
+    "webUrl": "https://www.theguardian.com/cities",
+    "apiUrl": "https://content.guardianapis.com/cities",
+    "editions": [
+      {
+        "id": "cities",
+        "webTitle": "Cities",
+        "webUrl": "https://www.theguardian.com/cities",
+        "apiUrl": "https://content.guardianapis.com/cities",
+        "code": "default"
+      }
+    ],
+    "activeSponsorships": [
+      {
+        "sponsorshipTypeName": "foundation",
+        "sponsorName": "Rockefeller Foundation",
+        "sponsorLogo": "https://static.theguardian.com/commercial/sponsor/cities/cities/logo.png",
+        "sponsorLink": "http://www.100resilientcities.org/",
+        "sponsorLogoDimensions": {
+          "width": 140,
+          "height": 37
+        },
+        "highContrastSponsorLogo": "https://static.theguardian.com/commercial/sponsor/19/Oct/2016/4369caea-6271-4ddf-ad67-Rock_white.png",
+        "highContrastSponsorLogoDimensions": {
+          "width": 140,
+          "height": 47
+        }
+      }
+    ]
+  },
+  "isHosted": false
+}

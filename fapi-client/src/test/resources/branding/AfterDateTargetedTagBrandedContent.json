@@ -1,0 +1,199 @@
+{
+  "id": "football/audio/2016/sep/02/transfer-window-special-guardian-australias-premier-league-podcast",
+  "typeName": "audio",
+  "sectionId": "football",
+  "sectionName": "Football",
+  "webPublicationDate": "2016-09-01T20:30:21Z",
+  "webTitle": "Transfer window special – Guardian Australia's Premier League podcast",
+  "webUrl": "https://www.theguardian.com/football/audio/2016/sep/02/transfer-window-special-guardian-australias-premier-league-podcast",
+  "apiUrl": "https://content.guardianapis.com/football/audio/2016/sep/02/transfer-window-special-guardian-australias-premier-league-podcast",
+  "tags": [
+    {
+      "id": "football/series/premier-league-the-view-from-australia",
+      "typeName": "series",
+      "sectionId": "football",
+      "sectionName": "Football",
+      "webTitle": "Premier League: the view from Australia",
+      "webUrl": "https://www.theguardian.com/football/series/premier-league-the-view-from-australia",
+      "apiUrl": "https://content.guardianapis.com/football/series/premier-league-the-view-from-australia",
+      "references": [
+      ],
+      "description": "<p>A&nbsp;weekly view&nbsp;from Down Under of all things top flight football in England and Wales</p>",
+      "podcast": {
+        "linkUrl": "http://www.theguardian.com",
+        "copyright": "theguardian.com © 2016",
+        "author": "theguardian.com",
+        "subscriptionUrl": "https://itunes.apple.com/au/podcast/premier-league-view-from-australia/id1140387436?mt=2",
+        "explicit": false,
+        "image": "https://uploads.guim.co.uk/2016/08/03/Optus_PodcastBadge3.jpg",
+        "categories": [
+          {
+            "main": "Sports & Recreation",
+            "sub": "Professional"
+          }
+        ]
+      },
+      "activeSponsorships": [
+        {
+          "sponsorshipTypeName": "paid-content",
+          "sponsorName": "ING DIRECT",
+          "sponsorLogo": "https://static.theguardian.com/commercial/sponsor/06/Oct/2016/d767ce82-0525-ING_dreamstarter_140.png",
+          "sponsorLink": "https://www.campaigns.ingdirect.com.au/dreamstarter",
+          "targeting": {
+            "publishedSince": "2016-07-04T01:57:12Z"
+          },
+          "sponsorLogoDimensions": {
+            "width": 140,
+            "height": 58
+          }
+        }
+      ]
+    },
+    {
+      "id": "football/football",
+      "typeName": "keyword",
+      "sectionId": "football",
+      "sectionName": "Football",
+      "webTitle": "Football",
+      "webUrl": "https://www.theguardian.com/football/football",
+      "apiUrl": "https://content.guardianapis.com/football/football",
+      "references": [
+      ]
+    },
+    {
+      "id": "football/series/epl-the-view-from-australia",
+      "typeName": "series",
+      "sectionId": "football",
+      "sectionName": "Football",
+      "webTitle": "EPL: the view from Australia",
+      "webUrl": "https://www.theguardian.com/football/series/epl-the-view-from-australia",
+      "apiUrl": "https://content.guardianapis.com/football/series/epl-the-view-from-australia",
+      "references": [
+      ]
+    },
+    {
+      "id": "football/epl-the-view-from-australia",
+      "typeName": "keyword",
+      "sectionId": "football",
+      "sectionName": "Football",
+      "webTitle": "EPL: the view from Australia",
+      "webUrl": "https://www.theguardian.com/football/epl-the-view-from-australia",
+      "apiUrl": "https://content.guardianapis.com/football/epl-the-view-from-australia",
+      "references": [
+      ]
+    },
+    {
+      "id": "sport/australia-sport",
+      "typeName": "keyword",
+      "sectionId": "sport",
+      "sectionName": "Sport",
+      "webTitle": "Australia sport",
+      "webUrl": "https://www.theguardian.com/sport/australia-sport",
+      "apiUrl": "https://content.guardianapis.com/sport/australia-sport",
+      "references": [
+      ]
+    },
+    {
+      "id": "type/audio",
+      "typeName": "type",
+      "webTitle": "Audio",
+      "webUrl": "https://www.theguardian.com/audio",
+      "apiUrl": "https://content.guardianapis.com/type/audio",
+      "references": [
+      ]
+    },
+    {
+      "id": "type/podcast",
+      "typeName": "type",
+      "webTitle": "Podcast",
+      "webUrl": "https://www.theguardian.com/podcasts",
+      "apiUrl": "https://content.guardianapis.com/type/podcast",
+      "references": [
+      ]
+    },
+    {
+      "id": "profile/richard-parkin",
+      "typeName": "contributor",
+      "webTitle": "Richard Parkin",
+      "webUrl": "https://www.theguardian.com/profile/richard-parkin",
+      "apiUrl": "https://content.guardianapis.com/profile/richard-parkin",
+      "references": [
+      ],
+      "bio": "<p>Richard Parkin is a Sydney-based journalist and the casual sport editor at Guardian Australia. He was the football analyst on SBS's The Full Brazilian and is completing a PhD in Political Economy</p>",
+      "bylineImageUrl": "https://static.guim.co.uk/sys-images/Guardian/Pix/pictures/2015/4/30/1430357903733/140x140Richard_Parkin.jpg",
+      "bylineLargeImageUrl": "https://static.guim.co.uk/sys-images/Guardian/Pix/pictures/2015/5/1/1430441131977/Richard-Parkin-R.png",
+      "firstName": "richard",
+      "lastName": "parkin",
+      "twitterHandle": "rrjparkin",
+      "r2ContributorId": "56860"
+    },
+    {
+      "id": "profile/david-squires",
+      "typeName": "contributor",
+      "webTitle": "David Squires",
+      "webUrl": "https://www.theguardian.com/profile/david-squires",
+      "apiUrl": "https://content.guardianapis.com/profile/david-squires",
+      "references": [
+      ],
+      "firstName": "david",
+      "lastName": "squires",
+      "r2ContributorId": "67060"
+    },
+    {
+      "id": "profile/miketicher",
+      "typeName": "contributor",
+      "webTitle": "Mike Ticher",
+      "webUrl": "https://www.theguardian.com/profile/miketicher",
+      "apiUrl": "https://content.guardianapis.com/profile/miketicher",
+      "references": [
+      ],
+      "bio": "<p>Mike Ticher is Guardian Australia's news editor. He has worked for the Sydney Morning Herald, the Guardian sports desk in London and was founding editor of independent football magazine When Saturday Comes</p>",
+      "bylineImageUrl": "https://static.guim.co.uk/sys-images/Guardian/Pix/contributor/2015/4/9/1428590280939/Mike-Ticher.jpg",
+      "bylineLargeImageUrl": "https://static.guim.co.uk/sys-images/Guardian/Pix/contributor/2015/4/9/1428590298042/Mike-Ticher-L.png",
+      "firstName": "",
+      "lastName": "ticher",
+      "rcsId": "GNL271742",
+      "r2ContributorId": "16151"
+    },
+    {
+      "id": "profile/miles-martignoni",
+      "typeName": "contributor",
+      "webTitle": "Miles Martignoni",
+      "webUrl": "https://www.theguardian.com/profile/miles-martignoni",
+      "apiUrl": "https://content.guardianapis.com/profile/miles-martignoni",
+      "references": [
+      ],
+      "bio": "<p>Miles Martignoni is the Podcast Producer at Guardian Australia. Miles tweets at <a href=\" https://twitter.com/milesage\">@milesage</a>. You can email him at <a href=\"mailto:miles.martignoni@theguardian.com \"> miles.martignoni@theguardian.com </a></p>",
+      "bylineImageUrl": "https://static.guim.co.uk/sys-images/Guardian/Pix/contributor/2015/4/22/1429700784680/Miles-Martignoni.jpg",
+      "firstName": "miles",
+      "lastName": "martignoni",
+      "twitterHandle": "milesage",
+      "r2ContributorId": "69123"
+    },
+    {
+      "id": "tracking/commissioningdesk/australia-sport",
+      "typeName": "tracking",
+      "webTitle": "Australia Sport",
+      "webUrl": "https://www.theguardian.com/tracking/commissioningdesk/australia-sport",
+      "apiUrl": "https://content.guardianapis.com/tracking/commissioningdesk/australia-sport",
+      "references": [
+      ]
+    }
+  ],
+  "section": {
+    "id": "football",
+    "webTitle": "Football",
+    "webUrl": "https://www.theguardian.com/football",
+    "apiUrl": "https://content.guardianapis.com/football",
+    "editions": [
+      {
+        "id": "football",
+        "webTitle": "Football",
+        "webUrl": "https://www.theguardian.com/football",
+        "apiUrl": "https://content.guardianapis.com/football",
+        "code": "default"
+      }
+    ]
+  },
+  "isHosted": false
+}

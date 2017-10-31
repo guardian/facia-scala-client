@@ -1,0 +1,194 @@
+{
+  "id": "sustainable-business/2017/jan/04/coffee-rainforest-alliance-utz-brazil-pesticides-exploited-workers-pay",
+  "typeName": "article",
+  "sectionId": "sustainable-business",
+  "sectionName": "Guardian Sustainable Business",
+  "webPublicationDate": "2017-01-04T07:00:17Z",
+  "webTitle": "Coffee from Rainforest Alliance farms in Brazil linked to exploited workers",
+  "webUrl": "https://www.theguardian.com/sustainable-business/2017/jan/04/coffee-rainforest-alliance-utz-brazil-pesticides-exploited-workers-pay",
+  "apiUrl": "https://content.guardianapis.com/sustainable-business/2017/jan/04/coffee-rainforest-alliance-utz-brazil-pesticides-exploited-workers-pay",
+  "tags": [
+    {
+      "id": "sustainable-business/sustainable-business",
+      "typeName": "keyword",
+      "sectionId": "sustainable-business",
+      "sectionName": "Guardian Sustainable Business",
+      "webTitle": "Guardian sustainable business",
+      "webUrl": "https://www.theguardian.com/sustainable-business/sustainable-business",
+      "apiUrl": "https://content.guardianapis.com/sustainable-business/sustainable-business",
+      "references": [
+      ]
+    },
+    {
+      "id": "sustainable-business/series/spotlight-on-commodities",
+      "typeName": "series",
+      "sectionId": "sustainable-business",
+      "sectionName": "Guardian Sustainable Business",
+      "webTitle": "Spotlight on commodities",
+      "webUrl": "https://www.theguardian.com/sustainable-business/series/spotlight-on-commodities",
+      "apiUrl": "https://content.guardianapis.com/sustainable-business/series/spotlight-on-commodities",
+      "references": [
+      ],
+      "activeSponsorships": [
+        {
+          "sponsorshipTypeName": "sponsored",
+          "sponsorName": "Fairtrade Foundation",
+          "sponsorLogo": "https://static.theguardian.com/commercial/sponsor/sustainable/series/spotlight-commodities/logo.png",
+          "sponsorLink": "http://www.fairtrade.org.uk/",
+          "aboutLink": "https://www.theguardian.com/uk"
+        }
+      ]
+    },
+    {
+      "id": "world/brazil",
+      "typeName": "keyword",
+      "sectionId": "world",
+      "sectionName": "World news",
+      "webTitle": "Brazil",
+      "webUrl": "https://www.theguardian.com/world/brazil",
+      "apiUrl": "https://content.guardianapis.com/world/brazil",
+      "references": [
+      ],
+      "activeSponsorships": [
+        {
+          "sponsorshipTypeName": "foundation",
+          "sponsorName": "Rockefeller Foundation",
+          "sponsorLogo": "https://static.theguardian.com/commercial/sponsor/cities/cities/logo.png",
+          "sponsorLink": "http://www.100resilientcities.org/",
+          "sponsorLogoDimensions": {
+            "width": 140,
+            "height": 37
+          },
+          "highContrastSponsorLogo": "https://static.theguardian.com/commercial/sponsor/19/Oct/2016/4369caea-6271-4ddf-ad67-Rock_white.png",
+          "highContrastSponsorLogoDimensions": {
+            "width": 140,
+            "height": 47
+          }
+        }
+      ]
+    },
+    {
+      "id": "world/americas",
+      "typeName": "keyword",
+      "sectionId": "world",
+      "sectionName": "World news",
+      "webTitle": "Americas",
+      "webUrl": "https://www.theguardian.com/world/americas",
+      "apiUrl": "https://content.guardianapis.com/world/americas",
+      "references": [
+      ]
+    },
+    {
+      "id": "world/world",
+      "typeName": "keyword",
+      "sectionId": "world",
+      "sectionName": "World news",
+      "webTitle": "World news",
+      "webUrl": "https://www.theguardian.com/world/world",
+      "apiUrl": "https://content.guardianapis.com/world/world",
+      "references": [
+      ]
+    },
+    {
+      "id": "lifeandstyle/coffee",
+      "typeName": "keyword",
+      "sectionId": "lifeandstyle",
+      "sectionName": "Life and style",
+      "webTitle": "Coffee",
+      "webUrl": "https://www.theguardian.com/lifeandstyle/coffee",
+      "apiUrl": "https://content.guardianapis.com/lifeandstyle/coffee",
+      "references": [
+      ]
+    },
+    {
+      "id": "global-development/global-development",
+      "typeName": "keyword",
+      "sectionId": "global-development",
+      "sectionName": "Global development",
+      "webTitle": "Global development",
+      "webUrl": "https://www.theguardian.com/global-development/global-development",
+      "apiUrl": "https://content.guardianapis.com/global-development/global-development",
+      "references": [
+      ]
+    },
+    {
+      "id": "global-development/fair-trade",
+      "typeName": "keyword",
+      "sectionId": "global-development",
+      "sectionName": "Global development",
+      "webTitle": "Fair trade",
+      "webUrl": "https://www.theguardian.com/global-development/fair-trade",
+      "apiUrl": "https://content.guardianapis.com/global-development/fair-trade",
+      "references": [
+      ],
+      "description": "<p>News, comment and features on fair trade, the the Fairtrade Foundation and trading conditions in developing countries</p>"
+    },
+    {
+      "id": "environment/environment",
+      "typeName": "keyword",
+      "sectionId": "environment",
+      "sectionName": "Environment",
+      "webTitle": "Environment",
+      "webUrl": "https://www.theguardian.com/environment/environment",
+      "apiUrl": "https://content.guardianapis.com/environment/environment",
+      "references": [
+      ]
+    },
+    {
+      "id": "type/article",
+      "typeName": "type",
+      "webTitle": "Article",
+      "webUrl": "https://www.theguardian.com/articles",
+      "apiUrl": "https://content.guardianapis.com/type/article",
+      "references": [
+      ]
+    },
+    {
+      "id": "tone/news",
+      "typeName": "tone",
+      "webTitle": "News",
+      "webUrl": "https://www.theguardian.com/tone/news",
+      "apiUrl": "https://content.guardianapis.com/tone/news",
+      "references": [
+      ]
+    },
+    {
+      "id": "profile/dom-phillips",
+      "typeName": "contributor",
+      "webTitle": "Dom Phillips",
+      "webUrl": "https://www.theguardian.com/profile/dom-phillips",
+      "apiUrl": "https://content.guardianapis.com/profile/dom-phillips",
+      "references": [
+      ],
+      "bio": "<p>Dom Phillips is a British journalist who has been based in Brazil since 2007. A former Mixmag editor, his book Superstar DJs Here We Go was published in 2009. Twitter @domphillips</p>",
+      "firstName": "dom",
+      "lastName": "phillips",
+      "r2ContributorId": "59208"
+    },
+    {
+      "id": "tracking/commissioningdesk/uk-professional-networks",
+      "typeName": "tracking",
+      "webTitle": "UK Professional Networks",
+      "webUrl": "https://www.theguardian.com/tracking/commissioningdesk/uk-professional-networks",
+      "apiUrl": "https://content.guardianapis.com/tracking/commissioningdesk/uk-professional-networks",
+      "references": [
+      ]
+    }
+  ],
+  "section": {
+    "id": "sustainable-business",
+    "webTitle": "Guardian Sustainable Business",
+    "webUrl": "https://www.theguardian.com/sustainable-business",
+    "apiUrl": "https://content.guardianapis.com/sustainable-business",
+    "editions": [
+      {
+        "id": "sustainable-business",
+        "webTitle": "Guardian Sustainable Business",
+        "webUrl": "https://www.theguardian.com/sustainable-business",
+        "apiUrl": "https://content.guardianapis.com/sustainable-business",
+        "code": "default"
+      }
+    ]
+  },
+  "isHosted": false
+}

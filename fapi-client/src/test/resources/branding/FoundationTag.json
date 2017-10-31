@@ -1,0 +1,33 @@
+{
+  "id": "sustainable-business/series/spotlight-on-commodities",
+  "typeName": "series",
+  "sectionId": "sustainable-business",
+  "sectionName": "Guardian Sustainable Business",
+  "webTitle": "Spotlight on commodities",
+  "webUrl": "https://www.theguardian.com/sustainable-business/series/spotlight-on-commodities",
+  "apiUrl": "https://content.guardianapis.com/sustainable-business/series/spotlight-on-commodities",
+  "activeSponsorships": [
+    {
+      "sponsorshipTypeName": "sponsored",
+      "sponsorName": "Fairtrade Foundation",
+      "sponsorLogo": "https://static.theguardian.com/commercial/sponsor/sustainable/series/spotlight-commodities/logo.png",
+      "sponsorLink": "http://www.fairtrade.org.uk/",
+      "aboutLink": "https://www.theguardian.com/uk"
+    },
+    {
+      "sponsorshipTypeName": "foundation",
+      "sponsorName": "Rockefeller Foundation",
+      "sponsorLogo": "https://static.theguardian.com/commercial/sponsor/cities/cities/logo.png",
+      "sponsorLink": "http://www.100resilientcities.org/",
+      "sponsorLogoDimensions": {
+        "width": 140,
+        "height": 37
+      },
+      "highContrastSponsorLogo": "https://static.theguardian.com/commercial/sponsor/19/Oct/2016/4369caea-6271-4ddf-ad67-Rock_white.png",
+      "highContrastSponsorLogoDimensions": {
+        "width": 140,
+        "height": 47
+      }
+    }
+  ]
+}
