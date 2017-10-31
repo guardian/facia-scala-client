@@ -13,7 +13,7 @@ import org.scalatest.mock.MockitoSugar
 import scala.concurrent.Future
 
 class ContentApiTest extends FreeSpec
-  with ShouldMatchers
+  with Matchers
   with OptionValues
   with EitherValues
   with TryValues

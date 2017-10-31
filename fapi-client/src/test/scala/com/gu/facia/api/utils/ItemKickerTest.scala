@@ -5,11 +5,11 @@ import com.gu.facia.api.models.CollectionConfig
 import com.gu.facia.client.models.{CollectionConfigJson, TrailMetaData}
 import org.mockito.Mockito
 import org.scalatest.mock.MockitoSugar
-import org.scalatest.{OneInstancePerTest, OptionValues, ShouldMatchers, FreeSpec}
+import org.scalatest.{OneInstancePerTest, OptionValues, Matchers, FreeSpec}
 import org.mockito.Mockito._
 
 
-class ItemKickerTest extends FreeSpec with ShouldMatchers with MockitoSugar with OptionValues with OneInstancePerTest {
+class ItemKickerTest extends FreeSpec with Matchers with MockitoSugar with OptionValues with OneInstancePerTest {
   val trailMetadata = Mockito.spy(TrailMetaData.empty)
   val content = mock[Content]
   val collectionConfig = Mockito.spy(CollectionConfig.fromCollectionJson(CollectionConfigJson.withDefaults()))

@@ -10,11 +10,11 @@ import lib.IntegrationTestConfig
 import org.joda.time.DateTime
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.time.{Millis, Seconds, Span}
-import org.scalatest.{FreeSpec, OptionValues, ShouldMatchers}
+import org.scalatest.{FreeSpec, OptionValues, Matchers}
 import play.api.libs.json.{Json, JsArray, JsString}
 
 // TODO: reinstate ignored tests when cmsFronts account has access to test fixtures
-class IntegrationTest extends FreeSpec with ShouldMatchers with ScalaFutures with OptionValues with IntegrationTestConfig {
+class IntegrationTest extends FreeSpec with Matchers with ScalaFutures with OptionValues with IntegrationTestConfig {
   implicit val patience = PatienceConfig(Span(5, Seconds), Span(50, Millis))
 
   def makeCollectionJson(trails: Trail*) = CollectionJson(
