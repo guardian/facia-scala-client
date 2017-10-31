@@ -6,11 +6,13 @@ organization := "com.gu"
 
 name := "facia-api-client"
 
-scalaVersion := "2.11.11"
+description := "Scala client for The Guardian's Facia JSON API"
 
+scalaVersion := "2.11.11"
 scalaVersion in ThisBuild := "2.11.11"
 
-description := "Scala client for The Guardian's Facia JSON API"
+val buildCrossList = Seq(scalaVersion.value, "2.12.4")
+releaseCrossBuild := true
 
 val sonatypeReleaseSettings = Seq(
   licenses := Seq("Apache V2" -> url("http://www.apache.org/licenses/LICENSE-2.0.html")),
@@ -119,6 +121,7 @@ lazy val faciaJson_play26 = project.in(file("facia-json-play26"))
       "Typesafe Repository" at "http://repo.typesafe.com/typesafe/releases/"
     ),
     scalacOptions := Seq("-feature", "-deprecation"),
+    crossScalaVersions := buildCrossList,
     libraryDependencies ++= Seq(
       awsSdk,
       commonsIo,
@@ -184,6 +187,7 @@ lazy val fapiClient_play26 = project.in(file("fapi-client-play26"))
       "Guardian Frontend Bintray" at "https://dl.bintray.com/guardian/frontend",
       "Typesafe Repository" at "http://repo.typesafe.com/typesafe/releases/"
     ),
+    crossScalaVersions := buildCrossList,
     scalacOptions := Seq("-feature", "-deprecation"),
     libraryDependencies ++= Seq(
       contentApi,

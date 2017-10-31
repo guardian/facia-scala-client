@@ -1,0 +1,20 @@
+{
+  "id": "swiss-cities/swiss-cities",
+  "typeName": "paid-content",
+  "webTitle": "Swiss cities",
+  "webUrl": "https://www.theguardian.com/swiss-cities/swiss-cities",
+  "apiUrl": "https://content.guardianapis.com/swiss-cities/swiss-cities",
+  "activeSponsorships": [
+    {
+      "sponsorshipTypeName": "paid-content",
+      "sponsorName": "Switzerland Tourism",
+      "sponsorLogo": "https://static.theguardian.com/commercial/sponsor/10/Mar/2017/916b37be-2f03-4b2a-b78e-25029ba0a52c-Logo_ST0031854_POS.png",
+      "sponsorLink": " https://www.swiss.com/gb/en?WT.mc_id=LXGUARDIANGB1711",
+      "sponsorLogoDimensions": {
+        "width": 140,
+        "height": 90
+      }
+    }
+  ],
+  "paidContentType": "Topic"
+}

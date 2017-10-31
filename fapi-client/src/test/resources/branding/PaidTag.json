@@ -1,0 +1,20 @@
+{
+  "id": "visit-las-vegas/visit-las-vegas",
+  "typeName": "paid-content",
+  "webTitle": "Visit Las Vegas",
+  "webUrl": "https://www.theguardian.com/visit-las-vegas/visit-las-vegas",
+  "apiUrl": "https://content.guardianapis.com/visit-las-vegas/visit-las-vegas",
+  "activeSponsorships": [
+    {
+      "sponsorshipTypeName": "paid-content",
+      "sponsorName": "Las Vegas Tourism",
+      "sponsorLogo": "https://static.theguardian.com/commercial/sponsor/16/Mar/2017/8b15f5a5-7d9d-4c8f-ae1b-5ab72654fd15-LasVegas_4c_207_Red.png",
+      "sponsorLink": "http://viva.lasvegas.com",
+      "sponsorLogoDimensions": {
+        "width": 140,
+        "height": 90
+      }
+    }
+  ],
+  "paidContentType": "Topic"
+}

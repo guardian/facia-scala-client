@@ -1,0 +1,96 @@
+{
+  "id": "marriott-travels/2016/nov/15/seven-surprising-facts-about-the-worlds-largest-hotel-group",
+  "typeName": "article",
+  "sectionId": "marriott-travels",
+  "sectionName": "Marriott Travels",
+  "webPublicationDate": "2016-11-15T17:29:54Z",
+  "webTitle": "Seven surprising facts about the world's largest hotel group",
+  "webUrl": "https://www.theguardian.com/marriott-travels/2016/nov/15/seven-surprising-facts-about-the-worlds-largest-hotel-group",
+  "apiUrl": "https://content.guardianapis.com/marriott-travels/2016/nov/15/seven-surprising-facts-about-the-worlds-largest-hotel-group",
+  "fields": {
+    "isInappropriateForSponsorship": false
+  },
+  "tags": [
+    {
+      "id": "marriott-travels/marriott-travels",
+      "typeName": "paid-content",
+      "webTitle": "Marriott Travels",
+      "webUrl": "https://www.theguardian.com/marriott-travels/marriott-travels",
+      "apiUrl": "https://content.guardianapis.com/marriott-travels/marriott-travels",
+      "references": [
+
+      ],
+      "activeSponsorships": [
+        {
+          "sponsorshipTypeName": "paid-content",
+          "sponsorName": "Marriott Hotels",
+          "sponsorLogo": "https://static.theguardian.com/commercial/sponsor/09/Nov/2016/9d4910cd-55ed-42aa-92bc-5a4fce76dc53-Marriott_logo_2.png",
+          "sponsorLink": "http://www.marriott.co.uk/rewards/rewards-program.mi",
+          "sponsorLogoDimensions": {
+            "width": 140,
+            "height": 90
+          }
+        }
+      ],
+      "paidContentType": "Topic"
+    },
+    {
+      "id": "type/article",
+      "typeName": "type",
+      "webTitle": "Article",
+      "webUrl": "https://www.theguardian.com/articles",
+      "apiUrl": "https://content.guardianapis.com/type/article",
+      "references": [
+
+      ]
+    },
+    {
+      "id": "tone/advertisement-features",
+      "typeName": "tone",
+      "webTitle": "Advertisement features",
+      "webUrl": "https://www.theguardian.com/tone/advertisement-features",
+      "apiUrl": "https://content.guardianapis.com/tone/advertisement-features",
+      "references": [
+
+      ]
+    },
+    {
+      "id": "tracking/commissioningdesk/uk-labs",
+      "typeName": "tracking",
+      "webTitle": "UK Labs",
+      "webUrl": "https://www.theguardian.com/tracking/commissioningdesk/uk-labs",
+      "apiUrl": "https://content.guardianapis.com/tracking/commissioningdesk/uk-labs",
+      "references": [
+
+      ]
+    }
+  ],
+  "section": {
+    "id": "marriott-travels",
+    "webTitle": "Marriott Travels",
+    "webUrl": "https://www.theguardian.com/marriott-travels",
+    "apiUrl": "https://content.guardianapis.com/marriott-travels",
+    "editions": [
+      {
+        "id": "marriott-travels",
+        "webTitle": "Marriott Travels",
+        "webUrl": "https://www.theguardian.com/marriott-travels",
+        "apiUrl": "https://content.guardianapis.com/marriott-travels",
+        "code": "default"
+      }
+    ],
+    "activeSponsorships": [
+      {
+        "sponsorshipTypeName": "paid-content",
+        "sponsorName": "Marriott Hotels",
+        "sponsorLogo": "https://static.theguardian.com/commercial/sponsor/09/Nov/2016/9d4910cd-55ed-42aa-92bc-5a4fce76dc53-Marriott_logo_2.png",
+        "sponsorLink": "http://www.marriott.co.uk/rewards/rewards-program.mi",
+        "sponsorLogoDimensions": {
+          "width": 140,
+          "height": 90
+        }
+      }
+    ]
+  },
+  "isHosted": false
+}

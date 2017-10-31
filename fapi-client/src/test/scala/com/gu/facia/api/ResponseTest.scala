@@ -4,7 +4,7 @@ import org.scalatest.concurrent.ScalaFutures
 import org.scalatest._
 import scala.concurrent.ExecutionContext.Implicits.global
 
-class ResponseTest extends FreeSpec with ShouldMatchers with ScalaFutures {
+class ResponseTest extends FreeSpec with Matchers with ScalaFutures {
 
   "Response.filter" - {
     "should return the same result if the filter function returns true" in {

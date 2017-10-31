@@ -1,0 +1,18 @@
+{
+  "id": "sustainable-business/series/spotlight-on-candles",
+  "typeName": "series",
+  "sectionId": "sustainable-business",
+  "sectionName": "Guardian Sustainable Business",
+  "webTitle": "Spotlight on candles",
+  "webUrl": "https://www.theguardian.com/sustainable-business/series/spotlight-on-candles",
+  "apiUrl": "https://content.guardianapis.com/sustainable-business/series/spotlight-on-candles",
+  "activeSponsorships": [
+    {
+      "sponsorshipTypeName": "sponsored",
+      "sponsorName": "Fairtrade Foundation",
+      "sponsorLogo": "https://static.theguardian.com/commercial/sponsor/sustainable/series/spotlight-commodities/logo.png",
+      "sponsorLink": "http://www.fairtrade.org.uk/",
+      "aboutLink": "https://www.theguardian.com/uk"
+    }
+  ]
+}
