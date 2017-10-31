@@ -11,7 +11,7 @@ description := "Scala client for The Guardian's Facia JSON API"
 scalaVersion := "2.11.11"
 scalaVersion in ThisBuild := "2.11.11"
 
-val buildCrossList = Seq(scalaVersion.value, "2.12.4")
+val buildCrossList = Seq("2.11.11", "2.12.4")
 releaseCrossBuild := true
 
 val sonatypeReleaseSettings = Seq(
