@@ -8,11 +8,8 @@ name := "facia-api-client"
 
 description := "Scala client for The Guardian's Facia JSON API"
 
-scalaVersion := "2.11.11"
-scalaVersion in ThisBuild := "2.11.11"
-
-val buildCrossList = Seq("2.11.11", "2.12.4")
-releaseCrossBuild := true
+val scala211 = "2.11.11"
+val scala212 = "2.12.4"
 
 val sonatypeReleaseSettings = Seq(
   licenses := Seq("Apache V2" -> url("http://www.apache.org/licenses/LICENSE-2.0.html")),
@@ -76,12 +73,14 @@ lazy val faciaJson = project.in(file("facia-json"))
       Resolver.file("Local", file( Path.userHome.absolutePath + "/.ivy2/local"))(Resolver.ivyStylePatterns),
       "Typesafe Repository" at "http://repo.typesafe.com/typesafe/releases/"
     ),
+    scalaVersion := scala211,
+    crossScalaVersions:= Seq(scala211),
     scalacOptions := Seq("-feature", "-deprecation"),
     libraryDependencies ++= Seq(
       awsSdk,
       commonsIo,
       specs2,
-      playJson,
+      playJson24,
       scalaLogging
     ),
     publishArtifact := true
@@ -98,6 +97,8 @@ lazy val faciaJson_play25 = project.in(file("facia-json-play25"))
       Resolver.file("Local", file( Path.userHome.absolutePath + "/.ivy2/local"))(Resolver.ivyStylePatterns),
       "Typesafe Repository" at "http://repo.typesafe.com/typesafe/releases/"
     ),
+    scalaVersion := scala211,
+    crossScalaVersions:= Seq(scala211),
     scalacOptions := Seq("-feature", "-deprecation"),
     libraryDependencies ++= Seq(
       awsSdk,
@@ -120,8 +121,10 @@ lazy val faciaJson_play26 = project.in(file("facia-json-play26"))
       Resolver.file("Local", file( Path.userHome.absolutePath + "/.ivy2/local"))(Resolver.ivyStylePatterns),
       "Typesafe Repository" at "http://repo.typesafe.com/typesafe/releases/"
     ),
+    scalaVersion := scala211,
+    crossScalaVersions:= Seq(scala211, scala212),
+    releaseCrossBuild := true,
     scalacOptions := Seq("-feature", "-deprecation"),
-    crossScalaVersions := buildCrossList,
     libraryDependencies ++= Seq(
       awsSdk,
       commonsIo,
@@ -143,6 +146,8 @@ lazy val fapiClient = project.in(file("fapi-client"))
       "Guardian Frontend Bintray" at "https://dl.bintray.com/guardian/frontend",
       "Typesafe Repository" at "http://repo.typesafe.com/typesafe/releases/"
     ),
+    scalaVersion := scala211,
+    crossScalaVersions:= Seq(scala211),
     scalacOptions := Seq("-feature", "-deprecation"),
     libraryDependencies ++= Seq(
       contentApi,
@@ -165,6 +170,8 @@ lazy val fapiClient_play25 = project.in(file("fapi-client-play25"))
       "Guardian Frontend Bintray" at "https://dl.bintray.com/guardian/frontend",
       "Typesafe Repository" at "http://repo.typesafe.com/typesafe/releases/"
     ),
+    scalaVersion := scala211,
+    crossScalaVersions:= Seq(scala211),
     scalacOptions := Seq("-feature", "-deprecation"),
     libraryDependencies ++= Seq(
       contentApi,
@@ -187,7 +194,9 @@ lazy val fapiClient_play26 = project.in(file("fapi-client-play26"))
       "Guardian Frontend Bintray" at "https://dl.bintray.com/guardian/frontend",
       "Typesafe Repository" at "http://repo.typesafe.com/typesafe/releases/"
     ),
-    crossScalaVersions := buildCrossList,
+    scalaVersion := scala211,
+    crossScalaVersions:= Seq(scala211, scala212),
+    releaseCrossBuild := true,
     scalacOptions := Seq("-feature", "-deprecation"),
     libraryDependencies ++= Seq(
       contentApi,

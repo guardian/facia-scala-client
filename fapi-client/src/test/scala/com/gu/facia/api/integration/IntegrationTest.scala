@@ -1,7 +1,7 @@
 package com.gu.facia.api.integration
 
 import com.gu.contentapi.client.model.v1.TagType
-import com.gu.facia.api.FAPI
+import com.gu.facia.api.{ApiError, FAPI}
 import com.gu.facia.api.contentapi.ContentApi.{AdjustItemQuery, AdjustSearchQuery}
 import com.gu.facia.api.models._
 import com.gu.facia.api.utils.{InvalidBackfillConfiguration, SectionKicker}
@@ -10,8 +10,8 @@ import lib.IntegrationTestConfig
 import org.joda.time.DateTime
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.time.{Millis, Seconds, Span}
-import org.scalatest.{FreeSpec, OptionValues, Matchers}
-import play.api.libs.json.{Json, JsArray, JsString}
+import org.scalatest.{FreeSpec, Matchers, OptionValues}
+import play.api.libs.json.{JsArray, JsString, Json}
 
 // TODO: reinstate ignored tests when cmsFronts account has access to test fixtures
 class IntegrationTest extends FreeSpec with Matchers with ScalaFutures with OptionValues with IntegrationTestConfig {
@@ -71,13 +71,18 @@ class IntegrationTest extends FreeSpec with Matchers with ScalaFutures with Opti
   }
 
   "collectionContent" - {
-    // fetch collection to use in these tests
-    val collection = FAPI.getCollection("uk-alpha/news/regular-stories").asFuture.futureValue.fold(
-      err => fail(s"expected collection, got $err", err.cause),
-      collection => collection
-    )
+
+    val collectionResponse: Either[ApiError, Collection] = FAPI.getCollection("uk-alpha/news/regular-stories").asFuture.futureValue
+
+    "fetch collection" in {
+      collectionResponse.fold(
+        err => fail(s"expected collection, got $err", err.cause),
+        collection => collection
+      )
+    }
 
     "should return the curated content for the collection" ignore {
+      val collection = collectionResponse.right.get
       FAPI.liveCollectionContentWithSnaps(collection).asFuture.futureValue.fold(
         err => fail(s"expected collection, got $err", err.cause),
         curatedContent => curatedContent.size should be > 0
@@ -86,6 +91,7 @@ class IntegrationTest extends FreeSpec with Matchers with ScalaFutures with Opti
 
     "will use the provided function to adjust the query used to hydrate content" ignore {
       val adjust: AdjustSearchQuery = q => q.showTags("tone")
+      val collection = collectionResponse.right.get
       FAPI.liveCollectionContentWithSnaps(collection, adjust).asFuture.futureValue.fold(
         err => fail(s"expected collection, got $err", err.cause),
         curatedContent => curatedContent.flatMap{
