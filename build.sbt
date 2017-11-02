@@ -74,6 +74,7 @@ lazy val root = (project in file("."))
   .aggregate(faciaJson, faciaJson_play25, faciaJson_play26, fapiClient, fapiClient_play25, fapiClient_play26)
   .settings(sonatypeReleaseSettings: _*)
   .settings(publishArtifact := false)
+  .settings(skip in publish := true)
 
 lazy val faciaJson = project.in(file("facia-json"))
   .settings(
