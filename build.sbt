@@ -83,7 +83,13 @@ lazy val faciaJson = project.in(file("facia-json"))
       playJson24,
       scalaLogging
     ),
-    publishArtifact := true
+    publishArtifact := true,
+    publishTo := Some(
+      if (isSnapshot.value)
+        Opts.resolver.sonatypeSnapshots
+      else
+        Opts.resolver.sonatypeStaging
+    )
   )
   .settings(sonatypeReleaseSettings: _*)
 
@@ -107,7 +113,13 @@ lazy val faciaJson_play25 = project.in(file("facia-json-play25"))
       playJson25,
       scalaLogging
     ),
-    publishArtifact := true
+    publishArtifact := true,
+    publishTo := Some(
+      if (isSnapshot.value)
+        Opts.resolver.sonatypeSnapshots
+      else
+        Opts.resolver.sonatypeStaging
+    )
   )
   .settings(sonatypeReleaseSettings: _*)
 
@@ -132,7 +144,13 @@ lazy val faciaJson_play26 = project.in(file("facia-json-play26"))
       playJson26,
       scalaLogging
     ),
-    publishArtifact := true
+    publishArtifact := true,
+    publishTo := Some(
+      if (isSnapshot.value)
+        Opts.resolver.sonatypeSnapshots
+      else
+        Opts.resolver.sonatypeStaging
+    )
   )
   .settings(sonatypeReleaseSettings: _*)
 
@@ -155,7 +173,13 @@ lazy val fapiClient = project.in(file("fapi-client"))
       scalaTest,
       mockito
     ),
-    publishArtifact := true
+    publishArtifact := true,
+    publishTo := Some(
+      if (isSnapshot.value)
+        Opts.resolver.sonatypeSnapshots
+      else
+        Opts.resolver.sonatypeStaging
+    )
   )
   .dependsOn(faciaJson)
 
@@ -179,7 +203,13 @@ lazy val fapiClient_play25 = project.in(file("fapi-client-play25"))
       scalaTest,
       mockito
     ),
-    publishArtifact := true
+    publishArtifact := true,
+    publishTo := Some(
+      if (isSnapshot.value)
+        Opts.resolver.sonatypeSnapshots
+      else
+        Opts.resolver.sonatypeStaging
+    )
   )
   .dependsOn(faciaJson_play25)
 
@@ -204,6 +234,12 @@ lazy val fapiClient_play26 = project.in(file("fapi-client-play26"))
       scalaTest,
       mockito
     ),
-    publishArtifact := true
+    publishArtifact := true,
+    publishTo := Some(
+      if (isSnapshot.value)
+        Opts.resolver.sonatypeSnapshots
+      else
+        Opts.resolver.sonatypeStaging
+    )
   )
   .dependsOn(faciaJson_play26)
