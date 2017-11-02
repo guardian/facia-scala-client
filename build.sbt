@@ -59,6 +59,16 @@ val sonatypeReleaseSettings = Seq(
   )
 )
 
+val publishSettings = Seq(
+  publishArtifact := true,
+  publishTo := Some(
+    if (isSnapshot.value)
+      Opts.resolver.sonatypeSnapshots
+    else
+      Opts.resolver.sonatypeStaging
+  )
+)
+
 lazy val root = (project in file("."))
   .aggregate(faciaJson, faciaJson_play25, faciaJson_play26, fapiClient, fapiClient_play25, fapiClient_play26)
   .settings(publishArtifact := false)
@@ -83,7 +93,7 @@ lazy val faciaJson = project.in(file("facia-json"))
       playJson24,
       scalaLogging
     ),
-    publishArtifact := true
+    publishSettings
   )
   .settings(sonatypeReleaseSettings: _*)
 
@@ -107,7 +117,7 @@ lazy val faciaJson_play25 = project.in(file("facia-json-play25"))
       playJson25,
       scalaLogging
     ),
-    publishArtifact := true
+    publishSettings
   )
   .settings(sonatypeReleaseSettings: _*)
 
@@ -132,7 +142,7 @@ lazy val faciaJson_play26 = project.in(file("facia-json-play26"))
       playJson26,
       scalaLogging
     ),
-    publishArtifact := true
+    publishSettings
   )
   .settings(sonatypeReleaseSettings: _*)
 
@@ -155,7 +165,7 @@ lazy val fapiClient = project.in(file("fapi-client"))
       scalaTest,
       mockito
     ),
-    publishArtifact := true
+    publishSettings
   )
   .dependsOn(faciaJson)
 
@@ -179,7 +189,7 @@ lazy val fapiClient_play25 = project.in(file("fapi-client-play25"))
       scalaTest,
       mockito
     ),
-    publishArtifact := true
+    publishSettings
   )
   .dependsOn(faciaJson_play25)
 
@@ -204,6 +214,6 @@ lazy val fapiClient_play26 = project.in(file("fapi-client-play26"))
       scalaTest,
       mockito
     ),
-    publishArtifact := true
+    publishSettings
   )
   .dependsOn(faciaJson_play26)
