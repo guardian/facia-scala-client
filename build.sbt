@@ -50,7 +50,8 @@ val sonatypeReleaseSettings = Seq(
         val extracted = Project.extract(state)
         val ref = extracted.get(Keys.thisProjectRef)
         extracted.runAggregated(PgpKeys.publishSigned in Global in ref, state)
-      }
+      },
+      enableCrossBuild = true
     ),
     setNextVersion,
     commitNextVersion,
@@ -71,11 +72,10 @@ val publishSettings = Seq(
 
 lazy val root = (project in file("."))
   .aggregate(faciaJson, faciaJson_play25, faciaJson_play26, fapiClient, fapiClient_play25, fapiClient_play26)
-  .settings(publishArtifact := false)
   .settings(sonatypeReleaseSettings: _*)
+  .settings(publishArtifact := false)
 
 lazy val faciaJson = project.in(file("facia-json"))
-  .settings(sonatypeReleaseSettings: _*)
   .settings(
     organization := "com.gu",
     name := "facia-json",
@@ -98,7 +98,6 @@ lazy val faciaJson = project.in(file("facia-json"))
   .settings(sonatypeReleaseSettings: _*)
 
 lazy val faciaJson_play25 = project.in(file("facia-json-play25"))
-  .settings(sonatypeReleaseSettings: _*)
   .settings(
     organization := "com.gu",
     name := "facia-json-play25",
@@ -122,7 +121,6 @@ lazy val faciaJson_play25 = project.in(file("facia-json-play25"))
   .settings(sonatypeReleaseSettings: _*)
 
 lazy val faciaJson_play26 = project.in(file("facia-json-play26"))
-  .settings(sonatypeReleaseSettings: _*)
   .settings(
     organization := "com.gu",
     name := "facia-json-play26",
@@ -147,7 +145,6 @@ lazy val faciaJson_play26 = project.in(file("facia-json-play26"))
   .settings(sonatypeReleaseSettings: _*)
 
 lazy val fapiClient = project.in(file("fapi-client"))
-  .settings(sonatypeReleaseSettings: _*)
   .settings(
     organization := "com.gu",
     name := "fapi-client",
@@ -168,9 +165,9 @@ lazy val fapiClient = project.in(file("fapi-client"))
     publishSettings
   )
   .dependsOn(faciaJson)
+  .settings(sonatypeReleaseSettings: _*)
 
 lazy val fapiClient_play25 = project.in(file("fapi-client-play25"))
-  .settings(sonatypeReleaseSettings: _*)
   .settings(
     organization := "com.gu",
     name := "fapi-client-play25",
@@ -192,9 +189,9 @@ lazy val fapiClient_play25 = project.in(file("fapi-client-play25"))
     publishSettings
   )
   .dependsOn(faciaJson_play25)
+  .settings(sonatypeReleaseSettings: _*)
 
 lazy val fapiClient_play26 = project.in(file("fapi-client-play26"))
-  .settings(sonatypeReleaseSettings: _*)
   .settings(
     organization := "com.gu",
     name := "fapi-client-play26",
@@ -217,3 +214,4 @@ lazy val fapiClient_play26 = project.in(file("fapi-client-play26"))
     publishSettings
   )
   .dependsOn(faciaJson_play26)
+  .settings(sonatypeReleaseSettings: _*)
