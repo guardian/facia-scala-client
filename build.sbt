@@ -21,11 +21,6 @@ val sonatypeReleaseSettings = Seq(
     <url>https://github.com/guardian/facia-scala-client</url>
       <developers>
         <developer>
-          <id>robertberry</id>
-          <name>Robert Berry</name>
-          <url>https://github.com/robertberry</url>
-        </developer>
-        <developer>
           <id>janua</id>
           <name>Francis Carr</name>
           <url>https://github.com/janua</url>
@@ -71,32 +66,10 @@ val publishSettings = Seq(
 )
 
 lazy val root = (project in file("."))
-  .aggregate(faciaJson, faciaJson_play25, faciaJson_play26, fapiClient, fapiClient_play25, fapiClient_play26)
+  .aggregate(faciaJson_play25, faciaJson_play26, fapiClient_play25, fapiClient_play26)
   .settings(sonatypeReleaseSettings: _*)
   .settings(publishArtifact := false)
   .settings(skip in publish := true)
-
-lazy val faciaJson = project.in(file("facia-json"))
-  .settings(
-    organization := "com.gu",
-    name := "facia-json",
-    resolvers ++= Seq(
-      Resolver.file("Local", file( Path.userHome.absolutePath + "/.ivy2/local"))(Resolver.ivyStylePatterns),
-      "Typesafe Repository" at "http://repo.typesafe.com/typesafe/releases/"
-    ),
-    scalaVersion := scala211,
-    crossScalaVersions:= Seq(scala211),
-    scalacOptions := Seq("-feature", "-deprecation"),
-    libraryDependencies ++= Seq(
-      awsSdk,
-      commonsIo,
-      specs2,
-      playJson24,
-      scalaLogging
-    ),
-    publishSettings
-  )
-  .settings(sonatypeReleaseSettings: _*)
 
 lazy val faciaJson_play25 = project.in(file("facia-json-play25"))
   .settings(
@@ -143,29 +116,6 @@ lazy val faciaJson_play26 = project.in(file("facia-json-play26"))
     ),
     publishSettings
   )
-  .settings(sonatypeReleaseSettings: _*)
-
-lazy val fapiClient = project.in(file("fapi-client"))
-  .settings(
-    organization := "com.gu",
-    name := "fapi-client",
-    resolvers ++= Seq(
-      Resolver.file("Local", file( Path.userHome.absolutePath + "/.ivy2/local"))(Resolver.ivyStylePatterns),
-      "Guardian Frontend Bintray" at "https://dl.bintray.com/guardian/frontend",
-      "Typesafe Repository" at "http://repo.typesafe.com/typesafe/releases/"
-    ),
-    scalaVersion := scala211,
-    crossScalaVersions:= Seq(scala211),
-    scalacOptions := Seq("-feature", "-deprecation"),
-    libraryDependencies ++= Seq(
-      contentApi,
-      commercialShared,
-      scalaTest,
-      mockito
-    ),
-    publishSettings
-  )
-  .dependsOn(faciaJson)
   .settings(sonatypeReleaseSettings: _*)
 
 lazy val fapiClient_play25 = project.in(file("fapi-client-play25"))
