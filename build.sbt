@@ -21,11 +21,6 @@ val sonatypeReleaseSettings = Seq(
     <url>https://github.com/guardian/facia-scala-client</url>
       <developers>
         <developer>
-          <id>robertberry</id>
-          <name>Robert Berry</name>
-          <url>https://github.com/robertberry</url>
-        </developer>
-        <developer>
           <id>janua</id>
           <name>Francis Carr</name>
           <url>https://github.com/janua</url>
@@ -38,7 +33,6 @@ val sonatypeReleaseSettings = Seq(
       </developers>
     ),
   releaseProcess := Seq[ReleaseStep](
-    checkSnapshotDependencies,
     inquireVersions,
     runClean,
     runTest,
@@ -50,8 +44,7 @@ val sonatypeReleaseSettings = Seq(
         val extracted = Project.extract(state)
         val ref = extracted.get(Keys.thisProjectRef)
         extracted.runAggregated(PgpKeys.publishSigned in Global in ref, state)
-      },
-      enableCrossBuild = true
+      }
     ),
     setNextVersion,
     commitNextVersion,
@@ -73,8 +66,10 @@ val publishSettings = Seq(
 lazy val root = (project in file("."))
   .aggregate(faciaJson, faciaJson_play25, faciaJson_play26, fapiClient, fapiClient_play25, fapiClient_play26)
   .settings(sonatypeReleaseSettings: _*)
-  .settings(publishArtifact := false)
-  .settings(skip in publish := true)
+  .settings(
+    publishArtifact := false,
+    skip in publish := true
+  )
 
 lazy val faciaJson = project.in(file("facia-json"))
   .settings(
