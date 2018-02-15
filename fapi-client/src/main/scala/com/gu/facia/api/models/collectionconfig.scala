@@ -1,6 +1,6 @@
 package com.gu.facia.api.models
 
-import com.gu.facia.client.models.{Backfill, CollectionConfigJson, DisplayHintsJson, Metadata}
+import com.gu.facia.client.models.{Backfill, CollectionConfigJson, CollectionPlatform, AnyPlatform, DisplayHintsJson, Metadata}
 
 case class Groups(groups: List[String])
 
@@ -28,7 +28,8 @@ case class CollectionConfig(
     excludeFromRss: Boolean,
     showTimestamps: Boolean,
     hideShowMore: Boolean,
-    displayHints: Option[DisplayHints])
+    displayHints: Option[DisplayHints],
+    platform: CollectionPlatform = AnyPlatform)
 
 object CollectionConfig {
   val DefaultCollectionType = "fixed/small/slow-VI"
@@ -50,7 +51,8 @@ object CollectionConfig {
     excludeFromRss = false,
     showTimestamps = false,
     hideShowMore = false,
-    displayHints = None)
+    displayHints = None,
+    platform = AnyPlatform)
 
   def fromCollectionJson(collectionJson: CollectionConfigJson): CollectionConfig =
     CollectionConfig(
@@ -70,5 +72,6 @@ object CollectionConfig {
       collectionJson.excludeFromRss.exists(identity),
       collectionJson.showTimestamps.exists(identity),
       collectionJson.hideShowMore.exists(identity),
-      collectionJson.displayHints.map(DisplayHints.fromDisplayHintsJson))
+      collectionJson.displayHints.map(DisplayHints.fromDisplayHintsJson),
+      collectionJson.platform.getOrElse(AnyPlatform))
 }

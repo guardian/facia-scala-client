@@ -54,6 +54,28 @@ object Metadata extends StrictLogging {
   }
 }
 
+sealed trait CollectionPlatform
+case object AnyPlatform extends CollectionPlatform
+case object WebCollection extends CollectionPlatform
+case object AppCollection extends CollectionPlatform
+
+object CollectionPlatform {
+  implicit object CollectionPlatformFormat extends Format[CollectionPlatform] {
+    def reads(json: JsValue) = json match {
+      case JsString("Web") => JsSuccess(WebCollection)
+      case JsString("App") => JsSuccess(AppCollection)
+      case JsString("Any") => JsSuccess(AnyPlatform)
+      case other => JsError(s"Could not deserialize to a CollectionPlatform type: $other")
+    }
+
+    def writes(platform: CollectionPlatform): JsString = platform match {
+      case AnyPlatform => JsString("Any")
+      case WebCollection => JsString("Web")
+      case AppCollection => JsString("App")
+    }
+  }
+}
+
 object DisplayHintsJson {
   implicit val jsonFormat = Json.format[DisplayHintsJson]
 }
@@ -82,7 +104,8 @@ object CollectionConfigJson {
     excludeFromRss: Option[Boolean] = None,
     showTimestamps: Option[Boolean] = None,
     hideShowMore: Option[Boolean] = None,
-    displayHints: Option[DisplayHintsJson] = None
+    displayHints: Option[DisplayHintsJson] = None,
+    platform: Option[CollectionPlatform] = None
   ): CollectionConfigJson
     = CollectionConfigJson(
     displayName,
@@ -101,7 +124,8 @@ object CollectionConfigJson {
     excludeFromRss,
     showTimestamps,
     hideShowMore,
-    displayHints
+    displayHints,
+    platform
   )
 }
 
@@ -122,7 +146,8 @@ case class CollectionConfigJson(
   excludeFromRss: Option[Boolean],
   showTimestamps: Option[Boolean],
   hideShowMore: Option[Boolean],
-  displayHints: Option[DisplayHintsJson]
+  displayHints: Option[DisplayHintsJson],
+  platform: Option[CollectionPlatform]
   ) {
   val collectionType = `type`
 }
