@@ -70,6 +70,13 @@ To run the tests you need to pass a content api key and facia client target url 
 To release a new version of the client:  
 
 1. Ensure you have a GPG key listed on a public key server.
-0. Ensure you are registered on Sonatype for Guardian projects.
-0. Run the [sbt release](https://github.com/sbt/sbt-release) task.
-0. When the release process has completed successfully, update the [change log](CHANGES.md).
+2. Ensure you are registered on Sonatype for Guardian projects.
+3. Open sbt and run the [sbt release](https://github.com/sbt/sbt-release) task, ensuring that the scala version is 2.12:
+
+```
+$ sbt
+sbt:facia-api-client> ++ 2.12
+sbt:facia-api-client> release
+```
+
+4. When the release process has completed successfully, update the [change log](CHANGES.md).
