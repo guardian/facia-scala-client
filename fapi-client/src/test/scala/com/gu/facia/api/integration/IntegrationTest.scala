@@ -15,7 +15,7 @@ import play.api.libs.json.{JsArray, JsString, Json}
 
 // TODO: reinstate ignored tests when cmsFronts account has access to test fixtures
 class IntegrationTest extends FreeSpec with Matchers with ScalaFutures with OptionValues with IntegrationTestConfig {
-  implicit val patience = PatienceConfig(Span(5, Seconds), Span(50, Millis))
+  implicit val patience = PatienceConfig(Span(20, Seconds), Span(50, Millis))
 
   def makeCollectionJson(trails: Trail*) = CollectionJson(
     live = trails.toList,

@@ -49,7 +49,7 @@ object ContentApi extends StrictLogging {
 
   def buildBackfillQuery(apiQuery: String): Either[ItemQuery, SearchQuery] = {
     val uri = new URI(apiQuery.replaceAllLiterally("|", "%7C").replaceAllLiterally(" ", "%20"))
-    val path = uri.getPath
+    val path = uri.getPath.stripPrefix("/")
     val rawParams = Option(uri.getQuery).map(parseQueryString).getOrElse(Nil).map {
       // wrap backfill tags in parentheses in case the editors wrote a raw OR query
       // makes it possible to safely append additional tags

@@ -1,5 +1,7 @@
 package com.gu.facia.api.contentapi
 
+import java.net.URI
+
 import com.gu.contentapi.client.model.ItemQuery
 import com.gu.contentapi.client.model.v1.{Content, ItemResponse, SearchResponse, Tag}
 import com.gu.contentapi.client.{ContentApiClientLogic, GuardianContentClient}
@@ -95,6 +97,10 @@ class ContentApiTest extends FreeSpec
       "will force editors picks to false if they are explicitly included on the query" in {
         val backfill = "lifeandstyle/food-and-drink?show-most-viewed=true&show-editors-picks=true&hide-recent-content=true"
         ContentApi.buildBackfillQuery(backfill).left.value.parameters.get("show-editors-picks").value should equal ("false")
+      }
+
+      "should trim slash" in {
+        ContentApi.buildBackfillQuery(s"/$backfill").left.value.pathSegment should equal (new URI(backfill).getPath)
       }
     }
   }
