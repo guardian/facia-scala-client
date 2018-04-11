@@ -2,7 +2,7 @@ package com.gu.facia.api.contentapi
 
 import java.net.URI
 
-import com.gu.contentapi.client.ContentApiClientLogic
+import com.gu.contentapi.client.ContentApiClient
 import com.gu.contentapi.client.model.v1.{Content, ItemResponse, SearchResponse}
 import com.gu.contentapi.client.model.{ItemQuery, SearchQuery}
 import com.gu.facia.api.models.BrandingByEdition
@@ -24,8 +24,8 @@ object ContentApi extends StrictLogging {
   type AdjustSearchQuery = SearchQuery => SearchQuery
   type AdjustItemQuery = ItemQuery => ItemQuery
 
-  def buildHydrateQueries(client: ContentApiClientLogic, ids: List[String], adjustSearchQuery: AdjustSearchQuery = identity): Response[Seq[SearchQuery]] = {
-    def queryForIds(ids: Seq[String]) = adjustSearchQuery(client.search
+  def buildHydrateQueries(client: ContentApiClient, ids: List[String], adjustSearchQuery: AdjustSearchQuery = identity): Response[Seq[SearchQuery]] = {
+    def queryForIds(ids: Seq[String]) = adjustSearchQuery(ContentApiClient.search
       .ids(ids mkString ",")
       .pageSize(ids.size)
       .showFields("internalPageCode"))
@@ -38,7 +38,7 @@ object ContentApi extends StrictLogging {
             s"single ID must be too long!): ${ids.mkString(", ")}"))}
   }
 
-  def getHydrateResponse(client: ContentApiClientLogic, searchQueries: Seq[SearchQuery])(implicit ec: ExecutionContext): Response[Seq[SearchResponse]] = {
+  def getHydrateResponse(client: ContentApiClient, searchQueries: Seq[SearchQuery])(implicit ec: ExecutionContext): Response[Seq[SearchResponse]] = {
     Response.Async.Right(Future.traverse(searchQueries)(client.getResponse)) mapError { err =>
       CapiError(s"Failed to hydrate content ${err.message}", err.cause)
     }
@@ -76,7 +76,7 @@ object ContentApi extends StrictLogging {
     }
   }
 
-  def getBackfillResponse(client: ContentApiClientLogic, query: Either[ItemQuery, SearchQuery])
+  def getBackfillResponse(client: ContentApiClient, query: Either[ItemQuery, SearchQuery])
                          (implicit ec: ExecutionContext): Either[Response[ItemResponse], Response[SearchResponse]] = {
     query.right.map { itemQuery =>
       Response.Async.Right(client.getResponse(itemQuery)) mapError { err =>
@@ -109,10 +109,10 @@ object ContentApi extends StrictLogging {
     }
   }
 
-  def latestContentFromLatestSnaps(capiClient: ContentApiClientLogic, latestSnapsRequest: LatestSnapsRequest, adjustItemQuery: AdjustItemQuery)
+  def latestContentFromLatestSnaps(capiClient: ContentApiClient, latestSnapsRequest: LatestSnapsRequest, adjustItemQuery: AdjustItemQuery)
                                   (implicit ec: ExecutionContext): Response[Map[String, Option[Content]]] = {
     def itemQueryFromSnapUri(uri: String): ItemQuery =
-      adjustItemQuery(capiClient.item(uri).pageSize(1).showFields("internalPageCode"))
+      adjustItemQuery(ContentApiClient.item(uri).pageSize(1).showFields("internalPageCode"))
 
     Response.Async.Right(
       Future.traverse(latestSnapsRequest.snaps) { case (id, uri) =>
@@ -121,14 +121,14 @@ object ContentApi extends StrictLogging {
       }.map(_.toMap))
   }
 
-  def linkSnapBrandingsByEdition(capiClient: ContentApiClientLogic, linkSnapsRequest: LinkSnapsRequest)
+  def linkSnapBrandingsByEdition(capiClient: ContentApiClient, linkSnapsRequest: LinkSnapsRequest)
     (implicit ec: ExecutionContext): Response[Map[String, BrandingByEdition]] = {
 
     def toIdAndUri(snap: (String, String)): (String, URI) = snap._1 -> new URI(snap._2)
 
     def itemQueryFromSnapUri(uri: URI): ItemQuery = {
       def cleaned(path: String) = path.stripPrefix("/").stripSuffix("/all").stripSuffix("/latest")
-      capiClient.item(cleaned(uri.getPath)).pageSize(1)
+      ContentApiClient.item(cleaned(uri.getPath)).pageSize(1)
     }
 
     def isPossibleSectionFrontOrTagPage(snap: (String, URI)): Boolean = {

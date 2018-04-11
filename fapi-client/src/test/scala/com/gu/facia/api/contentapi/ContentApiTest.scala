@@ -4,7 +4,7 @@ import java.net.URI
 
 import com.gu.contentapi.client.model.ItemQuery
 import com.gu.contentapi.client.model.v1.{Content, ItemResponse, SearchResponse, Tag}
-import com.gu.contentapi.client.{ContentApiClientLogic, GuardianContentClient}
+import com.gu.contentapi.client.{ContentApiClient, GuardianContentClient}
 import com.gu.facia.api.Response
 import lib.ExecutionContext
 import org.mockito.Mockito._
@@ -146,7 +146,7 @@ class ContentApiTest extends FreeSpec
 
   "linkSnapBrandingsByEdition" - {
 
-    def capiClient(id: String): ContentApiClientLogic = {
+    def capiClient(id: String): ContentApiClient = {
       val query = ItemQuery(id)
 
       val tag = mock[Tag]
@@ -156,8 +156,8 @@ class ContentApiTest extends FreeSpec
       when(response.section) thenReturn None
       when(response.tag) thenReturn Some(tag)
 
-      val capiClient = mock[ContentApiClientLogic]
-      when(capiClient.item(id)) thenReturn query
+      val capiClient = mock[ContentApiClient]
+      when(ContentApiClient.item(id)) thenReturn query
       when(capiClient.getResponse(query.pageSize(1))) thenReturn Future.successful(response)
 
       capiClient
@@ -189,7 +189,7 @@ class ContentApiTest extends FreeSpec
     }
 
     "will not make capi request for an external link" in {
-      val capiClient = mock[ContentApiClientLogic]
+      val capiClient = mock[ContentApiClient]
       val request = LinkSnapsRequest(Map("trailId" -> "http://www.bbc.co.uk/news/election-2017-39966615"))
       ContentApi.linkSnapBrandingsByEdition(capiClient, request).asFuture.futureValue.fold(
         err => fail(s"expected brandings result, got error $err"),
@@ -198,7 +198,7 @@ class ContentApiTest extends FreeSpec
     }
 
     "will not make capi request for a link to a tag combiner" in {
-      val capiClient = mock[ContentApiClientLogic]
+      val capiClient = mock[ContentApiClient]
       val request = LinkSnapsRequest(Map("trailId" -> "/world/asia-pacific+world/south-and-central-asia"))
       ContentApi.linkSnapBrandingsByEdition(capiClient, request).asFuture.futureValue.fold(
         err => fail(s"expected brandings result, got error $err"),
