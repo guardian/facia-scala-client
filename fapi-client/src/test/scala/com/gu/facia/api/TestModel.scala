@@ -127,6 +127,8 @@ object TestModel {
     def charCount: Option[Int] = None
     def internalVideoCode: Option[String] = None
     def shouldHideReaderRevenue: Option[Boolean] = None
+    def internalCommissionedWordcount: Option[Int] = None
+    def showAffiliateLinks: Option[Boolean] = None
   }
   implicit val stubFieldsFormat = Json.reads[StubFields]
 
@@ -196,6 +198,8 @@ object TestModel {
     def debug: Option[Debug] = None
     def isGone: Option[Boolean] = None
     def isHosted: Boolean = false
+    def pillarId: Option[String] = None
+    def pillarName: Option[String] = None
   }
   implicit val stubItemFormat = Json.reads[StubItem]
 
