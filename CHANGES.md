@@ -1,4 +1,4 @@
-#### 2.5.5
+#### 2.6
   
   - Upgrade Content API dependency to `12.0`
 
