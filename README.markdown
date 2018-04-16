@@ -75,7 +75,7 @@ To release a new version of the client:
 
 ```
 $ sbt
-sbt:facia-api-client> ++ 2.12
+sbt:facia-api-client> ++ 2.12.4
 sbt:facia-api-client> release
 ```
 
