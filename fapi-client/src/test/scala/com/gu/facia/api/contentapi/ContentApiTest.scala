@@ -4,7 +4,7 @@ import java.net.URI
 
 import com.gu.contentapi.client.model.ItemQuery
 import com.gu.contentapi.client.model.v1.{Content, ItemResponse, SearchResponse, Tag}
-import com.gu.contentapi.client.{ContentApiClientLogic, GuardianContentClient}
+import com.gu.contentapi.client.{ContentApiClient, ContentApiQueries, GuardianContentClient}
 import com.gu.facia.api.Response
 import lib.ExecutionContext
 import org.mockito.Mockito._
@@ -22,7 +22,7 @@ class ContentApiTest extends FreeSpec
   with ScalaFutures
   with MockitoSugar
   with ExecutionContext {
-  val testClient = new GuardianContentClient("test")
+  val testClient = new GuardianContentClient("test") with ContentApiQueries
 
   "buildHydrateQueries" - {
     "should do a search query with the provided ids" in {
@@ -146,9 +146,7 @@ class ContentApiTest extends FreeSpec
 
   "linkSnapBrandingsByEdition" - {
 
-    def capiClient(id: String): ContentApiClientLogic = {
-      val query = ItemQuery(id)
-
+    def capiClient(query: ItemQuery): ContentApiClient = {
       val tag = mock[Tag]
       when(tag.activeSponsorships) thenReturn None
 
@@ -156,16 +154,22 @@ class ContentApiTest extends FreeSpec
       when(response.section) thenReturn None
       when(response.tag) thenReturn Some(tag)
 
-      val capiClient = mock[ContentApiClientLogic]
-      when(capiClient.item(id)) thenReturn query
-      when(capiClient.getResponse(query.pageSize(1))) thenReturn Future.successful(response)
+      val capiClient = mock[ContentApiClient]
+      when(capiClient.getResponse(query)) thenReturn Future.successful(response)
 
       capiClient
     }
 
+    def itemQueries(query: ItemQuery, brandingUri: String) = {
+      val itemQueries = mock[ItemQueries]
+      when(itemQueries.brandingQueryFromSnapUri(new URI(brandingUri))) thenReturn query
+      itemQueries
+    }
+
     "will give branding for a link to a sponsored tag page" in {
       val request = LinkSnapsRequest(Map("trailId" -> "/sustainable-business/series/palm-oil-debate"))
-      ContentApi.linkSnapBrandingsByEdition(capiClient("sustainable-business/series/palm-oil-debate"), request).asFuture
+      val query = ItemQuery("sustainable-business/series/palm-oil-debate")
+      ContentApi.linkSnapBrandingsByEdition(capiClient(query), request, itemQueries(query, "/sustainable-business/series/palm-oil-debate")).asFuture
       .futureValue.fold(
         err => fail(s"expected brandings result, got error $err"),
         result => result.values.headOption should not be empty
@@ -174,7 +178,8 @@ class ContentApiTest extends FreeSpec
 
     "will give branding for a link to a sponsored section front" in {
       val request = LinkSnapsRequest(Map("trailId" -> "/cities"))
-      ContentApi.linkSnapBrandingsByEdition(capiClient("cities"), request).asFuture.futureValue.fold(
+      val query = ItemQuery("cities")
+      ContentApi.linkSnapBrandingsByEdition(capiClient(query), request, itemQueries(query, "/cities")).asFuture.futureValue.fold(
         err => fail(s"expected brandings result, got error $err"),
         result => result.values.headOption should not be empty
       )
@@ -182,14 +187,15 @@ class ContentApiTest extends FreeSpec
 
     "will give branding for a link to a sponsored section front with a query string" in {
       val request = LinkSnapsRequest(Map("trailId" -> "/cities?a=1"))
-      ContentApi.linkSnapBrandingsByEdition(capiClient("cities"), request).asFuture.futureValue.fold(
+      val query = ItemQuery("cities")
+      ContentApi.linkSnapBrandingsByEdition(capiClient(query), request, itemQueries(query, "/cities?a=1")).asFuture.futureValue.fold(
         err => fail(s"expected brandings result, got error $err"),
         result => result.values.headOption should not be empty
       )
     }
 
     "will not make capi request for an external link" in {
-      val capiClient = mock[ContentApiClientLogic]
+      val capiClient = mock[ContentApiClient]
       val request = LinkSnapsRequest(Map("trailId" -> "http://www.bbc.co.uk/news/election-2017-39966615"))
       ContentApi.linkSnapBrandingsByEdition(capiClient, request).asFuture.futureValue.fold(
         err => fail(s"expected brandings result, got error $err"),
@@ -198,7 +204,7 @@ class ContentApiTest extends FreeSpec
     }
 
     "will not make capi request for a link to a tag combiner" in {
-      val capiClient = mock[ContentApiClientLogic]
+      val capiClient = mock[ContentApiClient]
       val request = LinkSnapsRequest(Map("trailId" -> "/world/asia-pacific+world/south-and-central-asia"))
       ContentApi.linkSnapBrandingsByEdition(capiClient, request).asFuture.futureValue.fold(
         err => fail(s"expected brandings result, got error $err"),
@@ -208,7 +214,8 @@ class ContentApiTest extends FreeSpec
 
     "will use snap link stripped of '/all' to find branding" in {
       val request = LinkSnapsRequest(Map("trailId" -> "/cities/all"))
-      ContentApi.linkSnapBrandingsByEdition(capiClient("cities"), request).asFuture.futureValue.fold(
+      val query = ItemQuery("cities")
+      ContentApi.linkSnapBrandingsByEdition(capiClient(query), request, itemQueries(query, "/cities/all")).asFuture.futureValue.fold(
         err => fail(s"expected brandings result, got error $err"),
         result => result.values.headOption should not be empty
       )
@@ -216,7 +223,8 @@ class ContentApiTest extends FreeSpec
 
     "will use snap link stripped of '/latest' to find branding" in {
       val request = LinkSnapsRequest(Map("trailId" -> "/cities/latest"))
-      ContentApi.linkSnapBrandingsByEdition(capiClient("cities"), request).asFuture.futureValue.fold(
+      val query = ItemQuery("cities")
+      ContentApi.linkSnapBrandingsByEdition(capiClient(query), request, itemQueries(query, "/cities/latest")).asFuture.futureValue.fold(
         err => fail(s"expected brandings result, got error $err"),
         result => result.values.headOption should not be empty
       )

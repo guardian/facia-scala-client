@@ -3,7 +3,8 @@ import sbt._
 object Dependencies {
   val awsSdk = "com.amazonaws" % "aws-java-sdk-s3" % "1.11.154"
   val commonsIo = "org.apache.commons" % "commons-io" % "1.3.2"
-  val contentApi = "com.gu" %% "content-api-client" % "11.55"
+  val contentApi = "com.gu" %% "content-api-client" % "12.0"
+  val contentApiDefault = "com.gu" %% "content-api-client-default" % "12.0" % "test"
   val mockito = "org.mockito" % "mockito-all" % "1.10.19" % "test"
   val playJson24 = "com.typesafe.play" %% "play-json" % "2.4.6"
   val playJson25 = "com.typesafe.play" %% "play-json" % "2.5.4"

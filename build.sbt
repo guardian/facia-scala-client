@@ -154,6 +154,7 @@ lazy val fapiClient = project.in(file("fapi-client"))
     scalacOptions := Seq("-feature", "-deprecation"),
     libraryDependencies ++= Seq(
       contentApi,
+      contentApiDefault,
       commercialShared,
       scalaTest,
       mockito
@@ -178,6 +179,7 @@ lazy val fapiClient_play25 = project.in(file("fapi-client-play25"))
     scalacOptions := Seq("-feature", "-deprecation"),
     libraryDependencies ++= Seq(
       contentApi,
+      contentApiDefault,
       commercialShared,
       scalaTest,
       mockito
@@ -203,6 +205,7 @@ lazy val fapiClient_play26 = project.in(file("fapi-client-play26"))
     scalacOptions := Seq("-feature", "-deprecation"),
     libraryDependencies ++= Seq(
       contentApi,
+      contentApiDefault,
       commercialShared,
       scalaTest,
       mockito

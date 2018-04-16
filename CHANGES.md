@@ -1,3 +1,7 @@
+#### 2.6
+  
+  - Upgrade Content API dependency to `12.0`
+
 #### 2.4
   
   - Upgrade Content API dependency to `11.33`
