@@ -159,6 +159,7 @@ object TestModel {
     def r2ContributorId: Option[String] = None
     def entityIds: Option[scala.collection.Set[String]] = None
     def tagCategories: Option[scala.collection.Set[String]] = None
+    def campaignInformationType: Option[String] = None
   }
   implicit val stubTagFormat = Json.reads[StubTag]
 
