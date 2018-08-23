@@ -34,7 +34,7 @@ object ContentApi extends StrictLogging {
   }
 
   def getHydrateResponse(client: ContentApiClient, searchQueries: Seq[SearchQuery])(implicit ec: ExecutionContext): Response[Seq[SearchResponse]] = {
-    Response.Async.Right(Future.traverse(searchQueries)(client.getResponse)) mapError { err =>
+    Response.Async.Right(Future.traverse(searchQueries)(client.getResponse(_))) mapError { err =>
       CapiError(s"Failed to hydrate content ${err.message}", err.cause)
     }
   }
