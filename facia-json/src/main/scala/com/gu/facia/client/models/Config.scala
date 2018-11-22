@@ -76,6 +76,13 @@ object CollectionPlatform {
   }
 }
 
+object FrontsToolSettings {
+  implicit val jsonFormat = Json.format[FrontsToolSettings]
+}
+
+case class FrontsToolSettings (
+  displayEditWarning: Option[Boolean])
+
 object DisplayHintsJson {
   implicit val jsonFormat = Json.format[DisplayHintsJson]
 }
@@ -105,7 +112,8 @@ object CollectionConfigJson {
     showTimestamps: Option[Boolean] = None,
     hideShowMore: Option[Boolean] = None,
     displayHints: Option[DisplayHintsJson] = None,
-    platform: Option[CollectionPlatform] = None
+    platform: Option[CollectionPlatform] = None,
+    frontsToolSettings: Option[FrontsToolSettings] = None
   ): CollectionConfigJson
     = CollectionConfigJson(
     displayName,
@@ -125,7 +133,8 @@ object CollectionConfigJson {
     showTimestamps,
     hideShowMore,
     displayHints,
-    platform
+    platform,
+    frontsToolSettings
   )
 }
 
@@ -147,7 +156,8 @@ case class CollectionConfigJson(
   showTimestamps: Option[Boolean],
   hideShowMore: Option[Boolean],
   displayHints: Option[DisplayHintsJson],
-  platform: Option[CollectionPlatform]
+  platform: Option[CollectionPlatform],
+  frontsToolSettings: Option[FrontsToolSettings]
   ) {
   val collectionType = `type`
 }
