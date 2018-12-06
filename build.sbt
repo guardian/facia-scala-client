@@ -9,7 +9,7 @@ name := "facia-api-client"
 description := "Scala client for The Guardian's Facia JSON API"
 
 val scala211 = "2.11.11"
-val scala212 = "2.12.4"
+val scala212 = "2.12.6"
 
 val sonatypeReleaseSettings = Seq(
   licenses := Seq("Apache V2" -> url("http://www.apache.org/licenses/LICENSE-2.0.html")),

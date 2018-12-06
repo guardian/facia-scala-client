@@ -112,6 +112,7 @@ object CollectionConfigJson {
     showTimestamps: Option[Boolean] = None,
     hideShowMore: Option[Boolean] = None,
     displayHints: Option[DisplayHintsJson] = None,
+    userVisibility: Option[String] = None,
     platform: Option[CollectionPlatform] = None,
     frontsToolSettings: Option[FrontsToolSettings] = None
   ): CollectionConfigJson
@@ -133,6 +134,7 @@ object CollectionConfigJson {
     showTimestamps,
     hideShowMore,
     displayHints,
+    userVisibility,
     platform,
     frontsToolSettings
   )
@@ -156,6 +158,7 @@ case class CollectionConfigJson(
   showTimestamps: Option[Boolean],
   hideShowMore: Option[Boolean],
   displayHints: Option[DisplayHintsJson],
+  userVisibility: Option[String],
   platform: Option[CollectionPlatform],
   frontsToolSettings: Option[FrontsToolSettings]
   ) {

@@ -31,6 +31,7 @@ case class CollectionConfig(
     showTimestamps: Boolean,
     hideShowMore: Boolean,
     displayHints: Option[DisplayHints],
+    userVisibility: Option[String],
     platform: CollectionPlatform = AnyPlatform,
     frontsToolSettings: Option[FrontsToolSettings])
 
@@ -55,6 +56,7 @@ object CollectionConfig {
     showTimestamps = false,
     hideShowMore = false,
     displayHints = None,
+    userVisibility = None,
     platform = AnyPlatform,
     frontsToolSettings = None)
 
@@ -77,6 +79,7 @@ object CollectionConfig {
       collectionJson.showTimestamps.exists(identity),
       collectionJson.hideShowMore.exists(identity),
       collectionJson.displayHints.map(DisplayHints.fromDisplayHintsJson),
+      collectionJson.userVisibility,
       collectionJson.platform.getOrElse(AnyPlatform),
       collectionJson.frontsToolSettings)
 }
