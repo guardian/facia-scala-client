@@ -9,8 +9,7 @@ name := "facia-api-client"
 description := "Scala client for The Guardian's Facia JSON API"
 
 val scala211 = "2.11.11"
-val scala212 = "2.12.4"
-val scala212_6 = "2.12.6"
+val scala212 = "2.12.6"
 
 val sonatypeReleaseSettings = Seq(
   licenses := Seq("Apache V2" -> url("http://www.apache.org/licenses/LICENSE-2.0.html")),
@@ -127,7 +126,7 @@ lazy val faciaJson_play26 = project.in(file("facia-json-play26"))
       "Typesafe Repository" at "http://repo.typesafe.com/typesafe/releases/"
     ),
     scalaVersion := scala211,
-    crossScalaVersions:= Seq(scala211, scala212, scala212_6),
+    crossScalaVersions:= Seq(scala211, scala212),
     releaseCrossBuild := true,
     scalacOptions := Seq("-feature", "-deprecation"),
     libraryDependencies ++= Seq(
@@ -201,7 +200,7 @@ lazy val fapiClient_play26 = project.in(file("fapi-client-play26"))
       "Typesafe Repository" at "http://repo.typesafe.com/typesafe/releases/"
     ),
     scalaVersion := scala211,
-    crossScalaVersions:= Seq(scala211, scala212, scala212_6),
+    crossScalaVersions:= Seq(scala211, scala212),
     releaseCrossBuild := true,
     scalacOptions := Seq("-feature", "-deprecation"),
     libraryDependencies ++= Seq(
