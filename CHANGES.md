@@ -1,3 +1,7 @@
+#### 2.6.6 
+
+  - adds support for userVisibiity value
+
 #### 2.6
   
   - Upgrade Content API dependency to `12.0`
