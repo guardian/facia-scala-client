@@ -1,6 +1,6 @@
 package com.gu.facia.api.utils
 
-import com.gu.contentapi.client.model.v1.{ContentFields, Element, Tag, Content}
+import com.gu.contentapi.client.model.v1._
 import com.gu.facia.api.models._
 import org.joda.time.DateTime
 
@@ -195,13 +195,13 @@ object FaciaContentUtils {
     linkSnap => linkSnap.properties.showByline,
     latestSnap => latestSnap.properties.showByline)
 
-  private def tagsOfType(fc: FaciaContent)(tagType: String): Seq[Tag] = tags(fc).filter(_.`type` == tagType)
-  def nonKeywordTags(fc: FaciaContent): Seq[Tag] = tags(fc).filterNot(_.`type` == "keyword")
-  def keywords(fc: FaciaContent): Seq[Tag] = tagsOfType(fc)("keyword")
-  def series(fc: FaciaContent): Seq[Tag] = tagsOfType(fc)("series")
-  def blogs(fc: FaciaContent): Seq[Tag] = tagsOfType(fc)("blog")
-  def tones(fc: FaciaContent): Seq[Tag] = tagsOfType(fc)("tone")
-  def types(fc: FaciaContent): Seq[Tag] = tagsOfType(fc)("type")
+  private def tagsOfType(fc: FaciaContent)(tagType: TagType): Seq[Tag] = tags(fc).filter(_.`type` == tagType)
+  def nonKeywordTags(fc: FaciaContent): Seq[Tag] = tags(fc).filterNot(_.`type` == TagType.Keyword)
+  def keywords(fc: FaciaContent): Seq[Tag] = tagsOfType(fc)(TagType.Keyword)
+  def series(fc: FaciaContent): Seq[Tag] = tagsOfType(fc)(TagType.Series)
+  def blogs(fc: FaciaContent): Seq[Tag] = tagsOfType(fc)(TagType.Blog)
+  def tones(fc: FaciaContent): Seq[Tag] = tagsOfType(fc)(TagType.Tone)
+  def types(fc: FaciaContent): Seq[Tag] = tagsOfType(fc)(TagType.Type)
 
   def contributors(fc: FaciaContent): Seq[Tag] = maybeContent(fc).map(_.contributors).getOrElse(Nil)
   def isContributorPage(fc: FaciaContent): Boolean = maybeContent(fc).exists(_.contributors.nonEmpty)
