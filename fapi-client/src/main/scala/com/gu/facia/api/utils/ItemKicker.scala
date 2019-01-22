@@ -64,7 +64,7 @@ object ItemKicker {
     if (content.fields.flatMap(_.liveBloggingNow).exists(identity)) {
       Some(LiveKicker)
     } else if (isPodcast) {
-      val series = content.tags.find(_.`type` == "series") map { seriesTag =>
+      val series = content.tags.find(_.`type` == TagType.Series) map { seriesTag =>
         Series(seriesTag.webTitle, seriesTag.webUrl)
       }
       Some(PodcastKicker(series))

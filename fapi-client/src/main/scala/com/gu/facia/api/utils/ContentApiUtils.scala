@@ -10,7 +10,7 @@ object ContentApiUtils {
     private def tagsOfType(tagType: TagType): Seq[Tag] = content.tags.filter(_.`type` == tagType)
 
     lazy val keywords: Seq[Tag] = tagsOfType(TagType.Keyword)
-    lazy val nonKeywordTags: Seq[Tag] = content.tags.filterNot(_.`type` == "keyword")
+    lazy val nonKeywordTags: Seq[Tag] = content.tags.filterNot(_.`type` == TagType.Keyword)
     lazy val contributors: Seq[Tag] = tagsOfType(TagType.Contributor)
     lazy val isContributorPage: Boolean = contributors.nonEmpty
     lazy val series: Seq[Tag] = tagsOfType(TagType.Series)
