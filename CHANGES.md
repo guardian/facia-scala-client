@@ -1,3 +1,7 @@
+#### 2.6.7
+
+  - Bug fix: Compare tag `type` field with `TagType`s rather than `String`s
+
 #### 2.6.6 
 
   - adds support for userVisibiity value
