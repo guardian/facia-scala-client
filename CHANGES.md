@@ -1,3 +1,7 @@
+#### 2.6.8
+
+  - CAPI client update: brings it up to date with other libraries to avoid inconsistencies and fix a leaking dependency version mismatch
+
 #### 2.6.7
 
   - Bug fix: Compare tag `type` field with `TagType`s rather than `String`s
