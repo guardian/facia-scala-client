@@ -84,6 +84,7 @@ object TestModel {
     def standfirst: Option[String] = None
     def trailText: Option[String] = None
     def byline: Option[String] = None
+    def bylineHtml: Option[String] = None
     def main: Option[String] = None
     def body: Option[String] = None
     def newspaperPageNumber: Option[Int] = None
@@ -160,6 +161,7 @@ object TestModel {
     def entityIds: Option[scala.collection.Set[String]] = None
     def tagCategories: Option[scala.collection.Set[String]] = None
     def campaignInformationType: Option[String] = None
+    def internalName: Option[String] = None
   }
   implicit val stubTagFormat = Json.reads[StubTag]
 
