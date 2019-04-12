@@ -8,8 +8,8 @@ name := "facia-api-client"
 
 description := "Scala client for The Guardian's Facia JSON API"
 
-val scala211 = "2.11.11"
-val scala212 = "2.12.6"
+val scala211 = "2.11.12"
+val scala212 = "2.12.8"
 
 val sonatypeReleaseSettings = Seq(
   licenses := Seq("Apache V2" -> url("http://www.apache.org/licenses/LICENSE-2.0.html")),
@@ -77,6 +77,7 @@ lazy val faciaJson = project.in(file("facia-json"))
     name := "facia-json",
     resolvers ++= Seq(
       Resolver.sonatypeRepo("releases"),
+      Resolver.sonatypeRepo("public"),
       Resolver.file("Local", file( Path.userHome.absolutePath + "/.ivy2/local"))(Resolver.ivyStylePatterns),
       "Typesafe Repository" at "http://repo.typesafe.com/typesafe/releases/"
     ),
@@ -101,6 +102,7 @@ lazy val faciaJson_play25 = project.in(file("facia-json-play25"))
     sourceDirectory := baseDirectory.value / "../facia-json/src",
     resolvers ++= Seq(
       Resolver.sonatypeRepo("releases"),
+      Resolver.sonatypeRepo("public"),
       Resolver.file("Local", file( Path.userHome.absolutePath + "/.ivy2/local"))(Resolver.ivyStylePatterns),
       "Typesafe Repository" at "http://repo.typesafe.com/typesafe/releases/"
     ),
@@ -125,6 +127,7 @@ lazy val faciaJson_play26 = project.in(file("facia-json-play26"))
     sourceDirectory := baseDirectory.value / "../facia-json/src",
     resolvers ++= Seq(
       Resolver.sonatypeRepo("releases"),
+      Resolver.sonatypeRepo("public"),
       Resolver.file("Local", file( Path.userHome.absolutePath + "/.ivy2/local"))(Resolver.ivyStylePatterns),
       "Typesafe Repository" at "http://repo.typesafe.com/typesafe/releases/"
     ),
@@ -149,6 +152,7 @@ lazy val fapiClient = project.in(file("fapi-client"))
     name := "fapi-client",
     resolvers ++= Seq(
       Resolver.sonatypeRepo("releases"),
+      Resolver.sonatypeRepo("public"),
       Resolver.file("Local", file( Path.userHome.absolutePath + "/.ivy2/local"))(Resolver.ivyStylePatterns),
       "Guardian Frontend Bintray" at "https://dl.bintray.com/guardian/frontend",
       "Typesafe Repository" at "http://repo.typesafe.com/typesafe/releases/"
@@ -175,6 +179,7 @@ lazy val fapiClient_play25 = project.in(file("fapi-client-play25"))
     sourceDirectory := baseDirectory.value / "../fapi-client/src",
     resolvers ++= Seq(
       Resolver.sonatypeRepo("releases"),
+      Resolver.sonatypeRepo("public"),
       Resolver.file("Local", file( Path.userHome.absolutePath + "/.ivy2/local"))(Resolver.ivyStylePatterns),
       "Guardian Frontend Bintray" at "https://dl.bintray.com/guardian/frontend",
       "Typesafe Repository" at "http://repo.typesafe.com/typesafe/releases/"
@@ -201,6 +206,7 @@ lazy val fapiClient_play26 = project.in(file("fapi-client-play26"))
     sourceDirectory := baseDirectory.value / "../fapi-client/src",
     resolvers ++= Seq(
       Resolver.sonatypeRepo("releases"),
+      Resolver.sonatypeRepo("public"),
       Resolver.file("Local", file( Path.userHome.absolutePath + "/.ivy2/local"))(Resolver.ivyStylePatterns),
       "Guardian Frontend Bintray" at "https://dl.bintray.com/guardian/frontend",
       "Typesafe Repository" at "http://repo.typesafe.com/typesafe/releases/"
