@@ -1,3 +1,7 @@
+#### 3.0.0
+
+  - Upgrades all CAPI dependencies using the newest version of the Scrooge/Thrift library
+
 #### 2.6.8
 
   - CAPI client update: brings it up to date with other libraries to avoid inconsistencies and fix a leaking dependency version mismatch
