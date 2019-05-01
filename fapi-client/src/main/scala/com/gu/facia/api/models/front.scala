@@ -34,6 +34,7 @@ object Front {
       case Some("commercial") => CommercialPriority
       case Some("training") => TrainingPriority
       case Some("email") => EmailPriority
+      case Some("edition") => TrainingPriority
       case _ => EditorialPriority}
 
   private def getImageUrl(frontJson: FrontJson): Option[FrontImage] =
