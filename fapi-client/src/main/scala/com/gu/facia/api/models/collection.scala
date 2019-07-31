@@ -23,8 +23,8 @@ object Collection {
   def fromCollectionJsonConfigAndContent(collectionId: String, collectionJson: Option[CollectionJson], collectionConfig: CollectionConfig): Collection = {
     Collection(
       collectionId,
-      collectionJson.flatMap(_.displayName).orElse(collectionConfig.displayName).getOrElse("untitled"),
-      collectionJson.flatMap(_.href).orElse(collectionConfig.href),
+      collectionConfig.displayName.orElse(collectionJson.flatMap(_.displayName)).getOrElse("untitled"),
+      collectionConfig.href.orElse(collectionJson.flatMap(_.href)),
       collectionJson.map(_.live).getOrElse(Nil),
       collectionJson.flatMap(_.draft),
       collectionJson.flatMap(_.treats).getOrElse(Nil),

@@ -126,7 +126,7 @@ class CollectionTest extends FreeSpec with Matchers with MockitoSugar with OneIn
       collection should have(
         'id("id"),
         'draft(None),
-        'href(Some("collectionHref")),
+        'href(Some("collectionConfigHref")),
         'lastUpdated(Some(new DateTime(1))),
         'updatedBy(Some("test")),
         'updatedEmail(Some("test@example.com")),
