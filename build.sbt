@@ -55,12 +55,7 @@ val sonatypeReleaseSettings = Seq(
 
 val publishSettings = Seq(
   publishArtifact := true,
-  publishTo := Some(
-    if (isSnapshot.value)
-      Opts.resolver.sonatypeSnapshots
-    else
-      Opts.resolver.sonatypeStaging
-  )
+  publishTo := sonatypePublishTo.value
 )
 
 lazy val root = (project in file("."))
