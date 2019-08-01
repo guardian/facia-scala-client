@@ -11,9 +11,9 @@ easily-used types.
 
 ### Adding the dependency to SBT
 
-Add the following line to your [SBT build file] (http://www.scala-sbt.org/0.13.5/docs/Getting-Started/Basic-Def.html):
+Add the following line to your [SBT build file](https://www.scala-sbt.org/1.0/docs/Basic-Def.html):
 
-    libraryDependencies += "com.gu" %% "fapi-client" % "1.5.3"
+    libraryDependencies += "com.gu" %% "fapi-client-play26" % "3.0.2"
 
 ### Using the library
 
@@ -33,9 +33,9 @@ This library provides underlying behaviour for the main Fronts API client.
 
 ### Adding the dependency to SBT
 
-Add the following line to your [SBT build file] (http://www.scala-sbt.org/0.13.5/docs/Getting-Started/Basic-Def.html):
+Add the following line to your [SBT build file](https://www.scala-sbt.org/1.0/docs/Basic-Def.html):
 
-    libraryDependencies += "com.gu" %% "facia-json" % "0.65"
+    libraryDependencies += "com.gu" %% "facia-json-play26" % "3.0.2"
 
 ### Making calls to the API
 
@@ -71,11 +71,10 @@ To release a new version of the client:
 
 1. Ensure you have a GPG key listed on a public key server.
 2. Ensure you are registered on Sonatype for Guardian projects.
-3. Open sbt and run the [sbt release](https://github.com/sbt/sbt-release) task, ensuring that the scala version is 2.12:
+3. Open sbt and run the [sbt release](https://github.com/sbt/sbt-release) task:
 
 ```
 $ sbt
-sbt:facia-api-client> ++ 2.12.4
 sbt:facia-api-client> release
 ```
 
