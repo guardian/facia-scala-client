@@ -1,3 +1,7 @@
+#### 3.0.4
+
+  - Populates displayName from collectionConfig rather than collectionJson
+
 #### 3.0.0
 
   - Upgrades all CAPI dependencies using the newest version of the Scrooge/Thrift library
