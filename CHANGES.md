@@ -1,3 +1,7 @@
+#### 3.0.5
+
+  - Removes Scala 2.11 and Play 2.5
+
 #### 3.0.4
 
   - Populates displayName from collectionConfig rather than collectionJson
