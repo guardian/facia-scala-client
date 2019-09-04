@@ -78,7 +78,6 @@ def baseProject(module: String, majorMinorVersion: String) = Project(s"$module-p
     ),
     scalaVersion := "2.12.8",
     scalacOptions := Seq("-feature", "-deprecation"),
-    publishArtifact := true,
     publishTo := sonatypePublishTo.value,
     sonatypeReleaseSettings
   )
