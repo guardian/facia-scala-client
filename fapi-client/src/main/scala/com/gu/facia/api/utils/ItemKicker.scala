@@ -52,7 +52,7 @@ object ItemKicker {
     fromContentAndTrail(Option(content), trailMeta, resolvedMetaData, config)
 
   private[utils] def tonalKicker(content: Content, trailMeta: MetaDataCommonFields): Option[ItemKicker] = {
-    def tagsOfType(tagType: String): Seq[Tag] = content.tags.filter(_.`type` == tagType)
+    def tagsOfType(tagType: String): Seq[Tag] = content.tags.toSeq.filter(_.`type`.name == tagType)
     val types: Seq[Tag] = tagsOfType("type")
     val tones: Seq[Tag] = tagsOfType("tone")
 

@@ -7,10 +7,10 @@ import com.gu.facia.api.models.BrandingByEdition
 object ContentApiUtils {
 
   implicit class RichContent(content: Content) {
-    private def tagsOfType(tagType: TagType): Seq[Tag] = content.tags.filter(_.`type` == tagType)
+    private def tagsOfType(tagType: TagType): Seq[Tag] = content.tags.toSeq.filter(_.`type` == tagType)
 
     lazy val keywords: Seq[Tag] = tagsOfType(TagType.Keyword)
-    lazy val nonKeywordTags: Seq[Tag] = content.tags.filterNot(_.`type` == TagType.Keyword)
+    lazy val nonKeywordTags: Seq[Tag] = content.tags.toSeq.filterNot(_.`type` == TagType.Keyword)
     lazy val contributors: Seq[Tag] = tagsOfType(TagType.Contributor)
     lazy val isContributorPage: Boolean = contributors.nonEmpty
     lazy val series: Seq[Tag] = tagsOfType(TagType.Series)

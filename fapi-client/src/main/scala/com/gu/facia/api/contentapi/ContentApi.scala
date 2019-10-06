@@ -107,7 +107,7 @@ object ContentApi extends StrictLogging {
   def latestContentFromLatestSnaps(capiClient: ContentApiClient, latestSnapsRequest: LatestSnapsRequest, adjustItemQuery: AdjustItemQuery, itemQueries: ItemQueries = ItemQueries)
                                   (implicit ec: ExecutionContext): Response[Map[String, Option[Content]]] = {
     Response.Async.Right(
-      Future.traverse(latestSnapsRequest.snaps) { case (id, uri) =>
+      Future.traverse(latestSnapsRequest.snaps.toSeq) { case (id, uri) =>
         capiClient.getResponse(adjustItemQuery(itemQueries.latestContentQueryFromSnapUri(uri)))
           .map(_.results.getOrElse(Nil).headOption).map(id -> _)
       }.map(_.toMap))
@@ -127,11 +127,11 @@ object ContentApi extends StrictLogging {
       response.section.map(_.brandingByEdition) orElse response.tag.map(_.brandingByEdition) getOrElse Map.empty
 
     Response.Async.Right {
-      Future.traverse(linkSnapsRequest.snaps.map(toIdAndUri).filter(isPossibleSectionFrontOrTagPage)) {
+      Future.traverse(linkSnapsRequest.snaps.toSeq.map(toIdAndUri).filter(isPossibleSectionFrontOrTagPage)) {
         case (id, uri) =>
           val query = itemQueries.brandingQueryFromSnapUri(uri)
           val response = capiClient.getResponse(query)
-          response.onFailure { case NonFatal(e) =>
+          response.failed.foreach { case NonFatal(e) =>
             logger.warn(s"Failed to get response for link snap query '$query'", e)
           }
           response.map(brandingsFromResponse).map(id -> _)
