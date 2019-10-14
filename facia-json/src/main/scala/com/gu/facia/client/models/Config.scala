@@ -76,6 +76,26 @@ object CollectionPlatform {
   }
 }
 
+sealed trait TargetedTerritory
+case object NZTerritory extends TargetedTerritory
+case object USEastCoastTerritory extends TargetedTerritory
+case object EU27Territory extends TargetedTerritory
+
+object TargetedTerritory {
+  implicit object TargetedTerritoryFormat extends Format[TargetedTerritory] {
+    def reads(json: JsValue): JsSuccess[TargetedTerritory] = json match {
+      case JsString("NZ") => JsSuccess(NZTerritory)
+      case JsString("US-East-Coast") => JsSuccess(USEastCoastTerritory)
+      case JsString("EU-27") => JsSuccess(EU27Territory)
+    }
+    def writes(territory: TargetedTerritory): JsString = territory match {
+      case NZTerritory => JsString("NZ")
+      case USEastCoastTerritory => JsString("US-East-Coast")
+      case EU27Territory => JsString("EU-27")
+    }
+  }
+}
+
 object FrontsToolSettings {
   implicit val jsonFormat = Json.format[FrontsToolSettings]
 }
@@ -113,6 +133,7 @@ object CollectionConfigJson {
     hideShowMore: Option[Boolean] = None,
     displayHints: Option[DisplayHintsJson] = None,
     userVisibility: Option[String] = None,
+    targetedTerritory: Option[TargetedTerritory] = None,
     platform: Option[CollectionPlatform] = None,
     frontsToolSettings: Option[FrontsToolSettings] = None
   ): CollectionConfigJson
@@ -135,6 +156,7 @@ object CollectionConfigJson {
     hideShowMore,
     displayHints,
     userVisibility,
+    targetedTerritory,
     platform,
     frontsToolSettings
   )
@@ -159,8 +181,10 @@ case class CollectionConfigJson(
   hideShowMore: Option[Boolean],
   displayHints: Option[DisplayHintsJson],
   userVisibility: Option[String],
+  targetedTerritory: Option[TargetedTerritory],
   platform: Option[CollectionPlatform],
-  frontsToolSettings: Option[FrontsToolSettings]
+  frontsToolSettings: Option[FrontsToolSettings],
+
   ) {
   val collectionType = `type`
 }

@@ -26,5 +26,22 @@ class ConfigSpec extends Specification with ResourcesHelper {
           "decorating and gardening from the Guardian, the world's leading liberal voice"))
       })
     }
+    "deserialize territories" in {
+      val config = Json.fromJson[ConfigJson](Json.parse(slurpOrDie("DEV/frontsapi/config/config.json").get)).get
+
+      config.collections.get("au/sport/golf/regular-stories") must beSome.which({ collection =>
+        collection.targetedTerritory.get mustEqual(EU27Territory)
+      })
+    }
+
+    "serialize territories" in {
+      val config = Json.fromJson[ConfigJson](Json.parse(slurpOrDie("DEV/frontsapi/config/config.json").get)).get
+
+      config.collections.get("uk/commentisfree/most-viewed/regular-stories") must beSome.which({ collection =>
+        val collectionWithTerritory = collection.copy(targetedTerritory = Some(NZTerritory))
+        val json = Json.toJson(collectionWithTerritory).toString()
+        json mustEqual """{"displayName":"Most popular","backfill":{"type":"capi","query":"uk/commentisfree?show-most-viewed=true&show-editors-picks=false&hide-recent-content=true"},"type":"news/most-popular","uneditable":true,"targetedTerritory":"NZ"}"""
+      })
+    }
   }
 }
