@@ -76,22 +76,31 @@ object CollectionPlatform {
   }
 }
 
-sealed trait TargetedTerritory
-case object NZTerritory extends TargetedTerritory
-case object USEastCoastTerritory extends TargetedTerritory
-case object EU27Territory extends TargetedTerritory
+sealed trait TargetedTerritory {
+  val id: String
+}
+case object NZTerritory extends TargetedTerritory {
+  val id = "NZ"
+}
+case object USEastCoastTerritory extends TargetedTerritory {
+  val id = "US-East-Coast"
+}
+case object EU27Territory extends TargetedTerritory {
+  val id = "EU-27"
+}
 
 object TargetedTerritory {
+  val allTerritories: List[TargetedTerritory] = List(NZTerritory, USEastCoastTerritory, EU27Territory)
   implicit object TargetedTerritoryFormat extends Format[TargetedTerritory] {
     def reads(json: JsValue): JsSuccess[TargetedTerritory] = json match {
-      case JsString("NZ") => JsSuccess(NZTerritory)
-      case JsString("US-East-Coast") => JsSuccess(USEastCoastTerritory)
-      case JsString("EU-27") => JsSuccess(EU27Territory)
+      case JsString(NZTerritory.id) => JsSuccess(NZTerritory)
+      case JsString(USEastCoastTerritory.id) => JsSuccess(USEastCoastTerritory)
+      case JsString(EU27Territory.id) => JsSuccess(EU27Territory)
     }
     def writes(territory: TargetedTerritory): JsString = territory match {
-      case NZTerritory => JsString("NZ")
-      case USEastCoastTerritory => JsString("US-East-Coast")
-      case EU27Territory => JsString("EU-27")
+      case NZTerritory => JsString(NZTerritory.id)
+      case USEastCoastTerritory => JsString(USEastCoastTerritory.id)
+      case EU27Territory => JsString(EU27Territory.id)
     }
   }
 }
