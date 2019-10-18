@@ -2854,7 +2854,8 @@
         "query" : "sport/golf?edition=au"
       },
       "type" : "news/special",
-      "href" : "sport/golf"
+      "href" : "sport/golf",
+      "targetedTerritory": "EU-27"
     },
     "c45f-d5fc-39b6-bd7d" : {
       "displayName" : "Reviews",

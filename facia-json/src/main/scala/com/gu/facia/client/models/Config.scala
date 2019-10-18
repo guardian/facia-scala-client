@@ -76,6 +76,35 @@ object CollectionPlatform {
   }
 }
 
+sealed trait TargetedTerritory {
+  val id: String
+}
+case object NZTerritory extends TargetedTerritory {
+  val id = "NZ"
+}
+case object USEastCoastTerritory extends TargetedTerritory {
+  val id = "US-East-Coast"
+}
+case object EU27Territory extends TargetedTerritory {
+  val id = "EU-27"
+}
+
+object TargetedTerritory {
+  val allTerritories: List[TargetedTerritory] = List(NZTerritory, USEastCoastTerritory, EU27Territory)
+  implicit object TargetedTerritoryFormat extends Format[TargetedTerritory] {
+    def reads(json: JsValue): JsSuccess[TargetedTerritory] = json match {
+      case JsString(NZTerritory.id) => JsSuccess(NZTerritory)
+      case JsString(USEastCoastTerritory.id) => JsSuccess(USEastCoastTerritory)
+      case JsString(EU27Territory.id) => JsSuccess(EU27Territory)
+    }
+    def writes(territory: TargetedTerritory): JsString = territory match {
+      case NZTerritory => JsString(NZTerritory.id)
+      case USEastCoastTerritory => JsString(USEastCoastTerritory.id)
+      case EU27Territory => JsString(EU27Territory.id)
+    }
+  }
+}
+
 object FrontsToolSettings {
   implicit val jsonFormat = Json.format[FrontsToolSettings]
 }
@@ -113,6 +142,7 @@ object CollectionConfigJson {
     hideShowMore: Option[Boolean] = None,
     displayHints: Option[DisplayHintsJson] = None,
     userVisibility: Option[String] = None,
+    targetedTerritory: Option[TargetedTerritory] = None,
     platform: Option[CollectionPlatform] = None,
     frontsToolSettings: Option[FrontsToolSettings] = None
   ): CollectionConfigJson
@@ -135,6 +165,7 @@ object CollectionConfigJson {
     hideShowMore,
     displayHints,
     userVisibility,
+    targetedTerritory,
     platform,
     frontsToolSettings
   )
@@ -159,8 +190,10 @@ case class CollectionConfigJson(
   hideShowMore: Option[Boolean],
   displayHints: Option[DisplayHintsJson],
   userVisibility: Option[String],
+  targetedTerritory: Option[TargetedTerritory],
   platform: Option[CollectionPlatform],
-  frontsToolSettings: Option[FrontsToolSettings]
+  frontsToolSettings: Option[FrontsToolSettings],
+
   ) {
   val collectionType = `type`
 }
