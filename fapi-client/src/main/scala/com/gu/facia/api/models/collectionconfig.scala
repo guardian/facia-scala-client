@@ -1,6 +1,6 @@
 package com.gu.facia.api.models
 
-import com.gu.facia.client.models.{AnyPlatform, Backfill, CollectionConfigJson, CollectionPlatform, DisplayHintsJson, FrontsToolSettings, Metadata}
+import com.gu.facia.client.models.{AnyPlatform, Backfill, CollectionConfigJson, CollectionPlatform, DisplayHintsJson, FrontsToolSettings, Metadata, TargetedTerritory}
 
 case class Groups(groups: List[String])
 
@@ -32,6 +32,7 @@ case class CollectionConfig(
     hideShowMore: Boolean,
     displayHints: Option[DisplayHints],
     userVisibility: Option[String],
+    targetedTerritory: Option[TargetedTerritory],
     platform: CollectionPlatform = AnyPlatform,
     frontsToolSettings: Option[FrontsToolSettings])
 
@@ -57,6 +58,7 @@ object CollectionConfig {
     hideShowMore = false,
     displayHints = None,
     userVisibility = None,
+    targetedTerritory = None,
     platform = AnyPlatform,
     frontsToolSettings = None)
 
@@ -80,6 +82,7 @@ object CollectionConfig {
       collectionJson.hideShowMore.exists(identity),
       collectionJson.displayHints.map(DisplayHints.fromDisplayHintsJson),
       collectionJson.userVisibility,
+      collectionJson.targetedTerritory,
       collectionJson.platform.getOrElse(AnyPlatform),
       collectionJson.frontsToolSettings)
 }
