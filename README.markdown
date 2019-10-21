@@ -65,7 +65,7 @@ To run the tests you need to pass a content api key and facia client target url 
 
 ## Building a release
 
-[This document](https://docs.google.com/document/d/1M_MiE8qntdDn97QIRnIUci5wdVQ8_defCqpeAwoKY8g/edit) is a good source of information about releasing Guardian artefacts generally.
+[This document](https://docs.google.com/document/d/1rNXjoZDqZMsQblOVXPAIIOMWuwUKe3KzTCttuqS7AcY/edit) is a good source of information about releasing Guardian artefacts generally.
 
 To release a new version of the client:  
 
