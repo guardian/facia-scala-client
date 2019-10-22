@@ -3,7 +3,7 @@ package com.gu.facia.api.models
 import com.gu.contentapi.client.model.v1.Content
 import com.gu.facia.api.contentapi.{LatestSnapsRequest, LinkSnapsRequest}
 import com.gu.facia.api.utils.IntegerString
-import com.gu.facia.client.models.{CollectionJson, SupportingItem, Trail}
+import com.gu.facia.client.models.{CollectionJson, SupportingItem, TargetedTerritory, Trail}
 import org.joda.time.DateTime
 
 case class Collection(
@@ -16,7 +16,8 @@ case class Collection(
   lastUpdated: Option[DateTime],
   updatedBy: Option[String],
   updatedEmail: Option[String],
-  collectionConfig: CollectionConfig
+  collectionConfig: CollectionConfig,
+  targetedTerritory: Option[TargetedTerritory]
 )
 
 object Collection {
@@ -31,7 +32,8 @@ object Collection {
       collectionJson.map(_.lastUpdated),
       collectionJson.map(_.updatedBy),
       collectionJson.map(_.updatedEmail),
-      collectionConfig)
+      collectionConfig,
+      collectionConfig.targetedTerritory)
   }
 
   def contentFrom(collection: Collection,
