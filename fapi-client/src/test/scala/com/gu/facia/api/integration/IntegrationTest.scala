@@ -26,7 +26,8 @@ class IntegrationTest extends FreeSpec with Matchers with ScalaFutures with Opti
     updatedEmail = "test@example.com",
     displayName = Some("displayName"),
     href = Some("href"),
-    previously = None
+    previously = None,
+    None
   )
 
   def makeLatestTrailFor(id: String, uri: String) =
@@ -189,7 +190,8 @@ class IntegrationTest extends FreeSpec with Matchers with ScalaFutures with Opti
       Some("updatedBy@example.com"),
       CollectionConfig.empty.copy(backfill = Some(Backfill(
         `type` = "capi",
-        query = "business?edition=uk")))
+        query = "business?edition=uk"))),
+      None
     )
 
     "can get the backfill for a collection" ignore {
@@ -239,7 +241,8 @@ class IntegrationTest extends FreeSpec with Matchers with ScalaFutures with Opti
       Some(new DateTime(1)),
       Some("updatedBy"),
       Some("updatedBy@example.com"),
-      CollectionConfig.empty
+      CollectionConfig.empty,
+      None
     )
 
     "returns empty list" in {
@@ -261,7 +264,8 @@ class IntegrationTest extends FreeSpec with Matchers with ScalaFutures with Opti
       Some(new DateTime(1)),
       Some("updatedBy"),
       Some("updatedBy@example.com"),
-      CollectionConfig.empty
+      CollectionConfig.empty,
+      None
     )
 
     "inheriting from a non existing collection" in {
@@ -344,7 +348,8 @@ class IntegrationTest extends FreeSpec with Matchers with ScalaFutures with Opti
           `type` = "invalid-backfill-configuration",
           query = "any"
         ))
-      )
+      ),
+      None
     )
 
     "returns an empty list" in {
@@ -456,7 +461,8 @@ class IntegrationTest extends FreeSpec with Matchers with ScalaFutures with Opti
       updatedEmail = "test@example.com",
       displayName = Some("displayName"),
       href = Some("href"),
-      previously = None
+      previously = None,
+      targetedTerritory = None
     )
 
     val normalTrail = Trail("internal-code/page/2144828", 0, None, None)
@@ -524,7 +530,8 @@ class IntegrationTest extends FreeSpec with Matchers with ScalaFutures with Opti
       updatedEmail = "test@example.com",
       displayName = Some("displayName"),
       href = Some("href"),
-      previously = None
+      previously = None,
+      targetedTerritory = None
     )
 
     val normalTrail = Trail("internal-code/page/2144828", 0, None, None)
