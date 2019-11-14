@@ -73,10 +73,9 @@ def baseProject(module: String, majorMinorVersion: String) = Project(s"$module-p
     resolvers ++= Seq(
       Resolver.sonatypeRepo("releases"),
       Resolver.sonatypeRepo("public"),
-      Resolver.file("Local", file( Path.userHome.absolutePath + "/.ivy2/local"))(Resolver.ivyStylePatterns),
-      "Typesafe Repository" at "http://repo.typesafe.com/typesafe/releases/"
+      Resolver.typesafeRepo("releases")
     ),
-    scalaVersion := "2.12.8",
+    scalaVersion := "2.12.10",
     scalacOptions := Seq("-feature", "-deprecation"),
     publishTo := sonatypePublishTo.value,
     sonatypeReleaseSettings
@@ -104,8 +103,12 @@ def fapiClient_playJsonVersion(majorMinorVersion: String) =  baseProject("fapi-c
     )
   )
 
+lazy val crossCompileScala213 = crossScalaVersions := Seq(scalaVersion.value, "2.13.1")
+
+
 lazy val faciaJson_play26 = faciaJson_playJsonVersion("26")
-lazy val faciaJson_play27 = faciaJson_playJsonVersion("27")
+lazy val faciaJson_play27 = faciaJson_playJsonVersion("27").settings(crossCompileScala213)
 
 lazy val fapiClient_play26 = fapiClient_playJsonVersion("26").dependsOn(faciaJson_play26)
-lazy val fapiClient_play27 = fapiClient_playJsonVersion("27").dependsOn(faciaJson_play27)
+lazy val fapiClient_play27 = fapiClient_playJsonVersion("27").dependsOn(faciaJson_play27).settings(crossCompileScala213)
+

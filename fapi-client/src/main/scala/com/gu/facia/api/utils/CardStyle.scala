@@ -37,7 +37,7 @@ object CardStyle {
   def apply(content: Content, trailMetaData: MetaDataCommonFields): CardStyle = {
     val href = trailMetaData.href
 
-    val hashedTagIds: Seq[String] = content.tags.flatMap { tag =>
+    val hashedTagIds: Seq[String] = content.tags.toSeq.flatMap { tag =>
       md5(salt + tag.id)
     }
 
