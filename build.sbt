@@ -29,23 +29,20 @@ val sonatypeReleaseSettings = Seq(
         </developer>
       </developers>
     ),
+  releaseCrossBuild := true, // true if you cross-build the project for multiple Scala versions
   releaseProcess := Seq[ReleaseStep](
+    checkSnapshotDependencies,
     inquireVersions,
     runClean,
     runTest,
     setReleaseVersion,
     commitReleaseVersion,
     tagRelease,
-    ReleaseStep(
-      action = { state =>
-        val extracted = Project.extract(state)
-        val ref = extracted.get(Keys.thisProjectRef)
-        extracted.runAggregated(PgpKeys.publishSigned in Global in ref, state)
-      }
-    ),
+    // For non cross-build projects, use releaseStepCommand("publishSigned")
+    releaseStepCommandAndRemaining("+publishSigned"),
+    releaseStepCommand("sonatypeBundleRelease"),
     setNextVersion,
     commitNextVersion,
-    releaseStepCommand("sonatypeReleaseAll"),
     pushChanges
   )
 )
@@ -77,7 +74,7 @@ def baseProject(module: String, majorMinorVersion: String) = Project(s"$module-p
     ),
     scalaVersion := "2.12.10",
     scalacOptions := Seq("-feature", "-deprecation"),
-    publishTo := sonatypePublishTo.value,
+    publishTo := sonatypePublishToBundle.value,
     sonatypeReleaseSettings
   )
 
