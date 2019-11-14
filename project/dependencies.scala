@@ -11,5 +11,5 @@ object Dependencies {
   val scalaTest = "org.scalatest" %% "scalatest" % "3.0.4" % "test"
   val specs2 = "org.specs2" %% "specs2-core" % "4.0.0" % "test"
   val scalaLogging = "com.typesafe.scala-logging" %% "scala-logging" % "3.5.0"
-  val commercialShared = "com.gu" %% "commercial-shared" % "6.1.2"
+  val commercialShared = "com.gu" %% "commercial-shared" % "6.1.6"
 }
