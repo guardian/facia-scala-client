@@ -17,6 +17,7 @@ class FaciaContentUtilsTest extends FreeSpec with Matchers with TestContent {
     snapType = "",
     snapUri = None,
     snapCss = None,
+    atomId = None,
     headline = None,
     href = None,
     trailText = None,
