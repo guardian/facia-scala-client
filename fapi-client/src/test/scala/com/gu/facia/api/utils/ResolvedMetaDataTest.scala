@@ -51,11 +51,12 @@ class ResolvedMetaDataTest extends FreeSpec with Matchers with TestContent {
         'showByline (true))
     }
 
-    "Content with type comment should showByline and showQuotedHeadline" in {
+    "Content with type comment should showByline, showQuotedHeadline and imageCutoutReplace" in {
       val resolvedMetaData = ResolvedMetaData.fromContent(contentWithComment, Comment)
       resolvedMetaData should have (
         'showByline (true),
-        'showQuotedHeadline (true))
+        'showQuotedHeadline (true),
+        'imageCutoutReplace (true))
     }
 
     "Content with type video should showMainVideo" in {
@@ -130,7 +131,8 @@ class ResolvedMetaDataTest extends FreeSpec with Matchers with TestContent {
       val resolvedComment = ResolvedMetaData.fromContentAndTrailMetaData(contentWithComment, emptyTrailMetaData, Comment)
       resolvedComment should have (
         'showByline (true),
-        'showQuotedHeadline (true))
+        'showQuotedHeadline (true),
+        'imageCutoutReplace (true))
     }
 
     "should resolve correct for video when trailMetaData is not set" in {
