@@ -59,7 +59,8 @@ object ResolvedMetaData {
       cardStyle match {
         case com.gu.facia.api.utils.Comment => Default.copy(
           showByline = true,
-          showQuotedHeadline = true)
+          showQuotedHeadline = true,
+          imageCutoutReplace = true)
         case _ if isCartoonForContent(content) => Default.copy(showByline = true)
         case _ if isVideoForContent(content) => Default.copy(showMainVideo = true)
         case _ => Default
