@@ -40,25 +40,6 @@ class FaciaContentHelperTest extends FreeSpec with Matchers with TestContent {
       None,
       Map.empty
     )
-
-    val linkSnap = LinkSnap("myLinkId",
-      Some("interactive"),
-      DefaultCardstyle,
-      Some("https://content.guardianapis.com/atom/interactive/interactives/2017/06/general-election"),
-      None,
-      Some("atomId123"),
-      Some("Good headline"),
-      None,
-      Some("Trail text"),
-      None,
-      None,
-      emptyContentProperties,
-      None,
-      None,
-      Map.empty
-    )
-
-
     FaciaContentUtils.headlineOption(snap) should equal(None)
   }
 
@@ -101,9 +82,27 @@ class FaciaContentHelperTest extends FreeSpec with Matchers with TestContent {
   }
 
   "should return an atomId for a Link Snap that is given the capi url for an interactive atom" in {
+    val linkSnap = LinkSnap(
+      "myLinkId",
+      None,
+      "interactive",
+      Some("https://content.guardianapis.com/atom/interactive/interactives/2017/06/general-election"),
+      None,
+      Some("atomId123"),
+      Some("Good headline"),
+      None,
+      Some("Trail text"),
+      "myGroup",
+      None,
+      emptyContentProperties,
+      None,
+      None,
+      Map.empty
+    )
+
     val content = baseContent.copy(fields = Some(ContentFields(headline = Some("myTitle"), trailText = Some("Content trailtext"), byline = Some("myByline"))))
     val snap = LatestSnap.fromTrailAndContent(emptyTrail, Option(content))
-    FaciaContentUtils.atomId(snap) should equal(Some("atom123"))
+    FaciaContentUtils.atomId(linkSnap) should equal(Some("atomId123"))
   }
 
 }
