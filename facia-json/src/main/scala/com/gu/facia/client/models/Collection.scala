@@ -53,6 +53,7 @@ sealed trait MetaDataCommonFields {
   lazy val imageSource: Option[ImageSourceAsset] = json.get("imageSource").flatMap(_.asOpt[ImageSourceAsset])
   lazy val hideShowMore: Option[Boolean] = json.get("hideShowMore").flatMap(_.asOpt[Boolean])
   lazy val atomId: Option[String] = json.get("atomId").flatMap(_.asOpt[String])
+  lazy val blockId: Option[String] = json.get("blockId").flatMap(_.asOpt[String])
 }
 
 object SupportingItemMetaData {
