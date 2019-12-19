@@ -63,6 +63,12 @@ To run the tests you need to pass a content api key and facia client target url 
     export FACIA_CLIENT_TARGET_URL="<target-url>"
     sbt test
 
+## Before releasing a new version
+
+Before releasing, consider whether your changes are likely to be backwards-compatible with older versions of the client -- for example, if the new version introduces new serialisations that old versions won't be able to read. Where possible, we should aim to maintain backwards compatibility.
+
+At the time of writing, Tools, Dotcom, Mobile teams (Mapi) and Ophan all use `facia-scala-client` -- take care to understand who is using the library and communicate changes where appropriate.
+
 ## Building a release
 
 [This document](https://docs.google.com/document/d/1rNXjoZDqZMsQblOVXPAIIOMWuwUKe3KzTCttuqS7AcY/edit) is a good source of information about releasing Guardian artefacts generally.
