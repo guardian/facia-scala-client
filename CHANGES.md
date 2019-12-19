@@ -1,3 +1,7 @@
+#### 3.0.19
+
+  - Adds a `blockId` property to trail meta. Intent: allow liveblog block IDs to be stored by the breaking news tool (`facia-tool`).
+
 #### 3.0.5
 
   - Removes Scala 2.11 and Play 2.5
