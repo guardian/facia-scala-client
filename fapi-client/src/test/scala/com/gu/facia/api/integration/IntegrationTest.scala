@@ -103,8 +103,8 @@ class IntegrationTest extends FreeSpec with Matchers with ScalaFutures with Opti
     }
 
     "for snaps" - {
-      val dreamSnapOne = makeLatestTrailFor("snap/1281727", "uk/culture")
-      val dreamSnapTwo = makeLatestTrailFor("snap/2372382", "technology")
+      val latestSnapOne = makeLatestTrailFor("snap/1281727", "uk/culture")
+      val latestSnapTwo = makeLatestTrailFor("snap/2372382", "technology")
 
       val plainSnapOne = makeLinkSnapFor("snap/347234723", "doesnotmatter")
 
@@ -112,20 +112,20 @@ class IntegrationTest extends FreeSpec with Matchers with ScalaFutures with Opti
 
       val collectionConfig = CollectionConfig.fromCollectionJson(CollectionConfigJson.withDefaults())
 
-      "should turn dream snaps into content" ignore {
-        val collectionJson = makeCollectionJson(dreamSnapOne, dreamSnapTwo)
+      "should turn latest snaps into content" ignore {
+        val collectionJson = makeCollectionJson(latestSnapOne, latestSnapTwo)
         val collection = Collection.fromCollectionJsonConfigAndContent("id", Some(collectionJson), collectionConfig)
         val faciaContent = FAPI.liveCollectionContentWithSnaps(collection)
 
         faciaContent.asFuture.futureValue.fold(
-          err => fail(s"expected to get two dream snaps, got $err", err.cause),
+          err => fail(s"expected to get two latest snaps, got $err", err.cause),
           {listOfFaciaContent =>
-            val dreamSnaps = listOfFaciaContent.collect{ case ls: LatestSnap => ls}
-            dreamSnaps.length should be (2)
-            dreamSnaps(0).latestContent.fold(fail("dream snap 0 content was empty")){ c =>
+            val latestSnaps = listOfFaciaContent.collect{ case ls: LatestSnap => ls}
+            latestSnaps.length should be (2)
+            latestSnaps(0).latestContent.fold(fail("latest snap 0 content was empty")){ c =>
               c.tags.exists(_.id.contains("culture"))
             }
-            dreamSnaps(1).latestContent.fold(fail("dream snap 1 content was empty")){ c =>
+            latestSnaps(1).latestContent.fold(fail("latest snap 1 content was empty")){ c =>
               c.tags.exists(_.id.contains("technology"))
             }
           }
@@ -133,7 +133,7 @@ class IntegrationTest extends FreeSpec with Matchers with ScalaFutures with Opti
       }
 
       "work with normal content and link snaps" ignore {
-        val collectionJson = makeCollectionJson(dreamSnapOne, normalTrail, plainSnapOne, dreamSnapTwo)
+        val collectionJson = makeCollectionJson(latestSnapOne, normalTrail, plainSnapOne, latestSnapTwo)
         val collection = Collection.fromCollectionJsonConfigAndContent("id", Some(collectionJson), collectionConfig)
         val faciaContent = FAPI.liveCollectionContentWithSnaps(collection)
 
@@ -158,8 +158,8 @@ class IntegrationTest extends FreeSpec with Matchers with ScalaFutures with Opti
           }
         )
       }
-      "not request dream snaps in" ignore {
-        val collectionJson = makeCollectionJson(dreamSnapOne, normalTrail, dreamSnapTwo)
+      "not request latest snaps in" ignore {
+        val collectionJson = makeCollectionJson(latestSnapOne, normalTrail, latestSnapTwo)
         val collection = Collection.fromCollectionJsonConfigAndContent("id", Some(collectionJson), collectionConfig)
         val faciaContent = FAPI.liveCollectionContentWithoutSnaps(collection)
 
@@ -374,11 +374,11 @@ class IntegrationTest extends FreeSpec with Matchers with ScalaFutures with Opti
     val collectionConfig = CollectionConfig.fromCollectionJson(CollectionConfigJson.withDefaults())
     val collectionJson = makeCollectionJson(trailWithSupporting)
 
-    val dreamSnapOne = makeLatestTrailFor("snap/1281727", "uk/culture")
-    val dreamSnapTwo = makeLatestTrailFor("snap/2372382", "technology")
+    val latestSnapOne = makeLatestTrailFor("snap/1281727", "uk/culture")
+    val latestSnapTwo = makeLatestTrailFor("snap/2372382", "technology")
     val plainSnapOne = makeLinkSnapFor("snap/347234723", "doesnotmatter")
-    val trailWithSupportingAndDreamSnaps = makeTrailWithSupporting("internal-code/page/2381864", supportingTrailOne, dreamSnapOne, dreamSnapTwo, supportingTrailTwo, plainSnapOne)
-    val collectionJsonSupportingWithDreamSnaps = makeCollectionJson(trailWithSupportingAndDreamSnaps)
+    val trailWithSupportingAndLatestSnaps = makeTrailWithSupporting("internal-code/page/2381864", supportingTrailOne, latestSnapOne, latestSnapTwo, supportingTrailTwo, plainSnapOne)
+    val collectionJsonSupportingWithLatestSnaps = makeCollectionJson(trailWithSupportingAndLatestSnaps)
 
     "should be filled correctly" ignore {
       val collection = Collection.fromCollectionJsonConfigAndContent("id", Option(collectionJson), collectionConfig)
@@ -397,12 +397,12 @@ class IntegrationTest extends FreeSpec with Matchers with ScalaFutures with Opti
       })
     }
 
-    "should not fill in dream snaps in supporting items" ignore {
-      val collection = Collection.fromCollectionJsonConfigAndContent("id", Option(collectionJsonSupportingWithDreamSnaps), collectionConfig)
+    "should not fill in latest snaps in supporting items" ignore {
+      val collection = Collection.fromCollectionJsonConfigAndContent("id", Option(collectionJsonSupportingWithLatestSnaps), collectionConfig)
       val faciaContent = FAPI.liveCollectionContentWithoutSnaps(collection)
 
       faciaContent.asFuture.futureValue.fold(
-      err => fail(s"expected to get one item with supporting and dream snaps, got $err", err.cause),
+      err => fail(s"expected to get one item with supporting and latest snaps, got $err", err.cause),
       { listOfFaciaContent =>
         listOfFaciaContent.length should be (1)
 
@@ -419,12 +419,12 @@ class IntegrationTest extends FreeSpec with Matchers with ScalaFutures with Opti
       })
     }
 
-    "should fill in dream snaps in supporting items" ignore {
-      val collection = Collection.fromCollectionJsonConfigAndContent("id", Option(collectionJsonSupportingWithDreamSnaps), collectionConfig)
+    "should fill in latest snaps in supporting items" ignore {
+      val collection = Collection.fromCollectionJsonConfigAndContent("id", Option(collectionJsonSupportingWithLatestSnaps), collectionConfig)
       val faciaContent = FAPI.liveCollectionContentWithSnaps(collection)
 
       faciaContent.asFuture.futureValue.fold(
-      err => fail(s"expected to get one item with supporting and dream snaps, got $err", err.cause),
+      err => fail(s"expected to get one item with supporting and latest snaps, got $err", err.cause),
       { listOfFaciaContent =>
         listOfFaciaContent.length should be (1)
 
@@ -483,10 +483,10 @@ class IntegrationTest extends FreeSpec with Matchers with ScalaFutures with Opti
           })
     }
 
-    "should request dream snap treats" ignore {
-      val dreamSnapOne = makeLatestTrailFor("snap/1281727", "uk/culture")
-      val dreamSnapTwo = makeLatestTrailFor("snap/2372382", "technology")
-      val collectionJson = makeCollectionJsonWithTreats(dreamSnapOne, dreamSnapTwo)
+    "should request latest snap treats" ignore {
+      val latestSnapOne = makeLatestTrailFor("snap/1281727", "uk/culture")
+      val latestSnapTwo = makeLatestTrailFor("snap/2372382", "technology")
+      val collectionJson = makeCollectionJsonWithTreats(latestSnapOne, latestSnapTwo)
       val collection = Collection.fromCollectionJsonConfigAndContent("id", Some(collectionJson), collectionConfig)
       val faciaContent = FAPI.getTreatsForCollection(collection, adjustItemQuery = itemQuery => itemQuery.showTags("all"))
 
@@ -500,9 +500,9 @@ class IntegrationTest extends FreeSpec with Matchers with ScalaFutures with Opti
     }
 
     "Should request a mix of both" ignore {
-      val dreamSnapOne = makeLatestTrailFor("snap/1281727", "uk/culture")
-      val dreamSnapTwo = makeLatestTrailFor("snap/2372382", "technology")
-      val collectionJson = makeCollectionJsonWithTreats(dreamSnapOne, normalTrail, dreamSnapTwo, normalTrailTwo)
+      val latestSnapOne = makeLatestTrailFor("snap/1281727", "uk/culture")
+      val latestSnapTwo = makeLatestTrailFor("snap/2372382", "technology")
+      val collectionJson = makeCollectionJsonWithTreats(latestSnapOne, normalTrail, latestSnapTwo, normalTrailTwo)
       val collection = Collection.fromCollectionJsonConfigAndContent("id", Some(collectionJson), collectionConfig)
       val faciaContent = FAPI.getTreatsForCollection(collection, adjustItemQuery = itemQuery => itemQuery.showTags("all"))
 
@@ -564,10 +564,10 @@ class IntegrationTest extends FreeSpec with Matchers with ScalaFutures with Opti
         })
     }
 
-    "should request dreamsnaps in draft" ignore {
-      val dreamSnapOne = makeLatestTrailFor("snap/1281727", "uk/culture")
-      val dreamSnapTwo = makeLatestTrailFor("snap/2372382", "technology")
-      val collectionJson = makeCollectionJsonWithDraft(List(dreamSnapOne, dreamSnapTwo))
+    "should request latest snaps in draft" ignore {
+      val latestSnapOne = makeLatestTrailFor("snap/1281727", "uk/culture")
+      val latestSnapTwo = makeLatestTrailFor("snap/2372382", "technology")
+      val collectionJson = makeCollectionJsonWithDraft(List(latestSnapOne, latestSnapTwo))
       val collection = Collection.fromCollectionJsonConfigAndContent("id", Some(collectionJson), collectionConfig)
       val faciaContent = FAPI.draftCollectionContentWithSnaps(collection, adjustSnapItemQuery = itemQuery => itemQuery.showTags("all"))
 
@@ -594,10 +594,10 @@ class IntegrationTest extends FreeSpec with Matchers with ScalaFutures with Opti
         })
       }
 
-      "for dreamsnaps" ignore {
-        val dreamSnapOne = makeLatestTrailFor("snap/1281727", "uk/culture")
-        val dreamSnapTwo = makeLatestTrailFor("snap/2372382", "technology")
-        val collectionJson = makeCollectionJson(normalTrail, normalTrailTwo, dreamSnapOne, dreamSnapTwo)
+      "for latest snaps" ignore {
+        val latestSnapOne = makeLatestTrailFor("snap/1281727", "uk/culture")
+        val latestSnapTwo = makeLatestTrailFor("snap/2372382", "technology")
+        val collectionJson = makeCollectionJson(normalTrail, normalTrailTwo, latestSnapOne, latestSnapTwo)
         val collection = Collection.fromCollectionJsonConfigAndContent("id", Some(collectionJson), collectionConfig)
 
         val faciaContent = FAPI.draftCollectionContentWithSnaps(collection, adjustSnapItemQuery = itemQuery => itemQuery.showTags("all"))
@@ -614,9 +614,9 @@ class IntegrationTest extends FreeSpec with Matchers with ScalaFutures with Opti
 
     "Should request a mix of both" - {
       val normalTrailThree = Trail("internal-code/page/2379309", 0, None, None)
-      val dreamSnapOne = makeLatestTrailFor("snap/1281727", "uk/culture")
-      val dreamSnapTwo = makeLatestTrailFor("snap/2372382", "technology")
-      val collectionJson = makeCollectionJsonWithDraft(List(dreamSnapOne, normalTrail, dreamSnapTwo, normalTrailTwo), normalTrailThree)
+      val latestSnapOne = makeLatestTrailFor("snap/1281727", "uk/culture")
+      val latestSnapTwo = makeLatestTrailFor("snap/2372382", "technology")
+      val collectionJson = makeCollectionJsonWithDraft(List(latestSnapOne, normalTrail, latestSnapTwo, normalTrailTwo), normalTrailThree)
       val collection = Collection.fromCollectionJsonConfigAndContent("id", Some(collectionJson), collectionConfig)
 
       "for draft" ignore {
