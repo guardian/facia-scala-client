@@ -22,14 +22,19 @@ case object Breaking extends Metadata
 
 case object Branded extends Metadata
 
-case object UnknownMetadata extends Metadata
+case object DynamoLike extends Metadata
 
+case object UnknownMetadata extends Metadata
 
 object Metadata extends StrictLogging {
 
   val tags: Map[String, Metadata] = Map(
-    ("Canonical", Canonical), ("Special", Special), ("Breaking", Breaking), ("Branded", Branded)
-  )
+    "Canonical" -> Canonical,
+    "Special" -> Special,
+    "Breaking" -> Breaking,
+    "Branded" -> Branded,
+    "DynamoLike" -> DynamoLike
+ )
 
   implicit object MetadataFormat extends Format[Metadata] {
     def reads(json: JsValue) = {
