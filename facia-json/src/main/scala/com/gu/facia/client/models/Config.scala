@@ -34,7 +34,7 @@ object Metadata extends StrictLogging {
     "Breaking" -> Breaking,
     "Branded" -> Branded,
     "DynamoLike" -> DynamoLike
- )
+  )
 
   implicit object MetadataFormat extends Format[Metadata] {
     def reads(json: JsValue) = {
@@ -54,6 +54,7 @@ object Metadata extends StrictLogging {
       case Special => JsObject(Seq("type" -> JsString("Special")))
       case Breaking => JsObject(Seq("type" -> JsString("Breaking")))
       case Branded => JsObject(Seq("type" -> JsString("Branded")))
+      case DynamoLike => JsObject(Seq("type" -> JsString("DynamoLike")))
       case UnknownMetadata => JsObject(Seq("type" -> JsString("UnknownMetadata")))
     }
   }
