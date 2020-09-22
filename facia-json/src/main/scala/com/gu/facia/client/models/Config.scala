@@ -24,6 +24,18 @@ case object Branded extends Metadata
 
 case object DynamoLike extends Metadata
 
+case object LongRunningPalette extends Metadata
+
+case object SombrePalette extends Metadata
+
+case object InvestigationPalette extends Metadata
+ 
+case object BreakingPalette extends Metadata
+
+case object EventPalette extends Metadata
+
+case object EventAltPalette extends Metadata
+
 case object UnknownMetadata extends Metadata
 
 object Metadata extends StrictLogging {
@@ -33,7 +45,13 @@ object Metadata extends StrictLogging {
     "Special" -> Special,
     "Breaking" -> Breaking,
     "Branded" -> Branded,
-    "DynamoLike" -> DynamoLike
+    "DynamoLike" -> DynamoLike,
+    "LongRunningPalette" -> LongRunningPalette,
+    "SombrePalette" -> SombrePalette,
+    "InvestigationPalette" -> InvestigationPalette,
+    "BreakingPalette" -> BreakingPalette,
+    "EventPalette" -> EventPalette,
+    "EventAltPalette" -> EventAltPalette,
   )
 
   implicit object MetadataFormat extends Format[Metadata] {
@@ -55,6 +73,12 @@ object Metadata extends StrictLogging {
       case Breaking => JsObject(Seq("type" -> JsString("Breaking")))
       case Branded => JsObject(Seq("type" -> JsString("Branded")))
       case DynamoLike => JsObject(Seq("type" -> JsString("DynamoLike")))
+      case LongRunningPalette => JsObject(Seq("type" -> JsString("LongRunningPalette")))
+      case SombrePalette => JsObject(Seq("type" -> JsString("SombrePalette")))
+      case InvestigationPalette => JsObject(Seq("type" -> JsString("InvestigationPalette")))
+      case BreakingPalette => JsObject(Seq("type" -> JsString("BreakingPalette")))
+      case EventPalette => JsObject(Seq("type" -> JsString("EventPalette")))
+      case EventAltPalette => JsObject(Seq("type" -> JsString("EventAltPalette")))
       case UnknownMetadata => JsObject(Seq("type" -> JsString("UnknownMetadata")))
     }
   }
@@ -240,5 +264,3 @@ case class ConfigJson(
   fronts: Map[String, FrontJson],
   collections: Map[String, CollectionConfigJson]
 )
-
-
