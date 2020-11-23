@@ -50,8 +50,10 @@ val sonatypeReleaseSettings = Seq(
 lazy val root = (project in file(".")).aggregate(
     faciaJson_play26,
     faciaJson_play27,
+    faciaJson_play28,
     fapiClient_play26,
-    fapiClient_play27
+    fapiClient_play27,
+    fapiClient_play28
   ).settings(
     publishArtifact := false,
     skip in publish := true,
@@ -60,7 +62,8 @@ lazy val root = (project in file(".")).aggregate(
 
 val exactPlayJsonVersions = Map(
   "26" -> "2.6.13",
-  "27" -> "2.7.4"
+  "27" -> "2.7.4",
+  "28" -> "2.8.1"
 )
 
 def baseProject(module: String, majorMinorVersion: String) = Project(s"$module-play$majorMinorVersion", file(s"$module-play$majorMinorVersion"))
@@ -72,7 +75,7 @@ def baseProject(module: String, majorMinorVersion: String) = Project(s"$module-p
       Resolver.sonatypeRepo("public"),
       Resolver.typesafeRepo("releases")
     ),
-    scalaVersion := "2.12.10",
+    scalaVersion := "2.12.12",
     scalacOptions := Seq("-feature", "-deprecation"),
     publishTo := sonatypePublishToBundle.value,
     sonatypeReleaseSettings
@@ -100,12 +103,14 @@ def fapiClient_playJsonVersion(majorMinorVersion: String) =  baseProject("fapi-c
     )
   )
 
-lazy val crossCompileScala213 = crossScalaVersions := Seq(scalaVersion.value, "2.13.1")
+lazy val crossCompileScala213 = crossScalaVersions := Seq(scalaVersion.value, "2.13.4")
 
 
 lazy val faciaJson_play26 = faciaJson_playJsonVersion("26")
 lazy val faciaJson_play27 = faciaJson_playJsonVersion("27").settings(crossCompileScala213)
+lazy val faciaJson_play28 = faciaJson_playJsonVersion("28").settings(crossCompileScala213)
 
 lazy val fapiClient_play26 = fapiClient_playJsonVersion("26").dependsOn(faciaJson_play26)
 lazy val fapiClient_play27 = fapiClient_playJsonVersion("27").dependsOn(faciaJson_play27).settings(crossCompileScala213)
+lazy val fapiClient_play28 = fapiClient_playJsonVersion("28").dependsOn(faciaJson_play28).settings(crossCompileScala213)
 
