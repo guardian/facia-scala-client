@@ -1,4 +1,4 @@
-Facia Scala Client [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.gu/fapi-client_2.11/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.gu/fapi-client_2.11)
+Facia Scala Client [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.gu/fapi-client-play27_2.13/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.gu/fapi-client-play27_2.13)
 ==================
 
 Facia's Scala client is split into two parts.
