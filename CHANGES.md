@@ -1,3 +1,8 @@
+#### 3.2.2
+
+  - Bump CAPI client to `v17.11`
+  - Implement the `Format` type for `CuratedContent`, `SupportingCuratedContent` and `LatestSnap`.
+
 #### 3.0.19
 
   - Adds a `blockId` property to trail meta. Intent: allow liveblog block IDs to be stored by the breaking news tool (`facia-tool`).
