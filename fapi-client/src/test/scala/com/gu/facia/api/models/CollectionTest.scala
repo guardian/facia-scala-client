@@ -73,6 +73,7 @@ class CollectionTest extends FreeSpec with Matchers with MockitoSugar with OneIn
       id,
       maybeFrontPublicationDate,
       DefaultCardstyle,
+      ContentFormat.defaultContentFormat,
       snapUri,
       snapCss,
       latestContent,

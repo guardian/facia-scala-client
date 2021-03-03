@@ -1,6 +1,8 @@
 package com.gu.facia.api.models
 
 import com.gu.contentapi.client.model.v1.{Content, TagType}
+import com.gu.contentapi.client.utils.CapiModelEnrichment.RenderingFormat
+import com.gu.contentapi.client.utils.format._
 import com.gu.facia.api.utils.ContentApiUtils._
 import com.gu.facia.api.utils._
 import com.gu.facia.client.models.{MetaDataCommonFields, SupportingItem, Trail, TrailMetaData}
@@ -61,6 +63,24 @@ object FaciaImage {
 
 sealed trait FaciaContent {
   def brandingByEdition: BrandingByEdition = Map.empty
+}
+
+// This needs to be kept aligned with Frontend until it's pushed all the way upstream to Thrift
+// https://github.com/guardian/frontend/blob/46ac997bbb6482bacbd59c3528ce3141623c8033/common/app/model/meta.scala#L220-L224
+
+final case class ContentFormat(
+  design: Design,
+  theme: Theme,
+  display: Display,
+)
+
+object ContentFormat {
+  lazy val defaultContentFormat: ContentFormat = {
+    ContentFormat(ArticleDesign, NewsPillar, StandardDisplay)
+  }
+  def apply(content: Content): ContentFormat = {
+    ContentFormat(content.design, content.theme, content.display)
+  }
 }
 
 object Snap {
@@ -150,6 +170,7 @@ case class LatestSnap(
   id: String,
   maybeFrontPublicationDate: Option[Long],
   cardStyle: CardStyle,
+  format: ContentFormat,
   snapUri: Option[String],
   snapCss: Option[String],
   latestContent: Option[Content],
@@ -167,6 +188,7 @@ case class LatestSnap(
 object LatestSnap {
   def fromTrailAndContent(trail: Trail, maybeContent: Option[Content]): LatestSnap = {
     val cardStyle: CardStyle = maybeContent.map(CardStyle.apply(_, trail.safeMeta)).getOrElse(DefaultCardstyle)
+    val contentFormat: ContentFormat = maybeContent.map(ContentFormat.apply).getOrElse(ContentFormat.defaultContentFormat)
     val resolvedMetaData: ResolvedMetaData =
       maybeContent.fold(ResolvedMetaData.fromTrailMetaData(trail.safeMeta))(ResolvedMetaData.fromContentAndTrailMetaData(_, trail.safeMeta, cardStyle))
     val brandingByEdition = maybeContent map (_.brandingByEdition) getOrElse Map.empty
@@ -174,6 +196,7 @@ object LatestSnap {
       trail.id,
       Option(trail.frontPublicationDate),
       cardStyle,
+      contentFormat,
       trail.safeMeta.snapUri,
       trail.safeMeta.snapCss,
       maybeContent,
@@ -191,6 +214,7 @@ object LatestSnap {
 
   def fromSupportingItemAndContent(supportingItem: SupportingItem, maybeContent: Option[Content]): LatestSnap = {
     val cardStyle: CardStyle = maybeContent.map(CardStyle.apply(_, supportingItem.safeMeta)).getOrElse(DefaultCardstyle)
+    val contentFormat: ContentFormat = maybeContent.map(ContentFormat.apply).getOrElse(ContentFormat.defaultContentFormat)
     val resolvedMetaData: ResolvedMetaData =
       maybeContent.fold(ResolvedMetaData.fromTrailMetaData(supportingItem.safeMeta))(ResolvedMetaData.fromContentAndTrailMetaData(_, supportingItem.safeMeta, cardStyle))
     val brandingByEdition = maybeContent map (_.brandingByEdition) getOrElse Map.empty
@@ -198,6 +222,7 @@ object LatestSnap {
       supportingItem.id,
       supportingItem.frontPublicationDate,
       cardStyle,
+      contentFormat,
       supportingItem.safeMeta.snapUri,
       supportingItem.safeMeta.snapCss,
       maybeContent,
@@ -219,6 +244,7 @@ case class CuratedContent(
   maybeFrontPublicationDate: Option[Long],
   supportingContent: List[FaciaContent],
   cardStyle: CardStyle,
+  format: ContentFormat,
   headline: String,
   href: Option[String],
   trailText: Option[String],
@@ -237,6 +263,7 @@ case class SupportingCuratedContent(
   content: Content,
   maybeFrontPublicationDate: Option[Long],
   cardStyle: CardStyle,
+  format: ContentFormat,
   headline: String,
   href: Option[String],
   trailText: Option[String],
@@ -261,6 +288,7 @@ object CuratedContent {
       maybeFrontPublicationDate,
       supportingContent,
       cardStyle,
+      ContentFormat(content),
       trailMetaData.headline.orElse(content.fields.flatMap(_.headline)).getOrElse(content.webTitle),
       trailMetaData.href,
       trailMetaData.trailText.orElse(content.fields.flatMap(_.trailText)),
@@ -289,6 +317,8 @@ object CuratedContent {
       maybeFrontPublicationDate,
       supportingContent = Nil,
       cardStyle = cardStyle,
+      ContentFormat(content),
+
       trailMetaData.headline.orElse(content.fields.flatMap(_.headline)).getOrElse(content.webTitle),
       trailMetaData.href,
       trailMetaData.trailText.orElse(content.fields.flatMap(_.trailText)),
@@ -316,6 +346,7 @@ object SupportingCuratedContent {
       content,
       maybeFrontPublicationDate,
       cardStyle,
+      ContentFormat(content),
       trailMetaData.headline.orElse(content.fields.flatMap(_.headline)).getOrElse(content.webTitle),
       trailMetaData.href,
       trailMetaData.trailText.orElse(content.fields.flatMap(_.trailText)),

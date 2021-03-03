@@ -203,6 +203,7 @@ object TestModel {
     def isHosted: Boolean = false
     def pillarId: Option[String] = None
     def pillarName: Option[String] = None
+    def aliasPaths: Option[Seq[AliasPath]] = None
   }
   implicit val stubItemFormat = Json.reads[StubItem]
 

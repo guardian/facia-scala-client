@@ -27,6 +27,7 @@ class FaciaContentHelperTest extends FreeSpec with Matchers with TestContent {
     val snap = LatestSnap("myId",
       None,
       DefaultCardstyle,
+      ContentFormat.defaultContentFormat,
       None,
       None,
       None,
@@ -45,13 +46,13 @@ class FaciaContentHelperTest extends FreeSpec with Matchers with TestContent {
 
   "should return the headline for a CuratedContent" in {
     val content = baseContent.copy(fields = Some(ContentFields(headline = Some("myTitle"), trailText = Some("Content trailtext"), byline = Some("Content byline"))))
-    val cc = CuratedContent(content, None, Nil, DefaultCardstyle, "The headline", None, None, "myGroup", None, emptyContentProperties, None, None, None, None, None, Map.empty)
+    val cc = CuratedContent(content, None, Nil, DefaultCardstyle, ContentFormat.defaultContentFormat, "The headline", None, None, "myGroup", None, emptyContentProperties, None, None, None, None, None, Map.empty)
     FaciaContentUtils.headlineOption(cc) should equal(Some("The headline"))
   }
 
   "should return 'Missing href' when the href is None in a CuratedContent" in {
     val content = baseContent.copy(fields = Some(ContentFields(headline = Some("myTitle"), trailText = Some("Content trailtext"), byline = Some("Content byline"))))
-    val cc = CuratedContent(content, None, Nil, DefaultCardstyle, "The headline", None, None, "myGroup", None, emptyContentProperties, None, None, None, None, None, Map.empty)
+    val cc = CuratedContent(content, None, Nil, DefaultCardstyle, ContentFormat.defaultContentFormat, "The headline", None, None, "myGroup", None, emptyContentProperties, None, None, None, None, None, Map.empty)
     FaciaContentUtils.href(cc) should equal(None)
   }
 
@@ -59,6 +60,7 @@ class FaciaContentHelperTest extends FreeSpec with Matchers with TestContent {
     val snap = LatestSnap("myId",
       None,
       DefaultCardstyle,
+      ContentFormat.defaultContentFormat,
       None,
       None,
       None,
