@@ -331,16 +331,16 @@ class FaciaContentUtilsTest extends FreeSpec with Matchers with TestContent {
     }
   }
 
-  "shortUrl" - {
+  "shortUrl (theguardian.com)" - {
     def contentWithShortUrl(shortUrl: String) = baseContent.copy(fields = Some(ContentFields(shortUrl = Some(shortUrl))))
 
     val contentWithNoShortUrl = content
 
-    val latestSnapWithShortUrl = makeLatestSnap("some-latest-snap", contentWithShortUrl("http://gu.com/p/4vq42"))
+    val latestSnapWithShortUrl = makeLatestSnap("some-latest-snap", contentWithShortUrl("http://www.theguardian.com/p/4vq42"))
     val latestSnapWithNoShortUrl = makeLatestSnap("some-latest-snap", contentWithNoShortUrl)
-    val curatedContentWithShortUrl = makeCuratedContent("some-latest-snap", contentWithShortUrl("http://gu.com/p/4vq42"))
+    val curatedContentWithShortUrl = makeCuratedContent("some-latest-snap", contentWithShortUrl("http://www.theguardian.com/p/4vq42"))
     val curatedContentWithNoShortUrl = makeLatestSnap("some-latest-snap", contentWithNoShortUrl)
-    val supportingCuratedContentWithShortUrl = makeSupportingCuratedContent("some-latest-snap", contentWithShortUrl("http://gu.com/p/4vq42"))
+    val supportingCuratedContentWithShortUrl = makeSupportingCuratedContent("some-latest-snap", contentWithShortUrl("http://www.theguardian.com/p/4vq42"))
     val supportingCuratedContentWithNoShortUrl = makeLatestSnap("some-latest-snap", contentWithNoShortUrl)
 
     "should return a false for a LinkSnap" in {
@@ -350,7 +350,7 @@ class FaciaContentUtilsTest extends FreeSpec with Matchers with TestContent {
 
     "maybeShortUrl should" - {
       "return Some for LatestSnap with inner content with shortUrl" in {
-        FaciaContentUtils.maybeShortUrl(latestSnapWithShortUrl) should be(Some("http://gu.com/p/4vq42"))
+        FaciaContentUtils.maybeShortUrl(latestSnapWithShortUrl) should be(Some("http://www.theguardian.com/p/4vq42"))
       }
 
       "return None for LatestSnap with inner content with no shortUrl" in {
@@ -358,7 +358,7 @@ class FaciaContentUtilsTest extends FreeSpec with Matchers with TestContent {
       }
 
       "return Some for CuratedContent with inner content with shortUrl" in {
-        FaciaContentUtils.maybeShortUrl(curatedContentWithShortUrl) should be(Some("http://gu.com/p/4vq42"))
+        FaciaContentUtils.maybeShortUrl(curatedContentWithShortUrl) should be(Some("http://www.theguardian.com/p/4vq42"))
       }
 
       "return None for CuratedContent with inner content with no shortUrl" in {
@@ -366,7 +366,7 @@ class FaciaContentUtilsTest extends FreeSpec with Matchers with TestContent {
       }
 
       "return Some for SupportingCuratedContent with inner content with shortUrl" in {
-        FaciaContentUtils.maybeShortUrl(supportingCuratedContentWithShortUrl) should be(Some("http://gu.com/p/4vq42"))
+        FaciaContentUtils.maybeShortUrl(supportingCuratedContentWithShortUrl) should be(Some("http://www.theguardian.com/p/4vq42"))
       }
 
       "return None for SupportingCuratedContent with inner content with no shortUrl" in {
@@ -376,7 +376,7 @@ class FaciaContentUtilsTest extends FreeSpec with Matchers with TestContent {
 
     "shortUrl should" - {
       "return Some for LatestSnap with inner content with shortUrl" in {
-        FaciaContentUtils.shortUrl(latestSnapWithShortUrl) should be("http://gu.com/p/4vq42")
+        FaciaContentUtils.shortUrl(latestSnapWithShortUrl) should be("http://www.theguardian.com/p/4vq42")
       }
 
       "return None for LatestSnap with inner content with no shortUrl" in {
@@ -384,7 +384,7 @@ class FaciaContentUtilsTest extends FreeSpec with Matchers with TestContent {
       }
 
       "return Some for CuratedContent with inner content with shortUrl" in {
-        FaciaContentUtils.shortUrl(curatedContentWithShortUrl) should be("http://gu.com/p/4vq42")
+        FaciaContentUtils.shortUrl(curatedContentWithShortUrl) should be("http://www.theguardian.com/p/4vq42")
       }
 
       "return None for CuratedContent with inner content with no shortUrl" in {
@@ -392,7 +392,7 @@ class FaciaContentUtilsTest extends FreeSpec with Matchers with TestContent {
       }
 
       "return Some for SupportingCuratedContent with inner content with shortUrl" in {
-        FaciaContentUtils.shortUrl(supportingCuratedContentWithShortUrl) should be("http://gu.com/p/4vq42")
+        FaciaContentUtils.shortUrl(supportingCuratedContentWithShortUrl) should be("http://www.theguardian.com/p/4vq42")
       }
 
       "return None for SupportingCuratedContent with inner content with no shortUrl" in {
