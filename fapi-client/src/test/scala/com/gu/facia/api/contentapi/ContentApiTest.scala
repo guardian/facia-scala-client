@@ -203,6 +203,15 @@ class ContentApiTest extends FreeSpec
       )
     }
 
+    "will not make request when the external link is malformed" in {
+      val capiClient = mock[ContentApiClient]
+      val request = LinkSnapsRequest(Map("trailId" -> "javascript:(function(){document.body.appendChild(document.createElement('script')).src='https://dashboard.ophan.co.uk/assets/js/heatmap-bookmarklet.js';})();"))
+      ContentApi.linkSnapBrandingsByEdition(capiClient, request).asFuture.futureValue.fold(
+        err => fail(s"expected brandings result, got error $err"),
+        result => result should be(empty)
+      )
+    }
+
     "will not make capi request for a link to a tag combiner" in {
       val capiClient = mock[ContentApiClient]
       val request = LinkSnapsRequest(Map("trailId" -> "/world/asia-pacific+world/south-and-central-asia"))
