@@ -12,7 +12,7 @@ import com.typesafe.scalalogging.StrictLogging
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.control.NonFatal
-import scala.util.{Success, Try}
+import scala.util.{Success, Try, Failure}
 
 case class LatestSnapsRequest(snaps: Map[String, String]) {
   def join(other: LatestSnapsRequest): LatestSnapsRequest = this.copy(snaps = this.snaps ++ other.snaps)
@@ -116,7 +116,13 @@ object ContentApi extends StrictLogging {
   def linkSnapBrandingsByEdition(capiClient: ContentApiClient, linkSnapsRequest: LinkSnapsRequest, itemQueries: ItemQueries = ItemQueries)
     (implicit ec: ExecutionContext): Response[Map[String, BrandingByEdition]] = {
 
-    def toIdAndUri(snap: (String, String)): (String, URI) = snap._1 -> new URI(snap._2)
+    def toIdAndUri(snap: (String, String)): Option[(String, URI)] = Try { new URI(snap._2) } match {
+      case Success(uri) => Some(snap._1 -> uri)
+      case Failure(exception) =>
+        // Swallow the error at this point rather than failing fast, and log.
+        logger.error(s"Failed to parse URI ${snap._2} of snap ${snap._1}", exception)
+        None
+    }
 
     def isPossibleSectionFrontOrTagPage(snap: (String, URI)): Boolean = {
       val uri = snap._2
@@ -127,7 +133,7 @@ object ContentApi extends StrictLogging {
       response.section.map(_.brandingByEdition) orElse response.tag.map(_.brandingByEdition) getOrElse Map.empty
 
     Response.Async.Right {
-      Future.traverse(linkSnapsRequest.snaps.toSeq.map(toIdAndUri).filter(isPossibleSectionFrontOrTagPage)) {
+      Future.traverse(linkSnapsRequest.snaps.toSeq.flatMap(toIdAndUri).filter(isPossibleSectionFrontOrTagPage)) {
         case (id, uri) =>
           val query = itemQueries.brandingQueryFromSnapUri(uri)
           val response = capiClient.getResponse(query)
