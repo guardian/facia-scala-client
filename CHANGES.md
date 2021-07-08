@@ -1,3 +1,7 @@
+#### 3.3.5
+
+  - Bump CAPI client to `v17.20`
+
 #### 3.2.2
 
   - Bump CAPI client to `v17.11`
