@@ -1,3 +1,8 @@
+#### 3.3.6
+  
+  - Bump CAPI client to `v17.21`
+  - Push special report logic into CAPI client
+
 #### 3.3.5
 
   - Bump CAPI client to `v17.20`
