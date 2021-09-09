@@ -1,6 +1,5 @@
 package com.gu.facia.client.models
 
-import com.sun.corba.se.spi.legacy.interceptor.UnknownType
 import com.typesafe.scalalogging.StrictLogging
 import play.api.libs.json._
 
@@ -29,12 +28,14 @@ case object LongRunningPalette extends Metadata
 case object SombrePalette extends Metadata
 
 case object InvestigationPalette extends Metadata
- 
+
 case object BreakingPalette extends Metadata
 
 case object EventPalette extends Metadata
 
 case object EventAltPalette extends Metadata
+
+case object Podcast extends Metadata
 
 case object UnknownMetadata extends Metadata
 
@@ -52,6 +53,7 @@ object Metadata extends StrictLogging {
     "BreakingPalette" -> BreakingPalette,
     "EventPalette" -> EventPalette,
     "EventAltPalette" -> EventAltPalette,
+    "Podcast" -> Podcast,
   )
 
   implicit object MetadataFormat extends Format[Metadata] {
@@ -79,6 +81,7 @@ object Metadata extends StrictLogging {
       case BreakingPalette => JsObject(Seq("type" -> JsString("BreakingPalette")))
       case EventPalette => JsObject(Seq("type" -> JsString("EventPalette")))
       case EventAltPalette => JsObject(Seq("type" -> JsString("EventAltPalette")))
+      case Podcast => JsObject(Seq("type" -> JsString("Podcast")))
       case UnknownMetadata => JsObject(Seq("type" -> JsString("UnknownMetadata")))
     }
   }
