@@ -125,15 +125,15 @@ case object EU27Territory extends TargetedTerritory {
   val id = "EU-27"
 }
 
-case object AUVictoria extends TargetedTerritory {
+case object AUVictoriaTerritory extends TargetedTerritory {
   val id = "AU-VIC"
 }
 
-case object AUQueensland extends TargetedTerritory {
+case object AUQueenslandTerritory extends TargetedTerritory {
   val id = "AU-QLD"
 }
 
-case object AUNewSouthWales extends TargetedTerritory {
+case object AUNewSouthWalesTerritory extends TargetedTerritory {
   val id = "AU-NSW"
 }
 
@@ -144,9 +144,9 @@ object TargetedTerritory {
     USEastCoastTerritory,
     USWestCoastTerritory,
     EU27Territory,
-    AUVictoria,
-    AUQueensland,
-    AUNewSouthWales
+    AUVictoriaTerritory,
+    AUQueenslandTerritory,
+    AUNewSouthWalesTerritory
   )
 
   implicit object TargetedTerritoryFormat extends Format[TargetedTerritory] {
@@ -155,18 +155,18 @@ object TargetedTerritory {
       case JsString(USEastCoastTerritory.id) => JsSuccess(USEastCoastTerritory)
       case JsString(USWestCoastTerritory.id) => JsSuccess(USWestCoastTerritory)
       case JsString(EU27Territory.id) => JsSuccess(EU27Territory)
-      case JsString(AUVictoria.id) => JsSuccess(AUVictoria)
-      case JsString(AUQueensland.id) => JsSuccess(AUQueensland)
-      case JsString(AUNewSouthWales.id) => JsSuccess(AUNewSouthWales)
+      case JsString(AUVictoriaTerritory.id) => JsSuccess(AUVictoriaTerritory)
+      case JsString(AUQueenslandTerritory.id) => JsSuccess(AUQueenslandTerritory)
+      case JsString(AUNewSouthWalesTerritory.id) => JsSuccess(AUNewSouthWalesTerritory)
     }
     def writes(territory: TargetedTerritory): JsString = territory match {
       case NZTerritory => JsString(NZTerritory.id)
       case USEastCoastTerritory => JsString(USEastCoastTerritory.id)
       case USWestCoastTerritory => JsString(USWestCoastTerritory.id)
       case EU27Territory => JsString(EU27Territory.id)
-      case AUVictoria => JsString(AUVictoria.id)
-      case AUQueensland => JsString(AUQueensland.id)
-      case AUNewSouthWales => JsString(AUNewSouthWales.id)
+      case AUVictoriaTerritory => JsString(AUVictoriaTerritory.id)
+      case AUQueenslandTerritory => JsString(AUQueenslandTerritory.id)
+      case AUNewSouthWalesTerritory => JsString(AUNewSouthWalesTerritory.id)
     }
   }
 }
