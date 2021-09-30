@@ -150,7 +150,7 @@ object TargetedTerritory {
   )
 
   implicit object TargetedTerritoryFormat extends Format[TargetedTerritory] {
-    def reads(json: JsValue): JsSuccess[TargetedTerritory] = json match {
+    def reads(json: JsValue): JsResult[TargetedTerritory] = json match {
       case JsString(NZTerritory.id) => JsSuccess(NZTerritory)
       case JsString(USEastCoastTerritory.id) => JsSuccess(USEastCoastTerritory)
       case JsString(USWestCoastTerritory.id) => JsSuccess(USWestCoastTerritory)
@@ -158,6 +158,8 @@ object TargetedTerritory {
       case JsString(AUVictoriaTerritory.id) => JsSuccess(AUVictoriaTerritory)
       case JsString(AUQueenslandTerritory.id) => JsSuccess(AUQueenslandTerritory)
       case JsString(AUNewSouthWalesTerritory.id) => JsSuccess(AUNewSouthWalesTerritory)
+      case JsString(value) => JsError(s"'$value' is not a valid territory")
+      case _ => JsError("Territory must be a string")
     }
     def writes(territory: TargetedTerritory): JsString = territory match {
       case NZTerritory => JsString(NZTerritory.id)
