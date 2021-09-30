@@ -125,21 +125,48 @@ case object EU27Territory extends TargetedTerritory {
   val id = "EU-27"
 }
 
+case object AUVictoriaTerritory extends TargetedTerritory {
+  val id = "AU-VIC"
+}
+
+case object AUQueenslandTerritory extends TargetedTerritory {
+  val id = "AU-QLD"
+}
+
+case object AUNewSouthWalesTerritory extends TargetedTerritory {
+  val id = "AU-NSW"
+}
+
 
 object TargetedTerritory {
-  val allTerritories: List[TargetedTerritory] = List(NZTerritory, USEastCoastTerritory, USWestCoastTerritory, EU27Territory)
+  val allTerritories: List[TargetedTerritory] = List(
+    NZTerritory,
+    USEastCoastTerritory,
+    USWestCoastTerritory,
+    EU27Territory,
+    AUVictoriaTerritory,
+    AUQueenslandTerritory,
+    AUNewSouthWalesTerritory
+  )
+
   implicit object TargetedTerritoryFormat extends Format[TargetedTerritory] {
     def reads(json: JsValue): JsSuccess[TargetedTerritory] = json match {
       case JsString(NZTerritory.id) => JsSuccess(NZTerritory)
       case JsString(USEastCoastTerritory.id) => JsSuccess(USEastCoastTerritory)
       case JsString(USWestCoastTerritory.id) => JsSuccess(USWestCoastTerritory)
       case JsString(EU27Territory.id) => JsSuccess(EU27Territory)
+      case JsString(AUVictoriaTerritory.id) => JsSuccess(AUVictoriaTerritory)
+      case JsString(AUQueenslandTerritory.id) => JsSuccess(AUQueenslandTerritory)
+      case JsString(AUNewSouthWalesTerritory.id) => JsSuccess(AUNewSouthWalesTerritory)
     }
     def writes(territory: TargetedTerritory): JsString = territory match {
       case NZTerritory => JsString(NZTerritory.id)
       case USEastCoastTerritory => JsString(USEastCoastTerritory.id)
       case USWestCoastTerritory => JsString(USWestCoastTerritory.id)
       case EU27Territory => JsString(EU27Territory.id)
+      case AUVictoriaTerritory => JsString(AUVictoriaTerritory.id)
+      case AUQueenslandTerritory => JsString(AUQueenslandTerritory.id)
+      case AUNewSouthWalesTerritory => JsString(AUNewSouthWalesTerritory.id)
     }
   }
 }
