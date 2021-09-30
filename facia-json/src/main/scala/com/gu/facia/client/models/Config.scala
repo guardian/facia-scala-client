@@ -124,19 +124,15 @@ case object USWestCoastTerritory extends TargetedTerritory {
 case object EU27Territory extends TargetedTerritory {
   val id = "EU-27"
 }
-
 case object AUVictoriaTerritory extends TargetedTerritory {
   val id = "AU-VIC"
 }
-
 case object AUQueenslandTerritory extends TargetedTerritory {
   val id = "AU-QLD"
 }
-
 case object AUNewSouthWalesTerritory extends TargetedTerritory {
   val id = "AU-NSW"
 }
-
 
 object TargetedTerritory {
   val allTerritories: List[TargetedTerritory] = List(
