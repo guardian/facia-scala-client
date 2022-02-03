@@ -134,6 +134,10 @@ case object AUNewSouthWalesTerritory extends TargetedTerritory {
   val id = "AU-NSW"
 }
 
+case object UnknownTerritory extends TargetedTerritory {
+  val id = "XX"
+}
+
 object TargetedTerritory {
   val allTerritories: List[TargetedTerritory] = List(
     NZTerritory,
@@ -154,7 +158,8 @@ object TargetedTerritory {
       case JsString(AUVictoriaTerritory.id) => JsSuccess(AUVictoriaTerritory)
       case JsString(AUQueenslandTerritory.id) => JsSuccess(AUQueenslandTerritory)
       case JsString(AUNewSouthWalesTerritory.id) => JsSuccess(AUNewSouthWalesTerritory)
-      case JsString(value) => JsError(s"'$value' is not a valid territory")
+      case JsString(UnknownTerritory.id) => JsSuccess(UnknownTerritory)
+      case JsString(value) => JsSuccess(UnknownTerritory)
       case _ => JsError("Territory must be a string")
     }
     def writes(territory: TargetedTerritory): JsString = territory match {
@@ -165,6 +170,7 @@ object TargetedTerritory {
       case AUVictoriaTerritory => JsString(AUVictoriaTerritory.id)
       case AUQueenslandTerritory => JsString(AUQueenslandTerritory.id)
       case AUNewSouthWalesTerritory => JsString(AUNewSouthWalesTerritory.id)
+      case _ => JsString(UnknownTerritory.id)
     }
   }
 }
