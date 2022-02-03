@@ -33,6 +33,23 @@ class ConfigSpec extends Specification with ResourcesHelper {
         collection.targetedTerritory.get mustEqual(EU27Territory)
       })
     }
+    "deserialize unsupported territories as unknown" in {
+
+      val configJson = """{
+        |      "displayName" : "Golf",
+        |      "backfill" : {
+        |        "type" : "capi",
+        |        "query" : "sport/golf?edition=au"
+        |      },
+        |      "type" : "news/special",
+        |      "href" : "sport/golf",
+        |      "targetedTerritory": "Made-Up-Territory"
+        |    }""".stripMargin
+      val parsed = Json.fromJson[CollectionConfigJson](Json.parse(configJson))
+      parsed.asOpt must beSome.which({ config =>
+        config.targetedTerritory must beSome(UnknownTerritory)
+      })
+    }
 
     "serialize territories" in {
       val config = Json.fromJson[ConfigJson](Json.parse(slurpOrDie("DEV/frontsapi/config/config.json").get)).get
