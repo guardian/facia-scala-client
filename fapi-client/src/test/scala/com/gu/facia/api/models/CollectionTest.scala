@@ -6,7 +6,7 @@ import com.gu.facia.api.utils._
 import com.gu.facia.client.models.{Branded, CollectionConfigJson, CollectionJson, Trail, TrailMetaData}
 import org.joda.time.DateTime
 import org.mockito.Mockito._
-import org.scalatest.mock.MockitoSugar
+import org.scalatestplus.mockito.MockitoSugar
 import org.scalatest.{FreeSpec, OneInstancePerTest, Matchers}
 import play.api.libs.json.{JsArray, JsString, Json}
 

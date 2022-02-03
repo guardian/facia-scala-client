@@ -4,7 +4,7 @@ import com.gu.contentapi.client.model.v1.{ContentFields, Content}
 import com.gu.facia.api.models.CollectionConfig
 import com.gu.facia.client.models.{CollectionConfigJson, TrailMetaData}
 import org.mockito.Mockito
-import org.scalatest.mock.MockitoSugar
+import org.scalatestplus.mockito.MockitoSugar
 import org.scalatest.{OneInstancePerTest, OptionValues, Matchers, FreeSpec}
 import org.mockito.Mockito._
 
