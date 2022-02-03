@@ -2,7 +2,7 @@ package com.gu.facia.api.models
 
 import com.gu.facia.client.models.FrontJson
 import org.scalatest._
-import org.scalatest.mock.MockitoSugar
+import org.scalatestplus.mockito.MockitoSugar
 
 class FrontTest extends FreeSpec with Matchers with MockitoSugar with OneInstancePerTest {
   "fromFrontJson" - {

@@ -76,7 +76,11 @@ def baseProject(module: String, majorMinorVersion: String) = Project(s"$module-p
       Resolver.typesafeRepo("releases")
     ),
     scalaVersion := "2.12.12",
-    scalacOptions := Seq("-feature", "-deprecation"),
+    scalacOptions := Seq(
+        "-feature",
+        "-deprecation",
+        "-Xfatal-warnings"
+    ),
     publishTo := sonatypePublishToBundle.value,
     sonatypeReleaseSettings
   )
