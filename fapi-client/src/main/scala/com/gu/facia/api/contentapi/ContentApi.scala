@@ -99,7 +99,7 @@ object ContentApi extends StrictLogging {
   def parseQueryString(queryString: String): Seq[(String, String)] = {
     val KeyValuePair = """([^=]+)=(.*)""".r
 
-    queryString split "&" collect {
+    queryString.split("&").toIndexedSeq.collect {
       case KeyValuePair(key, value) => (key, value)
     }
   }
