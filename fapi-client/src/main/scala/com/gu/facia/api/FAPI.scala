@@ -21,7 +21,7 @@ object FAPI {
 
   def frontForPath(path: String)(implicit capiClient: ContentApiClient, faciaClient: ApiClient, ec: ExecutionContext): Response[Front] = {
     for {
-      fronts <- getFronts
+      fronts <- getFronts()
       front <- Response.fromOption(fronts.find(_.id == path), NotFound(s"Not front found for $path"))
     } yield front
   }
