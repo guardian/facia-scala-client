@@ -7,7 +7,7 @@ import com.gu.facia.api.contentapi.{ContentApi, LatestSnapsRequest, LinkSnapsReq
 import com.gu.facia.api.models._
 import com.gu.facia.api.utils.BackfillResolver
 import com.gu.facia.client.ApiClient
-import com.gu.facia.scalacompat.Implicits._
+import scala.collection.compat._
 
 import scala.concurrent.{ExecutionContext, Future}
 
