@@ -49,18 +49,18 @@ class ContentApiTest extends FreeSpec
       }
 
       "should wrap the tag parameter in brackets" in {
-        val tagParam = ContentApi.buildBackfillQuery(backfill).right.value.parameters.get("tag").value
+        val tagParam = ContentApi.buildBackfillQuery(backfill).toOption.get.parameters.get("tag").value
         tagParam should startWith("(")
         tagParam should endWith(")")
       }
 
       "adds the internalPageCode field" in {
-        ContentApi.buildBackfillQuery(backfill).right.value.parameters.get("show-fields").value should equal ("internalPageCode")
+        ContentApi.buildBackfillQuery(backfill).toOption.get.parameters.get("show-fields").value should equal ("internalPageCode")
       }
 
       "preserves existing show-fields when adding internaPageCode" in {
         val backfillWithFields = s"$backfill&show-fields=headline"
-        ContentApi.buildBackfillQuery(backfillWithFields).right.value.parameters.get("show-fields").value should equal ("headline,internalPageCode")
+        ContentApi.buildBackfillQuery(backfillWithFields).toOption.get.parameters.get("show-fields").value should equal ("headline,internalPageCode")
       }
     }
 

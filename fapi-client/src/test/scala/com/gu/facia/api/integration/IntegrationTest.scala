@@ -57,7 +57,7 @@ class IntegrationTest extends FreeSpec with Matchers with ScalaFutures with Opti
     "should return the collection with a given id" in {
       FAPI.getCollection("uk-alpha/news/regular-stories").asFuture.futureValue.fold(
         err => fail(s"expected collection, got $err", err.cause),
-        collection => collection should have ('id ("uk-alpha/news/regular-stories"))
+        collection => collection should have (Symbol("id") ("uk-alpha/news/regular-stories"))
       )
     }
   }
@@ -83,7 +83,7 @@ class IntegrationTest extends FreeSpec with Matchers with ScalaFutures with Opti
     }
 
     "should return the curated content for the collection" ignore {
-      val collection = collectionResponse.right.get
+      val collection = collectionResponse.toOption.get
       FAPI.liveCollectionContentWithSnaps(collection).asFuture.futureValue.fold(
         err => fail(s"expected collection, got $err", err.cause),
         curatedContent => curatedContent.size should be > 0
@@ -92,7 +92,7 @@ class IntegrationTest extends FreeSpec with Matchers with ScalaFutures with Opti
 
     "will use the provided function to adjust the query used to hydrate content" ignore {
       val adjust: AdjustSearchQuery = q => q.showTags("tone")
-      val collection = collectionResponse.right.get
+      val collection = collectionResponse.toOption.get
       FAPI.liveCollectionContentWithSnaps(collection, adjust).asFuture.futureValue.fold(
         err => fail(s"expected collection, got $err", err.cause),
         curatedContent => curatedContent.flatMap{

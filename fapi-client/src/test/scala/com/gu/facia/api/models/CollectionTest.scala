@@ -128,23 +128,23 @@ class CollectionTest extends FreeSpec with Matchers with MockitoSugar with OneIn
 
     "creates a Facia collection from the collection JSON and provided config" in {
       collection should have(
-        'id("id"),
-        'draft(None),
-        'href(Some("collectionConfigHref")),
-        'lastUpdated(Some(new DateTime(1))),
-        'updatedBy(Some("test")),
-        'updatedEmail(Some("test@example.com")),
-        'displayName("displayName")
+        Symbol("id")("id"),
+        Symbol("draft")(None),
+        Symbol("href")(Some("collectionConfigHref")),
+        Symbol("lastUpdated")(Some(new DateTime(1))),
+        Symbol("updatedBy")(Some("test")),
+        Symbol("updatedEmail")(Some("test@example.com")),
+        Symbol("displayName")("displayName")
       )
 
       collection.collectionConfig should have (
-        'href(Some("collectionConfigHref"))
+        Symbol("href")(Some("collectionConfigHref"))
       )
     }
 
     "creates metadata from provided config JSON" in {
       collection.collectionConfig should have(
-        'metadata (Some(List(Branded)))
+        Symbol("metadata") (Some(List(Branded)))
       )
     }
   }
@@ -155,7 +155,7 @@ class CollectionTest extends FreeSpec with Matchers with MockitoSugar with OneIn
     "Uses content fields when no facia override exists" in {
       val curatedContent = Collection.liveContent(collection, contents)
       curatedContent.head should have (
-        'headline ("Content headline")
+        Symbol("headline") ("Content headline")
       )
     }
 
@@ -167,9 +167,9 @@ class CollectionTest extends FreeSpec with Matchers with MockitoSugar with OneIn
 
       val curatedContent = Collection.liveContent(collection, contents)
       curatedContent.head should have (
-        'headline ("trail headline"),
-        'href (Some("trail href")),
-        'kicker (Some(FreeHtmlKicker("Custom kicker")))
+        Symbol("headline") ("trail headline"),
+        Symbol("href") (Some("trail href")),
+        Symbol("kicker") (Some(FreeHtmlKicker("Custom kicker")))
       )
     }
 
@@ -456,7 +456,7 @@ class CollectionTest extends FreeSpec with Matchers with MockitoSugar with OneIn
       val result = Collection.liveContent(collection, contents)
       result.length should be (1)
       result.head should have (
-        'headline("straight banana")
+        Symbol("headline")("straight banana")
       )
     }
     "supporting with internalPageCode" in {
@@ -467,7 +467,7 @@ class CollectionTest extends FreeSpec with Matchers with MockitoSugar with OneIn
       val result = Collection.liveContent(collection, contents)
       result.length should be (1)
       result.head should have (
-        'headline("straw berry")
+        Symbol("headline")("straw berry")
       )
       FaciaContentUtils.headline(FaciaContentUtils.supporting(result.head).head) should be ("straight banana")
     }
