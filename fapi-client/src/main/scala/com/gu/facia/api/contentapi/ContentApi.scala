@@ -73,7 +73,7 @@ object ContentApi extends StrictLogging {
 
   def getBackfillResponse(client: ContentApiClient, query: Either[ItemQuery, SearchQuery])
                          (implicit ec: ExecutionContext): Either[Response[ItemResponse], Response[SearchResponse]] = {
-    query.right.map { itemQuery =>
+    query.map { itemQuery =>
       Response.Async.Right(client.getResponse(itemQuery)) mapError { err =>
         CapiError(s"Failed to get backfill response ${err.message}", err.cause)
       }

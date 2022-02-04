@@ -32,7 +32,7 @@ object BackfillResolver {
     resolver match {
       case CapiBackfill(query, collectionConfig) =>
         val capiQuery = ContentApi.buildBackfillQuery(query)
-          .right.map(adjustSearchQuery)
+          .map(adjustSearchQuery)
           .left.map(adjustItemQuery)
         val backfillResponse = ContentApi.getBackfillResponse(capiClient, capiQuery)
         for {
