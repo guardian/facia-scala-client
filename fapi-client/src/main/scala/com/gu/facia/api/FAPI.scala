@@ -7,6 +7,7 @@ import com.gu.facia.api.contentapi.{ContentApi, LatestSnapsRequest, LinkSnapsReq
 import com.gu.facia.api.models._
 import com.gu.facia.api.utils.BackfillResolver
 import com.gu.facia.client.ApiClient
+import com.gu.facia.scalacompat.Implicits._
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -58,7 +59,7 @@ object FAPI {
       )
       collectionConfigs = collectionConfigJsons.map(CollectionConfig.fromCollectionJson)
     } yield {
-      (collectionIds, collectionsJsons, collectionConfigs).zipped.toList.map { case (collectionId, collectionJson, collectionConfig) =>
+      collectionIds.lazyZip(collectionsJsons).lazyZip(collectionConfigs).toList.map { case (collectionId, collectionJson, collectionConfig) =>
         Collection.fromCollectionJsonConfigAndContent(collectionId, collectionJson, collectionConfig)
       }
     }
