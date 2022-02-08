@@ -34,4 +34,5 @@
 - [ ] Updated MAPI to use latest version
 - [ ] Updated Ophan to use latest version
 - [ ] Updated story-packages to use latest version
+- [ ] Updated apple-news to use latest version
 - [ ] Checked for other downstream dependencies (perhaps via snyk or github search)
