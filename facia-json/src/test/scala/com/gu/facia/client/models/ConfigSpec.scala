@@ -47,7 +47,7 @@ class ConfigSpec extends Specification with ResourcesHelper {
         |    }""".stripMargin
       val parsed = Json.fromJson[CollectionConfigJson](Json.parse(configJson))
       parsed.asOpt must beSome.which({ config =>
-        config.targetedTerritory must be(Some(UnknownTerritory))
+        config.targetedTerritory must beSome(UnknownTerritory: TargetedTerritory)
       })
     }
 
