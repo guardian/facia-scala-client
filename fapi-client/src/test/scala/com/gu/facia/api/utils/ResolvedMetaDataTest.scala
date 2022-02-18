@@ -48,38 +48,38 @@ class ResolvedMetaDataTest extends FreeSpec with Matchers with TestContent {
     "Content with type cartoon should showByline" in {
       val resolvedMetaData = ResolvedMetaData.fromContent(contentWithCartoon, DefaultCardstyle)
       resolvedMetaData should have (
-        'showByline (true))
+        Symbol("showByline") (true))
     }
 
     "Content with type comment should showByline, showQuotedHeadline and imageCutoutReplace" in {
       val resolvedMetaData = ResolvedMetaData.fromContent(contentWithComment, Comment)
       resolvedMetaData should have (
-        'showByline (true),
-        'showQuotedHeadline (true),
-        'imageCutoutReplace (true))
+        Symbol("showByline") (true),
+        Symbol("showQuotedHeadline") (true),
+        Symbol("imageCutoutReplace") (true))
     }
 
     "Content with type video should showMainVideo" in {
       val resolvedMetaData = ResolvedMetaData.fromContent(contentWithVideo, DefaultCardstyle)
       resolvedMetaData should have (
-        'showMainVideo (true))
+        Symbol("showMainVideo") (true))
     }
 
     "Content with silly type should all false" in {
       val contentWithVideo = contentWithTags(tagWithId("sillyid"))
       val resolvedMetaData = ResolvedMetaData.fromContent(contentWithVideo, DefaultCardstyle)
       resolvedMetaData should have (
-        'showByline (false),
-        'showQuotedHeadline (false),
-        'imageCutoutReplace (false),
-        'showMainVideo (false),
-        'isBoosted (false),
-        'isBreaking (false),
-        'imageHide (false),
-        'imageReplace (false),
-        'showKickerCustom (false),
-        'showKickerSection (false),
-        'showKickerTag (false))
+        Symbol("showByline") (false),
+        Symbol("showQuotedHeadline") (false),
+        Symbol("imageCutoutReplace") (false),
+        Symbol("showMainVideo") (false),
+        Symbol("isBoosted") (false),
+        Symbol("isBreaking") (false),
+        Symbol("imageHide") (false),
+        Symbol("imageReplace") (false),
+        Symbol("showKickerCustom") (false),
+        Symbol("showKickerSection") (false),
+        Symbol("showKickerTag") (false))
     }
   }
 
@@ -88,33 +88,33 @@ class ResolvedMetaDataTest extends FreeSpec with Matchers with TestContent {
     "Resolve all to false for empty TrailMetaData" in {
       val resolvedMetaData = ResolvedMetaData.fromTrailMetaData(emptyTrailMetaData)
       resolvedMetaData should have (
-        'showByline (false),
-        'showQuotedHeadline (false),
-        'imageCutoutReplace (false),
-        'showMainVideo (false),
-        'isBoosted (false),
-        'isBreaking (false),
-        'imageHide (false),
-        'imageReplace (false),
-        'showKickerCustom (false),
-        'showKickerSection (false),
-        'showKickerTag (false))
+        Symbol("showByline") (false),
+        Symbol("showQuotedHeadline") (false),
+        Symbol("imageCutoutReplace") (false),
+        Symbol("showMainVideo") (false),
+        Symbol("isBoosted") (false),
+        Symbol("isBreaking") (false),
+        Symbol("imageHide") (false),
+        Symbol("imageReplace") (false),
+        Symbol("showKickerCustom") (false),
+        Symbol("showKickerSection") (false),
+        Symbol("showKickerTag") (false))
     }
 
     "Resolve all to true for empty TrailMetaData" in {
       val resolvedMetaData = ResolvedMetaData.fromTrailMetaData(trailMetaDataWithFieldsSetTrue)
       resolvedMetaData should have (
-        'showByline (true),
-        'showQuotedHeadline (true),
-        'imageCutoutReplace (true),
-        'showMainVideo (true),
-        'isBoosted (false),
-        'isBreaking (false),
-        'imageHide (false),
-        'imageReplace (false),
-        'showKickerCustom (false),
-        'showKickerSection (false),
-        'showKickerTag (false)
+        Symbol("showByline") (true),
+        Symbol("showQuotedHeadline") (true),
+        Symbol("imageCutoutReplace") (true),
+        Symbol("showMainVideo") (true),
+        Symbol("isBoosted") (false),
+        Symbol("isBreaking") (false),
+        Symbol("imageHide") (false),
+        Symbol("imageReplace") (false),
+        Symbol("showKickerCustom") (false),
+        Symbol("showKickerSection") (false),
+        Symbol("showKickerTag") (false)
       )
     }
   }
@@ -124,47 +124,47 @@ class ResolvedMetaDataTest extends FreeSpec with Matchers with TestContent {
     "should resolve correct for cartoon when trailMetaData is not set" in {
       val resolvedCartoon = ResolvedMetaData.fromContentAndTrailMetaData(contentWithCartoon, emptyTrailMetaData, DefaultCardstyle)
       resolvedCartoon should have (
-        'showByline (true))
+        Symbol("showByline") (true))
     }
 
     "should resolve correct for comment when trailMetaData is not set" in {
       val resolvedComment = ResolvedMetaData.fromContentAndTrailMetaData(contentWithComment, emptyTrailMetaData, Comment)
       resolvedComment should have (
-        'showByline (true),
-        'showQuotedHeadline (true),
-        'imageCutoutReplace (true))
+        Symbol("showByline") (true),
+        Symbol("showQuotedHeadline") (true),
+        Symbol("imageCutoutReplace") (true))
     }
 
     "should resolve correct for video when trailMetaData is not set" in {
       val resolvedVideo = ResolvedMetaData.fromContentAndTrailMetaData(contentWithVideo, emptyTrailMetaData, DefaultCardstyle)
       resolvedVideo should have (
-        'showMainVideo (true))
+        Symbol("showMainVideo") (true))
     }
 
     "should resolve correct for video with Atom" in {
       val resolvedVideo = ResolvedMetaData.fromContentAndTrailMetaData(contentWithAtom, emptyTrailMetaData, DefaultCardstyle)
       resolvedVideo should have(
-        'showMainVideo (true))
+        Symbol("showMainVideo") (true))
     }
 
     "should resolve correct for cartoon when trailMetaData IS set" in {
       val resolvedCartoon = ResolvedMetaData.fromContentAndTrailMetaData(contentWithCartoon, trailMetaDataWithFieldsSetFalse, DefaultCardstyle)
       resolvedCartoon should have (
-        'showByline (false))
+        Symbol("showByline") (false))
     }
 
     "should resolve correct for comment when trailMetaData IS set" in {
       val resolvedComment = ResolvedMetaData.fromContentAndTrailMetaData(contentWithComment, trailMetaDataWithFieldsSetFalse, DefaultCardstyle)
       resolvedComment should have (
-        'showByline (false),
-        'showQuotedHeadline (false),
-        'imageCutoutReplace (false))
+        Symbol("showByline") (false),
+        Symbol("showQuotedHeadline") (false),
+        Symbol("imageCutoutReplace") (false))
     }
 
     "should resolve correct for video when trailMetaData IS set" in {
       val resolvedVideo = ResolvedMetaData.fromContentAndTrailMetaData(contentWithVideo, trailMetaDataWithFieldsSetFalse, DefaultCardstyle)
       resolvedVideo should have (
-        'showMainVideo (false))
+        Symbol("showMainVideo") (false))
     }
   }
 

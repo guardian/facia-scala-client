@@ -43,7 +43,7 @@ object ContentApi extends StrictLogging {
     searchResponses.flatMap(_.results).toSet
 
   def buildBackfillQuery(apiQuery: String): Either[ItemQuery, SearchQuery] = {
-    val uri = new URI(apiQuery.replaceAllLiterally("|", "%7C").replaceAllLiterally(" ", "%20"))
+    val uri = new URI(apiQuery.replace("|", "%7C").replace(" ", "%20"))
     val path = uri.getPath.stripPrefix("/")
     val rawParams = Option(uri.getQuery).map(parseQueryString).getOrElse(Nil).map {
       // wrap backfill tags in parentheses in case the editors wrote a raw OR query
@@ -73,7 +73,7 @@ object ContentApi extends StrictLogging {
 
   def getBackfillResponse(client: ContentApiClient, query: Either[ItemQuery, SearchQuery])
                          (implicit ec: ExecutionContext): Either[Response[ItemResponse], Response[SearchResponse]] = {
-    query.right.map { itemQuery =>
+    query.map { itemQuery =>
       Response.Async.Right(client.getResponse(itemQuery)) mapError { err =>
         CapiError(s"Failed to get backfill response ${err.message}", err.cause)
       }
@@ -99,7 +99,7 @@ object ContentApi extends StrictLogging {
   def parseQueryString(queryString: String): Seq[(String, String)] = {
     val KeyValuePair = """([^=]+)=(.*)""".r
 
-    queryString split "&" collect {
+    queryString.split("&").toSeq.collect {
       case KeyValuePair(key, value) => (key, value)
     }
   }

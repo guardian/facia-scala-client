@@ -22,7 +22,7 @@ class CollectionSpec extends Specification with ResourcesHelper {
 
       collection.live.find(_.id == "football/quiz/2014/jun/11/world-cup-2014-the-ultimate-world-cup-trivia-quiz") must
         beSome.which({ front =>
-          (front.frontPublicationDate mustEqual 1402500092818l) and (front.meta mustEqual Some(TrailMetaData.withDefaults(
+          (front.frontPublicationDate mustEqual 1402500092818L) and (front.meta mustEqual Some(TrailMetaData.withDefaults(
             ("headline", JsString("The ultimate World Cup trivia quiz")),
             ("group", JsString("0"))
           )))
