@@ -39,6 +39,10 @@ case object Podcast extends Metadata
 
 case object UnknownMetadata extends Metadata
 
+case object LongRunningAltPalette extends Metadata
+
+case object SombreAltPalette extends Metadata
+
 object Metadata extends StrictLogging {
 
   val tags: Map[String, Metadata] = Map(
@@ -54,6 +58,8 @@ object Metadata extends StrictLogging {
     "EventPalette" -> EventPalette,
     "EventAltPalette" -> EventAltPalette,
     "Podcast" -> Podcast,
+    "LongRunningAltPalette" -> LongRunningAltPalette,
+    "SombreAltPalette" -> SombreAltPalette
   )
 
   implicit object MetadataFormat extends Format[Metadata] {
@@ -82,6 +88,8 @@ object Metadata extends StrictLogging {
       case EventPalette => JsObject(Seq("type" -> JsString("EventPalette")))
       case EventAltPalette => JsObject(Seq("type" -> JsString("EventAltPalette")))
       case Podcast => JsObject(Seq("type" -> JsString("Podcast")))
+      case LongRunningAltPalette => JsObject(Seq("type" -> JsString("LongRunningAltPalette")))
+      case SombreAltPalette => JsObject(Seq("type" -> JsString("SombreAltPalette")))
       case UnknownMetadata => JsObject(Seq("type" -> JsString("UnknownMetadata")))
     }
   }
