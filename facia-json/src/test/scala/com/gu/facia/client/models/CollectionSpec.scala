@@ -43,6 +43,28 @@ class CollectionSpec extends Specification with ResourcesHelper {
       })
     }
 
+    "deserialize content with slideshows, where captions are optional" in {
+      val collection = getCollectionFixture("PROD/frontsapi/collection/uk-alpha/news/regular-stories/collection-with-captions.json")
+
+      collection.live.lift(0) must beSome.which({ item =>
+        item.safeMeta.slideshow mustEqual Some(
+          List(
+            SlideshowAsset(
+              "http://static.guim.co.uk/sys-images/Guardian/Pix/pictures/2014/8/4/1407146294410/PrinceWilliamCatherineDuche.jpg",
+              "940",
+              "720"
+            ),
+            SlideshowAsset(
+              "http://static.guim.co.uk/sys-images/Guardian/Pix/pictures/2014/8/4/1407140556976/AustraliansingerKylieMinogu.jpg",
+              "940",
+              "720",
+              Some("Kylie Minogue")
+            )
+          )
+        )
+      })
+    }
+
     "deserialize content without metadata" in {
       val collection = getCollectionFixture("PROD/frontsapi/collection/754c-8e8c-fad9-a927/collection.json")
 
