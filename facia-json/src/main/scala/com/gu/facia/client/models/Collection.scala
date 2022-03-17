@@ -5,7 +5,7 @@ import org.joda.time.DateTime
 import play.api.libs.json.{JsValue, Json}
 import com.gu.facia.client.json.JodaFormat._
 
-case class SlideshowAsset(src: String, width: String, height: String)
+case class SlideshowAsset(src: String, width: String, height: String, caption: Option[String] = None)
 object SlideshowAsset {
   implicit val slideshowAssetFormat = Json.format[SlideshowAsset]
 }
