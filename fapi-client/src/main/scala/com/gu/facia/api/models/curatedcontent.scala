@@ -9,7 +9,7 @@ import com.gu.facia.client.models.{MetaDataCommonFields, SupportingItem, Trail, 
 
 sealed trait FaciaImage
 case class Cutout(imageSrc: String, imageSrcWidth: Option[String], imageSrcHeight: Option[String]) extends FaciaImage
-case class Replace(imageSrc: String, imageSrcWidth: String, imageSrcHeight: String) extends FaciaImage
+case class Replace(imageSrc: String, imageSrcWidth: String, imageSrcHeight: String, imageCaption: Option[String]) extends FaciaImage
 case class ImageSlideshow(assets: List[Replace]) extends FaciaImage
 
 object FaciaImage {
@@ -44,19 +44,19 @@ object FaciaImage {
   def imageReplace(trailMeta: MetaDataCommonFields, resolvedMetaData: ResolvedMetaData): Option[FaciaImage] = {
     trailMeta.imageSource match {
       case Some(imageSource) =>
-        Some(Replace(imageSource.src, imageSource.width, imageSource.height))
+        Some(Replace(imageSource.src, imageSource.width, imageSource.height, None))
       case None =>
         for {
           src <- trailMeta.imageSrc
           width <- trailMeta.imageSrcWidth
           height <- trailMeta.imageSrcHeight
-        } yield Replace(src, width, height)
+        } yield Replace(src, width, height, None)
     }
   }
 
   def imageSlideshow(trailMeta: MetaDataCommonFields, resolvedMetaData: ResolvedMetaData): Option[FaciaImage] =
     trailMeta.slideshow.map { assets =>
-      val slideshowAssets = assets.map(asset => Replace(asset.src, asset.width, asset.height))
+      val slideshowAssets = assets.map(asset => Replace(asset.src, asset.width, asset.height, asset.caption))
       ImageSlideshow(slideshowAssets)}
 
 }
