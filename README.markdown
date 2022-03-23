@@ -75,7 +75,7 @@ To run the tests you need to pass a content api key and facia client target url 
 
 Before releasing, consider whether your changes are likely to be backwards-compatible with older versions of the client -- for example, if the new version introduces new serialisations that old versions won't be able to read. Where possible, we should aim to maintain backwards compatibility.
 
-At the time of writing, Tools, Dotcom, Mobile teams (Mapi) and Ophan all use `facia-scala-client` -- take care to understand who is using the library and communicate changes where appropriate.
+At the time of writing, Tools, CAPI, Dotcom, Mobile teams (Mapi) and Ophan all use `facia-scala-client` -- take care to understand who is using the library and communicate changes where appropriate. In particular remember the Apple News feed uses this client, we've forgotten that twice before.
 
 ## Building a release
 
