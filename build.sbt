@@ -75,7 +75,7 @@ def baseProject(module: String, majorMinorVersion: String) = Project(s"$module-p
       Resolver.sonatypeRepo("public"),
       Resolver.typesafeRepo("releases")
     ),
-    scalaVersion := "2.12.12",
+    scalaVersion := "2.12.16",
     scalacOptions := Seq(
         "-feature",
         "-deprecation",
@@ -92,7 +92,7 @@ def faciaJson_playJsonVersion(majorMinorVersion: String) = baseProject("facia-js
       commonsIo,
       specs2,
       "com.typesafe.play" %% "play-json" % exactPlayJsonVersions(majorMinorVersion),
-      "org.scala-lang.modules" %% "scala-collection-compat" % "2.6.0",
+      "org.scala-lang.modules" %% "scala-collection-compat" % "2.7.0",
       scalaLogging
     )
   )
@@ -108,7 +108,7 @@ def fapiClient_playJsonVersion(majorMinorVersion: String) =  baseProject("fapi-c
     )
   )
 
-lazy val crossCompileScala213 = crossScalaVersions := Seq(scalaVersion.value, "2.13.4")
+lazy val crossCompileScala213 = crossScalaVersions := Seq(scalaVersion.value, "2.13.8")
 
 
 lazy val faciaJson_play26 = faciaJson_playJsonVersion("26")
