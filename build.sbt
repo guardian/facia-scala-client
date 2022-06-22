@@ -1,6 +1,5 @@
 import Dependencies._
 import sbtrelease.ReleaseStateTransformations._
-import sbtrelease._
 
 organization := "com.gu"
 
@@ -56,7 +55,7 @@ lazy val root = (project in file(".")).aggregate(
     fapiClient_play28
   ).settings(
     publishArtifact := false,
-    skip in publish := true,
+    publish / skip := true,
     sonatypeReleaseSettings
   )
 
