@@ -1,0 +1,27 @@
+name: CI
+on:
+  pull_request:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+jobs:
+  CI:
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write # Needed to interact with GitHub's OIDC Token endpoint
+      contents: read
+    steps:
+      - uses: actions/checkout@v3
+      - uses: aws-actions/configure-aws-credentials@v1 # Needed for S3 read access for the tests!
+        with:
+          # The AWS role is configured as a GitHub Repo secret, the value is the cloudformation-output of the
+          # 'Facia-Scala-Client-CI-Role-Provider' cloudformation stack.
+          role-to-assume: ${{ secrets.AWS_ROLE_FOR_TESTS }}
+          aws-region: eu-west-1
+      - uses: coursier/cache-action@v6
+      - uses: olafurpg/setup-scala@v13
+        with:
+          java-version: adopt@1.11
+      - name: Build and Test
+        run: sbt test
