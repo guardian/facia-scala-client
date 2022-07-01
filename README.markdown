@@ -92,4 +92,7 @@ $ sbt
 sbt:facia-api-client> release
 ```
 
-4. When the release process has completed successfully, update the [change log](CHANGES.md).
+4. When the release process has completed successfully, document the new version with a GitHub Release note
+   ([guide](https://docs.github.com/en/repositories/releasing-projects-on-github/managing-releases-in-a-repository))
+   describing the change (the `Generate release notes` button can give you a good start!):
+   https://github.com/guardian/facia-scala-client/releases/new
