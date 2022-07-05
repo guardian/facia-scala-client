@@ -1,3 +1,12 @@
+# Latest information in GitHub Releases
+
+Check out **https://github.com/guardian/facia-scala-client/releases**
+for info on all releases from v4.0.0 onwards. For historical reference
+purposes, information on prior releases is included below.
+
+### Releases prior to v4.0.0...
+
+
 #### 3.3.6
   
   - Bump CAPI client to `v17.21`
