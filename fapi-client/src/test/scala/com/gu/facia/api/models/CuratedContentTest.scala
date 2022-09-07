@@ -121,13 +121,33 @@ class CuratedContentTest extends FreeSpec with Matchers with TestContent {
   }
 
   "CuratedContent images" - {
+    val replaceSrc = "https://somewhere-on-the-internet/replace-image.jpg"
+    val replaceDimensions = "100"
+    val cutoutSrc = "https://somewhere-on-the-internet/cutout-image.jpg"
+    val cutoutDimensions = "200"
+    val contentWithCommentTone = baseContent.copy(
+      fields = Some(ContentFields(headline = Some("Content headline"), trailText = Some("Content trailtext"), byline = Some("Content byline"))),
+      tags = List(Tag(ResolvedMetaData.Comment, TagType.Tone, None, None, "", "", ""))
+    )
+
+    "should default the cutout image for content with the Comment tone" in {
+      val trailMetadata = TrailMetaData(Map(
+        "imageCutoutSrc" -> JsString(cutoutSrc),
+        "imageCutoutSrcWidth" -> JsString(cutoutDimensions),
+        "imageCutoutSrcHeight" -> JsString(cutoutDimensions)
+      ))
+      val curatedContent = CuratedContent.fromTrailAndContent(contentWithCommentTone, trailMetadata, None, collectionConfig)
+
+      val expectedImage = Some(Cutout(
+        cutoutSrc,
+        Some(cutoutDimensions),
+        Some(cutoutDimensions)
+      ))
+
+      curatedContent.image shouldBe expectedImage
+    }
+
     "should default to the replacement image, not the cutout image, when `imageReplace` is true for content with the Comment tone" in {
-      val replaceSrc = "https://somewhere-on-the-internet/replace-image.jpg"
-      val replaceDimensions = "100"
-
-      val cutoutSrc = "https://somewhere-on-the-internet/cutout-image.jpg"
-      val cutoutDimensions = "200"
-
       val trailMetadata = TrailMetaData(Map(
         "imageReplace" -> JsBoolean(true),
         "imageSrc" -> JsString(replaceSrc),
@@ -137,13 +157,8 @@ class CuratedContentTest extends FreeSpec with Matchers with TestContent {
         "imageCutoutSrcWidth" -> JsString(cutoutDimensions),
         "imageCutoutSrcHeight" -> JsString(cutoutDimensions)
       ))
-
-      val contentWithCommentTone = baseContent.copy(
-        fields = Some(ContentFields(headline = Some("Content headline"), trailText = Some("Content trailtext"), byline = Some("Content byline"))),
-        tags = List(Tag(ResolvedMetaData.Comment, TagType.Tone, None, None, "", "", ""))
-      )
-
       val curatedContent = CuratedContent.fromTrailAndContent(contentWithCommentTone, trailMetadata, None, collectionConfig)
+
       val expectedImage = Some(Replace(
         replaceSrc,
         replaceDimensions,
