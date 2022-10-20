@@ -7,11 +7,13 @@ import lib.TestContent
 import org.scalatest.{FreeSpec, Matchers}
 import play.api.libs.json.{JsBoolean, JsString}
 import org.scalatest.OptionValues._
+import com.gu.facia.api.utils.ResolvedMetaData
 
 class CuratedContentTest extends FreeSpec with Matchers with TestContent {
 
+  val collectionConfig = CollectionConfig.fromCollectionJson(CollectionConfigJson.withDefaults())
+
   "CuratedContent headline" - {
-    val collectionConfig = CollectionConfig.fromCollectionJson(CollectionConfigJson.withDefaults())
 
     val contentWithFieldHeadline = baseContent.copy(fields = Some(ContentFields(headline = Some("Content headline"), trailText = Some("Content trailtext"), byline = Some("Content byline"))))
     val contentWithoutFieldHeadline = baseContent.copy(webTitle = "contentWithoutFieldHeadlineHeadline", fields = Some(ContentFields(trailText = Some("Content trailtext"), byline = Some("Content byline"))))
@@ -115,6 +117,56 @@ class CuratedContentTest extends FreeSpec with Matchers with TestContent {
       val trailMetaDataShowKickerTag = TrailMetaData(Map("showKickerTag" -> JsBoolean(value = true)))
       val supportingCuratedContent = SupportingCuratedContent.fromTrailAndContent(emptyContent, trailMetaDataShowKickerTag, None, collectionConfigShowTags)
       supportingCuratedContent.kicker.value shouldBe a [TagKicker]
+    }
+  }
+
+  "CuratedContent images" - {
+    val replaceSrc = "https://somewhere-on-the-internet/replace-image.jpg"
+    val replaceDimensions = "100"
+    val cutoutSrc = "https://somewhere-on-the-internet/cutout-image.jpg"
+    val cutoutDimensions = "200"
+    val contentWithCommentTone = baseContent.copy(
+      fields = Some(ContentFields(headline = Some("Content headline"), trailText = Some("Content trailtext"), byline = Some("Content byline"))),
+      tags = List(Tag(ResolvedMetaData.Comment, TagType.Tone, None, None, "", "", ""))
+    )
+
+    "should default the cutout image for content with the Comment tone" in {
+      val trailMetadata = TrailMetaData(Map(
+        "imageCutoutSrc" -> JsString(cutoutSrc),
+        "imageCutoutSrcWidth" -> JsString(cutoutDimensions),
+        "imageCutoutSrcHeight" -> JsString(cutoutDimensions)
+      ))
+      val curatedContent = CuratedContent.fromTrailAndContent(contentWithCommentTone, trailMetadata, None, collectionConfig)
+
+      val expectedImage = Some(Cutout(
+        cutoutSrc,
+        Some(cutoutDimensions),
+        Some(cutoutDimensions)
+      ))
+
+      curatedContent.image shouldBe expectedImage
+    }
+
+    "should default to the replacement image, not the cutout image, when `imageReplace` is true for content with the Comment tone" in {
+      val trailMetadata = TrailMetaData(Map(
+        "imageReplace" -> JsBoolean(true),
+        "imageSrc" -> JsString(replaceSrc),
+        "imageSrcWidth" -> JsString(replaceDimensions),
+        "imageSrcHeight" -> JsString(replaceDimensions),
+        "imageCutoutSrc" -> JsString(cutoutSrc),
+        "imageCutoutSrcWidth" -> JsString(cutoutDimensions),
+        "imageCutoutSrcHeight" -> JsString(cutoutDimensions)
+      ))
+      val curatedContent = CuratedContent.fromTrailAndContent(contentWithCommentTone, trailMetadata, None, collectionConfig)
+
+      val expectedImage = Some(Replace(
+        replaceSrc,
+        replaceDimensions,
+        replaceDimensions,
+        None
+      ))
+
+      curatedContent.image shouldBe expectedImage
     }
   }
 }

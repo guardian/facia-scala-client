@@ -19,10 +19,10 @@ object FaciaImage {
       None
     else if (resolvedMetadata.imageSlideshowReplace)
       imageSlideshow(trailMeta, resolvedMetadata)
-    else if (resolvedMetadata.imageCutoutReplace)
-      imageCutout(trailMeta) orElse maybeContent.flatMap(fromContentTags(_, trailMeta))
     else if (resolvedMetadata.imageReplace)
       imageReplace(trailMeta, resolvedMetadata)
+    else if (resolvedMetadata.imageCutoutReplace)
+      imageCutout(trailMeta) orElse maybeContent.flatMap(fromContentTags(_, trailMeta))
     else None}
 
   def fromContentTags(content: Content, trailMeta: MetaDataCommonFields): Option[FaciaImage] = {
