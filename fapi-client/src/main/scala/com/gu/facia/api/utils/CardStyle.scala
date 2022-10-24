@@ -3,11 +3,13 @@ package com.gu.facia.api.utils
 import com.gu.contentapi.client.model.v1.Content
 import com.gu.contentapi.client.utils.CapiModelEnrichment.RenderingFormat
 import com.gu.contentapi.client.utils.format.SpecialReportTheme
+import com.gu.contentapi.client.utils.format.SpecialReportAltTheme
 import com.gu.facia.api.utils.ContentApiUtils._
 import com.gu.facia.client.models.{MetaDataCommonFields, TrailMetaData}
 
 object CardStyle {
   val specialReport = "special-report"
+  val specialReportAlt = "special-report-alt"
   val live = "live"
   val dead = "dead"
   val feature = "feature"
@@ -28,6 +30,8 @@ object CardStyle {
       ExternalLink
     } else if (content.theme == SpecialReportTheme) {
       SpecialReport
+    } else if (content.theme == SpecialReportAltTheme) {
+      SpecialReportAlt
     } else if (content.isLiveBlog) {
       if (content.isLive) {
         LiveBlog
@@ -62,6 +66,10 @@ sealed trait CardStyle {
 
 case object SpecialReport extends CardStyle {
   val toneString = CardStyle.specialReport
+}
+
+case object SpecialReportAlt extends CardStyle {
+  val toneString = CardStyle.specialReportAlt
 }
 
 case object LiveBlog extends CardStyle {
