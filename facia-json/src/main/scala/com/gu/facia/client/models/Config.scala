@@ -42,6 +42,7 @@ case object UnknownMetadata extends Metadata
 case object LongRunningAltPalette extends Metadata
 
 case object SombreAltPalette extends Metadata
+case object SpecialReportAlt extends Metadata
 
 object Metadata extends StrictLogging {
 
@@ -59,7 +60,8 @@ object Metadata extends StrictLogging {
     "EventAltPalette" -> EventAltPalette,
     "Podcast" -> Podcast,
     "LongRunningAltPalette" -> LongRunningAltPalette,
-    "SombreAltPalette" -> SombreAltPalette
+    "SombreAltPalette" -> SombreAltPalette,
+    "SpecialReportAlt" -> SpecialReportAlt
   )
 
   implicit object MetadataFormat extends Format[Metadata] {
@@ -90,6 +92,7 @@ object Metadata extends StrictLogging {
       case Podcast => JsObject(Seq("type" -> JsString("Podcast")))
       case LongRunningAltPalette => JsObject(Seq("type" -> JsString("LongRunningAltPalette")))
       case SombreAltPalette => JsObject(Seq("type" -> JsString("SombreAltPalette")))
+      case SpecialReportAlt => JsObject(Seq("type" -> JsString("SpecialReportAlt")))
       case UnknownMetadata => JsObject(Seq("type" -> JsString("UnknownMetadata")))
     }
   }
