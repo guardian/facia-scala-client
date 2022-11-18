@@ -60,7 +60,7 @@ object ContentApi extends StrictLogging {
 
     val paramsWithEditorsPicks = paramsWithFields :+ ("show-editors-picks" -> "false")
 
-    if (path.startsWith("search")) {
+    if (path == "search") {
       val searchQuery = SearchQuery()
       val queryWithParams = searchQuery.withParameters(paramsWithEditorsPicks.map { case (k, v) => k -> searchQuery.StringParameter(k, Some(v)) }.toMap)
       Right(queryWithParams)

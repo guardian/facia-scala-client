@@ -71,6 +71,10 @@ class ContentApiTest extends FreeSpec
         ContentApi.buildBackfillQuery(backfill).isLeft should equal(true)
       }
 
+      "should produce an itemQuery instance for an item query starting with 'search'" in {
+        ContentApi.buildBackfillQuery("searchlight-pictures-nightmare-alley").isLeft should equal(true)
+      }
+
       "should use the given path for the itemQuery" in {
         ContentApi.buildBackfillQuery(backfill).left.value.id should equal("lifeandstyle/food-and-drink")
       }
