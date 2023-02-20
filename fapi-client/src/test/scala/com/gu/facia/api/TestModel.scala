@@ -130,6 +130,7 @@ object TestModel {
     def shouldHideReaderRevenue: Option[Boolean] = None
     def internalCommissionedWordcount: Option[Int] = None
     def showAffiliateLinks: Option[Boolean] = None
+    def showTableOfContents: Option[Boolean] = None
   }
   implicit val stubFieldsFormat = Json.reads[StubFields]
 
