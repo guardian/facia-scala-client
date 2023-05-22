@@ -1,17 +1,20 @@
 package com.gu.facia.client.lib
 
-import com.amazonaws.auth.{ AWSStaticCredentialsProvider, BasicAWSCredentials}
-import com.amazonaws.regions.Regions
-import com.amazonaws.services.s3.{AmazonS3, AmazonS3ClientBuilder}
 import com.gu.facia.client.models.{CollectionJson, ConfigJson}
 import com.gu.facia.client.{AmazonSdkS3Client, ApiClient}
 import play.api.libs.json.{Format, Json}
+import software.amazon.awssdk.auth.credentials.{AwsBasicCredentials, StaticCredentialsProvider}
+import software.amazon.awssdk.regions.Region
+import software.amazon.awssdk.services.s3.S3AsyncClient
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 object Amazon {
-  val amazonS3Client = AmazonS3ClientBuilder.standard().withRegion(Regions.EU_WEST_1).withCredentials(new AWSStaticCredentialsProvider(new BasicAWSCredentials("key", "pass"))).build()
+  val amazonS3Client = S3AsyncClient.builder()
+    .region(Region.EU_WEST_1)
+    .credentialsProvider(StaticCredentialsProvider.create(AwsBasicCredentials.create("key","pass")))
+    .build()
 }
 
 class ApiTestClient extends ApiClient("bucket", "DEV", AmazonSdkS3Client(Amazon.amazonS3Client)) with ResourcesHelper {
