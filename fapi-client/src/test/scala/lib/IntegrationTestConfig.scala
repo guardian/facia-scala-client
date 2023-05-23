@@ -35,6 +35,6 @@ trait IntegrationTestConfig extends ExecutionContext {
       .credentialsProvider(credentials)
       .build()
 
-    ApiClient("facia-tool-store", "TEST", AmazonSdkS3Client(amazonS3Client))
+    ApiClient("facia-tool-store", "DEV", AmazonSdkS3Client(amazonS3Client))
   }
 }
