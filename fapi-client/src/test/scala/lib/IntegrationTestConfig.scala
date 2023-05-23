@@ -1,11 +1,10 @@
 package lib
 
-import com.amazonaws.auth._
-import com.amazonaws.auth.profile.ProfileCredentialsProvider
-import com.amazonaws.services.s3.AmazonS3ClientBuilder
 import com.gu.contentapi.client.GuardianContentClient
 import com.gu.facia.client.{AmazonSdkS3Client, ApiClient}
-import com.amazonaws.regions.Regions.EU_WEST_1
+import software.amazon.awssdk.auth.credentials.{AwsCredentialsProviderChain, EnvironmentVariableCredentialsProvider, ProfileCredentialsProvider, SystemPropertyCredentialsProvider}
+import software.amazon.awssdk.regions.Region
+import software.amazon.awssdk.services.s3.S3AsyncClient
 
 private case class TestContentApiClient(override val apiKey: String, override val targetUrl: String)
   extends GuardianContentClient(apiKey)
@@ -23,15 +22,19 @@ trait IntegrationTestConfig extends ExecutionContext {
   }
 
   implicit val apiClient: ApiClient = {
-    val credentialsProvider = new AWSCredentialsProviderChain(
-      new EnvironmentVariableCredentialsProvider(),
-      new SystemPropertiesCredentialsProvider(),
-      new ProfileCredentialsProvider(awsProfileName)
-    )
-    val amazonS3Client = AmazonS3ClientBuilder.standard()
-      .withRegion(EU_WEST_1)
-      .withCredentials(credentialsProvider)
+    val credentials = AwsCredentialsProviderChain.builder()
+      .credentialsProviders(
+        EnvironmentVariableCredentialsProvider.create(),
+        SystemPropertyCredentialsProvider.create(),
+        ProfileCredentialsProvider.create(awsProfileName)
+      )
       .build()
+
+    val amazonS3Client = S3AsyncClient.builder()
+      .region(Region.EU_WEST_1)
+      .credentialsProvider(credentials)
+      .build()
+
     ApiClient("facia-tool-store", "DEV", AmazonSdkS3Client(amazonS3Client))
   }
 }
