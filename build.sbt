@@ -7,7 +7,7 @@ name := "facia-api-client"
 description := "Scala client for The Guardian's Facia JSON API"
 
 val sonatypeReleaseSettings = Seq(
-  releaseVersion := fromAggregatedAssessedCompatibilityWithLatestRelease().value,
+  // releaseVersion := fromAggregatedAssessedCompatibilityWithLatestRelease().value,
   releaseCrossBuild := true, // true if you cross-build the project for multiple Scala versions
   releaseProcess := Seq[ReleaseStep](
     checkSnapshotDependencies,
@@ -35,7 +35,19 @@ def artifactProducingSettings(supportScala3: Boolean) = Seq(
   libraryDependencies += scalaTest
 )
 
+lazy val fapiClient_core = (project in file("fapi-client-core")).settings(
+  libraryDependencies += eTagCachingS3Base,
+  artifactProducingSettings(supportScala3 = true)
+)
+
+lazy val fapiClient_s3_sdk_v2 = (project in file("fapi-s3-sdk-v2")).dependsOn(fapiClient_core).settings(
+  libraryDependencies += eTagCachingS3SdkV2,
+  artifactProducingSettings(supportScala3 = true)
+)
+
 lazy val root = (project in file(".")).aggregate(
+    fapiClient_core,
+    fapiClient_s3_sdk_v2,
     faciaJson_play28,
     faciaJson_play29,
     faciaJson_play30,
@@ -53,9 +65,10 @@ def playJsonSpecificProject(module: String, playJsonVersion: PlayJsonVersion) = 
   )
 
 def faciaJson(playJsonVersion: PlayJsonVersion) = playJsonSpecificProject("facia-json", playJsonVersion)
+  .dependsOn(fapiClient_core)
   .settings(
     libraryDependencies ++= Seq(
-      awsSdk,
+      awsS3SdkV1, // ideally, this would be pushed out to a separate FAPI artifact
       commonsIo,
       playJsonVersion.lib,
       "org.scala-lang.modules" %% "scala-collection-compat" % "2.11.0",
