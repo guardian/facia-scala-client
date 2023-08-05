@@ -107,7 +107,7 @@ def fapiClient_playJsonVersion(majorMinorVersion: String) =  baseProject("fapi-c
     )
   )
 
-lazy val crossCompileScala213 = crossScalaVersions := Seq(scalaVersion.value, "2.13.8")
+lazy val crossCompileScala213 = crossScalaVersions := Seq(scalaVersion.value, "2.13.11")
 
 
 lazy val faciaJson_play26 = faciaJson_playJsonVersion("26")
