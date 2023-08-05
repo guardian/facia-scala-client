@@ -18,7 +18,7 @@ trait IntegrationTestConfig extends ExecutionContext {
 
   implicit val capiClient: GuardianContentClient = {
     targetUrl.fold(ifEmpty = new GuardianContentClient(apiKey)) { targetUrl =>
-      new TestContentApiClient(apiKey, targetUrl)
+      TestContentApiClient(apiKey, targetUrl)
     }
   }
 

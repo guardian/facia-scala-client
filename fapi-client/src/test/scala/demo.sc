@@ -8,6 +8,8 @@ import com.gu.facia.client.{AmazonSdkS3Client, ApiClient}
 import scala.concurrent.Await
 import scala.concurrent.duration._
 
+implicit val executionContext = scala.concurrent.ExecutionContext.global
+
 // demo config
 val apiKey = "INSERT_CONTENT_API_KEY_HERE"
 val awsProfileName = "cmsFronts"
@@ -24,7 +26,6 @@ implicit val apiClient: ApiClient = {
   }
   ApiClient("aws-frontend-store", "DEV", AmazonSdkS3Client(amazonS3Client))
 }
-implicit val executionContext = scala.concurrent.ExecutionContext.global
 
 val frontResult = FAPI.frontForPath("uk/business").fold(
   { err => s"error: $err"},

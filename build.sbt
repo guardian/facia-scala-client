@@ -59,7 +59,7 @@ lazy val root = (project in file(".")).aggregate(
 
 val exactPlayJsonVersions = Map(
   "27" -> "2.7.4",
-  "28" -> "2.8.1"
+  "28" -> "2.8.2"
 )
 
 def baseProject(module: String, majorMinorVersion: String) = Project(s"$module-play$majorMinorVersion", file(s"$module-play$majorMinorVersion"))
@@ -68,8 +68,7 @@ def baseProject(module: String, majorMinorVersion: String) = Project(s"$module-p
     organization := "com.gu",
     resolvers ++= Seq(
       Resolver.sonatypeRepo("releases"),
-      Resolver.sonatypeRepo("public"),
-      Resolver.typesafeRepo("releases")
+      Resolver.sonatypeRepo("public")
     ),
     scalaVersion := "2.12.18",
     crossScalaVersions := Seq(scalaVersion.value, "2.13.11"),
