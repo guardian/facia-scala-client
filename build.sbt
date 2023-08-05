@@ -77,6 +77,7 @@ def baseProject(module: String, majorMinorVersion: String) = Project(s"$module-p
         "-deprecation",
         "-Xfatal-warnings"
     ),
+    libraryDependencies += scalaTest,
     publishTo := sonatypePublishToBundle.value,
     sonatypeReleaseSettings
   )
@@ -86,7 +87,6 @@ def faciaJson_playJsonVersion(majorMinorVersion: String) = baseProject("facia-js
     libraryDependencies ++= Seq(
       awsSdk,
       commonsIo,
-      specs2,
       "com.typesafe.play" %% "play-json" % exactPlayJsonVersions(majorMinorVersion),
       "org.scala-lang.modules" %% "scala-collection-compat" % "2.11.0",
       scalaLogging
@@ -99,7 +99,7 @@ def fapiClient_playJsonVersion(majorMinorVersion: String) =  baseProject("fapi-c
       contentApi,
       contentApiDefault,
       commercialShared,
-      scalaTest,
+      scalaTestMockito,
       mockito
     )
   )

@@ -1,13 +1,14 @@
 package com.gu.facia.api.utils
 
 import com.gu.contentapi.client.model.v1._
-import com.gu.facia.api.models.{ContentFormat, CuratedContent, LatestSnap, LinkSnap, SupportingCuratedContent}
+import com.gu.facia.api.models._
 import lib.TestContent
 import org.joda.time.DateTime
 import org.joda.time.format.ISODateTimeFormat
-import org.scalatest.{FreeSpec, Matchers}
+import org.scalatest.freespec.AnyFreeSpec
+import org.scalatest.matchers.should.Matchers
 
-class FaciaContentUtilsTest extends FreeSpec with Matchers with TestContent {
+class FaciaContentUtilsTest extends AnyFreeSpec with Matchers with TestContent {
 
   val emptyProperties = ContentProperties.fromResolvedMetaData(ResolvedMetaData.Default)
 

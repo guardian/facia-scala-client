@@ -1,13 +1,14 @@
 package com.gu.facia.api.models
 
-import com.gu.contentapi.client.model.v1.{TagType, ContentFields, Tag, Content}
+import com.gu.contentapi.client.model.v1.{Content, ContentFields, Tag, TagType}
 import com.gu.facia.api.utils.ResolvedMetaData
 import com.gu.facia.client.models.TrailMetaData
 import lib.TestContent
-import org.scalatest.{Matchers, FreeSpec}
-import play.api.libs.json.{JsString, JsBoolean}
+import org.scalatest.freespec.AnyFreeSpec
+import org.scalatest.matchers.should.Matchers
+import play.api.libs.json.{JsBoolean, JsString}
 
-class FaciaImageCutoutTest extends FreeSpec with Matchers with TestContent {
+class FaciaImageCutoutTest extends AnyFreeSpec with Matchers with TestContent {
 
   def trailMetaDataWithImageCutout(
     imageCutoutReplace: Boolean = false,

@@ -2,11 +2,12 @@ package com.gu.facia.api.utils
 
 import com.gu.contentapi.client.model.v1._
 import com.gu.facia.client.models.TrailMetaData
-import org.scalatest.{FreeSpec, Matchers}
-import play.api.libs.json.JsBoolean
 import lib.TestContent
+import org.scalatest.freespec.AnyFreeSpec
+import org.scalatest.matchers.should.Matchers
+import play.api.libs.json.JsBoolean
 
-class ResolvedMetaDataTest extends FreeSpec with Matchers with TestContent {
+class ResolvedMetaDataTest extends AnyFreeSpec with Matchers with TestContent {
 
   def tagWithId(id: String) = Tag(
     id = id,

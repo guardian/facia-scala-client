@@ -1,15 +1,15 @@
 package com.gu.facia.api.models
 
-import com.gu.contentapi.client.model.v1.{TagType, ContentFields, Tag, Content}
-import com.gu.facia.api.utils.{TagKicker, SectionKicker}
+import com.gu.contentapi.client.model.v1.{ContentFields, Tag, TagType}
+import com.gu.facia.api.utils.{ResolvedMetaData, SectionKicker, TagKicker}
 import com.gu.facia.client.models.{CollectionConfigJson, TrailMetaData}
 import lib.TestContent
-import org.scalatest.{FreeSpec, Matchers}
-import play.api.libs.json.{JsBoolean, JsString}
 import org.scalatest.OptionValues._
-import com.gu.facia.api.utils.ResolvedMetaData
+import org.scalatest.freespec.AnyFreeSpec
+import org.scalatest.matchers.should.Matchers
+import play.api.libs.json.{JsBoolean, JsString}
 
-class CuratedContentTest extends FreeSpec with Matchers with TestContent {
+class CuratedContentTest extends AnyFreeSpec with Matchers with TestContent {
 
   val collectionConfig = CollectionConfig.fromCollectionJson(CollectionConfigJson.withDefaults())
 
