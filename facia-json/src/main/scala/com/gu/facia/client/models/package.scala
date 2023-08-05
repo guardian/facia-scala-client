@@ -11,7 +11,7 @@ package object models {
     *
     * This makes me extremely sad.
     */
-  implicit val jodaDateTimeFormats = new Reads[DateTime] {
+  implicit val jodaDateTimeFormats: Reads[DateTime] = new Reads[DateTime] {
     override def reads(json: JsValue): JsResult[DateTime] = json match {
       case JsString(dateTimeString) => Try { DateTime.parse(dateTimeString) } match {
         case Success(dateTime) => JsSuccess(dateTime)

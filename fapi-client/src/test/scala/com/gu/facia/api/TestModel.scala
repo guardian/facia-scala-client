@@ -45,10 +45,10 @@ object TestModel {
     publishedSince: Option[CapiDateTime],
     validEditions: Option[Seq[String]]
   ) extends SponsorshipTargeting
-  implicit val testSponsorshipTargeting = Json.reads[TestSponsorshipTargeting]
+  implicit val testSponsorshipTargeting: Reads[TestSponsorshipTargeting] = Json.reads[TestSponsorshipTargeting]
 
   case class TestLogoDimensions(width: Int, height: Int) extends SponsorshipLogoDimensions
-  implicit val testLogoDimensionsFormat = Json.reads[TestLogoDimensions]
+  implicit val testLogoDimensionsFormat: Reads[TestLogoDimensions] = Json.reads[TestLogoDimensions]
 
   case class TestSponsorship(
     sponsorshipTypeName: String,
@@ -66,7 +66,7 @@ object TestModel {
     def validFrom = None
     def validTo = None
   }
-  implicit val testSponsorShipFormat = Json.reads[TestSponsorship]
+  implicit val testSponsorShipFormat: Reads[TestSponsorship] = Json.reads[TestSponsorship]
 
   case class StubSection(
     id: String,
@@ -77,7 +77,7 @@ object TestModel {
     def apiUrl: String = ""
     def editions: Seq[Edition] = Nil
   }
-  implicit val stubSectionFormat = Json.reads[StubSection]
+  implicit val stubSectionFormat: Reads[StubSection] = Json.reads[StubSection]
 
   case class StubFields(isInappropriateForSponsorship: Option[Boolean]) extends ContentFields {
     def headline: Option[String] = None
@@ -132,7 +132,7 @@ object TestModel {
     def showAffiliateLinks: Option[Boolean] = None
     def showTableOfContents: Option[Boolean] = None
   }
-  implicit val stubFieldsFormat = Json.reads[StubFields]
+  implicit val stubFieldsFormat: Reads[StubFields] = Json.reads[StubFields]
 
   case class StubTag(
     id: String,
@@ -164,7 +164,7 @@ object TestModel {
     def campaignInformationType: Option[String] = None
     def internalName: Option[String] = None
   }
-  implicit val stubTagFormat = Json.reads[StubTag]
+  implicit val stubTagFormat: Reads[StubTag] = Json.reads[StubTag]
 
   case class StubElement(
     id: String,
@@ -175,7 +175,7 @@ object TestModel {
     def galleryIndex: Option[Int] = None
     def assets: Seq[Asset] = Nil
   }
-  implicit val stubElementFormat = Json.reads[StubElement]
+  implicit val stubElementFormat: Reads[StubElement] = Json.reads[StubElement]
 
   case class StubItem(
     id: String,
@@ -206,7 +206,7 @@ object TestModel {
     def pillarName: Option[String] = None
     def aliasPaths: Option[Seq[AliasPath]] = None
   }
-  implicit val stubItemFormat = Json.reads[StubItem]
+  implicit val stubItemFormat: Reads[StubItem] = Json.reads[StubItem]
 
   def getContentItem(fileName: String): Content = getJson(fileName).validate[StubItem].get
   def getTag(fileName: String): Tag = getJson(fileName).validate[StubTag].get

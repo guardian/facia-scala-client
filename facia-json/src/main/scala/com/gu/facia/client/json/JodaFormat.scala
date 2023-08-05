@@ -38,5 +38,5 @@ object JodaReads {
 }
 
 object JodaFormat {
-  implicit val JodaDateTimeFormat = Format(JodaReads.JodaDateTimeReads, JodaWrites.JodaDateTimeWrites)
+  implicit val JodaDateTimeFormat: Format[DateTime] = Format(JodaReads.JodaDateTimeReads, JodaWrites.JodaDateTimeWrites)
 }

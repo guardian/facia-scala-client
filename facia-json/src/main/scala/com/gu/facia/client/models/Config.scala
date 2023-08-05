@@ -4,7 +4,7 @@ import com.typesafe.scalalogging.StrictLogging
 import play.api.libs.json._
 
 object Backfill {
-  implicit val jsonFormat = Json.format[Backfill]
+  implicit val jsonFormat: OFormat[Backfill] = Json.format[Backfill]
 }
 case class Backfill(
   `type`: String,
@@ -187,20 +187,20 @@ object TargetedTerritory {
 }
 
 object FrontsToolSettings {
-  implicit val jsonFormat = Json.format[FrontsToolSettings]
+  implicit val jsonFormat: OFormat[FrontsToolSettings] = Json.format[FrontsToolSettings]
 }
 
 case class FrontsToolSettings (
   displayEditWarning: Option[Boolean])
 
 object DisplayHintsJson {
-  implicit val jsonFormat = Json.format[DisplayHintsJson]
+  implicit val jsonFormat: OFormat[DisplayHintsJson] = Json.format[DisplayHintsJson]
 }
 
 case class DisplayHintsJson(maxItemsToDisplay: Option[Int])
 
 object CollectionConfigJson {
-  implicit val jsonFormat = Json.format[CollectionConfigJson]
+  implicit val jsonFormat: OFormat[CollectionConfigJson] = Json.format[CollectionConfigJson]
 
   val emptyConfig: CollectionConfigJson = withDefaults(None, None, None, None, None, None, None, None, None, None, None, None)
 
@@ -280,7 +280,7 @@ case class CollectionConfigJson(
 }
 
 object FrontJson {
-  implicit val jsonFormat = Json.format[FrontJson]
+  implicit val jsonFormat: OFormat[FrontJson] = Json.format[FrontJson]
 }
 
 case class FrontJson(
@@ -301,7 +301,7 @@ case class FrontJson(
 )
 
 object ConfigJson {
-  implicit val jsonFormat = Json.format[ConfigJson]
+  implicit val jsonFormat: OFormat[ConfigJson] = Json.format[ConfigJson]
   def empty = ConfigJson(Map.empty, Map.empty)
 }
 

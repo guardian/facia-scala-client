@@ -7,12 +7,12 @@ import com.gu.facia.client.json.JodaFormat._
 
 case class SlideshowAsset(src: String, width: String, height: String, caption: Option[String] = None)
 object SlideshowAsset {
-  implicit val slideshowAssetFormat = Json.format[SlideshowAsset]
+  implicit val slideshowAssetFormat: OFormat[SlideshowAsset] = Json.format[SlideshowAsset]
 }
 
 case class ImageSourceAsset(src: String, origin: String, width: String, height: String)
 object ImageSourceAsset {
-  implicit val imageSourceAssetFormat = Json.format[ImageSourceAsset]
+  implicit val imageSourceAssetFormat: OFormat[ImageSourceAsset] = Json.format[ImageSourceAsset]
 }
 
 sealed trait MetaDataCommonFields {
@@ -73,7 +73,7 @@ object SupportingItemMetaData {
 case class SupportingItemMetaData(json: Map[String, JsValue]) extends MetaDataCommonFields
 
 object SupportingItem {
-  implicit val jsonFormat = Json.format[SupportingItem]
+  implicit val jsonFormat: OFormat[SupportingItem] = Json.format[SupportingItem]
 }
 
 case class SupportingItem(
@@ -108,7 +108,7 @@ case class TrailMetaData(json: Map[String, JsValue]) extends MetaDataCommonField
 }
 
 object Trail {
-  implicit val jsonFormat = Json.format[Trail]
+  implicit val jsonFormat: OFormat[Trail] = Json.format[Trail]
 }
 
 case class Trail(
@@ -122,7 +122,7 @@ case class Trail(
 }
 
 object CollectionJson {
-  implicit val jsonFormat = Json.format[CollectionJson]
+  implicit val jsonFormat: OFormat[CollectionJson] = Json.format[CollectionJson]
 }
 
 case class CollectionJson(

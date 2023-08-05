@@ -66,12 +66,9 @@ def baseProject(module: String, majorMinorVersion: String) = Project(s"$module-p
   .settings(
     sourceDirectory := baseDirectory.value / s"../$module/src",
     organization := "com.gu",
-    resolvers ++= Seq(
-      Resolver.sonatypeRepo("releases"),
-      Resolver.sonatypeRepo("public")
-    ),
-    scalaVersion := "2.12.18",
-    crossScalaVersions := Seq(scalaVersion.value, "2.13.11"),
+    resolvers ++= Resolver.sonatypeOssRepos("releases"),
+    scalaVersion := "2.13.11",
+    crossScalaVersions := Seq(scalaVersion.value, "2.12.18"),
     scalacOptions := Seq(
         "-feature",
         "-deprecation",
