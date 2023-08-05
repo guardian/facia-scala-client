@@ -74,7 +74,7 @@ def baseProject(module: String, majorMinorVersion: String) = Project(s"$module-p
       Resolver.sonatypeRepo("public"),
       Resolver.typesafeRepo("releases")
     ),
-    scalaVersion := "2.12.16",
+    scalaVersion := "2.12.18",
     scalacOptions := Seq(
         "-feature",
         "-deprecation",
