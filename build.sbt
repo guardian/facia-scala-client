@@ -107,3 +107,7 @@ lazy val faciaJson_play28 = faciaJson_playJsonVersion("28")
 lazy val fapiClient_play27 = fapiClient_playJsonVersion("27").dependsOn(faciaJson_play27)
 lazy val fapiClient_play28 = fapiClient_playJsonVersion("28").dependsOn(faciaJson_play28)
 
+Test/testOptions += Tests.Argument(
+  TestFrameworks.ScalaTest,
+  "-u", s"test-results/scala-${scalaVersion.value}", "-o"
+)
