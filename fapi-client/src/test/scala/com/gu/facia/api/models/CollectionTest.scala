@@ -6,11 +6,13 @@ import com.gu.facia.api.utils._
 import com.gu.facia.client.models.{Branded, CollectionConfigJson, CollectionJson, Trail, TrailMetaData}
 import org.joda.time.DateTime
 import org.mockito.Mockito._
+import org.scalatest.OneInstancePerTest
+import org.scalatest.freespec.AnyFreeSpec
+import org.scalatest.matchers.should.Matchers
 import org.scalatestplus.mockito.MockitoSugar
-import org.scalatest.{FreeSpec, OneInstancePerTest, Matchers}
 import play.api.libs.json.{JsArray, JsString, Json}
 
-class CollectionTest extends FreeSpec with Matchers with MockitoSugar with OneInstancePerTest {
+class CollectionTest extends AnyFreeSpec with Matchers with MockitoSugar with OneInstancePerTest {
   val trailMetadata = spy(TrailMetaData.empty)
   val trail = Trail("internal-code/page/123", 1, None, Some(trailMetadata))
   val collectionJson = CollectionJson(

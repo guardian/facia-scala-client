@@ -4,9 +4,10 @@ import com.gu.contentapi.client.model.v1.ContentFields
 import com.gu.facia.api.utils.{ContentProperties, DefaultCardstyle, FaciaContentUtils}
 import com.gu.facia.client.models.{Trail, TrailMetaData}
 import lib.TestContent
-import org.scalatest.{FreeSpec, Matchers}
+import org.scalatest.freespec.AnyFreeSpec
+import org.scalatest.matchers.should.Matchers
 
-class FaciaContentHelperTest extends FreeSpec with Matchers with TestContent {
+class FaciaContentHelperTest extends AnyFreeSpec with Matchers with TestContent {
 
   val emptyTrail: Trail = Trail("no-id", 0, None, Option(TrailMetaData.empty))
 

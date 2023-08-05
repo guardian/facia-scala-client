@@ -1,14 +1,16 @@
 package com.gu.facia.api.utils
 
-import com.gu.facia.api.TestModel.{getContentItem, getTag}
+import com.gu.commercial.branding.{Branding, Logo, PaidMultiSponsorBranding, Sponsored}
 import com.gu.contentapi.client.model.v1.Content
+import com.gu.facia.api.TestModel.{getContentItem, getTag}
 import com.gu.facia.api.models.CollectionConfig
-import com.gu.facia.client.models.Branded
-import org.scalatest.{FlatSpec, Matchers, OptionValues}
-import com.gu.commercial.branding.{Branding, BrandingFinder, Sponsored, Logo, PaidMultiSponsorBranding}
 import com.gu.facia.api.utils.ContainerBrandingFinder._
+import com.gu.facia.client.models.Branded
+import org.scalatest.OptionValues
+import org.scalatest.flatspec.AnyFlatSpec
+import org.scalatest.matchers.should.Matchers
 
-class ContainerBrandingFinderTest extends FlatSpec with Matchers with OptionValues {
+class ContainerBrandingFinderTest extends AnyFlatSpec with Matchers with OptionValues {
 
   private def getTagBrandedItem = getContentItem("TagBrandedContent.json")
   private def getMultipleTagBrandedItem = getContentItem("TagBrandedContent-MultipleBrands.json")

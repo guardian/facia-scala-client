@@ -2,9 +2,11 @@ package com.gu.facia.api.models
 
 import com.gu.facia.client.models.FrontJson
 import org.scalatest._
+import org.scalatest.freespec.AnyFreeSpec
+import org.scalatest.matchers.should.Matchers
 import org.scalatestplus.mockito.MockitoSugar
 
-class FrontTest extends FreeSpec with Matchers with MockitoSugar with OneInstancePerTest {
+class FrontTest extends AnyFreeSpec with Matchers with MockitoSugar with OneInstancePerTest {
   "fromFrontJson" - {
     "when generating the canonical field" - {
       val frontJson = FrontJson(

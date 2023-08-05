@@ -1,8 +1,9 @@
 package com.gu.facia.api.contentapi
 
-import org.scalatest.{Matchers, FreeSpec}
+import org.scalatest.freespec.AnyFreeSpec
+import org.scalatest.matchers.should.Matchers
 
-class IdsSearchQueriesTest extends FreeSpec with Matchers {
+class IdsSearchQueriesTest extends AnyFreeSpec with Matchers {
 
   "limit batches" - {
     val fifty = List.fill(50)("abc").toSeq

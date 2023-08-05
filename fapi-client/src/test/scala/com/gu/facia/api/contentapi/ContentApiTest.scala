@@ -1,7 +1,6 @@
 package com.gu.facia.api.contentapi
 
 import java.net.URI
-
 import com.gu.contentapi.client.model.ItemQuery
 import com.gu.contentapi.client.model.v1.{Content, ItemResponse, SearchResponse, Tag}
 import com.gu.contentapi.client.{ContentApiClient, ContentApiQueries, GuardianContentClient}
@@ -10,11 +9,13 @@ import lib.ExecutionContext
 import org.mockito.Mockito._
 import org.scalatest._
 import org.scalatest.concurrent.ScalaFutures
+import org.scalatest.freespec.AnyFreeSpec
+import org.scalatest.matchers.should.Matchers
 import org.scalatestplus.mockito.MockitoSugar
 
 import scala.concurrent.Future
 
-class ContentApiTest extends FreeSpec
+class ContentApiTest extends AnyFreeSpec
   with Matchers
   with OptionValues
   with EitherValues
