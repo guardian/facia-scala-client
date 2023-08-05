@@ -1,10 +1,14 @@
 name: CI
 on:
-  pull_request:
   workflow_dispatch:
+  pull_request:
+
+  # triggering CI default branch improves caching
+  # see https://docs.github.com/en/free-pro-team@latest/actions/guides/caching-dependencies-to-speed-up-workflows#restrictions-for-accessing-a-cache
   push:
     branches:
       - main
+
 jobs:
   CI:
     runs-on: ubuntu-latest
@@ -12,16 +16,24 @@ jobs:
       id-token: write # Needed to interact with GitHub's OIDC Token endpoint
       contents: read
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout
+        uses: actions/checkout@v3
       - uses: aws-actions/configure-aws-credentials@v1 # Needed for S3 read access for the tests!
         with:
           # The AWS role is configured as a GitHub Repo secret, the value is the cloudformation-output of the
           # 'Facia-Scala-Client-CI-Role-Provider' cloudformation stack.
           role-to-assume: ${{ secrets.AWS_ROLE_FOR_TESTS }}
           aws-region: eu-west-1
-      - uses: coursier/cache-action@v6
-      - uses: olafurpg/setup-scala@v13
+      - name: Setup JDK
+        uses: actions/setup-java@v3
         with:
-          java-version: adopt@1.11
+          distribution: corretto
+          java-version: 11
+          cache: sbt
       - name: Build and Test
-        run: sbt test
+        run: sbt -v +test
+      - name: Test Summary
+        uses: test-summary/action@v2
+        with:
+          paths: "test-results/**/TEST-*.xml"
+        if: always()
