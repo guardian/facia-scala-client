@@ -1,6 +1,5 @@
 package com.gu.facia.api.contentapi
 
-import java.net.URI
 import com.gu.contentapi.client.model.ItemQuery
 import com.gu.contentapi.client.model.v1.{Content, ItemResponse, SearchResponse, Tag}
 import com.gu.contentapi.client.{ContentApiClient, ContentApiQueries, GuardianContentClient}
@@ -13,6 +12,7 @@ import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.should.Matchers
 import org.scalatestplus.mockito.MockitoSugar
 
+import java.net.URI
 import scala.concurrent.Future
 
 class ContentApiTest extends AnyFreeSpec
@@ -62,6 +62,14 @@ class ContentApiTest extends AnyFreeSpec
       "preserves existing show-fields when adding internaPageCode" in {
         val backfillWithFields = s"$backfill&show-fields=headline"
         ContentApi.buildBackfillQuery(backfillWithFields).toOption.get.parameters.get("show-fields").value should equal ("headline,internalPageCode")
+      }
+
+      "preserves pipe separated tags in search query parameters" in {
+        val backfillWithPipeSeparatedTags = "search?tag=tone/analysis|tone/comment&section=world|us-news|australia-news"
+
+        val searchQuery = ContentApi.buildBackfillQuery(backfillWithPipeSeparatedTags).toOption.get
+
+        searchQuery.parameters("tag") should be("(tone/analysis|tone/comment)")
       }
     }
 
