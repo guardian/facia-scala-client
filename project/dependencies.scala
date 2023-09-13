@@ -3,7 +3,7 @@ import sbt._
 object Dependencies {
   val capiVersion = "19.2.3"
 
-  val awsSdk = "com.amazonaws" % "aws-java-sdk-s3" % "1.12.523"
+  val awsSdk = "com.amazonaws" % "aws-java-sdk-s3" % "1.12.524"
   val commonsIo = "org.apache.commons" % "commons-io" % "1.3.2"
   val contentApi = "com.gu" %% "content-api-client" % capiVersion
   val contentApiDefault = "com.gu" %% "content-api-client-default" % capiVersion % Test
