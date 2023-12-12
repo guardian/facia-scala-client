@@ -27,8 +27,10 @@ val sonatypeReleaseSettings = Seq(
 lazy val root = (project in file(".")).aggregate(
     faciaJson_play27,
     faciaJson_play28,
+    faciaJson_play30,
     fapiClient_play27,
-    fapiClient_play28
+    fapiClient_play28,
+    fapiClient_play30
   ).settings(
     publish / skip := true,
     sonatypeReleaseSettings
@@ -36,7 +38,14 @@ lazy val root = (project in file(".")).aggregate(
 
 val exactPlayJsonVersions = Map(
   "27" -> "2.7.4",
-  "28" -> "2.8.2"
+  "28" -> "2.8.2",
+  "30" -> "3.0.1"
+)
+
+val playJsonGroupId = Map(
+  "27" -> "com.typesafe.play",
+  "28" -> "com.typesafe.play",
+  "30" -> "org.playframework"
 )
 
 def baseProject(module: String, majorMinorVersion: String) = Project(s"$module-play$majorMinorVersion", file(s"$module-play$majorMinorVersion"))
@@ -61,7 +70,7 @@ def faciaJson_playJsonVersion(majorMinorVersion: String) = baseProject("facia-js
     libraryDependencies ++= Seq(
       awsSdk,
       commonsIo,
-      "com.typesafe.play" %% "play-json" % exactPlayJsonVersions(majorMinorVersion),
+      playJsonGroupId(majorMinorVersion) %% "play-json" % exactPlayJsonVersions(majorMinorVersion),
       "org.scala-lang.modules" %% "scala-collection-compat" % "2.11.0",
       scalaLogging
     )
@@ -80,9 +89,11 @@ def fapiClient_playJsonVersion(majorMinorVersion: String) =  baseProject("fapi-c
 
 lazy val faciaJson_play27 = faciaJson_playJsonVersion("27")
 lazy val faciaJson_play28 = faciaJson_playJsonVersion("28")
+lazy val faciaJson_play30 = faciaJson_playJsonVersion("30")
 
 lazy val fapiClient_play27 = fapiClient_playJsonVersion("27").dependsOn(faciaJson_play27)
 lazy val fapiClient_play28 = fapiClient_playJsonVersion("28").dependsOn(faciaJson_play28)
+lazy val fapiClient_play30 = fapiClient_playJsonVersion("30").dependsOn(faciaJson_play30)
 
 Test/testOptions += Tests.Argument(
   TestFrameworks.ScalaTest,

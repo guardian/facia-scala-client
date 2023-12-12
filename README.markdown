@@ -1,4 +1,4 @@
-Facia Scala Client [![fapi-client-play28 Scala version support](https://index.scala-lang.org/guardian/facia-scala-client/fapi-client-play28/latest-by-scala-version.svg)](https://index.scala-lang.org/guardian/facia-scala-client/fapi-client-play28) [![Release](https://github.com/guardian/facia-scala-client/actions/workflows/release.yml/badge.svg)](https://github.com/guardian/facia-scala-client/actions/workflows/release.yml)
+Facia Scala Client [![fapi-client-play30 Scala version support](https://index.scala-lang.org/guardian/facia-scala-client/fapi-client-play30/latest-by-scala-version.svg)](https://index.scala-lang.org/guardian/facia-scala-client/fapi-client-play30) [![Release](https://github.com/guardian/facia-scala-client/actions/workflows/release.yml/badge.svg)](https://github.com/guardian/facia-scala-client/actions/workflows/release.yml)
 ==================
 
 Facia's Scala client is split into two parts.
@@ -11,13 +11,15 @@ easily-used types.
 
 ### Adding the dependency to SBT
 
+[![fapi-client-play30 Scala version support](https://index.scala-lang.org/guardian/facia-scala-client/fapi-client-play30/latest-by-scala-version.svg)](https://index.scala-lang.org/guardian/facia-scala-client/fapi-client-play30)
+
 [![fapi-client-play28 Scala version support](https://index.scala-lang.org/guardian/facia-scala-client/fapi-client-play28/latest-by-scala-version.svg)](https://index.scala-lang.org/guardian/facia-scala-client/fapi-client-play28)
 
 [![fapi-client-play27 Scala version support](https://index.scala-lang.org/guardian/facia-scala-client/fapi-client-play27/latest-by-scala-version.svg)](https://index.scala-lang.org/guardian/facia-scala-client/fapi-client-play27)
 
 Add the following line to your [SBT build file](https://www.scala-sbt.org/1.0/docs/Basic-Def.html):
 
-    libraryDependencies += "com.gu" %% "fapi-client-play28" % "3.3.3"
+    libraryDependencies += "com.gu" %% "fapi-client-play30" % "5.0.0"
 
 ### Using the library
 
@@ -36,6 +38,8 @@ The low-level Facia API client is designed to fetch and manipulate Facia's inter
 This library provides underlying behaviour for the main Fronts API client.
 
 ### Adding the dependency to SBT
+
+[![facia-json-play30 Scala version support](https://index.scala-lang.org/guardian/facia-scala-client/facia-json-play30/latest-by-scala-version.svg)](https://index.scala-lang.org/guardian/facia-scala-client/facia-json-play30)
 
 [![facia-json-play28 Scala version support](https://index.scala-lang.org/guardian/facia-scala-client/facia-json-play28/latest-by-scala-version.svg)](https://index.scala-lang.org/guardian/facia-scala-client/facia-json-play28)
 
