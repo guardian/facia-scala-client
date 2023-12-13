@@ -1,4 +1,4 @@
-Facia Scala Client [![fapi-client-play28 Scala version support](https://index.scala-lang.org/guardian/facia-scala-client/fapi-client-play28/latest-by-scala-version.svg)](https://index.scala-lang.org/guardian/facia-scala-client/fapi-client-play28)
+Facia Scala Client [![fapi-client-play28 Scala version support](https://index.scala-lang.org/guardian/facia-scala-client/fapi-client-play28/latest-by-scala-version.svg)](https://index.scala-lang.org/guardian/facia-scala-client/fapi-client-play28) [![Release](https://github.com/guardian/facia-scala-client/actions/workflows/release.yml/badge.svg)](https://github.com/guardian/facia-scala-client/actions/workflows/release.yml)
 ==================
 
 Facia's Scala client is split into two parts.
@@ -79,20 +79,13 @@ At the time of writing, Tools, CAPI, Dotcom, Mobile teams (Mapi) and Ophan all u
 
 ## Building a release
 
-[This document](https://docs.google.com/document/d/1rNXjoZDqZMsQblOVXPAIIOMWuwUKe3KzTCttuqS7AcY/edit) is a good source of information about releasing Guardian artefacts generally.
+This project uses the [`gha-scala-library-release-workflow`](https://github.com/guardian/gha-scala-library-release-workflow)
+to release to Maven Central. To release a new version, execute the
+[Release](https://github.com/guardian/facia-scala-client/actions/workflows/release.yml)
+workflow in the Actions tab on GitHub:
 
-To release a new version of the client:  
+![RunReleaseWorkflow](https://github.com/guardian/facia-scala-client/assets/52038/23920a58-80c6-4e6d-b5bc-6f58bf78f41d)
 
-1. Ensure you have a GPG key listed on a public key server.
-2. Ensure you are registered on Sonatype for Guardian projects.
-3. Open sbt and run the [sbt release](https://github.com/sbt/sbt-release) task:
+_You'll need to refresh the page to see the new workflow run._
 
-```
-$ sbt
-sbt:facia-api-client> release
-```
-
-4. When the release process has completed successfully, document the new version with a GitHub Release note
-   ([guide](https://docs.github.com/en/repositories/releasing-projects-on-github/managing-releases-in-a-repository))
-   describing the change (the `Generate release notes` button can give you a good start!):
-   https://github.com/guardian/facia-scala-client/releases/new
+https://github.com/guardian/facia-scala-client/assets/52038/dfc014d9-98f9-4d20-8977-0a20340083d1
