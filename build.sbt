@@ -1,5 +1,6 @@
 import Dependencies._
 import sbtrelease.ReleaseStateTransformations._
+import sbtversionpolicy.withsbtrelease.ReleaseVersion.fromAggregatedAssessedCompatibilityWithLatestRelease
 
 organization := "com.gu"
 
@@ -8,41 +9,18 @@ name := "facia-api-client"
 description := "Scala client for The Guardian's Facia JSON API"
 
 val sonatypeReleaseSettings = Seq(
-  licenses := Seq("Apache V2" -> url("http://www.apache.org/licenses/LICENSE-2.0.html")),
-  scmInfo := Some(ScmInfo(
-    url("https://github.com/guardian/facia-scala-client"),
-    "scm:git:git@github.com:guardian/facia-scala-client.git"
-  )),
-  pomExtra := (
-    <url>https://github.com/guardian/facia-scala-client</url>
-      <developers>
-        <developer>
-          <id>janua</id>
-          <name>Francis Carr</name>
-          <url>https://github.com/janua</url>
-        </developer>
-        <developer>
-          <id>adamnfish</id>
-          <name>Adam Fisher</name>
-          <url>https://github.com/adamnfish</url>
-        </developer>
-      </developers>
-    ),
+  licenses := Seq("Apache V2" -> url("https://www.apache.org/licenses/LICENSE-2.0.html")),
+  releaseVersion := fromAggregatedAssessedCompatibilityWithLatestRelease().value,
   releaseCrossBuild := true, // true if you cross-build the project for multiple Scala versions
   releaseProcess := Seq[ReleaseStep](
     checkSnapshotDependencies,
     inquireVersions,
     runClean,
-    runTest,
     setReleaseVersion,
     commitReleaseVersion,
     tagRelease,
-    // For non cross-build projects, use releaseStepCommand("publishSigned")
-    releaseStepCommandAndRemaining("+publishSigned"),
-    releaseStepCommand("sonatypeBundleRelease"),
     setNextVersion,
-    commitNextVersion,
-    pushChanges
+    commitNextVersion
   )
 )
 
@@ -52,7 +30,6 @@ lazy val root = (project in file(".")).aggregate(
     fapiClient_play27,
     fapiClient_play28
   ).settings(
-    publishArtifact := false,
     publish / skip := true,
     sonatypeReleaseSettings
   )
@@ -70,12 +47,12 @@ def baseProject(module: String, majorMinorVersion: String) = Project(s"$module-p
     scalaVersion := "2.13.11",
     crossScalaVersions := Seq(scalaVersion.value, "2.12.18"),
     scalacOptions := Seq(
+        "-release:11",
         "-feature",
         "-deprecation",
         "-Xfatal-warnings"
     ),
     libraryDependencies += scalaTest,
-    publishTo := sonatypePublishToBundle.value,
     sonatypeReleaseSettings
   )
 
