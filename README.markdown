@@ -19,7 +19,7 @@ easily-used types.
 
 Add the following line to your [SBT build file](https://www.scala-sbt.org/1.0/docs/Basic-Def.html):
 
-    libraryDependencies += "com.gu" %% "fapi-client-play30" % "5.0.0"
+    libraryDependencies += "com.gu" %% "fapi-client-play30" % "x.y.z"
 
 ### Using the library
 
