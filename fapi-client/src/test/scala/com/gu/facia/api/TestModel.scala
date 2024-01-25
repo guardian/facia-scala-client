@@ -185,6 +185,7 @@ object TestModel {
     tags: Seq[StubTag],
     elements: Option[Seq[StubElement]]
   ) extends Content {
+    val channels: Option[Seq[ContentChannel]] = None // alternatively, create StubContentChannel
     def `type`: ContentType = ContentType.list.find(byName(typeName)(_)).get
     def sectionId: Option[String] = None
     def sectionName: Option[String] = None
