@@ -7,6 +7,7 @@
   "activeSponsorships": [
     {
       "sponsorshipTypeName": "paid-content",
+      "sponsorshipPackage": "default",
       "sponsorName": "Las Vegas Tourism",
       "sponsorLogo": "https://static.theguardian.com/commercial/sponsor/16/Mar/2017/8b15f5a5-7d9d-4c8f-ae1b-5ab72654fd15-LasVegas_4c_207_Red.png",
       "sponsorLink": "http://viva.lasvegas.com",

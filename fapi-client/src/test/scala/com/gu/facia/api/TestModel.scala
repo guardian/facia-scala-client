@@ -29,6 +29,9 @@ object TestModel {
     implicit object SponsorshipType extends HasName[SponsorshipType] {
       def nameOf(t: SponsorshipType): String = t.name
     }
+    implicit object SponsorshipPackage extends HasName[SponsorshipPackage] {
+      def nameOf(t: SponsorshipPackage): String = t.name
+    }
   }
 
   private def byName[A](otherName: String)(a: A)(implicit n: HasName[A]): Boolean =
@@ -52,6 +55,7 @@ object TestModel {
 
   case class TestSponsorship(
     sponsorshipTypeName: String,
+    sponsorshipPackageName: Option[String],
     sponsorName: String,
     sponsorLogo: String,
     sponsorLink: String,
@@ -63,6 +67,8 @@ object TestModel {
   ) extends Sponsorship {
     def sponsorshipType: SponsorshipType =
       SponsorshipType.list.find(byName(sponsorshipTypeName)(_)).get
+    def sponsorshipPackage: Option[SponsorshipPackage] =
+      sponsorshipPackageName.flatMap(p => SponsorshipPackage.list.find(byName(p)(_)))
     def validFrom = None
     def validTo = None
   }
@@ -205,6 +211,7 @@ object TestModel {
     def pillarId: Option[String] = None
     def pillarName: Option[String] = None
     def aliasPaths: Option[Seq[AliasPath]] = None
+    def channels: Option[collection.Seq[ContentChannel]] = None
   }
   implicit val stubItemFormat: Reads[StubItem] = Json.reads[StubItem]
 
