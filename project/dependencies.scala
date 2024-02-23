@@ -1,7 +1,7 @@
 import sbt._
 
 object Dependencies {
-  val capiVersion = "19.2.3"
+  val capiVersion = "21.0.0"
 
   val awsSdk = "com.amazonaws" % "aws-java-sdk-s3" % "1.12.524"
   val commonsIo = "org.apache.commons" % "commons-io" % "1.3.2"
