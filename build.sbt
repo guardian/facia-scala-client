@@ -10,7 +10,7 @@ description := "Scala client for The Guardian's Facia JSON API"
 
 val sonatypeReleaseSettings = Seq(
   licenses := Seq("Apache V2" -> url("https://www.apache.org/licenses/LICENSE-2.0.html")),
-  releaseVersion := fromAggregatedAssessedCompatibilityWithLatestRelease().value,
+  // releaseVersion := fromAggregatedAssessedCompatibilityWithLatestRelease().value,
   releaseCrossBuild := true, // true if you cross-build the project for multiple Scala versions
   releaseProcess := Seq[ReleaseStep](
     checkSnapshotDependencies,
@@ -27,9 +27,11 @@ val sonatypeReleaseSettings = Seq(
 lazy val root = (project in file(".")).aggregate(
     faciaJson_play27,
     faciaJson_play28,
+    faciaJson_play29,
     faciaJson_play30,
     fapiClient_play27,
     fapiClient_play28,
+    fapiClient_play29,
     fapiClient_play30
   ).settings(
     publish / skip := true,
@@ -77,10 +79,12 @@ def fapiClient_playJsonVersion(playJsonVersion: PlayJsonVersion) =  baseProject(
 
 lazy val faciaJson_play27 = faciaJson_playJsonVersion(PlayJsonVersion.V27)
 lazy val faciaJson_play28 = faciaJson_playJsonVersion(PlayJsonVersion.V28)
+lazy val faciaJson_play29 = faciaJson_playJsonVersion(PlayJsonVersion.V29)
 lazy val faciaJson_play30 = faciaJson_playJsonVersion(PlayJsonVersion.V30)
 
 lazy val fapiClient_play27 = fapiClient_playJsonVersion(PlayJsonVersion.V27).dependsOn(faciaJson_play27)
 lazy val fapiClient_play28 = fapiClient_playJsonVersion(PlayJsonVersion.V28).dependsOn(faciaJson_play28)
+lazy val fapiClient_play29 = fapiClient_playJsonVersion(PlayJsonVersion.V29).dependsOn(faciaJson_play29)
 lazy val fapiClient_play30 = fapiClient_playJsonVersion(PlayJsonVersion.V30).dependsOn(faciaJson_play30)
 
 Test/testOptions += Tests.Argument(
