@@ -43,6 +43,8 @@ This library provides underlying behaviour for the main Fronts API client.
 
 [![facia-json-play30 Scala version support](https://index.scala-lang.org/guardian/facia-scala-client/facia-json-play30/latest-by-scala-version.svg)](https://index.scala-lang.org/guardian/facia-scala-client/facia-json-play30)
 
+[![facia-json-play29 Scala version support](https://index.scala-lang.org/guardian/facia-scala-client/facia-json-play29/latest-by-scala-version.svg)](https://index.scala-lang.org/guardian/facia-scala-client/facia-json-play29)
+
 [![facia-json-play28 Scala version support](https://index.scala-lang.org/guardian/facia-scala-client/facia-json-play28/latest-by-scala-version.svg)](https://index.scala-lang.org/guardian/facia-scala-client/facia-json-play28)
 
 [![facia-json-play27 Scala version support](https://index.scala-lang.org/guardian/facia-scala-client/facia-json-play27/latest-by-scala-version.svg)](https://index.scala-lang.org/guardian/facia-scala-client/facia-json-play27)
