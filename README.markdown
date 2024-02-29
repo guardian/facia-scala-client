@@ -13,6 +13,8 @@ easily-used types.
 
 [![fapi-client-play30 Scala version support](https://index.scala-lang.org/guardian/facia-scala-client/fapi-client-play30/latest-by-scala-version.svg)](https://index.scala-lang.org/guardian/facia-scala-client/fapi-client-play30)
 
+[![fapi-client-play29 Scala version support](https://index.scala-lang.org/guardian/facia-scala-client/fapi-client-play29/latest-by-scala-version.svg)](https://index.scala-lang.org/guardian/facia-scala-client/fapi-client-play29)
+
 [![fapi-client-play28 Scala version support](https://index.scala-lang.org/guardian/facia-scala-client/fapi-client-play28/latest-by-scala-version.svg)](https://index.scala-lang.org/guardian/facia-scala-client/fapi-client-play28)
 
 [![fapi-client-play27 Scala version support](https://index.scala-lang.org/guardian/facia-scala-client/fapi-client-play27/latest-by-scala-version.svg)](https://index.scala-lang.org/guardian/facia-scala-client/fapi-client-play27)
