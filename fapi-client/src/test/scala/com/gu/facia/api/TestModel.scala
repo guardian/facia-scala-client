@@ -5,6 +5,7 @@ import java.time.ZoneOffset.UTC
 import java.time.format.DateTimeFormatter.ISO_OFFSET_DATE_TIME
 
 import com.gu.contentapi.client.model.v1._
+import com.gu.contentapi.client.model.schemaorg.SchemaOrg
 import play.api.libs.json._
 
 import scala.io.Source
@@ -212,6 +213,7 @@ object TestModel {
     def pillarName: Option[String] = None
     def aliasPaths: Option[Seq[AliasPath]] = None
     def channels: Option[collection.Seq[ContentChannel]] = None
+    def schemaOrg: Option[SchemaOrg] = None
   }
   implicit val stubItemFormat: Reads[StubItem] = Json.reads[StubItem]
 
