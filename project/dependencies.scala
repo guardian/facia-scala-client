@@ -1,7 +1,7 @@
 import sbt._
 
 object Dependencies {
-  val capiVersion = "25.0.0"
+  val capiVersion = "26.0.0-PREVIEW.dbtest-content-api-model-preview-version.2024-03-27T1001.fa502f80" //TODO to get prod release
 
   val awsSdk = "com.amazonaws" % "aws-java-sdk-s3" % "1.12.673"
   val commonsIo = "org.apache.commons" % "commons-io" % "1.3.2"
