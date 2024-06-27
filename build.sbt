@@ -61,7 +61,7 @@ def faciaJson_playJsonVersion(playJsonVersion: PlayJsonVersion) = baseProject("f
       awsSdk,
       commonsIo,
       playJsonVersion.lib,
-      "org.scala-lang.modules" %% "scala-collection-compat" % "2.11.0",
+      "org.scala-lang.modules" %% "scala-collection-compat" % "2.12.0",
       scalaLogging
     )
   )
