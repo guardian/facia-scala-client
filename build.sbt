@@ -43,8 +43,8 @@ def baseProject(module: String, playJsonVersion: PlayJsonVersion) = Project(s"$m
     sourceDirectory := baseDirectory.value / s"../$module/src",
     organization := "com.gu",
     resolvers ++= Resolver.sonatypeOssRepos("releases"),
-    scalaVersion := "2.13.11",
-    crossScalaVersions := Seq(scalaVersion.value, "2.12.18"), // ++ (if (playJsonVersion.supportsScala3) Seq("3.3.1") else Seq.empty),
+    scalaVersion := "2.13.13",
+    crossScalaVersions := Seq(scalaVersion.value, "2.12.19"), // ++ (if (playJsonVersion.supportsScala3) Seq("3.3.1") else Seq.empty),
     scalacOptions := Seq(
         "-release:11",
         "-feature",
