@@ -37,7 +37,7 @@ case class CollectionConfig(
     frontsToolSettings: Option[FrontsToolSettings])
 
 object CollectionConfig {
-  val DefaultCollectionType = "fixed/small/slow-VI"
+  val DefaultCollectionType = "fixed/small/slow-IV"
 
   val empty = CollectionConfig(
     displayName = None,
