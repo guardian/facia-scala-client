@@ -9,7 +9,6 @@ import scala.concurrent.{ExecutionContext, Future, blocking}
 import scala.util.Try
 
 
-
 case class AmazonSdkS3Client(client: AmazonS3)(implicit executionContext: ExecutionContext) extends S3Client {
   def get(bucket: String, path: String): Future[FaciaResult] = Future {
     blocking {
