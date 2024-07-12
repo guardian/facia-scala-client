@@ -18,6 +18,9 @@ trait ApiClient {
 object ApiClient {
   private val Encoding = "utf-8"
 
+  /**
+   * Legacy constructor for creating a client that does not support caching. Use `ApiClient.withCaching()` instead.
+   */
   def apply(
     bucket: String,
     environment: String, // e.g., CODE, PROD, DEV ...
@@ -51,8 +54,8 @@ object ApiClient {
 
   def withCaching(
     bucket: String,
-    s3Fetching: Fetching[ObjectId, Array[Byte]], // Eg S3ObjectFetching(s3AsyncClient, Bytes).mapResponse(_.asByteArray())
     environment: Environment,
+    s3Fetching: Fetching[ObjectId, Array[Byte]], // Eg S3ObjectFetching(s3AsyncClient, Bytes).mapResponse(_.asByteArray())
     configureCollectionCache: ConfigCache = _.maximumSize(10000) // at most 1GB RAM worst case
   )(implicit ec: ExecutionContext): ApiClient =
     new ApiClient {
