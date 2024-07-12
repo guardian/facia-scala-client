@@ -2,7 +2,7 @@ import sbt._
 
 object Dependencies {
   val capiVersion = "31.0.2"
-  val eTagCachingVersion = "4.0.0-PREVIEW.suppress-caffeine-exceptions-by-allowing-fetch-results-to-indicate-missing-keys.2024-07-09T1701.cbc4304a"
+  val eTagCachingVersion = "4.0.0"
 
   val awsS3SdkV1 = "com.amazonaws" % "aws-java-sdk-s3" % "1.12.673"
   val eTagCachingS3Base = "com.gu.etag-caching" %% "aws-s3-base" % eTagCachingVersion

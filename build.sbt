@@ -80,6 +80,7 @@ def faciaJson(playJsonVersion: PlayJsonVersion) = playJsonSpecificProject("facia
 def fapiClient(playJsonVersion: PlayJsonVersion) =  playJsonSpecificProject("fapi-client", playJsonVersion)
   .settings(
     libraryDependencies ++= Seq(
+      eTagCachingS3SdkV2,
       contentApi,
       contentApiDefault,
       commercialShared,
