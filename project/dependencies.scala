@@ -25,7 +25,6 @@ object Dependencies {
   }
 
   object PlayJsonVersion {
-    val V27 = PlayJsonVersion("27", "com.typesafe.play", "2.7.4")
     val V28 = PlayJsonVersion("28", "com.typesafe.play", "2.8.2")
     val V29 = PlayJsonVersion("29", "com.typesafe.play", "2.10.4", supportsScala3 = true)
     val V30 = PlayJsonVersion("30", "org.playframework", "3.0.2", supportsScala3 = true)

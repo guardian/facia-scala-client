@@ -54,7 +54,7 @@ class ConfigSpec extends AnyFlatSpec with Matchers with OptionValues with Resour
 
     val collection = config.collections.get("uk/commentisfree/most-viewed/regular-stories").value
     val collectionWithTerritory = collection.copy(targetedTerritory = Some(NZTerritory))
-    val json = Json.toJson(collectionWithTerritory).toString()
-    json shouldBe """{"displayName":"Most popular","backfill":{"type":"capi","query":"uk/commentisfree?show-most-viewed=true&show-editors-picks=false&hide-recent-content=true"},"type":"news/most-popular","uneditable":true,"targetedTerritory":"NZ"}"""
+    val json = Json.toJson(collectionWithTerritory)
+    json shouldBe Json.parse("""{"displayName":"Most popular","backfill":{"type":"capi","query":"uk/commentisfree?show-most-viewed=true&show-editors-picks=false&hide-recent-content=true"},"type":"news/most-popular","uneditable":true,"targetedTerritory":"NZ"}""")
   }
 }
