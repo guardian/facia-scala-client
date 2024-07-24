@@ -59,7 +59,7 @@ def faciaJson(playJsonVersion: PlayJsonVersion) = playJsonSpecificProject("facia
       awsSdk,
       commonsIo,
       playJsonVersion.lib,
-      "org.scala-lang.modules" %% "scala-collection-compat" % "2.11.0",
+      "org.scala-lang.modules" %% "scala-collection-compat" % "2.12.0",
       scalaLogging
     ),
     artifactProducingSettings(supportScala3 = playJsonVersion.supportsScala3)
