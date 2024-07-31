@@ -30,6 +30,7 @@ sealed trait MetaDataCommonFields {
   lazy val imageSrcHeight: Option[String] = json.get("imageSrcHeight").flatMap(_.asOpt[String])
   lazy val isBreaking: Option[Boolean] = json.get("isBreaking").flatMap(_.asOpt[Boolean])
   lazy val isBoosted: Option[Boolean] = json.get("isBoosted").flatMap(_.asOpt[Boolean])
+  lazy val boostLevel: Option[String] = json.get("boostLevel").flatMap(_.asOpt[String])
   lazy val imageHide: Option[Boolean] = json.get("imageHide").flatMap(_.asOpt[Boolean])
   lazy val imageReplace: Option[Boolean] = json.get("imageReplace").flatMap(_.asOpt[Boolean])
   lazy val showMainVideo: Option[Boolean] = json.get("showMainVideo").flatMap(_.asOpt[Boolean])

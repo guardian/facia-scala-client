@@ -1,11 +1,13 @@
 package com.gu.facia.api.models
 
 import com.gu.contentapi.client.model.v1.ContentFields
-import com.gu.facia.api.utils.{ContentProperties, DefaultCardstyle, FaciaContentUtils}
+import com.gu.facia.api.utils.{BoostLevel, ContentProperties, DefaultCardstyle, FaciaContentUtils}
 import com.gu.facia.client.models.{Trail, TrailMetaData}
 import lib.TestContent
 import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.should.Matchers
+import com.gu.facia.client.models.CollectionConfigJson
+import play.api.libs.json.JsString
 
 class FaciaContentHelperTest extends AnyFreeSpec with Matchers with TestContent {
 
@@ -14,6 +16,7 @@ class FaciaContentHelperTest extends AnyFreeSpec with Matchers with TestContent 
   val emptyContentProperties =
     ContentProperties(
       isBreaking = false,
+      boostLevel = BoostLevel.Default,
       isBoosted = false,
       imageHide = false,
       showBoostedHeadline = false,
@@ -56,6 +59,18 @@ class FaciaContentHelperTest extends AnyFreeSpec with Matchers with TestContent 
     val cc = CuratedContent(content, None, Nil, DefaultCardstyle, ContentFormat.defaultContentFormat, "The headline", None, None, "myGroup", None, emptyContentProperties, None, None, None, None, None, Map.empty)
     FaciaContentUtils.href(cc) should equal(None)
   }
+
+  "should return default boost level for a CuratedContent if the boostLevel is not present in meta data" in {
+    val content = baseContent.copy(fields = Some(ContentFields(headline = Some("myTitle"), trailText = Some("Content trailtext"), byline = Some("myByline"))))
+    val cc = CuratedContent.fromTrailAndContent(content, TrailMetaData.empty, None, CollectionConfig.fromCollectionJson(CollectionConfigJson.withDefaults()))
+    FaciaContentUtils.boostLevel(cc) should equal(BoostLevel.Default)
+  }
+
+  "should return boost level for a CuratedContent" in {
+    val content = baseContent.copy(fields = Some(ContentFields(headline = Some("myTitle"), trailText = Some("Content trailtext"), byline = Some("myByline"))))
+    val cc = CuratedContent.fromTrailAndContent(content, TrailMetaData(Map("boostLevel" -> JsString("gigaboost"))), None, CollectionConfig.fromCollectionJson(CollectionConfigJson.withDefaults()))
+    FaciaContentUtils.boostLevel(cc) should equal(BoostLevel.GigaBoost)
+  }  
 
   "should return a href for a LatestSnap" in {
     val snap = LatestSnap("myId",
