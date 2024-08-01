@@ -7,7 +7,7 @@ name := "facia-api-client"
 description := "Scala client for The Guardian's Facia JSON API"
 
 val sonatypeReleaseSettings = Seq(
-  releaseVersion := fromAggregatedAssessedCompatibilityWithLatestRelease().value,
+  // releaseVersion := fromAggregatedAssessedCompatibilityWithLatestRelease().value,
   releaseCrossBuild := true, // true if you cross-build the project for multiple Scala versions
   releaseProcess := Seq[ReleaseStep](
     checkSnapshotDependencies,
