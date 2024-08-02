@@ -6,6 +6,8 @@ name := "facia-api-client"
 
 description := "Scala client for The Guardian's Facia JSON API"
 
+ThisBuild / scalaVersion := "2.13.14"
+
 val sonatypeReleaseSettings = Seq(
   releaseVersion := fromAggregatedAssessedCompatibilityWithLatestRelease().value,
   releaseCrossBuild := true, // true if you cross-build the project for multiple Scala versions
@@ -25,7 +27,6 @@ def artifactProducingSettings(supportScala3: Boolean) = Seq(
   organization := "com.gu",
   licenses := Seq(License.Apache2),
   resolvers ++= Resolver.sonatypeOssRepos("releases"),
-  scalaVersion := "2.13.14",
   crossScalaVersions := Seq(scalaVersion.value) ++ (if (supportScala3) Seq("3.3.3") else Seq.empty),
   scalacOptions := Seq(
     "-release:8",
