@@ -155,6 +155,12 @@ object FaciaContentUtils {
     linkSnap => linkSnap.properties.isBoosted,
     latestSnap => latestSnap.properties.isBoosted
   )
+  def boostLevel(fc: FaciaContent): BoostLevel = fold(fc)(
+    curatedContent => curatedContent.properties.boostLevel,
+    supportingCuratedContent => supportingCuratedContent.properties.boostLevel,
+    linkSnap => linkSnap.properties.boostLevel,
+    latestSnap => latestSnap.properties.boostLevel
+  )
   def showBoostedHeadline(fc: FaciaContent): Boolean = fold(fc)(
     curatedContent => curatedContent.properties.showBoostedHeadline,
     supportingCuratedContent => supportingCuratedContent.properties.showBoostedHeadline,
