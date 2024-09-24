@@ -53,7 +53,7 @@ object ContentApiUtils {
   }
 
   private def findBranding[T: Brandable](brandable: T): BrandingByEdition = {
-    val editions = Seq("uk", "us", "au", "int")
+    val editions = Seq("uk", "us", "au", "int", "eur")
     editions.map { edition =>
       edition -> BrandingFinder.findBranding(edition)(brandable)
     }.toMap
