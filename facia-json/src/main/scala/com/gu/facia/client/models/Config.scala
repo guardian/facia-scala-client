@@ -202,7 +202,7 @@ case class DisplayHintsJson(maxItemsToDisplay: Option[Int])
 object CollectionConfigJson {
   implicit val jsonFormat: OFormat[CollectionConfigJson] = Json.format[CollectionConfigJson]
 
-  val emptyConfig: CollectionConfigJson = withDefaults(None, None, None, None, None, None, None, None, None, None, None, None)
+  val emptyConfig: CollectionConfigJson = withDefaults(None, None, None, None, None, None, None, None, None, None, None, None, None)
 
   def withDefaults(
     displayName: Option[String] = None,
