@@ -226,7 +226,8 @@ object CollectionConfigJson {
     userVisibility: Option[String] = None,
     targetedTerritory: Option[TargetedTerritory] = None,
     platform: Option[CollectionPlatform] = None,
-    frontsToolSettings: Option[FrontsToolSettings] = None
+    frontsToolSettings: Option[FrontsToolSettings] = None,
+    suppressImages: Option[Boolean] = None
   ): CollectionConfigJson
     = CollectionConfigJson(
     displayName,
@@ -249,7 +250,8 @@ object CollectionConfigJson {
     userVisibility,
     targetedTerritory,
     platform,
-    frontsToolSettings
+    frontsToolSettings,
+    suppressImages
   )
 }
 
@@ -275,7 +277,7 @@ case class CollectionConfigJson(
   targetedTerritory: Option[TargetedTerritory],
   platform: Option[CollectionPlatform],
   frontsToolSettings: Option[FrontsToolSettings],
-
+  suppressImages: Option[Boolean]
   ) {
   val collectionType = `type`
 }
