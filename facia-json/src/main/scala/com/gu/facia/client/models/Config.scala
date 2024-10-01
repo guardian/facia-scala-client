@@ -191,8 +191,8 @@ object FrontsToolSettings {
 }
 
 case class FrontsToolSettings (
-  displayEditWarning: Option[Boolean],
-  suppressImages: Option[Boolean])
+  displayEditWarning: Option[Boolean]
+)
 
 object DisplayHintsJson {
   implicit val jsonFormat: OFormat[DisplayHintsJson] = Json.format[DisplayHintsJson]
