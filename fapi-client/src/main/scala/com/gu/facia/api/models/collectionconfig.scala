@@ -35,7 +35,9 @@ case class CollectionConfig(
     targetedTerritory: Option[TargetedTerritory],
     platform: CollectionPlatform = AnyPlatform,
     frontsToolSettings: Option[FrontsToolSettings],
-    suppressImages: Boolean)
+    suppressImages: Boolean,
+    containerStyle: Option[String],
+    imageAspectRatio: Option[String])
 
 object CollectionConfig {
   val DefaultCollectionType = "fixed/small/slow-IV"
@@ -62,7 +64,9 @@ object CollectionConfig {
     targetedTerritory = None,
     platform = AnyPlatform,
     frontsToolSettings = None,
-    suppressImages = false)
+    suppressImages = false,
+    containerStyle = None,
+    imageAspectRatio = None)
 
   def fromCollectionJson(collectionJson: CollectionConfigJson): CollectionConfig =
     CollectionConfig(
@@ -87,5 +91,7 @@ object CollectionConfig {
       collectionJson.targetedTerritory,
       collectionJson.platform.getOrElse(AnyPlatform),
       collectionJson.frontsToolSettings,
-      collectionJson.suppressImages.exists(identity))
+      collectionJson.suppressImages.exists(identity),
+      collectionJson.containerStyle,
+      collectionJson.imageAspectRatio)
 }
