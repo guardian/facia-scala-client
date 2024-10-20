@@ -1,7 +1,9 @@
 package com.gu.facia.client.models
 
+import ai.x.play.json.Encoders.encoder
 import com.typesafe.scalalogging.StrictLogging
 import play.api.libs.json._
+import ai.x.play.json.Jsonx
 
 object Backfill {
   implicit val jsonFormat: OFormat[Backfill] = Json.format[Backfill]
@@ -201,7 +203,7 @@ object DisplayHintsJson {
 case class DisplayHintsJson(maxItemsToDisplay: Option[Int])
 
 object CollectionConfigJson {
-  implicit val jsonFormat: OFormat[CollectionConfigJson] = Json.format[CollectionConfigJson]
+  implicit val jsonFormat: OFormat[CollectionConfigJson] = Jsonx.formatCaseClass[CollectionConfigJson]
 
   val emptyConfig: CollectionConfigJson = withDefaults(None, None, None, None, None, None, None, None, None, None, None, None)
 
@@ -227,7 +229,9 @@ object CollectionConfigJson {
     targetedTerritory: Option[TargetedTerritory] = None,
     platform: Option[CollectionPlatform] = None,
     frontsToolSettings: Option[FrontsToolSettings] = None,
-    suppressImages: Option[Boolean] = None
+    suppressImages: Option[Boolean] = None,
+    containerStyle: Option[String] = None,
+    imageAspectRatio: Option[String] = None
   ): CollectionConfigJson
     = CollectionConfigJson(
     displayName,
@@ -251,8 +255,9 @@ object CollectionConfigJson {
     targetedTerritory,
     platform,
     frontsToolSettings,
-    suppressImages
-  )
+    suppressImages,
+    containerStyle,
+    imageAspectRatio)
 }
 
 case class CollectionConfigJson(
@@ -277,7 +282,9 @@ case class CollectionConfigJson(
   targetedTerritory: Option[TargetedTerritory],
   platform: Option[CollectionPlatform],
   frontsToolSettings: Option[FrontsToolSettings],
-  suppressImages: Option[Boolean]
+  suppressImages: Option[Boolean],
+  containerStyle: Option[String],
+  imageAspectRatio: Option[String]
   ) {
   val collectionType = `type`
 }

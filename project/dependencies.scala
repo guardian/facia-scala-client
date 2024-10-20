@@ -12,6 +12,7 @@ object Dependencies {
   val scalaTest = "org.scalatest" %% "scalatest" % "3.2.18" % Test
   val scalaLogging = "com.typesafe.scala-logging" %% "scala-logging" % "3.9.5"
   val commercialShared = "com.gu" %% "commercial-shared" % "6.1.8"
+  val playJsonExtensions = "ai.x" %% "play-json-extensions" % "0.42.0"
 
   case class PlayJsonVersion(
     majorMinorVersion: String,
