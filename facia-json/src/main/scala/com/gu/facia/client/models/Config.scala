@@ -1,7 +1,9 @@
 package com.gu.facia.client.models
 
+import ai.x.play.json.Encoders.encoder
 import com.typesafe.scalalogging.StrictLogging
 import play.api.libs.json._
+import ai.x.play.json.Jsonx
 
 object Backfill {
   implicit val jsonFormat: OFormat[Backfill] = Json.format[Backfill]
@@ -201,7 +203,7 @@ object DisplayHintsJson {
 case class DisplayHintsJson(maxItemsToDisplay: Option[Int])
 
 object CollectionConfigJson {
-  implicit val jsonFormat: OFormat[CollectionConfigJson] = Json.format[CollectionConfigJson]
+  implicit val jsonFormat: OFormat[CollectionConfigJson] = Jsonx.formatCaseClass[CollectionConfigJson]
 
   val emptyConfig: CollectionConfigJson = withDefaults(None, None, None, None, None, None, None, None, None, None, None, None)
 

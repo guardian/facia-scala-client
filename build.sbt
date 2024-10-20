@@ -61,7 +61,8 @@ def faciaJson(playJsonVersion: PlayJsonVersion) = playJsonSpecificProject("facia
       commonsIo,
       playJsonVersion.lib,
       "org.scala-lang.modules" %% "scala-collection-compat" % "2.11.0",
-      scalaLogging
+      scalaLogging,
+      playJsonExtensions
     ),
     artifactProducingSettings(supportScala3 = playJsonVersion.supportsScala3)
   )
@@ -73,7 +74,8 @@ def fapiClient(playJsonVersion: PlayJsonVersion) =  playJsonSpecificProject("fap
       contentApiDefault,
       commercialShared,
       scalaTestMockito,
-      mockito
+      mockito,
+      playJsonExtensions
     ),
     artifactProducingSettings(supportScala3 = false) // currently blocked by contentApi & commercialShared clients
   )
