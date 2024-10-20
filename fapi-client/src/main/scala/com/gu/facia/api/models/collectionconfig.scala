@@ -1,6 +1,6 @@
 package com.gu.facia.api.models
 
-import com.gu.facia.client.models.{AnyPlatform, Backfill, CollectionConfigJson, CollectionPlatform, DisplayHintsJson, FrontsToolSettings, Metadata, TargetedTerritory}
+import com.gu.facia.client.models.{AnyPlatform, Backfill, CollectionConfigJson, CollectionPlatform, DisplayHintsJson, FrontsToolSettings, ContainerStylingSettings, Metadata, TargetedTerritory}
 
 case class Groups(groups: List[String])
 
@@ -35,7 +35,7 @@ case class CollectionConfig(
     targetedTerritory: Option[TargetedTerritory],
     platform: CollectionPlatform = AnyPlatform,
     frontsToolSettings: Option[FrontsToolSettings],
-    suppressImages: Boolean)
+    containerStylingSettings: Option[ContainerStylingSettings])
 
 object CollectionConfig {
   val DefaultCollectionType = "fixed/small/slow-IV"
@@ -62,7 +62,8 @@ object CollectionConfig {
     targetedTerritory = None,
     platform = AnyPlatform,
     frontsToolSettings = None,
-    suppressImages = false)
+    containerStylingSettings = None
+  )
 
   def fromCollectionJson(collectionJson: CollectionConfigJson): CollectionConfig =
     CollectionConfig(
@@ -87,5 +88,5 @@ object CollectionConfig {
       collectionJson.targetedTerritory,
       collectionJson.platform.getOrElse(AnyPlatform),
       collectionJson.frontsToolSettings,
-      collectionJson.suppressImages.exists(identity))
+      collectionJson.containerStylingSettings)
 }
