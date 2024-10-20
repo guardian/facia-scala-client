@@ -190,8 +190,18 @@ object FrontsToolSettings {
   implicit val jsonFormat: OFormat[FrontsToolSettings] = Json.format[FrontsToolSettings]
 }
 
+object ContainerStylingSettings {
+  implicit val jsonFormat: OFormat[ContainerStylingSettings] = Json.format[ContainerStylingSettings]
+}
+
 case class FrontsToolSettings (
   displayEditWarning: Option[Boolean]
+)
+
+case class ContainerStylingSettings(
+  suppressImages: Option[Boolean],
+  containerLevel: Option[String],
+  imageAspectRatio: Option[String]
 )
 
 object DisplayHintsJson {
@@ -227,9 +237,7 @@ object CollectionConfigJson {
     targetedTerritory: Option[TargetedTerritory] = None,
     platform: Option[CollectionPlatform] = None,
     frontsToolSettings: Option[FrontsToolSettings] = None,
-    suppressImages: Option[Boolean] = None,
-    containerStyle: Option[String] = None,
-    imageAspectRatio: Option[String] = None
+    containerStylingSettings: Option[ContainerStylingSettings] = None
   ): CollectionConfigJson
     = CollectionConfigJson(
     displayName,
@@ -253,9 +261,7 @@ object CollectionConfigJson {
     targetedTerritory,
     platform,
     frontsToolSettings,
-    suppressImages,
-    containerStyle,
-    imageAspectRatio)
+    containerStylingSettings)
 }
 
 case class CollectionConfigJson(
@@ -280,9 +286,7 @@ case class CollectionConfigJson(
   targetedTerritory: Option[TargetedTerritory],
   platform: Option[CollectionPlatform],
   frontsToolSettings: Option[FrontsToolSettings],
-  suppressImages: Option[Boolean],
-  containerStyle: Option[String],
-  imageAspectRatio: Option[String]
+  containerStylingSettings: Option[ContainerStylingSettings]
   ) {
   val collectionType = `type`
 }
