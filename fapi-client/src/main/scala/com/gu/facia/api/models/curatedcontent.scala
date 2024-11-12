@@ -14,8 +14,8 @@ case class ImageSlideshow(assets: List[Replace]) extends FaciaImage
 
 object FaciaImage {
 
-  def getFaciaImage(maybeContent: Option[Content], trailMeta: MetaDataCommonFields, resolvedMetadata: ResolvedMetaData): Option[FaciaImage] = {
-    if (resolvedMetadata.imageHide)
+  def getFaciaImage(maybeContent: Option[Content], trailMeta: MetaDataCommonFields, resolvedMetadata: ResolvedMetaData, suppressImages: Option[Boolean]): Option[FaciaImage] = {
+    if (resolvedMetadata.imageHide || suppressImages.getOrElse(false))
       None
     else if (resolvedMetadata.imageSlideshowReplace)
       imageSlideshow(trailMeta, resolvedMetadata)
@@ -111,7 +111,7 @@ object Snap {
           trail.safeMeta.href,
           trail.safeMeta.trailText,
           trail.safeMeta.group.getOrElse("0"),
-          FaciaImage.getFaciaImage(None, trail.safeMeta, resolvedMetaData),
+          FaciaImage.getFaciaImage(None, trail.safeMeta, resolvedMetaData, None),
           contentProperties,
           trail.safeMeta.byline,
           ItemKicker.fromTrailMetaData(trail.safeMeta),
@@ -137,7 +137,7 @@ object Snap {
         supportingItem.safeMeta.href,
         supportingItem.safeMeta.trailText,
         supportingItem.safeMeta.group.getOrElse("0"),
-        FaciaImage.getFaciaImage(None, supportingItem.safeMeta, resolvedMetaData),
+        FaciaImage.getFaciaImage(None, supportingItem.safeMeta, resolvedMetaData, None),
         contentProperties,
         supportingItem.safeMeta.byline,
         ItemKicker.fromTrailMetaData(supportingItem.safeMeta),
@@ -204,7 +204,7 @@ object LatestSnap {
       trail.safeMeta.href.orElse(maybeContent.map(_.id)),
       trail.safeMeta.trailText.orElse(maybeContent.flatMap(_.fields.flatMap(_.trailText))),
       trail.safeMeta.group.getOrElse("0"),
-      FaciaImage.getFaciaImage(maybeContent, trail.safeMeta, resolvedMetaData),
+      FaciaImage.getFaciaImage(maybeContent, trail.safeMeta, resolvedMetaData, None),
       ContentProperties.fromResolvedMetaData(resolvedMetaData),
       trail.safeMeta.byline.orElse(maybeContent.flatMap(_.fields.flatMap(_.byline))),
       ItemKicker.fromMaybeContentTrailMetaAndResolvedMetaData(maybeContent, trail.safeMeta, resolvedMetaData),
@@ -230,7 +230,7 @@ object LatestSnap {
       supportingItem.safeMeta.href,
       supportingItem.safeMeta.trailText.orElse(maybeContent.flatMap(_.fields.flatMap(_.trailText))),
       supportingItem.safeMeta.group.getOrElse("0"),
-      FaciaImage.getFaciaImage(maybeContent, supportingItem.safeMeta, resolvedMetaData),
+      FaciaImage.getFaciaImage(maybeContent, supportingItem.safeMeta, resolvedMetaData, None),
       ContentProperties.fromResolvedMetaData(resolvedMetaData),
       supportingItem.safeMeta.byline.orElse(maybeContent.flatMap(_.fields.flatMap(_.byline))),
       ItemKicker.fromMaybeContentTrailMetaAndResolvedMetaData(maybeContent, supportingItem.safeMeta, resolvedMetaData),
@@ -293,7 +293,7 @@ object CuratedContent {
       trailMetaData.href,
       trailMetaData.trailText.orElse(content.fields.flatMap(_.trailText)),
       trailMetaData.group.getOrElse("0"),
-      FaciaImage.getFaciaImage(Some(content), trailMetaData, resolvedMetaData),
+      FaciaImage.getFaciaImage(Some(content), trailMetaData, resolvedMetaData, Some(collectionConfig.suppressImages)),
       ContentProperties.fromResolvedMetaData(resolvedMetaData),
       trailMetaData.byline.orElse(content.fields.flatMap(_.byline)),
       ItemKicker.fromContentAndTrail(Option(content), trailMetaData, resolvedMetaData, Some(collectionConfig)),
@@ -323,7 +323,7 @@ object CuratedContent {
       trailMetaData.href,
       trailMetaData.trailText.orElse(content.fields.flatMap(_.trailText)),
       trailMetaData.group.getOrElse("0"),
-      FaciaImage.getFaciaImage(Some(content), trailMetaData, resolvedMetaData),
+      FaciaImage.getFaciaImage(Some(content), trailMetaData, resolvedMetaData, Some(collectionConfig.suppressImages)),
       ContentProperties.fromResolvedMetaData(resolvedMetaData),
       trailMetaData.byline.orElse(content.fields.flatMap(_.byline)),
       ItemKicker.fromContentAndTrail(Option(content), trailMetaData, resolvedMetaData, Some(collectionConfig)),
@@ -351,7 +351,7 @@ object SupportingCuratedContent {
       trailMetaData.href,
       trailMetaData.trailText.orElse(content.fields.flatMap(_.trailText)),
       trailMetaData.group.getOrElse("0"),
-      FaciaImage.getFaciaImage(Some(content), trailMetaData, resolvedMetaData),
+      FaciaImage.getFaciaImage(Some(content), trailMetaData, resolvedMetaData, None),
       ContentProperties.fromResolvedMetaData(resolvedMetaData),
       trailMetaData.byline.orElse(content.fields.flatMap(_.byline)),
       ItemKicker.fromContentAndTrail(Option(content), trailMetaData, resolvedMetaData, None)
