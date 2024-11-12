@@ -51,22 +51,22 @@ class FaciaImageSlideshowTest extends AnyFlatSpec with Matchers {
 
   "Image" should "give a None if when imageSlideshowReplace not set" in {
     val resolvedMetaData =  ResolvedMetaData.fromTrailMetaData(trailMetaDataWithoutImageSlideshowReplace)
-    FaciaImage.getFaciaImage(None, trailMetaDataWithoutImageSlideshowReplace, resolvedMetaData) should be (None)
+    FaciaImage.getFaciaImage(None, trailMetaDataWithoutImageSlideshowReplace, resolvedMetaData, None) should be (None)
   }
 
   it should "give back an ImageGallery when true" in {
     val resolvedMetaData =  ResolvedMetaData.fromTrailMetaData(trailMetaDataWithImageSlideshowReplace)
-    FaciaImage.getFaciaImage(None, trailMetaDataWithImageSlideshowReplace, resolvedMetaData) should be (Some(ImageSlideshow(List(Replace("theImageSrcOne", "theImageSrcWidthOne", "theImageSrcHeightOne", None), Replace("theImageSrcTwo", "theImageSrcWidthTwo", "theImageSrcHeightTwo", None), Replace("theImageSrcThree", "theImageSrcWidthThree", "theImageSrcHeightThree", None)))))
+    FaciaImage.getFaciaImage(None, trailMetaDataWithImageSlideshowReplace, resolvedMetaData, None) should be (Some(ImageSlideshow(List(Replace("theImageSrcOne", "theImageSrcWidthOne", "theImageSrcHeightOne", None), Replace("theImageSrcTwo", "theImageSrcWidthTwo", "theImageSrcHeightTwo", None), Replace("theImageSrcThree", "theImageSrcWidthThree", "theImageSrcHeightThree", None)))))
   }
 
   it should "give back an ImageGallery when true, with caption set on one image" in {
     val resolvedMetaData = ResolvedMetaData.fromTrailMetaData(trailMetaDataWithImageSlideshowReplaceAndCaptionSetOnOneImage)
-    FaciaImage.getFaciaImage(None, trailMetaDataWithImageSlideshowReplaceAndCaptionSetOnOneImage, resolvedMetaData) should be (Some(ImageSlideshow(List(Replace("theImageSrcOne", "theImageSrcWidthOne", "theImageSrcHeightOne", None), Replace("theImageSrcTwo", "theImageSrcWidthTwo", "theImageSrcHeightTwo", None), Replace("theImageSrcThree", "theImageSrcWidthThree", "theImageSrcHeightThree", None), Replace("theImageSrcFour", "theImageSrcWidthFour", "theImageSrcHeightFour", Some("exampleCaption"))))))
+    FaciaImage.getFaciaImage(None, trailMetaDataWithImageSlideshowReplaceAndCaptionSetOnOneImage, resolvedMetaData, None) should be (Some(ImageSlideshow(List(Replace("theImageSrcOne", "theImageSrcWidthOne", "theImageSrcHeightOne", None), Replace("theImageSrcTwo", "theImageSrcWidthTwo", "theImageSrcHeightTwo", None), Replace("theImageSrcThree", "theImageSrcWidthThree", "theImageSrcHeightThree", None), Replace("theImageSrcFour", "theImageSrcWidthFour", "theImageSrcHeightFour", Some("exampleCaption"))))))
   }
 
   it should "give back a None when imageSlideshowReplace true with no assets" in {
     val resolvedMetaData =  ResolvedMetaData.fromTrailMetaData(trailMetaDataWithImageSlideshowReplaceAndNoAssets)
-    FaciaImage.getFaciaImage(None, trailMetaDataWithImageSlideshowReplaceAndNoAssets, resolvedMetaData) should be (None)
+    FaciaImage.getFaciaImage(None, trailMetaDataWithImageSlideshowReplaceAndNoAssets, resolvedMetaData, None) should be (None)
   }
 }
 

@@ -40,16 +40,16 @@ class FaciaImageReplaceTest extends AnyFlatSpec with Matchers {
 
   "Image" should "give an Image of type default when it is not set" in {
     val resolvedMetaData =  ResolvedMetaData.fromTrailMetaData(trailMetaDataWithoutImageReplace)
-    FaciaImage.getFaciaImage(None, trailMetaDataWithoutImageReplace, resolvedMetaData) should be (None)
+    FaciaImage.getFaciaImage(None, trailMetaDataWithoutImageReplace, resolvedMetaData, None) should be (None)
   }
 
   it should "give back an Image when true" in {
     val resolvedMetaData =  ResolvedMetaData.fromTrailMetaData(trailMetaDataWithImageReplace)
-    FaciaImage.getFaciaImage(None, trailMetaDataWithImageReplace, resolvedMetaData) should be (Some(Replace("theImageSrc", "theImageSrcWidth", "theImageSrcHeight", None)))
+    FaciaImage.getFaciaImage(None, trailMetaDataWithImageReplace, resolvedMetaData, None) should be (Some(Replace("theImageSrc", "theImageSrcWidth", "theImageSrcHeight", None)))
   }
 
   it should "give back an ImageSource when imageSource present in metadata" in {
     val resolvedMetaData =  ResolvedMetaData.fromTrailMetaData(trailMetaDataWithImageSource)
-    FaciaImage.getFaciaImage(None, trailMetaDataWithImageSource, resolvedMetaData) should be (Some(Replace("theImageSrcAsset", "500", "300", None)))
+    FaciaImage.getFaciaImage(None, trailMetaDataWithImageSource, resolvedMetaData, None) should be (Some(Replace("theImageSrcAsset", "500", "300", None)))
   }
 }
