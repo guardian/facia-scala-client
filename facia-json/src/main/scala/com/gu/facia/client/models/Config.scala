@@ -13,9 +13,7 @@ case class Backfill(
 
 sealed trait Metadata
 
-case object Primary extends Metadata
-
-case object Secondary extends Metadata
+case object SecondaryLevel extends Metadata
 
 case object Canonical extends Metadata
 
@@ -51,8 +49,6 @@ case object SpecialReportAltPalette extends Metadata
 object Metadata extends StrictLogging {
 
   val tags: Map[String, Metadata] = Map(
-    "Primary" -> Primary,
-    "Secondary" -> Secondary,
     "Canonical" -> Canonical,
     "Special" -> Special,
     "Breaking" -> Breaking,
@@ -84,8 +80,7 @@ object Metadata extends StrictLogging {
     }
 
     def writes(cardStyle: Metadata) = cardStyle match {
-      case Primary => JsObject(Seq("type" -> JsString("Primary")))
-      case Secondary => JsObject(Seq("type" -> JsString("Secondary")))
+      case SecondaryLevel => JsObject(Seq("type" -> JsString("SecondaryLevel")))
       case Canonical => JsObject(Seq("type" -> JsString("Canonical")))
       case Special => JsObject(Seq("type" -> JsString("Special")))
       case Breaking => JsObject(Seq("type" -> JsString("Breaking")))
