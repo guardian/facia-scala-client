@@ -49,6 +49,7 @@ case object SpecialReportAltPalette extends Metadata
 object Metadata extends StrictLogging {
 
   val tags: Map[String, Metadata] = Map(
+    "SecondaryLevel" -> SecondaryLevel,
     "Canonical" -> Canonical,
     "Special" -> Special,
     "Breaking" -> Breaking,
