@@ -55,6 +55,7 @@ sealed trait MetaDataCommonFields {
   lazy val hideShowMore: Option[Boolean] = json.get("hideShowMore").flatMap(_.asOpt[Boolean])
   lazy val atomId: Option[String] = json.get("atomId").flatMap(_.asOpt[String])
   lazy val blockId: Option[String] = json.get("blockId").flatMap(_.asOpt[String])
+  lazy val aspectRatio: Option[String] = json.get("aspectRatio").flatMap(_.asOpt[String])
 }
 
 object SupportingItemMetaData {
