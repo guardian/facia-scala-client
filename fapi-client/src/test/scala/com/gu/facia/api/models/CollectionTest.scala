@@ -473,5 +473,13 @@ class CollectionTest extends AnyFreeSpec with Matchers with MockitoSugar with On
       )
       FaciaContentUtils.headline(FaciaContentUtils.supporting(result.head).head) should be ("straight banana")
     }
+    "AspectRatio.getAspectRatio" in {
+      val defaultCollectionType = collectionConfig.collectionType
+
+      CollectionConfig.AspectRatio.getAspectRatio("scrollable/feature") should be (CollectionConfig.AspectRatio.Portrait45)
+      CollectionConfig.AspectRatio.getAspectRatio("scrollable/small") should be (CollectionConfig.AspectRatio.Landscape54)
+      CollectionConfig.AspectRatio.getAspectRatio("scrollable/highlights") should be (CollectionConfig.AspectRatio.Square)
+      CollectionConfig.AspectRatio.getAspectRatio(defaultCollectionType) should be (CollectionConfig.AspectRatio.Landscape53)
+    }
   }
 }
