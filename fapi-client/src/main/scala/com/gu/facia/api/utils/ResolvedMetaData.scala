@@ -1,11 +1,8 @@
 package com.gu.facia.api.utils
 
-import com.fasterxml.jackson.databind.`type`.CollectionType
 import com.gu.facia.client.models.MetaDataCommonFields
 import play.api.libs.json.{Format, Json}
 import com.gu.contentapi.client.model.v1.{Content, Element, ElementType}
-import com.gu.facia.api.models.CollectionConfig
-
 
 sealed trait BoostLevel {
   def label: String
@@ -63,8 +60,7 @@ object ResolvedMetaData {
     showByline = false,
     imageCutoutReplace = false,
     showQuotedHeadline = false,
-    imageSlideshowReplace = false
-  )
+    imageSlideshowReplace = false)
 
   def fromTrailMetaData(trailMeta: MetaDataCommonFields): ResolvedMetaData =
     ResolvedMetaData(
@@ -115,7 +111,7 @@ object ResolvedMetaData {
       showQuotedHeadline = trailMeta.showQuotedHeadline.getOrElse(metaDataFromContent.showQuotedHeadline),
       imageSlideshowReplace = trailMeta.imageSlideshowReplace.getOrElse(metaDataFromContent.imageSlideshowReplace))}
 
-  def toMap(resolvedMetaData: ResolvedMetaData, collectionConfig: CollectionConfig): Map[String, Boolean] = resolvedMetaData match {
+  def toMap(resolvedMetaData: ResolvedMetaData): Map[String, Boolean] = resolvedMetaData match {
     case ResolvedMetaData(
       isBreaking,
       isBoosted,
@@ -150,8 +146,7 @@ object ResolvedMetaData {
         "showByline" -> showByline,
         "imageCutoutReplace" -> imageCutoutReplace,
         "showQuotedHeadline" -> showQuotedHeadline,
-        "imageSlideshowReplace" -> imageSlideshowReplace,
-      )
+        "imageSlideshowReplace" -> imageSlideshowReplace)
   }
 }
 
