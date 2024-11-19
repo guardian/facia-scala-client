@@ -88,4 +88,50 @@ object CollectionConfig {
       collectionJson.platform.getOrElse(AnyPlatform),
       collectionJson.frontsToolSettings,
       collectionJson.suppressImages.exists(identity))
+
+
+  sealed trait AspectRatio {
+    def label: String
+  }
+
+  object AspectRatio {
+    case object Portrait45 extends AspectRatio {
+      val label = "4:5"
+    }
+
+    case object Landscape53 extends AspectRatio {
+      val label = "5:3"
+    }
+
+    case object Landscape54 extends AspectRatio {
+      val label = "5:4"
+    }
+
+    case object Square extends AspectRatio {
+      val label = "1:1"
+    }
+
+    val Landscape54Collections = List(
+      "flexible/special",
+      "flexible/general",
+      "scrollable/small",
+      "scrollable/medium",
+      "static/medium/4",
+    )
+
+    val PortraitCollections = List(
+      "scrollable/feature",
+      "static/feature/2",
+    )
+
+    def getAspectRatio(collectionType: String): AspectRatio = {
+      collectionType match {
+        case _ if PortraitCollections.contains(collectionType) => Portrait45
+        case _ if Landscape54Collections.contains(collectionType) => Landscape54
+        case "scrollable/highlights" => Square
+        case _ => Landscape53
+      }
+    }
+  }
+
 }

@@ -6,50 +6,6 @@ import play.api.libs.json.{Format, Json}
 import com.gu.contentapi.client.model.v1.{Content, Element, ElementType}
 import com.gu.facia.api.models.CollectionConfig
 
-sealed trait AspectRatio {
-  def label: String
-}
-
-object AspectRatio {
-  case object Portrait45 extends AspectRatio {
-    val label = "4:5"
-  }
-
-  case object Landscape53 extends AspectRatio {
-    val label = "5:3"
-  }
-
-  case object Landscape54 extends AspectRatio {
-    val label = "5:4"
-  }
-
-  case object Square extends AspectRatio {
-    val label = "1:1"
-  }
-
-  val Landscape54Collections = List(
-    "flexible/special",
-    "flexible/general",
-    "scrollable/small",
-    "scrollable/medium",
-    "static/medium/4",
-  )
-
-  val PortraitCollections = List(
-    "scrollable/feature",
-    "static/feature/2",
-  )
-
-  def getAspectRatio(collectionType: String): AspectRatio = {
-    collectionType match {
-      case _ if PortraitCollections.contains(collectionType) => Portrait45
-      case _ if Landscape54Collections.contains(collectionType) => Landscape54
-      case "scrollable/highlights" => Square
-      case _ => Landscape53
-    }
-  }
-
-}
 
 sealed trait BoostLevel {
   def label: String
@@ -107,8 +63,8 @@ object ResolvedMetaData {
     showByline = false,
     imageCutoutReplace = false,
     showQuotedHeadline = false,
-    imageSlideshowReplace = false,
-    aspectRatio = AspectRatio.Landscape53.label)
+    imageSlideshowReplace = false
+  )
 
   def fromTrailMetaData(trailMeta: MetaDataCommonFields): ResolvedMetaData =
     ResolvedMetaData(
@@ -126,9 +82,7 @@ object ResolvedMetaData {
       showByline = trailMeta.showByline.exists(identity),
       imageCutoutReplace = trailMeta.imageCutoutReplace.exists(identity),
       showQuotedHeadline = trailMeta.showQuotedHeadline.exists(identity),
-      imageSlideshowReplace = trailMeta.imageSlideshowReplace.exists(identity),
-      aspectRatio = trailMeta.aspectRatio.getOrElse(AspectRatio.Landscape53.label)
-
+      imageSlideshowReplace = trailMeta.imageSlideshowReplace.exists(identity)
   )
 
   def fromContent(content: Content, cardStyle: CardStyle): ResolvedMetaData =
@@ -177,8 +131,7 @@ object ResolvedMetaData {
       showByline,
       imageCutoutReplace,
       showQuotedHeadline,
-      imageSlideshowReplace,
-      aspectRatio) =>
+      imageSlideshowReplace) =>
       Map(
         "isBreaking" -> isBreaking,
         "isBoosted" -> isBoosted,
@@ -198,10 +151,6 @@ object ResolvedMetaData {
         "imageCutoutReplace" -> imageCutoutReplace,
         "showQuotedHeadline" -> showQuotedHeadline,
         "imageSlideshowReplace" -> imageSlideshowReplace,
-        "aspectRatio.landscape53" -> (AspectRatio.getAspectRatio(collectionConfig.collectionType) == AspectRatio.Landscape53),
-        "aspectRatio.landscape54" -> (AspectRatio.getAspectRatio(collectionConfig.collectionType) == AspectRatio.Landscape54),
-        "aspectRatio.portrait45" -> (AspectRatio.getAspectRatio(collectionConfig.collectionType) == AspectRatio.Portrait45),
-        "aspectRatio.square" -> (AspectRatio.getAspectRatio(collectionConfig.collectionType) == AspectRatio.Square)
       )
   }
 }
@@ -221,11 +170,10 @@ case class ResolvedMetaData(
     showByline: Boolean,
     imageCutoutReplace: Boolean,
     showQuotedHeadline: Boolean,
-    imageSlideshowReplace: Boolean,
-    aspectRatio: String)
+    imageSlideshowReplace: Boolean)
 
 object ContentProperties {
-  def fromResolvedMetaData(resolvedMetaData: ResolvedMetaData, config: CollectionConfig): ContentProperties =
+  def fromResolvedMetaData(resolvedMetaData: ResolvedMetaData): ContentProperties =
     ContentProperties(
       isBreaking = resolvedMetaData.isBreaking,
       isBoosted = resolvedMetaData.isBoosted,
@@ -237,8 +185,7 @@ object ContentProperties {
       showKickerTag = resolvedMetaData.showKickerTag,
       showByline = resolvedMetaData.showByline,
       showQuotedHeadline = resolvedMetaData.showQuotedHeadline,
-      imageSlideshowReplace = resolvedMetaData.imageSlideshowReplace,
-      aspectRatio = AspectRatio.getAspectRatio(config.collectionType))
+      imageSlideshowReplace = resolvedMetaData.imageSlideshowReplace)
 }
 
 case class ContentProperties(
@@ -252,5 +199,4 @@ case class ContentProperties(
     showKickerTag: Boolean,
     showByline: Boolean,
     showQuotedHeadline: Boolean,
-    imageSlideshowReplace: Boolean,
-    aspectRatio: AspectRatio)
+    imageSlideshowReplace: Boolean)
