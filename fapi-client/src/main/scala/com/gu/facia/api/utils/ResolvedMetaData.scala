@@ -67,7 +67,7 @@ object ResolvedMetaData {
       isBreaking = trailMeta.isBreaking.exists(identity),
       isBoosted = trailMeta.isBoosted.exists(identity),
       boostLevel = trailMeta.boostLevel.getOrElse(BoostLevel.Default.label),
-      imageHide = trailMeta.imageHide.exists(identity),
+      imageHide = trailMeta.imageHide.exists(identity) || overrideImageHide(trailMeta),
       imageReplace = trailMeta.imageReplace.exists(identity),
       showKickerSection = trailMeta.showKickerSection.exists(identity),
       showKickerCustom = trailMeta.showKickerCustom.exists(identity),
@@ -92,18 +92,18 @@ object ResolvedMetaData {
         case _ => Default
       }
 
-
+  private def overrideImageHide(trailMeta: MetaDataCommonFields) = {
+    // If cutout requested but none available, automatically toggle hide media
+    trailMeta.imageCutoutReplace.getOrElse(false) && trailMeta.imageCutoutSrc.isEmpty
+  }
+  
   def fromContentAndTrailMetaData(content: Content, trailMeta: MetaDataCommonFields, cardStyle: CardStyle): ResolvedMetaData = {
     val metaDataFromContent = fromContent(content, cardStyle)
-
-    // If cutout requested but none available, automatically toggle hide media
-    val shouldHideMedia = trailMeta.imageCutoutReplace.getOrElse(false) && trailMeta.imageCutoutSrc.isEmpty
-
     metaDataFromContent.copy(
       isBreaking = trailMeta.isBreaking.getOrElse(metaDataFromContent.isBreaking),
       isBoosted = trailMeta.isBoosted.getOrElse(metaDataFromContent.isBoosted),
       boostLevel = trailMeta.boostLevel.getOrElse(BoostLevel.Default.label),
-      imageHide = trailMeta.imageHide.getOrElse(metaDataFromContent.imageHide || shouldHideMedia),
+      imageHide = trailMeta.imageHide.getOrElse(metaDataFromContent.imageHide) || overrideImageHide(trailMeta),
       imageReplace = trailMeta.imageReplace.getOrElse(metaDataFromContent.imageReplace),
       showKickerSection = trailMeta.showKickerSection.getOrElse(metaDataFromContent.showKickerSection),
       showKickerCustom = trailMeta.showKickerCustom.getOrElse(metaDataFromContent.showKickerCustom),
