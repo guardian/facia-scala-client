@@ -3,6 +3,7 @@ package com.gu.facia.api.models
 import com.gu.contentapi.client.model.v1.{Content, ContentFields, ContentType}
 import com.gu.facia.api.utils.ContentApiUtils._
 import com.gu.facia.api.utils._
+import com.gu.facia.client.models.CollectionConfigJson.emptyConfig.collectionType
 import com.gu.facia.client.models.{Branded, CollectionConfigJson, CollectionJson, Trail, TrailMetaData}
 import org.joda.time.DateTime
 import org.mockito.Mockito._
@@ -475,11 +476,15 @@ class CollectionTest extends AnyFreeSpec with Matchers with MockitoSugar with On
     }
     "AspectRatio.getAspectRatio" in {
       val defaultCollectionType = collectionConfig.collectionType
+      val defaultCollectionConfig = CollectionConfig.empty.copy(collectionType = defaultCollectionType)
+      val scrollableFeatureConfig = CollectionConfig.empty.copy(collectionType ="scrollable/feature")
+      val scrollableSmallConfig = CollectionConfig.empty.copy(collectionType ="scrollable/small")
+      val scrollableHighlightsConfig = CollectionConfig.empty.copy(collectionType ="scrollable/highlights")
 
-      CollectionConfig.AspectRatio.getAspectRatio("scrollable/feature") should be (CollectionConfig.AspectRatio.Portrait45)
-      CollectionConfig.AspectRatio.getAspectRatio("scrollable/small") should be (CollectionConfig.AspectRatio.Landscape54)
-      CollectionConfig.AspectRatio.getAspectRatio("scrollable/highlights") should be (CollectionConfig.AspectRatio.Square)
-      CollectionConfig.AspectRatio.getAspectRatio(defaultCollectionType) should be (CollectionConfig.AspectRatio.Landscape53)
+      CollectionConfig.getAspectRatio(defaultCollectionConfig) should be (CollectionConfig.AspectRatio.Landscape53)
+      CollectionConfig.getAspectRatio(scrollableFeatureConfig) should be (CollectionConfig.AspectRatio.Portrait45)
+      CollectionConfig.getAspectRatio(scrollableSmallConfig) should be (CollectionConfig.AspectRatio.Landscape54)
+      CollectionConfig.getAspectRatio(scrollableHighlightsConfig) should be (CollectionConfig.AspectRatio.Square)
     }
   }
 }
