@@ -30,11 +30,13 @@ trait IntegrationTestConfig extends ExecutionContext {
   def credentialsForDevAndCI(devProfile: String, ciCreds: AwsCredentialsProvider): AwsCredentialsProviderChain =
     AwsCredentialsProviderChain.of(ciCreds, ProfileCredentialsProvider.builder().profileName(devProfile).build())
 
+  private val s3AsyncClient: S3AsyncClient = S3AsyncClient.builder()
+    .region(Region.EU_WEST_1)
+    .credentialsProvider(credentialsForDevAndCI(awsProfileName, EnvironmentVariableCredentialsProvider.create())).build()
+
   implicit val apiClient: ApiClient = ApiClient.withCaching(
     "facia-tool-store",
     Environment.Dev,
-    S3ObjectFetching(S3AsyncClient.builder()
-      .region(Region.EU_WEST_1)
-      .credentialsProvider(credentialsForDevAndCI(awsProfileName, EnvironmentVariableCredentialsProvider.create())).build(), Bytes).mapResponse(_.asByteArray())
+    S3ObjectFetching.byteArrayWith(s3AsyncClient)
   )
 }

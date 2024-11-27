@@ -10,6 +10,6 @@ import software.amazon.awssdk.services.s3.model.NoSuchKeyException
 
 case class AwsSdkV2(s3AsyncClient: S3AsyncClient) extends S3FetchBehaviour {
   override val fetching: Fetching[ObjectId, Array[Byte]] =
-    S3ObjectFetching(s3AsyncClient, Bytes).mapResponse(_.asByteArray())
+    com.gu.etagcaching.aws.sdkv2.s3.S3ObjectFetching.byteArrayWith(s3AsyncClient)
 
 }

@@ -1,7 +1,7 @@
 package com.gu.facia.client
 
 import com.gu.etagcaching.FreshnessPolicy.AlwaysWaitForRefreshedValue
-import com.gu.etagcaching.aws.s3.ObjectId
+import com.gu.etagcaching.aws.s3.{ObjectId, S3ByteArrayFetching}
 import com.gu.etagcaching.fetching.Fetching
 import com.gu.etagcaching.{ConfigCache, ETagCache}
 import com.gu.facia.client.models.{CollectionJson, ConfigJson}
@@ -52,29 +52,31 @@ object ApiClient {
       throw JsonDeserialisationError(s"Could not deserialize JSON")
     }
 
+  /**
+   * @param s3Fetching eg `S3ObjectFetching.byteArrayWith(s3AsyncClient)`
+   */
   def withCaching(
     bucket: String,
     environment: Environment,
-    s3Fetching: Fetching[ObjectId, Array[Byte]], // Eg S3ObjectFetching(s3AsyncClient, Bytes).mapResponse(_.asByteArray())
+    s3Fetching: S3ByteArrayFetching,
     configureCollectionCache: ConfigCache = _.maximumSize(10000) // at most 1GB RAM worst case
-  )(implicit ec: ExecutionContext): ApiClient =
-    new ApiClient {
-      private val fetching =
-        s3Fetching.keyOn[String](path => ObjectId(bucket, path))
+  )(implicit ec: ExecutionContext): ApiClient = new ApiClient {
+    private val fetching =
+      s3Fetching.keyOn[String](path => ObjectId(bucket, path))
 
-      def eTagCache[B: Format](configureCache: ConfigCache) = new ETagCache(
-        fetching.thenParsing(parseBytes[B]),
-        AlwaysWaitForRefreshedValue,
-        configureCache
-      )
+    def eTagCache[B: Format](configureCache: ConfigCache) = new ETagCache(
+      fetching.thenParsing(parseBytes[B]),
+      AlwaysWaitForRefreshedValue,
+      configureCache
+    )
 
-      private val configCache = eTagCache[ConfigJson](_.maximumSize(1))
-      private val collectionCache = eTagCache[CollectionJson](configureCollectionCache)
+    private val configCache = eTagCache[ConfigJson](_.maximumSize(1))
+    private val collectionCache = eTagCache[CollectionJson](configureCollectionCache)
 
-      override def config: Future[ConfigJson] =
-        configCache.get(environment.configS3Path).map(getOrWarnAboutMissingConfig)
+    override def config: Future[ConfigJson] =
+      configCache.get(environment.configS3Path).map(getOrWarnAboutMissingConfig)
 
-      override def collection(id: String): Future[Option[CollectionJson]] =
-        collectionCache.get(environment.collectionS3Path(id))
-    }
+    override def collection(id: String): Future[Option[CollectionJson]] =
+      collectionCache.get(environment.collectionS3Path(id))
+  }
 }

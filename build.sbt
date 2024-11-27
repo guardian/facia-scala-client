@@ -42,14 +42,8 @@ lazy val fapiClient_core = (project in file("fapi-client-core")).settings(
   artifactProducingSettings(supportScala3 = true)
 )
 
-lazy val fapiClient_s3_sdk_v2 = (project in file("fapi-s3-sdk-v2")).dependsOn(fapiClient_core).settings(
-  libraryDependencies += eTagCachingS3SdkV2,
-  artifactProducingSettings(supportScala3 = true)
-)
-
 lazy val root = (project in file(".")).aggregate(
     fapiClient_core,
-    fapiClient_s3_sdk_v2,
     faciaJson_play28,
     faciaJson_play29,
     faciaJson_play30,
