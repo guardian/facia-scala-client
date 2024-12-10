@@ -166,6 +166,21 @@ case class LinkSnap(
   override val brandingByEdition: BrandingByEdition
 ) extends Snap
 
+case class ReferenceSnap (
+  id: String,
+  maybeFrontPublicationDate: Option[Long],
+  snapType: String,
+  headline: Option[String],
+  href: Option[String],
+  trailText: Option[String],
+  group: String,
+  image: Option[FaciaImage],
+  properties: ContentProperties,
+  kicker: Option[ItemKicker],
+  snapReferenceType: String,
+  snapReferenceId: String,
+) extends Snap
+
 case class LatestSnap(
   id: String,
   maybeFrontPublicationDate: Option[Long],
