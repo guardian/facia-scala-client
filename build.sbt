@@ -1,120 +1,92 @@
-import Dependencies._
-import sbtrelease.ReleaseStateTransformations._
-
-organization := "com.gu"
+import Dependencies.*
+import sbtrelease.ReleaseStateTransformations.*
+import sbtversionpolicy.withsbtrelease.ReleaseVersion.fromAggregatedAssessedCompatibilityWithLatestRelease
 
 name := "facia-api-client"
 
 description := "Scala client for The Guardian's Facia JSON API"
 
+ThisBuild / scalaVersion := "2.13.14"
+
 val sonatypeReleaseSettings = Seq(
-  licenses := Seq("Apache V2" -> url("http://www.apache.org/licenses/LICENSE-2.0.html")),
-  scmInfo := Some(ScmInfo(
-    url("https://github.com/guardian/facia-scala-client"),
-    "scm:git:git@github.com:guardian/facia-scala-client.git"
-  )),
-  pomExtra := (
-    <url>https://github.com/guardian/facia-scala-client</url>
-      <developers>
-        <developer>
-          <id>janua</id>
-          <name>Francis Carr</name>
-          <url>https://github.com/janua</url>
-        </developer>
-        <developer>
-          <id>adamnfish</id>
-          <name>Adam Fisher</name>
-          <url>https://github.com/adamnfish</url>
-        </developer>
-      </developers>
-    ),
+  releaseVersion := fromAggregatedAssessedCompatibilityWithLatestRelease().value,
   releaseCrossBuild := true, // true if you cross-build the project for multiple Scala versions
   releaseProcess := Seq[ReleaseStep](
     checkSnapshotDependencies,
     inquireVersions,
     runClean,
-    runTest,
     setReleaseVersion,
     commitReleaseVersion,
     tagRelease,
-    // For non cross-build projects, use releaseStepCommand("publishSigned")
-    releaseStepCommandAndRemaining("+publishSigned"),
-    releaseStepCommand("sonatypeBundleRelease"),
     setNextVersion,
-    commitNextVersion,
-    pushChanges
+    commitNextVersion
   )
 )
 
+def artifactProducingSettings(supportScala3: Boolean) = Seq(
+  organization := "com.gu",
+  licenses := Seq(License.Apache2),
+  resolvers ++= Resolver.sonatypeOssRepos("releases"),
+  crossScalaVersions := Seq(scalaVersion.value) ++ (if (supportScala3) Seq("3.3.3") else Seq.empty),
+  scalacOptions := Seq(
+    "-release:8",
+    "-feature",
+    "-deprecation",
+    "-Xfatal-warnings"
+  ),
+  libraryDependencies += scalaTest
+)
+
 lazy val root = (project in file(".")).aggregate(
-    faciaJson_play26,
-    faciaJson_play27,
     faciaJson_play28,
-    fapiClient_play26,
-    fapiClient_play27,
-    fapiClient_play28
+    faciaJson_play29,
+    faciaJson_play30,
+    fapiClient_play28,
+    fapiClient_play29,
+    fapiClient_play30
   ).settings(
-    publishArtifact := false,
     publish / skip := true,
     sonatypeReleaseSettings
   )
 
-val exactPlayJsonVersions = Map(
-  "26" -> "2.6.13",
-  "27" -> "2.7.4",
-  "28" -> "2.8.1"
-)
-
-def baseProject(module: String, majorMinorVersion: String) = Project(s"$module-play$majorMinorVersion", file(s"$module-play$majorMinorVersion"))
+def playJsonSpecificProject(module: String, playJsonVersion: PlayJsonVersion) = Project(s"$module-${playJsonVersion.projectId}", file(s"$module-${playJsonVersion.projectId}"))
   .settings(
-    sourceDirectory := baseDirectory.value / s"../$module/src",
-    organization := "com.gu",
-    resolvers ++= Seq(
-      Resolver.sonatypeRepo("releases"),
-      Resolver.sonatypeRepo("public"),
-      Resolver.typesafeRepo("releases")
-    ),
-    scalaVersion := "2.12.16",
-    scalacOptions := Seq(
-        "-feature",
-        "-deprecation",
-        "-Xfatal-warnings"
-    ),
-    publishTo := sonatypePublishToBundle.value,
-    sonatypeReleaseSettings
+    sourceDirectory := baseDirectory.value / s"../$module/src"
   )
 
-def faciaJson_playJsonVersion(majorMinorVersion: String) = baseProject("facia-json", majorMinorVersion)
+def faciaJson(playJsonVersion: PlayJsonVersion) = playJsonSpecificProject("facia-json", playJsonVersion)
   .settings(
     libraryDependencies ++= Seq(
       awsSdk,
       commonsIo,
-      specs2,
-      "com.typesafe.play" %% "play-json" % exactPlayJsonVersions(majorMinorVersion),
-      "org.scala-lang.modules" %% "scala-collection-compat" % "2.7.0",
+      playJsonVersion.lib,
+      "org.scala-lang.modules" %% "scala-collection-compat" % "2.11.0",
       scalaLogging
-    )
+    ),
+    artifactProducingSettings(supportScala3 = playJsonVersion.supportsScala3)
   )
 
-def fapiClient_playJsonVersion(majorMinorVersion: String) =  baseProject("fapi-client", majorMinorVersion)
+def fapiClient(playJsonVersion: PlayJsonVersion) =  playJsonSpecificProject("fapi-client", playJsonVersion)
   .settings(
     libraryDependencies ++= Seq(
       contentApi,
       contentApiDefault,
       commercialShared,
-      scalaTest,
+      scalaTestMockito,
       mockito
-    )
+    ),
+    artifactProducingSettings(supportScala3 = false) // currently blocked by contentApi & commercialShared clients
   )
 
-lazy val crossCompileScala213 = crossScalaVersions := Seq(scalaVersion.value, "2.13.8")
+lazy val faciaJson_play28 = faciaJson(PlayJsonVersion.V28)
+lazy val faciaJson_play29 = faciaJson(PlayJsonVersion.V29)
+lazy val faciaJson_play30 = faciaJson(PlayJsonVersion.V30)
 
+lazy val fapiClient_play28 = fapiClient(PlayJsonVersion.V28).dependsOn(faciaJson_play28)
+lazy val fapiClient_play29 = fapiClient(PlayJsonVersion.V29).dependsOn(faciaJson_play29)
+lazy val fapiClient_play30 = fapiClient(PlayJsonVersion.V30).dependsOn(faciaJson_play30)
 
-lazy val faciaJson_play26 = faciaJson_playJsonVersion("26")
-lazy val faciaJson_play27 = faciaJson_playJsonVersion("27").settings(crossCompileScala213)
-lazy val faciaJson_play28 = faciaJson_playJsonVersion("28").settings(crossCompileScala213)
-
-lazy val fapiClient_play26 = fapiClient_playJsonVersion("26").dependsOn(faciaJson_play26)
-lazy val fapiClient_play27 = fapiClient_playJsonVersion("27").dependsOn(faciaJson_play27).settings(crossCompileScala213)
-lazy val fapiClient_play28 = fapiClient_playJsonVersion("28").dependsOn(faciaJson_play28).settings(crossCompileScala213)
-
+Test/testOptions += Tests.Argument(
+  TestFrameworks.ScalaTest,
+  "-u", s"test-results/scala-${scalaVersion.value}", "-o"
+)

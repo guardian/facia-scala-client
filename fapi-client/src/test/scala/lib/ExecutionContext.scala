@@ -1,5 +1,7 @@
 package lib
 
+import scala.concurrent.{ExecutionContext => EC}
+
 trait ExecutionContext {
-  implicit val executionContext = scala.concurrent.ExecutionContext.global
+  implicit val executionContext: EC = EC.global
 }

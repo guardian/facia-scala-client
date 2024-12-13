@@ -4,7 +4,7 @@ import com.typesafe.scalalogging.StrictLogging
 import play.api.libs.json._
 
 object Backfill {
-  implicit val jsonFormat = Json.format[Backfill]
+  implicit val jsonFormat: OFormat[Backfill] = Json.format[Backfill]
 }
 case class Backfill(
   `type`: String,
@@ -12,6 +12,8 @@ case class Backfill(
 )
 
 sealed trait Metadata
+
+case object Secondary extends Metadata
 
 case object Canonical extends Metadata
 
@@ -47,6 +49,7 @@ case object SpecialReportAltPalette extends Metadata
 object Metadata extends StrictLogging {
 
   val tags: Map[String, Metadata] = Map(
+    "Secondary" -> Secondary,
     "Canonical" -> Canonical,
     "Special" -> Special,
     "Breaking" -> Breaking,
@@ -78,6 +81,7 @@ object Metadata extends StrictLogging {
     }
 
     def writes(cardStyle: Metadata) = cardStyle match {
+      case Secondary => JsObject(Seq("type" -> JsString("Secondary")))
       case Canonical => JsObject(Seq("type" -> JsString("Canonical")))
       case Special => JsObject(Seq("type" -> JsString("Special")))
       case Breaking => JsObject(Seq("type" -> JsString("Breaking")))
@@ -187,20 +191,21 @@ object TargetedTerritory {
 }
 
 object FrontsToolSettings {
-  implicit val jsonFormat = Json.format[FrontsToolSettings]
+  implicit val jsonFormat: OFormat[FrontsToolSettings] = Json.format[FrontsToolSettings]
 }
 
 case class FrontsToolSettings (
-  displayEditWarning: Option[Boolean])
+  displayEditWarning: Option[Boolean]
+)
 
 object DisplayHintsJson {
-  implicit val jsonFormat = Json.format[DisplayHintsJson]
+  implicit val jsonFormat: OFormat[DisplayHintsJson] = Json.format[DisplayHintsJson]
 }
 
 case class DisplayHintsJson(maxItemsToDisplay: Option[Int])
 
 object CollectionConfigJson {
-  implicit val jsonFormat = Json.format[CollectionConfigJson]
+  implicit val jsonFormat: OFormat[CollectionConfigJson] = Json.format[CollectionConfigJson]
 
   val emptyConfig: CollectionConfigJson = withDefaults(None, None, None, None, None, None, None, None, None, None, None, None)
 
@@ -225,7 +230,8 @@ object CollectionConfigJson {
     userVisibility: Option[String] = None,
     targetedTerritory: Option[TargetedTerritory] = None,
     platform: Option[CollectionPlatform] = None,
-    frontsToolSettings: Option[FrontsToolSettings] = None
+    frontsToolSettings: Option[FrontsToolSettings] = None,
+    suppressImages: Option[Boolean] = None
   ): CollectionConfigJson
     = CollectionConfigJson(
     displayName,
@@ -248,7 +254,8 @@ object CollectionConfigJson {
     userVisibility,
     targetedTerritory,
     platform,
-    frontsToolSettings
+    frontsToolSettings,
+    suppressImages
   )
 }
 
@@ -274,13 +281,13 @@ case class CollectionConfigJson(
   targetedTerritory: Option[TargetedTerritory],
   platform: Option[CollectionPlatform],
   frontsToolSettings: Option[FrontsToolSettings],
-
+  suppressImages: Option[Boolean]
   ) {
   val collectionType = `type`
 }
 
 object FrontJson {
-  implicit val jsonFormat = Json.format[FrontJson]
+  implicit val jsonFormat: OFormat[FrontJson] = Json.format[FrontJson]
 }
 
 case class FrontJson(
@@ -301,7 +308,7 @@ case class FrontJson(
 )
 
 object ConfigJson {
-  implicit val jsonFormat = Json.format[ConfigJson]
+  implicit val jsonFormat: OFormat[ConfigJson] = Json.format[ConfigJson]
   def empty = ConfigJson(Map.empty, Map.empty)
 }
 

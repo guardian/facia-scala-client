@@ -1,9 +1,11 @@
 package com.gu.facia.api.utils
 
-import org.scalatest.{Inspectors, Matchers, FlatSpec}
-import ExternalLinks._
+import com.gu.facia.api.utils.ExternalLinks._
+import org.scalatest.Inspectors
+import org.scalatest.flatspec.AnyFlatSpec
+import org.scalatest.matchers.should.Matchers
 
-class ExternalLinksTest extends FlatSpec with Matchers with Inspectors {
+class ExternalLinksTest extends AnyFlatSpec with Matchers with Inspectors {
   val testPaths = Seq(
     "/sport/cycling",
     "/cities/2014/nov/24/equal-streets-happier-healthier-mumbai",

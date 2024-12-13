@@ -3,14 +3,17 @@ package com.gu.facia.api.models
 import com.gu.contentapi.client.model.v1.{Content, ContentFields, ContentType}
 import com.gu.facia.api.utils.ContentApiUtils._
 import com.gu.facia.api.utils._
+import com.gu.facia.client.models.CollectionConfigJson.emptyConfig.collectionType
 import com.gu.facia.client.models.{Branded, CollectionConfigJson, CollectionJson, Trail, TrailMetaData}
 import org.joda.time.DateTime
 import org.mockito.Mockito._
+import org.scalatest.OneInstancePerTest
+import org.scalatest.freespec.AnyFreeSpec
+import org.scalatest.matchers.should.Matchers
 import org.scalatestplus.mockito.MockitoSugar
-import org.scalatest.{FreeSpec, OneInstancePerTest, Matchers}
 import play.api.libs.json.{JsArray, JsString, Json}
 
-class CollectionTest extends FreeSpec with Matchers with MockitoSugar with OneInstancePerTest {
+class CollectionTest extends AnyFreeSpec with Matchers with MockitoSugar with OneInstancePerTest {
   val trailMetadata = spy(TrailMetaData.empty)
   val trail = Trail("internal-code/page/123", 1, None, Some(trailMetadata))
   val collectionJson = CollectionJson(
@@ -470,6 +473,18 @@ class CollectionTest extends FreeSpec with Matchers with MockitoSugar with OneIn
         Symbol("headline")("straw berry")
       )
       FaciaContentUtils.headline(FaciaContentUtils.supporting(result.head).head) should be ("straight banana")
+    }
+    "AspectRatio.getAspectRatio" in {
+      val defaultCollectionType = collectionConfig.collectionType
+      val defaultCollectionConfig = CollectionConfig.empty.copy(collectionType = defaultCollectionType)
+      val scrollableFeatureConfig = CollectionConfig.empty.copy(collectionType ="scrollable/feature")
+      val scrollableSmallConfig = CollectionConfig.empty.copy(collectionType ="scrollable/small")
+      val scrollableHighlightsConfig = CollectionConfig.empty.copy(collectionType ="scrollable/highlights")
+
+      CollectionConfig.getAspectRatio(defaultCollectionConfig) should be (CollectionConfig.AspectRatio.Landscape53)
+      CollectionConfig.getAspectRatio(scrollableFeatureConfig) should be (CollectionConfig.AspectRatio.Portrait45)
+      CollectionConfig.getAspectRatio(scrollableSmallConfig) should be (CollectionConfig.AspectRatio.Landscape54)
+      CollectionConfig.getAspectRatio(scrollableHighlightsConfig) should be (CollectionConfig.AspectRatio.Square)
     }
   }
 }

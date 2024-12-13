@@ -4,6 +4,30 @@ import com.gu.facia.client.models.MetaDataCommonFields
 import play.api.libs.json.{Format, Json}
 import com.gu.contentapi.client.model.v1.{Content, Element, ElementType}
 
+sealed trait BoostLevel {
+  def label: String
+}
+
+object BoostLevel {
+  case object Default extends BoostLevel {
+    val label = "default"
+  }
+  case object Boost extends BoostLevel {
+    val label = "boost"
+  }
+  case object MegaBoost extends BoostLevel {
+    val label = "megaboost"
+  }
+  case object GigaBoost extends BoostLevel {
+    val label = "gigaboost"
+  }
+  def fromMetaData(value: String): BoostLevel = value match {
+    case GigaBoost.label => GigaBoost
+    case MegaBoost.label => MegaBoost
+    case Boost.label => Boost
+    case _ => Default
+  }
+}
 
 object ResolvedMetaData {
   implicit val resolvedMetaDataFormat: Format[ResolvedMetaData] = Json.format[ResolvedMetaData]
@@ -24,6 +48,7 @@ object ResolvedMetaData {
   val Default = ResolvedMetaData(
     isBreaking = false,
     isBoosted = false,
+    boostLevel = BoostLevel.Default.label,
     imageHide = false,
     imageReplace = false,
     showKickerSection = false,
@@ -41,6 +66,7 @@ object ResolvedMetaData {
     ResolvedMetaData(
       isBreaking = trailMeta.isBreaking.exists(identity),
       isBoosted = trailMeta.isBoosted.exists(identity),
+      boostLevel = trailMeta.boostLevel.getOrElse(BoostLevel.Default.label),
       imageHide = trailMeta.imageHide.exists(identity),
       imageReplace = trailMeta.imageReplace.exists(identity),
       showKickerSection = trailMeta.showKickerSection.exists(identity),
@@ -71,6 +97,7 @@ object ResolvedMetaData {
     metaDataFromContent.copy(
       isBreaking = trailMeta.isBreaking.getOrElse(metaDataFromContent.isBreaking),
       isBoosted = trailMeta.isBoosted.getOrElse(metaDataFromContent.isBoosted),
+      boostLevel = trailMeta.boostLevel.getOrElse(BoostLevel.Default.label),
       imageHide = trailMeta.imageHide.getOrElse(metaDataFromContent.imageHide),
       imageReplace = trailMeta.imageReplace.getOrElse(metaDataFromContent.imageReplace),
       showKickerSection = trailMeta.showKickerSection.getOrElse(metaDataFromContent.showKickerSection),
@@ -88,6 +115,7 @@ object ResolvedMetaData {
     case ResolvedMetaData(
       isBreaking,
       isBoosted,
+      boostLevel,
       imageHide,
       imageReplace,
       showKickerSection,
@@ -103,6 +131,10 @@ object ResolvedMetaData {
       Map(
         "isBreaking" -> isBreaking,
         "isBoosted" -> isBoosted,
+        "boostLevel.default" -> (BoostLevel.fromMetaData(boostLevel) == BoostLevel.Default),
+        "boostLevel.boost" -> (BoostLevel.fromMetaData(boostLevel) == BoostLevel.Boost),
+        "boostLevel.megaboost" -> (BoostLevel.fromMetaData(boostLevel) == BoostLevel.MegaBoost),
+        "boostLevel.gigaBoost" -> (BoostLevel.fromMetaData(boostLevel) == BoostLevel.GigaBoost),
         "imageHide" -> imageHide,
         "imageReplace" -> imageReplace,
         "showKickerSection" -> showKickerSection,
@@ -121,6 +153,7 @@ object ResolvedMetaData {
 case class ResolvedMetaData(
     isBreaking: Boolean,
     isBoosted: Boolean,
+    boostLevel: String,
     imageHide: Boolean,
     imageReplace: Boolean,
     showKickerSection: Boolean,
@@ -139,6 +172,7 @@ object ContentProperties {
     ContentProperties(
       isBreaking = resolvedMetaData.isBreaking,
       isBoosted = resolvedMetaData.isBoosted,
+      boostLevel = BoostLevel.fromMetaData(resolvedMetaData.boostLevel),
       imageHide = resolvedMetaData.imageHide,
       showBoostedHeadline = resolvedMetaData.showBoostedHeadline,
       showMainVideo = resolvedMetaData.showMainVideo,
@@ -152,6 +186,7 @@ object ContentProperties {
 case class ContentProperties(
     isBreaking: Boolean,
     isBoosted: Boolean,
+    boostLevel: BoostLevel,
     imageHide: Boolean,
     showBoostedHeadline: Boolean,
     showMainVideo: Boolean,

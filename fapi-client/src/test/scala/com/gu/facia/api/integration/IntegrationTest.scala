@@ -1,21 +1,23 @@
 package com.gu.facia.api.integration
 
 import com.gu.contentapi.client.model.v1.TagType
-import com.gu.facia.api.{ApiError, FAPI}
 import com.gu.facia.api.contentapi.ContentApi.{AdjustItemQuery, AdjustSearchQuery}
 import com.gu.facia.api.models._
-import com.gu.facia.api.utils.{InvalidBackfillConfiguration, SectionKicker}
+import com.gu.facia.api.utils.SectionKicker
+import com.gu.facia.api.{ApiError, FAPI}
 import com.gu.facia.client.models._
 import lib.IntegrationTestConfig
 import org.joda.time.DateTime
+import org.scalatest.OptionValues
 import org.scalatest.concurrent.ScalaFutures
+import org.scalatest.freespec.AnyFreeSpec
+import org.scalatest.matchers.should.Matchers
 import org.scalatest.time.{Millis, Seconds, Span}
-import org.scalatest.{FreeSpec, Matchers, OptionValues}
 import play.api.libs.json.{JsArray, JsString, Json}
 
 // TODO: reinstate ignored tests when cmsFronts account has access to test fixtures
-class IntegrationTest extends FreeSpec with Matchers with ScalaFutures with OptionValues with IntegrationTestConfig {
-  implicit val patience = PatienceConfig(Span(20, Seconds), Span(50, Millis))
+class IntegrationTest extends AnyFreeSpec with Matchers with ScalaFutures with OptionValues with IntegrationTestConfig {
+  implicit val patience: PatienceConfig = PatienceConfig(Span(20, Seconds), Span(50, Millis))
 
   def makeCollectionJson(trails: Trail*) = CollectionJson(
     live = trails.toList,

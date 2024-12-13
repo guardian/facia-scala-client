@@ -2,10 +2,11 @@ package com.gu.facia.api.models
 
 import com.gu.facia.api.utils.ResolvedMetaData
 import com.gu.facia.client.models.TrailMetaData
-import org.scalatest.{Matchers, FlatSpec}
-import play.api.libs.json.{JsObject, JsArray, JsString, JsBoolean}
+import org.scalatest.flatspec.AnyFlatSpec
+import org.scalatest.matchers.should.Matchers
+import play.api.libs.json.{JsArray, JsBoolean, JsObject, JsString}
 
-class FaciaImageSlideshowTest extends FlatSpec with Matchers {
+class FaciaImageSlideshowTest extends AnyFlatSpec with Matchers {
   val assetOne = JsObject(List(
     "src" -> JsString("theImageSrcOne"),
     "width" -> JsString("theImageSrcWidthOne"),

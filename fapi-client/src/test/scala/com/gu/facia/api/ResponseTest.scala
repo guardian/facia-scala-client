@@ -2,9 +2,12 @@ package com.gu.facia.api
 
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest._
+import org.scalatest.freespec.AnyFreeSpec
+import org.scalatest.matchers.should.Matchers
+
 import scala.concurrent.ExecutionContext.Implicits.global
 
-class ResponseTest extends FreeSpec with Matchers with ScalaFutures {
+class ResponseTest extends AnyFreeSpec with Matchers with ScalaFutures {
 
   "Response.filter" - {
     "should return the same result if the filter function returns true" in {

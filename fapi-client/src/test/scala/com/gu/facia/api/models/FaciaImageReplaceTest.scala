@@ -2,10 +2,11 @@ package com.gu.facia.api.models
 
 import com.gu.facia.api.utils.ResolvedMetaData
 import com.gu.facia.client.models.TrailMetaData
-import org.scalatest.{Matchers, FlatSpec}
-import play.api.libs.json.{JsObject, JsString, JsBoolean}
+import org.scalatest.flatspec.AnyFlatSpec
+import org.scalatest.matchers.should.Matchers
+import play.api.libs.json.{JsBoolean, JsObject, JsString}
 
-class FaciaImageReplaceTest extends FlatSpec with Matchers {
+class FaciaImageReplaceTest extends AnyFlatSpec with Matchers {
   val trailMetaDataWithoutImageReplace =
     TrailMetaData(Map(
       "imageReplace" -> JsBoolean(value = false),

@@ -5,6 +5,7 @@ import java.time.ZoneOffset.UTC
 import java.time.format.DateTimeFormatter.ISO_OFFSET_DATE_TIME
 
 import com.gu.contentapi.client.model.v1._
+import com.gu.contentapi.client.model.schemaorg.SchemaOrg
 import play.api.libs.json._
 
 import scala.io.Source
@@ -29,6 +30,9 @@ object TestModel {
     implicit object SponsorshipType extends HasName[SponsorshipType] {
       def nameOf(t: SponsorshipType): String = t.name
     }
+    implicit object SponsorshipPackage extends HasName[SponsorshipPackage] {
+      def nameOf(t: SponsorshipPackage): String = t.name
+    }
   }
 
   private def byName[A](otherName: String)(a: A)(implicit n: HasName[A]): Boolean =
@@ -45,13 +49,14 @@ object TestModel {
     publishedSince: Option[CapiDateTime],
     validEditions: Option[Seq[String]]
   ) extends SponsorshipTargeting
-  implicit val testSponsorshipTargeting = Json.reads[TestSponsorshipTargeting]
+  implicit val testSponsorshipTargeting: Reads[TestSponsorshipTargeting] = Json.reads[TestSponsorshipTargeting]
 
   case class TestLogoDimensions(width: Int, height: Int) extends SponsorshipLogoDimensions
-  implicit val testLogoDimensionsFormat = Json.reads[TestLogoDimensions]
+  implicit val testLogoDimensionsFormat: Reads[TestLogoDimensions] = Json.reads[TestLogoDimensions]
 
   case class TestSponsorship(
     sponsorshipTypeName: String,
+    sponsorshipPackageName: Option[String],
     sponsorName: String,
     sponsorLogo: String,
     sponsorLink: String,
@@ -63,10 +68,12 @@ object TestModel {
   ) extends Sponsorship {
     def sponsorshipType: SponsorshipType =
       SponsorshipType.list.find(byName(sponsorshipTypeName)(_)).get
+    def sponsorshipPackage: Option[SponsorshipPackage] =
+      sponsorshipPackageName.flatMap(p => SponsorshipPackage.list.find(byName(p)(_)))
     def validFrom = None
     def validTo = None
   }
-  implicit val testSponsorShipFormat = Json.reads[TestSponsorship]
+  implicit val testSponsorShipFormat: Reads[TestSponsorship] = Json.reads[TestSponsorship]
 
   case class StubSection(
     id: String,
@@ -77,7 +84,7 @@ object TestModel {
     def apiUrl: String = ""
     def editions: Seq[Edition] = Nil
   }
-  implicit val stubSectionFormat = Json.reads[StubSection]
+  implicit val stubSectionFormat: Reads[StubSection] = Json.reads[StubSection]
 
   case class StubFields(isInappropriateForSponsorship: Option[Boolean]) extends ContentFields {
     def headline: Option[String] = None
@@ -130,8 +137,9 @@ object TestModel {
     def shouldHideReaderRevenue: Option[Boolean] = None
     def internalCommissionedWordcount: Option[Int] = None
     def showAffiliateLinks: Option[Boolean] = None
+    def showTableOfContents: Option[Boolean] = None
   }
-  implicit val stubFieldsFormat = Json.reads[StubFields]
+  implicit val stubFieldsFormat: Reads[StubFields] = Json.reads[StubFields]
 
   case class StubTag(
     id: String,
@@ -163,7 +171,7 @@ object TestModel {
     def campaignInformationType: Option[String] = None
     def internalName: Option[String] = None
   }
-  implicit val stubTagFormat = Json.reads[StubTag]
+  implicit val stubTagFormat: Reads[StubTag] = Json.reads[StubTag]
 
   case class StubElement(
     id: String,
@@ -174,7 +182,7 @@ object TestModel {
     def galleryIndex: Option[Int] = None
     def assets: Seq[Asset] = Nil
   }
-  implicit val stubElementFormat = Json.reads[StubElement]
+  implicit val stubElementFormat: Reads[StubElement] = Json.reads[StubElement]
 
   case class StubItem(
     id: String,
@@ -204,8 +212,10 @@ object TestModel {
     def pillarId: Option[String] = None
     def pillarName: Option[String] = None
     def aliasPaths: Option[Seq[AliasPath]] = None
+    def channels: Option[collection.Seq[ContentChannel]] = None
+    def schemaOrg: Option[SchemaOrg] = None
   }
-  implicit val stubItemFormat = Json.reads[StubItem]
+  implicit val stubItemFormat: Reads[StubItem] = Json.reads[StubItem]
 
   def getContentItem(fileName: String): Content = getJson(fileName).validate[StubItem].get
   def getTag(fileName: String): Tag = getJson(fileName).validate[StubTag].get
