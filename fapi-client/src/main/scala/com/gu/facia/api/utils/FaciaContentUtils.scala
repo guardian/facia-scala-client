@@ -178,7 +178,8 @@ object FaciaContentUtils {
     curatedContent => curatedContent.properties.boostLevel,
     supportingCuratedContent => supportingCuratedContent.properties.boostLevel,
     linkSnap => linkSnap.properties.boostLevel,
-    latestSnap => latestSnap.properties.boostLevel
+    latestSnap => latestSnap.properties.boostLevel,
+    referenceSnap => referenceSnap.properties.boostLevel
   )
   def showBoostedHeadline(fc: FaciaContent): Boolean = fold(fc)(
     curatedContent => curatedContent.properties.showBoostedHeadline,
