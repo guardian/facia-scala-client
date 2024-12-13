@@ -2,8 +2,11 @@ import sbt._
 
 object Dependencies {
   val capiVersion = "32.0.0"
+  val eTagCachingVersion = "6.0.0"
 
-  val awsSdk = "com.amazonaws" % "aws-java-sdk-s3" % "1.12.673"
+  val awsS3SdkV1 = "com.amazonaws" % "aws-java-sdk-s3" % "1.12.765"
+  val eTagCachingS3Base = "com.gu.etag-caching" %% "aws-s3-base" % eTagCachingVersion
+  val eTagCachingS3SupportForTesting = "com.gu.etag-caching" %% "aws-s3-sdk-v2" % eTagCachingVersion % Test
   val commonsIo = "org.apache.commons" % "commons-io" % "1.3.2"
   val contentApi = "com.gu" %% "content-api-client" % capiVersion
   val contentApiDefault = "com.gu" %% "content-api-client-default" % capiVersion % Test

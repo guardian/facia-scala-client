@@ -1,11 +1,12 @@
 package lib
 
-import com.amazonaws.auth._
-import com.amazonaws.auth.profile.ProfileCredentialsProvider
-import com.amazonaws.services.s3.AmazonS3ClientBuilder
+import software.amazon.awssdk.auth.credentials.{EnvironmentVariableCredentialsProvider, ProfileCredentialsProvider}
 import com.gu.contentapi.client.GuardianContentClient
-import com.gu.facia.client.{AmazonSdkS3Client, ApiClient}
-import com.amazonaws.regions.Regions.EU_WEST_1
+import com.gu.etagcaching.aws.sdkv2.s3.S3ObjectFetching
+import com.gu.facia.client.{ApiClient, Environment}
+import software.amazon.awssdk.auth.credentials.{AwsCredentialsProvider, AwsCredentialsProviderChain}
+import software.amazon.awssdk.regions.Region
+import software.amazon.awssdk.services.s3.S3AsyncClient
 
 private case class TestContentApiClient(override val apiKey: String, override val targetUrl: String)
   extends GuardianContentClient(apiKey)
@@ -22,16 +23,16 @@ trait IntegrationTestConfig extends ExecutionContext {
     }
   }
 
-  implicit val apiClient: ApiClient = {
-    val credentialsProvider = new AWSCredentialsProviderChain(
-      new EnvironmentVariableCredentialsProvider(),
-      new SystemPropertiesCredentialsProvider(),
-      new ProfileCredentialsProvider(awsProfileName)
-    )
-    val amazonS3Client = AmazonS3ClientBuilder.standard()
-      .withRegion(EU_WEST_1)
-      .withCredentials(credentialsProvider)
-      .build()
-    ApiClient("facia-tool-store", "DEV", AmazonSdkS3Client(amazonS3Client))
-  }
+  def credentialsForDevAndCI(devProfile: String, ciCreds: AwsCredentialsProvider): AwsCredentialsProviderChain =
+    AwsCredentialsProviderChain.of(ciCreds, ProfileCredentialsProvider.builder().profileName(devProfile).build())
+
+  private val s3AsyncClient: S3AsyncClient = S3AsyncClient.builder()
+    .region(Region.EU_WEST_1)
+    .credentialsProvider(credentialsForDevAndCI(awsProfileName, EnvironmentVariableCredentialsProvider.create())).build()
+
+  implicit val apiClient: ApiClient = ApiClient.withCaching(
+    "facia-tool-store",
+    Environment.Dev,
+    S3ObjectFetching.byteArraysWith(s3AsyncClient)
+  )
 }
