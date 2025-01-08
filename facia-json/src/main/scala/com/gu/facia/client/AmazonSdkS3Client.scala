@@ -1,19 +1,19 @@
 package com.gu.facia.client
 
-import com.amazonaws.regions.{Region, Regions}
-import com.amazonaws.services.s3.{AmazonS3, AmazonS3ClientBuilder}
+import com.amazonaws.regions.Regions
 import com.amazonaws.services.s3.model.AmazonS3Exception
+import com.amazonaws.services.s3.{AmazonS3, AmazonS3ClientBuilder}
 import org.apache.commons.io.IOUtils
+
 import scala.concurrent.{ExecutionContext, Future, blocking}
 import scala.util.Try
 
-/** For mocking in tests, but also to allow someone to define a properly asynchronous S3 client. (The one in the AWS
-  * SDK is unfortunately synchronous only.)
-  */
-trait S3Client {
-  def get(bucket: String, path: String): Future[FaciaResult]
-}
-
+/**
+ * Legacy wrapper around the AWS SDK v1, which is itself a legacy version of the AWS SDK.
+ *
+ * Ideally, don't use this class. It is passed to the legacy `com.gu.facia.client.ApiClient()` constructor -
+ * instead use AWS SDK v2 and the `ApiClient.withCaching()` constructor.
+ */
 case class AmazonSdkS3Client(client: AmazonS3)(implicit executionContext: ExecutionContext) extends S3Client {
   def get(bucket: String, path: String): Future[FaciaResult] = Future {
     blocking {
