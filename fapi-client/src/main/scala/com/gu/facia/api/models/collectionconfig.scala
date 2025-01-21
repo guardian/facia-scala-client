@@ -5,11 +5,12 @@ import com.gu.facia.client.models.{AnyPlatform, Backfill, CollectionConfigJson, 
 
 case class Groups(groups: List[String])
 
-case class DisplayHints(maxItemsToDisplay: Option[Int])
+case class DisplayHints(maxItemsToDisplay: Option[Int], flexGenStoryAmount: Option[Int])
 
 object DisplayHints {
   def fromDisplayHintsJson(displayHintsJson: DisplayHintsJson): DisplayHints = DisplayHints(
-    maxItemsToDisplay = displayHintsJson.maxItemsToDisplay
+    maxItemsToDisplay = displayHintsJson.maxItemsToDisplay,
+    flexGenStoryAmount = displayHintsJson.flexGenStoryAmount
   )
 }
 
