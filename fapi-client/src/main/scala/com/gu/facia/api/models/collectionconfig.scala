@@ -1,15 +1,41 @@
 package com.gu.facia.api.models
 
 import com.gu.facia.api.models.CollectionConfig.AspectRatio.{Landscape53, Landscape54, Landscape54Collections, Portrait45, PortraitCollections, Square}
-import com.gu.facia.client.models.{AnyPlatform, Backfill, CollectionConfigJson, CollectionPlatform, DisplayHintsJson, FrontsToolSettings, Metadata, TargetedTerritory}
+import com.gu.facia.client.models.{AnyPlatform, Backfill, CollectionConfigJson, CollectionPlatform, DisplayHintsJson, FrontsToolSettings, GroupsConfigJson, Metadata, TargetedTerritory}
 
-case class Groups(groups: List[String])
+case class GroupConfig(name: String, maxItems: Option[Int])
 
-case class DisplayHints(maxItemsToDisplay: Option[Int])
+case class Groups(config: List[GroupConfig]) {
+  @deprecated
+  def groups: List[String] = config.map(_.name)
+}
+
+object Groups {
+  def fromGroupsJson(groupsConfig: List[GroupsConfigJson]): Groups = Groups(
+    groupsConfig.map { group =>
+      GroupConfig(
+        name = group.name,
+        maxItems = group.maxItems
+      )
+    }
+  )
+
+  def fromGroups(groups: List[String]): Groups = Groups(
+    groups.map { group =>
+      GroupConfig(
+        name = group,
+        maxItems = None
+      )
+    }
+  )
+}
+
+case class DisplayHints(maxItemsToDisplay: Option[Int], suppressImages: Option[Boolean])
 
 object DisplayHints {
   def fromDisplayHintsJson(displayHintsJson: DisplayHintsJson): DisplayHints = DisplayHints(
-    maxItemsToDisplay = displayHintsJson.maxItemsToDisplay
+    maxItemsToDisplay = displayHintsJson.maxItemsToDisplay,
+    suppressImages = displayHintsJson.suppressImages
   )
 }
 
@@ -35,8 +61,8 @@ case class CollectionConfig(
     userVisibility: Option[String],
     targetedTerritory: Option[TargetedTerritory],
     platform: CollectionPlatform = AnyPlatform,
-    frontsToolSettings: Option[FrontsToolSettings],
-    suppressImages: Boolean)
+    frontsToolSettings: Option[FrontsToolSettings]
+)
 
 object CollectionConfig {
   val DefaultCollectionType = "fixed/small/slow-IV"
@@ -62,8 +88,7 @@ object CollectionConfig {
     userVisibility = None,
     targetedTerritory = None,
     platform = AnyPlatform,
-    frontsToolSettings = None,
-    suppressImages = false)
+    frontsToolSettings = None)
 
   def fromCollectionJson(collectionJson: CollectionConfigJson): CollectionConfig =
     CollectionConfig(
@@ -73,7 +98,7 @@ object CollectionConfig {
       collectionJson.collectionType getOrElse DefaultCollectionType,
       collectionJson.href,
       collectionJson.description,
-      collectionJson.groups.map(Groups),
+      collectionJson.groupsConfig.map(Groups.fromGroupsJson).orElse(collectionJson.groups.map(Groups.fromGroups)),
       collectionJson.uneditable.exists(identity),
       collectionJson.showTags.exists(identity),
       collectionJson.showSections.exists(identity),
@@ -87,8 +112,7 @@ object CollectionConfig {
       collectionJson.userVisibility,
       collectionJson.targetedTerritory,
       collectionJson.platform.getOrElse(AnyPlatform),
-      collectionJson.frontsToolSettings,
-      collectionJson.suppressImages.exists(identity))
+      collectionJson.frontsToolSettings)
 
   sealed trait AspectRatio {
     def label: String
