@@ -35,8 +35,8 @@ case class CollectionConfig(
     userVisibility: Option[String],
     targetedTerritory: Option[TargetedTerritory],
     platform: CollectionPlatform = AnyPlatform,
-    frontsToolSettings: Option[FrontsToolSettings],
-    suppressImages: Boolean)
+    frontsToolSettings: Option[FrontsToolSettings]
+   )
 
 object CollectionConfig {
   val DefaultCollectionType = "fixed/small/slow-IV"
@@ -62,8 +62,8 @@ object CollectionConfig {
     userVisibility = None,
     targetedTerritory = None,
     platform = AnyPlatform,
-    frontsToolSettings = None,
-    suppressImages = false)
+    frontsToolSettings = None
+  )
 
   def fromCollectionJson(collectionJson: CollectionConfigJson): CollectionConfig =
     CollectionConfig(
@@ -87,8 +87,8 @@ object CollectionConfig {
       collectionJson.userVisibility,
       collectionJson.targetedTerritory,
       collectionJson.platform.getOrElse(AnyPlatform),
-      collectionJson.frontsToolSettings,
-      collectionJson.suppressImages.exists(identity))
+      collectionJson.frontsToolSettings
+    )
 
   sealed trait AspectRatio {
     def label: String
