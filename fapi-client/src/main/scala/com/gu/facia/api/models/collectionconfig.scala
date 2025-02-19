@@ -5,11 +5,12 @@ import com.gu.facia.client.models.{AnyPlatform, Backfill, CollectionConfigJson, 
 
 case class Groups(groups: List[String])
 
-case class DisplayHints(maxItemsToDisplay: Option[Int])
+case class DisplayHints(maxItemsToDisplay: Option[Int], suppressImages: Option[Boolean])
 
 object DisplayHints {
   def fromDisplayHintsJson(displayHintsJson: DisplayHintsJson): DisplayHints = DisplayHints(
-    maxItemsToDisplay = displayHintsJson.maxItemsToDisplay
+    maxItemsToDisplay = displayHintsJson.maxItemsToDisplay,
+    suppressImages = displayHintsJson.suppressImages
   )
 }
 
@@ -35,8 +36,8 @@ case class CollectionConfig(
     userVisibility: Option[String],
     targetedTerritory: Option[TargetedTerritory],
     platform: CollectionPlatform = AnyPlatform,
-    frontsToolSettings: Option[FrontsToolSettings],
-    suppressImages: Boolean)
+    frontsToolSettings: Option[FrontsToolSettings]
+   )
 
 object CollectionConfig {
   val DefaultCollectionType = "fixed/small/slow-IV"
@@ -62,8 +63,8 @@ object CollectionConfig {
     userVisibility = None,
     targetedTerritory = None,
     platform = AnyPlatform,
-    frontsToolSettings = None,
-    suppressImages = false)
+    frontsToolSettings = None
+  )
 
   def fromCollectionJson(collectionJson: CollectionConfigJson): CollectionConfig =
     CollectionConfig(
@@ -87,8 +88,8 @@ object CollectionConfig {
       collectionJson.userVisibility,
       collectionJson.targetedTerritory,
       collectionJson.platform.getOrElse(AnyPlatform),
-      collectionJson.frontsToolSettings,
-      collectionJson.suppressImages.exists(identity))
+      collectionJson.frontsToolSettings
+    )
 
   sealed trait AspectRatio {
     def label: String
