@@ -88,7 +88,7 @@ object ContentApi extends StrictLogging {
                                  (implicit ec: ExecutionContext): Response[List[Content]] = {
     response.fold(
       _.map { itemResponse =>
-        (itemResponse.mostViewed.getOrElse(Nil) ++ itemResponse.results.getOrElse(Nil)).toList
+        (itemResponse.mostViewed.getOrElse(Nil) ++ itemResponse.deeplyRead.getOrElse(Nil) ++ itemResponse.results.getOrElse(Nil)).toList
       },
       _.map { searchResponse =>
         searchResponse.results.toList
