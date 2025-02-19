@@ -202,7 +202,7 @@ object DisplayHintsJson {
   implicit val jsonFormat: OFormat[DisplayHintsJson] = Json.format[DisplayHintsJson]
 }
 
-case class DisplayHintsJson(maxItemsToDisplay: Option[Int])
+case class DisplayHintsJson(maxItemsToDisplay: Option[Int], suppressImages: Option[Boolean] = None)
 
 object CollectionConfigJson {
   implicit val jsonFormat: OFormat[CollectionConfigJson] = Json.format[CollectionConfigJson]
