@@ -129,6 +129,7 @@ class ContentApiTest extends AnyFreeSpec
       when(itemResponse.results) thenReturn someContents
       when(itemResponse.editorsPicks) thenReturn Some(Nil)
       when(itemResponse.mostViewed) thenReturn Some(Nil)
+      when(itemResponse.deeplyRead) thenReturn Some(Nil)
       val response: Either[Response[ItemResponse], Response[SearchResponse]] = Left(Response.Right(itemResponse))
       ContentApi.backfillContentFromResponse(response).asFuture.futureValue.fold(
         err => fail(s"expected contents result, got error $err"),
@@ -141,6 +142,20 @@ class ContentApiTest extends AnyFreeSpec
       when(itemResponse.results) thenReturn Some(Nil)
       when(itemResponse.editorsPicks) thenReturn Some(Nil)
       when(itemResponse.mostViewed) thenReturn someContents
+      when(itemResponse.deeplyRead) thenReturn Some(Nil)
+      val response: Either[Response[ItemResponse], Response[SearchResponse]] = Left(Response.Right(itemResponse))
+      ContentApi.backfillContentFromResponse(response).asFuture.futureValue.fold(
+        err => fail(s"expected contents result, got error $err"),
+        result => result should be(contents)
+      )
+    }
+
+    "includes deeply read in item query backfill" in {
+      val itemResponse = mock[ItemResponse]
+      when(itemResponse.results) thenReturn Some(Nil)
+      when(itemResponse.editorsPicks) thenReturn Some(Nil)
+      when(itemResponse.mostViewed) thenReturn Some(Nil)
+      when(itemResponse.deeplyRead) thenReturn someContents
       val response: Either[Response[ItemResponse], Response[SearchResponse]] = Left(Response.Right(itemResponse))
       ContentApi.backfillContentFromResponse(response).asFuture.futureValue.fold(
         err => fail(s"expected contents result, got error $err"),
