@@ -1,9 +1,33 @@
 package com.gu.facia.api.models
 
 import com.gu.facia.api.models.CollectionConfig.AspectRatio.{Landscape53, Landscape54, Landscape54Collections, Portrait45, PortraitCollections, Square}
-import com.gu.facia.client.models.{AnyPlatform, Backfill, CollectionConfigJson, CollectionPlatform, DisplayHintsJson, FrontsToolSettings, Metadata, TargetedTerritory}
+import com.gu.facia.client.models.{AnyPlatform, Backfill, CollectionConfigJson, CollectionPlatform, DisplayHintsJson, FrontsToolSettings, GroupsConfigJson, Metadata, TargetedTerritory}
 
-case class Groups(groups: List[String])
+case class GroupsConfig(name: String, maxItems: Option[Int])
+case class Groups(config: List[GroupsConfig]) {
+  @deprecated
+  def groups: List[String] = config.map(_.name)
+}
+
+object Groups {
+  def fromGroupsJson(groupsConfig: List[GroupsConfigJson]): Groups = Groups(
+    groupsConfig.map { group =>
+      GroupsConfig(
+        name = group.name,
+        maxItems = group.maxItems
+      )
+    }
+  )
+
+  def fromGroups(groups: List[String]): Groups = Groups(
+    groups.map { group =>
+      GroupsConfig(
+        name = group,
+        maxItems = None
+      )
+    }
+  )
+}
 
 case class DisplayHints(maxItemsToDisplay: Option[Int], suppressImages: Option[Boolean])
 
@@ -74,7 +98,7 @@ object CollectionConfig {
       collectionJson.collectionType getOrElse DefaultCollectionType,
       collectionJson.href,
       collectionJson.description,
-      collectionJson.groups.map(Groups),
+      collectionJson.groupsConfig.map(Groups.fromGroupsJson).orElse(collectionJson.groups.map(Groups.fromGroups)),
       collectionJson.uneditable.exists(identity),
       collectionJson.showTags.exists(identity),
       collectionJson.showSections.exists(identity),
