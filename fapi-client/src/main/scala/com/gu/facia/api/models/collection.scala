@@ -2,7 +2,6 @@ package com.gu.facia.api.models
 
 import com.gu.contentapi.client.model.v1.Content
 import com.gu.facia.api.contentapi.{LatestSnapsRequest, LinkSnapsRequest}
-import com.gu.facia.api.utils.IntegerString
 import com.gu.facia.client.models.{CollectionJson, SupportingItem, TargetedTerritory, Trail}
 import org.joda.time.DateTime
 
@@ -192,18 +191,4 @@ object Collection {
     collection.copy(
       live = collection.live.filterNot(_.isSnap),
       draft = collection.draft.map(_.filterNot(_.isSnap)))}
-}
-
-case class Group(get: Int)
-
-object Group {
-  def fromGroups(groups: Groups): List[Group] = {
-    groups.groups.collect {
-      case IntegerString(n) => Group(n)
-    }
-  }
-
-  def toGroups(groups: List[Group]): Groups = {
-    Groups(groups.map(_.get.toString))
-  }
 }
