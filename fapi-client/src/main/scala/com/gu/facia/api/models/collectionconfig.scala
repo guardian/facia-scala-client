@@ -4,13 +4,22 @@ import com.gu.facia.api.models.CollectionConfig.AspectRatio.{Landscape53, Landsc
 import com.gu.facia.client.models.{AnyPlatform, Backfill, CollectionConfigJson, CollectionPlatform, DisplayHintsJson, FrontsToolSettings, GroupsConfigJson, Metadata, TargetedTerritory}
 
 case class GroupsConfig(name: String, maxItems: Option[Int])
+
+object GroupsConfig {
+  def fromGroupsConfigJson(groupsConfig: List[GroupsConfigJson]): List[GroupsConfig] =
+    groupsConfig.map(groupConfig => GroupsConfig(
+      name = groupConfig.name,
+      maxItems = groupConfig.maxItems
+    ))
+}
+
 case class Groups(config: List[GroupsConfig]) {
   @deprecated
   def groups: List[String] = config.map(_.name)
 }
 
 object Groups {
-  def fromGroupsJson(groupsConfig: List[GroupsConfigJson]): Groups = Groups(
+  def fromGroupsConfigJson(groupsConfig: List[GroupsConfigJson]): Groups = Groups(
     groupsConfig.map { group =>
       GroupsConfig(
         name = group.name,
@@ -47,6 +56,7 @@ case class CollectionConfig(
     href: Option[String],
     description: Option[String],
     groups: Option[Groups],
+    groupsConfig: Option[List[GroupsConfig]],
     uneditable: Boolean,
     showTags: Boolean,
     showSections: Boolean,
@@ -74,6 +84,7 @@ object CollectionConfig {
     href = None,
     description = None,
     groups = None,
+    groupsConfig = None,
     uneditable = false,
     showTags = false,
     showSections = false,
@@ -98,7 +109,8 @@ object CollectionConfig {
       collectionJson.collectionType getOrElse DefaultCollectionType,
       collectionJson.href,
       collectionJson.description,
-      collectionJson.groupsConfig.map(Groups.fromGroupsJson).orElse(collectionJson.groups.map(Groups.fromGroups)),
+      collectionJson.groupsConfig.map(Groups.fromGroupsConfigJson).orElse(collectionJson.groups.map(Groups.fromGroups)),
+      collectionJson.groupsConfig.map(GroupsConfig.fromGroupsConfigJson),
       collectionJson.uneditable.exists(identity),
       collectionJson.showTags.exists(identity),
       collectionJson.showSections.exists(identity),
