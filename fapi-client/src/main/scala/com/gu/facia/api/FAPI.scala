@@ -5,10 +5,11 @@ import com.gu.contentapi.client.model.v1.Content
 import com.gu.facia.api.contentapi.ContentApi.{AdjustItemQuery, AdjustSearchQuery}
 import com.gu.facia.api.contentapi.{ContentApi, LatestSnapsRequest, LinkSnapsRequest}
 import com.gu.facia.api.models._
-import com.gu.facia.api.utils.BackfillResolver
+import com.gu.facia.api.utils.{BackfillResolver, BoostLevel, ContentProperties}
 import com.gu.facia.client.ApiClient
-import scala.collection.compat._
 
+import scala.PartialFunction.condOpt
+import scala.collection.compat._
 import scala.concurrent.{ExecutionContext, Future}
 
 
@@ -188,5 +189,69 @@ object FAPI {
 
     val backfillRequest = BackfillResolver.resolveFromConfig(collectionConfig)
     BackfillResolver.backfill(backfillRequest, adjustSearchQuery, adjustItemQuery)
+  }
+
+  private def updateContentProperties(content: FaciaContent, properties: ContentProperties): FaciaContent = content match {
+    case curatedContent: CuratedContent => curatedContent.copy(properties = properties)
+    case supportingCuratedContent: SupportingCuratedContent => supportingCuratedContent.copy(properties = properties)
+    case snap: LatestSnap => snap.copy(properties = properties)
+    case snap: LinkSnap => snap.copy(properties = properties)
+  }
+
+  private def applyDefaultBoost[T](
+    content: T,
+    default: BoostLevel,
+    allowedBoosts: List[BoostLevel],
+    getBoostLevel: T => BoostLevel,
+    setBoostLevel: (T, BoostLevel) => T
+  ): T =
+    if (allowedBoosts.contains(getBoostLevel(content)))
+      content
+    else
+      setBoostLevel(content, default)
+
+  case class GroupBoostConfig(default: BoostLevel, allowedBoosts: List[BoostLevel], maxItems: Int)
+
+  private val flexibleGeneralBoosts = List(
+    // Splash
+    GroupBoostConfig(BoostLevel.Default, List(BoostLevel.Default, BoostLevel.Boost, BoostLevel.MegaBoost, BoostLevel.GigaBoost), maxItems = 1),
+    // Very large
+    GroupBoostConfig(BoostLevel.MegaBoost, List(BoostLevel.MegaBoost), maxItems = 0),
+    // Large
+    GroupBoostConfig(BoostLevel.Boost, List(BoostLevel.Boost, BoostLevel.MegaBoost), maxItems = 0),
+    // Standard
+    GroupBoostConfig(BoostLevel.Default, List(BoostLevel.Default, BoostLevel.Boost, BoostLevel.MegaBoost), maxItems = 8)
+  )
+
+  private def boostsConfigFor(collectionType: String, groupsConfig: List[GroupConfig]): Option[List[GroupBoostConfig]] =
+    condOpt(collectionType) {
+      case "flexible/general" => flexibleGeneralBoosts.zip(groupsConfig).map { case (boosts, groupConfig) =>
+        boosts.copy(maxItems = groupConfig.maxItems.getOrElse(boosts.maxItems))
+      }
+    }
+
+  def applyDefaultBoostLevels(collectionConfig: CollectionConfig, contents: List[FaciaContent]): List[FaciaContent] = {
+    applyDefaultBoostLevels[FaciaContent](collectionConfig.groupsConfig, collectionConfig.collectionType,
+      contents,
+      _.properties.boostLevel,
+      (content, default) => updateContentProperties(content, content.properties.copy(boostLevel = default))
+    )
+  }
+
+  // NB - this will not behave as expected if there are "gaps" in the curated content (ie there are no curated cards in the
+  // second group but there are curated cards in the third group). But the fronts tool is supposed to prevent gaps.
+  def applyDefaultBoostLevels[T](groupsConfig: Option[GroupsConfig], collectionType: String, contents: List[T], getBoostLevel: T => BoostLevel, setBoostLevel: (T, BoostLevel) => T): List[T] = {
+    val contentsWithDefaultBoosts = for {
+      gc <- groupsConfig
+      boostsConfig <- boostsConfigFor(collectionType, gc.config)
+    } yield {
+      val (result, _) = boostsConfig.foldLeft((List.empty[T], contents)) { case ((processed, unprocessed), groupConfig) =>
+        val (groupContents, remaining) = unprocessed.splitAt(groupConfig.maxItems)
+        (processed ++ groupContents.map(applyDefaultBoost(_, groupConfig.default, groupConfig.allowedBoosts, getBoostLevel, setBoostLevel)), remaining)
+      }
+      result
+    }
+
+    contentsWithDefaultBoosts.getOrElse(contents)
   }
 }
