@@ -3,17 +3,17 @@ package com.gu.facia.api.models
 import com.gu.facia.api.models.CollectionConfig.AspectRatio.{Landscape53, Landscape54, Landscape54Collections, Portrait45, PortraitCollections, Square}
 import com.gu.facia.client.models.{AnyPlatform, Backfill, CollectionConfigJson, CollectionPlatform, DisplayHintsJson, FrontsToolSettings, GroupsConfigJson, Metadata, TargetedTerritory}
 
-case class GroupsConfig(name: String, maxItems: Option[Int])
+case class GroupConfig(name: String, maxItems: Option[Int])
 
-object GroupsConfig {
-  def fromGroupsConfigJson(groupsConfig: List[GroupsConfigJson]): List[GroupsConfig] =
-    groupsConfig.map(groupConfig => GroupsConfig(
+object GroupConfig {
+  def fromGroupsConfigJson(groupsConfig: List[GroupsConfigJson]): List[GroupConfig] =
+    groupsConfig.map(groupConfig => GroupConfig(
       name = groupConfig.name,
       maxItems = groupConfig.maxItems
     ))
 }
 
-case class Groups(config: List[GroupsConfig]) {
+case class Groups(config: List[GroupConfig]) {
   @deprecated
   def groups: List[String] = config.map(_.name)
 }
@@ -21,7 +21,7 @@ case class Groups(config: List[GroupsConfig]) {
 object Groups {
   def fromGroupsConfigJson(groupsConfig: List[GroupsConfigJson]): Groups = Groups(
     groupsConfig.map { group =>
-      GroupsConfig(
+      GroupConfig(
         name = group.name,
         maxItems = group.maxItems
       )
@@ -30,7 +30,7 @@ object Groups {
 
   def fromGroups(groups: List[String]): Groups = Groups(
     groups.map { group =>
-      GroupsConfig(
+      GroupConfig(
         name = group,
         maxItems = None
       )
@@ -49,28 +49,28 @@ object DisplayHints {
 
 
 case class CollectionConfig(
-    displayName: Option[String],
-    backfill: Option[Backfill],
-    metadata: Option[List[Metadata]],
-    collectionType: String,
-    href: Option[String],
-    description: Option[String],
-    groups: Option[Groups],
-    groupsConfig: Option[List[GroupsConfig]],
-    uneditable: Boolean,
-    showTags: Boolean,
-    showSections: Boolean,
-    hideKickers: Boolean,
-    showDateHeader: Boolean,
-    showLatestUpdate: Boolean,
-    excludeFromRss: Boolean,
-    showTimestamps: Boolean,
-    hideShowMore: Boolean,
-    displayHints: Option[DisplayHints],
-    userVisibility: Option[String],
-    targetedTerritory: Option[TargetedTerritory],
-    platform: CollectionPlatform = AnyPlatform,
-    frontsToolSettings: Option[FrontsToolSettings]
+                             displayName: Option[String],
+                             backfill: Option[Backfill],
+                             metadata: Option[List[Metadata]],
+                             collectionType: String,
+                             href: Option[String],
+                             description: Option[String],
+                             groups: Option[Groups],
+                             groupsConfig: Option[List[GroupConfig]],
+                             uneditable: Boolean,
+                             showTags: Boolean,
+                             showSections: Boolean,
+                             hideKickers: Boolean,
+                             showDateHeader: Boolean,
+                             showLatestUpdate: Boolean,
+                             excludeFromRss: Boolean,
+                             showTimestamps: Boolean,
+                             hideShowMore: Boolean,
+                             displayHints: Option[DisplayHints],
+                             userVisibility: Option[String],
+                             targetedTerritory: Option[TargetedTerritory],
+                             platform: CollectionPlatform = AnyPlatform,
+                             frontsToolSettings: Option[FrontsToolSettings]
    )
 
 object CollectionConfig {
@@ -110,7 +110,7 @@ object CollectionConfig {
       collectionJson.href,
       collectionJson.description,
       collectionJson.groupsConfig.map(Groups.fromGroupsConfigJson).orElse(collectionJson.groups.map(Groups.fromGroups)),
-      collectionJson.groupsConfig.map(GroupsConfig.fromGroupsConfigJson),
+      collectionJson.groupsConfig.map(GroupConfig.fromGroupsConfigJson),
       collectionJson.uneditable.exists(identity),
       collectionJson.showTags.exists(identity),
       collectionJson.showSections.exists(identity),
