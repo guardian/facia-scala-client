@@ -1,7 +1,7 @@
 package com.gu.facia.api.models
 
 import com.gu.facia.api.models.CollectionConfig.AspectRatio.{Landscape53, Landscape54, Landscape54Collections, Portrait45, PortraitCollections, Square}
-import com.gu.facia.client.models.{AnyPlatform, Backfill, CollectionConfigJson, CollectionPlatform, DisplayHintsJson, FrontsToolSettings, GroupsConfigJson, Metadata, TargetedTerritory}
+import com.gu.facia.client.models.{AnyPlatform, Backfill, CollectionConfigJson, CollectionPlatform, DisplayHintsJson, FrontsToolSettings, GroupConfigJson, Metadata, TargetedTerritory}
 
 case class GroupConfig(name: String, maxItems: Option[Int])
 case class GroupsConfig(config: List[GroupConfig]) {
@@ -10,7 +10,7 @@ case class GroupsConfig(config: List[GroupConfig]) {
 }
 
 object GroupsConfig {
-  def fromGroupsConfigJson(groupsConfig: List[GroupsConfigJson]): GroupsConfig = GroupsConfig(
+  def fromGroupsConfigJson(groupsConfig: List[GroupConfigJson]): GroupsConfig = GroupsConfig(
     groupsConfig.map { group =>
       GroupConfig(
         name = group.name,
