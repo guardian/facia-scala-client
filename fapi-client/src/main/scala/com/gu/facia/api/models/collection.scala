@@ -56,9 +56,8 @@ object Collection {
     // if content is not in the set it was most likely filtered out by the CAPI query, so exclude it
     // note that this does not currently deal with e.g. snaps
     def resolveTrail(trail: Trail): Option[FaciaContent] = {
-         val boostLevel = trail.safeMeta.boostLevel
-         val maxItems = maxSupportingItems(boostLevel.getOrElse(""))
-
+      val boostLevel = trail.safeMeta.boostLevel
+      val maxItems = maxSupportingItems(boostLevel.getOrElse(""))
 
       content.find { c =>
         trail.id.endsWith("/" + c.fields.flatMap(_.internalPageCode).getOrElse(throw new RuntimeException("No internal page code")))
