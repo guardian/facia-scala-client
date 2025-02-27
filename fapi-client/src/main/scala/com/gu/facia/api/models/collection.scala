@@ -40,7 +40,7 @@ object Collection {
   }
 
   /** Cards can have varying amounts of supporting content (sublinks) depending on their boostlevel**/
-  def maxSupportingItems(value: String): Int = value match {
+  private def maxSupportingItems(value: String): Int = value match {
     case BoostLevel.Default.label => 2
     case BoostLevel.Boost.label => 2
     case BoostLevel.MegaBoost.label => 4
