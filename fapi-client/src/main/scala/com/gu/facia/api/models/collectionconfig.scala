@@ -1,9 +1,33 @@
 package com.gu.facia.api.models
 
 import com.gu.facia.api.models.CollectionConfig.AspectRatio.{Landscape53, Landscape54, Landscape54Collections, Portrait45, PortraitCollections, Square}
-import com.gu.facia.client.models.{AnyPlatform, Backfill, CollectionConfigJson, CollectionPlatform, DisplayHintsJson, FrontsToolSettings, Metadata, TargetedTerritory}
+import com.gu.facia.client.models.{AnyPlatform, Backfill, CollectionConfigJson, CollectionPlatform, DisplayHintsJson, FrontsToolSettings, GroupConfigJson, Metadata, TargetedTerritory}
 
-case class Groups(groups: List[String])
+case class GroupConfig(name: String, maxItems: Option[Int])
+case class GroupsConfig(config: List[GroupConfig]) {
+  @deprecated
+  def groups: List[String] = config.map(_.name)
+}
+
+object GroupsConfig {
+  def fromGroupsConfigJson(groupsConfig: List[GroupConfigJson]): GroupsConfig = GroupsConfig(
+    groupsConfig.map { group =>
+      GroupConfig(
+        name = group.name,
+        maxItems = group.maxItems
+      )
+    }
+  )
+
+  def fromGroups(groups: List[String]): GroupsConfig = GroupsConfig(
+    groups.map { group =>
+      GroupConfig(
+        name = group,
+        maxItems = None
+      )
+    }
+  )
+}
 
 case class DisplayHints(maxItemsToDisplay: Option[Int], suppressImages: Option[Boolean])
 
@@ -22,7 +46,7 @@ case class CollectionConfig(
     collectionType: String,
     href: Option[String],
     description: Option[String],
-    groups: Option[Groups],
+    groupsConfig: Option[GroupsConfig],
     uneditable: Boolean,
     showTags: Boolean,
     showSections: Boolean,
@@ -37,7 +61,7 @@ case class CollectionConfig(
     targetedTerritory: Option[TargetedTerritory],
     platform: CollectionPlatform = AnyPlatform,
     frontsToolSettings: Option[FrontsToolSettings]
-   )
+  )
 
 object CollectionConfig {
   val DefaultCollectionType = "fixed/small/slow-IV"
@@ -49,7 +73,7 @@ object CollectionConfig {
     collectionType = DefaultCollectionType,
     href = None,
     description = None,
-    groups = None,
+    groupsConfig = None,
     uneditable = false,
     showTags = false,
     showSections = false,
@@ -74,7 +98,7 @@ object CollectionConfig {
       collectionJson.collectionType getOrElse DefaultCollectionType,
       collectionJson.href,
       collectionJson.description,
-      collectionJson.groups.map(Groups),
+      collectionJson.groupsConfig.map(GroupsConfig.fromGroupsConfigJson).orElse(collectionJson.groups.map(GroupsConfig.fromGroups)),
       collectionJson.uneditable.exists(identity),
       collectionJson.showTags.exists(identity),
       collectionJson.showSections.exists(identity),

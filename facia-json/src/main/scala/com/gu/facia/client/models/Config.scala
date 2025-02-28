@@ -204,6 +204,12 @@ object DisplayHintsJson {
 
 case class DisplayHintsJson(maxItemsToDisplay: Option[Int], suppressImages: Option[Boolean] = None)
 
+object GroupConfigJson {
+  implicit val jsonFormat: OFormat[GroupConfigJson] = Json.format[GroupConfigJson]
+}
+
+case class GroupConfigJson(name: String, maxItems: Option[Int])
+
 object CollectionConfigJson {
   implicit val jsonFormat: OFormat[CollectionConfigJson] = Json.format[CollectionConfigJson]
 
@@ -217,6 +223,7 @@ object CollectionConfigJson {
     href: Option[String] = None,
     description: Option[String] = None,
     groups: Option[List[String]] = None,
+    groupsConfig: Option[List[GroupConfigJson]] = None,
     uneditable: Option[Boolean] = None,
     showTags: Option[Boolean] = None,
     showSections: Option[Boolean] = None,
@@ -240,6 +247,7 @@ object CollectionConfigJson {
     href,
     description,
     groups,
+    groupsConfig,
     uneditable,
     showTags,
     showSections,
@@ -265,6 +273,7 @@ case class CollectionConfigJson(
   href: Option[String],
   description: Option[String],
   groups: Option[List[String]],
+  groupsConfig: Option[List[GroupConfigJson]],
   uneditable: Option[Boolean],
   showTags: Option[Boolean],
   showSections: Option[Boolean],
