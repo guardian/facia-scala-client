@@ -2,9 +2,10 @@ package com.gu.facia.api.models
 
 import com.gu.contentapi.client.model.v1.Content
 import com.gu.facia.api.contentapi.{LatestSnapsRequest, LinkSnapsRequest}
+import com.gu.facia.api.models.CollectionConfig.BetaCollections
 import com.gu.facia.client.models.{CollectionJson, SupportingItem, TargetedTerritory, Trail}
 import org.joda.time.DateTime
-import com.gu.facia.api.utils.{BoostLevel}
+import com.gu.facia.api.utils.BoostLevel
 import com.gu.facia.api.utils.ResolvedMetaData
 
 
@@ -56,7 +57,7 @@ object Collection {
     // note that this does not currently deal with e.g. snaps
     def resolveTrail(trail: Trail): Option[FaciaContent] = {
       val boostLevel = trail.safeMeta.boostLevel
-      val maxItems = maxSupportingItems(boostLevel.getOrElse(""))
+      val maxItems = if (BetaCollections.contains(collection.collectionConfig.collectionType)) maxSupportingItems(boostLevel.getOrElse("")) else 4
 
       content.find { c =>
         trail.id.endsWith("/" + c.fields.flatMap(_.internalPageCode).getOrElse(throw new RuntimeException("No internal page code")))
