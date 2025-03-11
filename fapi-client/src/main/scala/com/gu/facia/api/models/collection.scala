@@ -5,8 +5,7 @@ import com.gu.facia.api.contentapi.{LatestSnapsRequest, LinkSnapsRequest}
 import com.gu.facia.api.models.CollectionConfig.BetaCollections
 import com.gu.facia.client.models.{CollectionJson, SupportingItem, TargetedTerritory, Trail}
 import org.joda.time.DateTime
-import com.gu.facia.api.utils.BoostLevel
-import com.gu.facia.api.utils.ResolvedMetaData
+import com.gu.facia.api.utils.{BoostLevel, ResolvedMetaData}
 
 
 case class Collection(
@@ -39,13 +38,20 @@ object Collection {
       collectionConfig.targetedTerritory)
   }
 
-  /** Cards can have varying amounts of supporting content (sublinks) depending on their boostlevel**/
-  private def maxSupportingItems(value: String): Int = value match {
-    case BoostLevel.Default.label => 2
-    case BoostLevel.Boost.label => 2
-    case BoostLevel.MegaBoost.label => 4
-    case BoostLevel.GigaBoost.label => 4
-    case _ => 4
+
+  private def isSplashCard(trail: Trail, index: Int, collectionType: String): Boolean = {
+    (collectionType, trail.safeMeta.group, index) match {
+      case ("flexible/general", Some("3"), _) => true
+      case ("flexible/special", Some("0"), 0) => true
+      case _ => false
+    }
+  }
+  private def maxSupportingItems(isSplashCard: Boolean, collectionType: String): Int = {
+    if (BetaCollections.contains(collectionType) && !isSplashCard && BoostLevel.Default.label == "default") {
+       2
+    } else {
+      4
+    }
   }
 
   def contentFrom(collection: Collection,
@@ -55,9 +61,10 @@ object Collection {
                   from: Collection => List[Trail]): List[FaciaContent] = {
     // if content is not in the set it was most likely filtered out by the CAPI query, so exclude it
     // note that this does not currently deal with e.g. snaps
-    def resolveTrail(trail: Trail): Option[FaciaContent] = {
+    def resolveTrail(trail: Trail, index: Int): Option[FaciaContent] = {
       val boostLevel = trail.safeMeta.boostLevel
-      val maxItems = if (BetaCollections.contains(collection.collectionConfig.collectionType)) maxSupportingItems(boostLevel.getOrElse("")) else 4
+      val isSplash = isSplashCard(trail, index, collection.collectionConfig.collectionType)
+      val maxItems =  maxSupportingItems(isSplash, boostLevel.getOrElse(""))
 
       content.find { c =>
         trail.id.endsWith("/" + c.fields.flatMap(_.internalPageCode).getOrElse(throw new RuntimeException("No internal page code")))
@@ -93,7 +100,11 @@ object Collection {
             .map(c => LatestSnap.fromSupportingItemAndContent(supportingItem, c._2))}
         .orElse{ Snap.maybeFromSupportingItem(supportingItem)}}
 
-    from(collection).flatMap(resolveTrail)
+    for {
+      (trail, index) <- from(collection).zipWithIndex
+      content <- resolveTrail(trail, index)
+    } yield content
+
   }
 
   /* Live Methods */
