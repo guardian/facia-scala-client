@@ -2,8 +2,12 @@ package com.gu.facia.api.models
 
 import com.gu.contentapi.client.model.v1.Content
 import com.gu.facia.api.contentapi.{LatestSnapsRequest, LinkSnapsRequest}
+import com.gu.facia.api.models.CollectionConfig.BetaCollections
 import com.gu.facia.client.models.{CollectionJson, SupportingItem, TargetedTerritory, Trail}
 import org.joda.time.DateTime
+import com.gu.facia.api.utils.BoostLevel
+import com.gu.facia.api.utils.ResolvedMetaData
+
 
 case class Collection(
   id: String,
@@ -35,6 +39,15 @@ object Collection {
       collectionConfig.targetedTerritory)
   }
 
+  /** Cards can have varying amounts of supporting content (sublinks) depending on their boostlevel**/
+  private def maxSupportingItems(value: String): Int = value match {
+    case BoostLevel.Default.label => 2
+    case BoostLevel.Boost.label => 2
+    case BoostLevel.MegaBoost.label => 4
+    case BoostLevel.GigaBoost.label => 4
+    case _ => 4
+  }
+
   def contentFrom(collection: Collection,
                   content: Set[Content],
                   snapContent: Map[String, Option[Content]] = Map.empty,
@@ -43,13 +56,16 @@ object Collection {
     // if content is not in the set it was most likely filtered out by the CAPI query, so exclude it
     // note that this does not currently deal with e.g. snaps
     def resolveTrail(trail: Trail): Option[FaciaContent] = {
+      val boostLevel = trail.safeMeta.boostLevel
+      val maxItems = if (BetaCollections.contains(collection.collectionConfig.collectionType)) maxSupportingItems(boostLevel.getOrElse("")) else 4
+
       content.find { c =>
         trail.id.endsWith("/" + c.fields.flatMap(_.internalPageCode).getOrElse(throw new RuntimeException("No internal page code")))
       }
         .map { content =>
         trail.safeMeta.supporting
           .map(_.flatMap(resolveSupportingContent))
-          .map(supportingItems => CuratedContent.fromTrailAndContentWithSupporting(content, trail.safeMeta, Option(trail.frontPublicationDate), supportingItems, collection.collectionConfig))
+          .map(supportingItems => CuratedContent.fromTrailAndContentWithSupporting(content, trail.safeMeta, Option(trail.frontPublicationDate), supportingItems.take(maxItems), collection.collectionConfig))
           .getOrElse(CuratedContent.fromTrailAndContent(content, trail.safeMeta, Option(trail.frontPublicationDate), collection.collectionConfig))}
         .orElse {
           snapContent

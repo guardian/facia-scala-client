@@ -150,6 +150,15 @@ object CollectionConfig {
     )
   }
 
+    val BetaCollections = List(
+      "flexible/special",
+      "flexible/general",
+      "scrollable/small",
+      "scrollable/medium",
+      "static/medium/4",
+    )
+
+
   def getAspectRatio(collectionConfig: CollectionConfig): AspectRatio = {
     collectionConfig.collectionType match {
       case _ if PortraitCollections.contains(collectionConfig.collectionType) => Portrait45

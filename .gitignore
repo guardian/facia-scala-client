@@ -33,3 +33,11 @@ project/plugins/project/
 # Maven
 log/
 target/
+
+# VSCode
+.vscode/
+
+# Metals
+.bloop/
+.metals/
+metals.sbt
