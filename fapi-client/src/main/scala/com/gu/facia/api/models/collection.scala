@@ -46,8 +46,11 @@ object Collection {
       case _ => false
     }
   }
-  private def maxSupportingItems(isSplashCard: Boolean, collectionType: String): Int = {
-    if (BetaCollections.contains(collectionType) && !isSplashCard && BoostLevel.Default.label == "default") {
+  private[models] def maxSupportingItems(isSplashCard: Boolean, collectionType: String, boostLevel: String): Int = {
+    if (
+          (collectionType == "flexible/general" || collectionType == "flexible/special") &&
+          !isSplashCard && boostLevel == BoostLevel.Default.label)
+    {
        2
     } else {
       4
@@ -64,7 +67,7 @@ object Collection {
     def resolveTrail(trail: Trail, index: Int): Option[FaciaContent] = {
       val boostLevel = trail.safeMeta.boostLevel
       val isSplash = isSplashCard(trail, index, collection.collectionConfig.collectionType)
-      val maxItems =  maxSupportingItems(isSplash, boostLevel.getOrElse(""))
+      val maxItems =  maxSupportingItems(isSplash, collection.collectionConfig.collectionType, boostLevel.getOrElse("default") )
 
       content.find { c =>
         trail.id.endsWith("/" + c.fields.flatMap(_.internalPageCode).getOrElse(throw new RuntimeException("No internal page code")))
