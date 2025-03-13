@@ -486,5 +486,58 @@ class CollectionTest extends AnyFreeSpec with Matchers with MockitoSugar with On
       CollectionConfig.getAspectRatio(scrollableSmallConfig) should be (CollectionConfig.AspectRatio.Landscape54)
       CollectionConfig.getAspectRatio(scrollableHighlightsConfig) should be (CollectionConfig.AspectRatio.Square)
     }
+
   }
+
+  "maxSupportingItems" - {
+    "should return 2 for non-splash cards in flexible/general collections with default boost level" in {
+      val isSplashCard = false
+      val collectionType = "flexible/general"
+      val boostLevel = BoostLevel.Default.label
+      Collection.maxSupportingItems(isSplashCard, collectionType, boostLevel) shouldBe 2
+    }
+
+    "should return 2 for non-splash cards in flexible/special collections with default boost level" in {
+      val isSplashCard = false
+      val collectionType = "flexible/special"
+      val boostLevel = BoostLevel.Default.label
+      Collection.maxSupportingItems(isSplashCard, collectionType, boostLevel) shouldBe 2
+    }
+
+    "should return 4 for non-splash cards in flexible/special collections with mega boost boost level" in {
+      val isSplashCard = false
+      val collectionType = "flexible/special"
+      val boostLevel = BoostLevel.MegaBoost.label
+      Collection.maxSupportingItems(isSplashCard, collectionType, boostLevel) shouldBe 4
+    }
+
+    "should return 4 for splash cards in flexible/general collections" in {
+      val isSplashCard = true
+      val collectionType = "flexible/general"
+      val boostLevel = BoostLevel.Default.label
+      Collection.maxSupportingItems(isSplashCard, collectionType, boostLevel) shouldBe 4
+    }
+
+    "should return 4 for splash cards in flexible/special collections" in {
+      val isSplashCard = true
+      val collectionType = "flexible/special"
+      val boostLevel = BoostLevel.Default.label
+      Collection.maxSupportingItems(isSplashCard, collectionType, boostLevel) shouldBe 4
+    }
+
+    "should return 4 for any other beta collection type" in {
+      val isSplashCard = false
+      val collectionType = "scrollable/small"
+      val boostLevel = BoostLevel.Default.label
+      Collection.maxSupportingItems(isSplashCard, collectionType, boostLevel) shouldBe 4
+    }
+
+    "should return 4 for any other collection type" in {
+      val isSplashCard = false
+      val collectionType = "dynamic/fast"
+      val boostLevel = BoostLevel.Default.label
+      Collection.maxSupportingItems(isSplashCard, collectionType, boostLevel) shouldBe 4
+    }
+  }
+
 }
