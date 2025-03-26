@@ -18,6 +18,7 @@ class FaciaContentHelperTest extends AnyFreeSpec with Matchers with TestContent 
       isBreaking = false,
       boostLevel = BoostLevel.Default,
       isBoosted = false,
+      isImmersive = false,
       imageHide = false,
       showBoostedHeadline = false,
       showMainVideo = false,
