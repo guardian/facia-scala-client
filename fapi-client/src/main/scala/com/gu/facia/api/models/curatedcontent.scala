@@ -63,6 +63,14 @@ object FaciaImage {
 
 sealed trait FaciaContent {
   def brandingByEdition: BrandingByEdition = Map.empty
+  def maybeFrontPublicationDate: Option[Long]
+  def href: Option[String]
+  def trailText: Option[String]
+  def group: String
+  def image: Option[FaciaImage]
+  def properties: ContentProperties
+  def byline: Option[String]
+  def kicker: Option[ItemKicker]
 }
 
 // This needs to be kept aligned with Frontend until it's pushed all the way upstream to Thrift
