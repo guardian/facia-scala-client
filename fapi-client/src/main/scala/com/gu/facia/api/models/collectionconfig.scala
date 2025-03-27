@@ -98,7 +98,7 @@ object CollectionConfig {
       collectionJson.collectionType getOrElse DefaultCollectionType,
       collectionJson.href,
       collectionJson.description,
-      collectionJson.groupsConfig.map(GroupsConfig.fromGroupsConfigJson).orElse(collectionJson.groups.map(GroupsConfig.fromGroups)),
+      collectionJson.groupsConfig.filter(_.nonEmpty).map(GroupsConfig.fromGroupsConfigJson).orElse(collectionJson.groups.map(GroupsConfig.fromGroups)),
       collectionJson.uneditable.exists(identity),
       collectionJson.showTags.exists(identity),
       collectionJson.showSections.exists(identity),
