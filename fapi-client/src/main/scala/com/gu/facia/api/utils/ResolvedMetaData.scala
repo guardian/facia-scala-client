@@ -100,7 +100,7 @@ object ResolvedMetaData {
       isBreaking = trailMeta.isBreaking.getOrElse(metaDataFromContent.isBreaking),
       isBoosted = trailMeta.isBoosted.getOrElse(metaDataFromContent.isBoosted),
       boostLevel = trailMeta.boostLevel.getOrElse(BoostLevel.Default.label),
-      isImmersive = trailMeta.isBoosted.getOrElse(metaDataFromContent.isImmersive),
+      isImmersive = trailMeta.isImmersive.getOrElse(metaDataFromContent.isImmersive),
       imageHide = trailMeta.imageHide.getOrElse(metaDataFromContent.imageHide),
       imageReplace = trailMeta.imageReplace.getOrElse(metaDataFromContent.imageReplace),
       showKickerSection = trailMeta.showKickerSection.getOrElse(metaDataFromContent.showKickerSection),
