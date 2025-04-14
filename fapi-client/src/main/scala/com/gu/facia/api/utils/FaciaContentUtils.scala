@@ -185,6 +185,21 @@ object FaciaContentUtils {
     linkSnap => linkSnap.properties.showMainVideo,
     latestSnap => latestSnap.properties.showMainVideo
   )
+
+  def videoReplace(fc: FaciaContent): Boolean = fold(fc)(
+    curatedContent => curatedContent.properties.videoReplace,
+    supportingCuratedContent => supportingCuratedContent.properties.videoReplace,
+    linkSnap => linkSnap.properties.videoReplace,
+    latestSnap => latestSnap.properties.videoReplace
+  )
+
+  def replacementVideoAtomId(fc: FaciaContent): Option[String] = fold(fc)(
+    curatedContent => curatedContent.properties.replacementVideoAtomId,
+    supportingCuratedContent => supportingCuratedContent.properties.replacementVideoAtomId,
+    linkSnap => linkSnap.properties.replacementVideoAtomId,
+    latestSnap => latestSnap.properties.replacementVideoAtomId
+  )
+
   def showLivePlayable(fc: FaciaContent): Boolean = fold(fc)(
     curatedContent => curatedContent.properties.showLivePlayable,
     supportingCuratedContent => supportingCuratedContent.properties.showLivePlayable,
