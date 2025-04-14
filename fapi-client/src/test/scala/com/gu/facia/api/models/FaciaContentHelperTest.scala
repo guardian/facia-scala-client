@@ -26,7 +26,9 @@ class FaciaContentHelperTest extends AnyFreeSpec with Matchers with TestContent 
       showByline = false,
       showQuotedHeadline = false,
       showLivePlayable = false,
-      imageSlideshowReplace = false)
+      imageSlideshowReplace = false,
+      videoReplace = false
+    )
 
   "should return 'Missing Headline' when the headline is None in a Snaps" in {
     val snap = LatestSnap("myId",
