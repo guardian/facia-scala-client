@@ -61,7 +61,9 @@ object ResolvedMetaData {
     showByline = false,
     imageCutoutReplace = false,
     showQuotedHeadline = false,
-    imageSlideshowReplace = false)
+    imageSlideshowReplace = false,
+    videoReplace = false
+  )
 
   def fromTrailMetaData(trailMeta: MetaDataCommonFields): ResolvedMetaData =
     ResolvedMetaData(
@@ -80,7 +82,8 @@ object ResolvedMetaData {
       showByline = trailMeta.showByline.exists(identity),
       imageCutoutReplace = trailMeta.imageCutoutReplace.exists(identity),
       showQuotedHeadline = trailMeta.showQuotedHeadline.exists(identity),
-      imageSlideshowReplace = trailMeta.imageSlideshowReplace.exists(identity)
+      imageSlideshowReplace = trailMeta.imageSlideshowReplace.exists(identity),
+      videoReplace = trailMeta.videoReplace.exists(identity)
   )
 
   def fromContent(content: Content, cardStyle: CardStyle): ResolvedMetaData =
@@ -131,7 +134,9 @@ object ResolvedMetaData {
       showByline,
       imageCutoutReplace,
       showQuotedHeadline,
-      imageSlideshowReplace) =>
+      imageSlideshowReplace,
+      videoReplace
+    ) =>
       Map(
         "isBreaking" -> isBreaking,
         "isBoosted" -> isBoosted,
@@ -151,7 +156,9 @@ object ResolvedMetaData {
         "showByline" -> showByline,
         "imageCutoutReplace" -> imageCutoutReplace,
         "showQuotedHeadline" -> showQuotedHeadline,
-        "imageSlideshowReplace" -> imageSlideshowReplace)
+        "imageSlideshowReplace" -> imageSlideshowReplace,
+        "videoReplace" -> videoReplace
+      )
   }
 }
 
@@ -171,7 +178,8 @@ case class ResolvedMetaData(
     showByline: Boolean,
     imageCutoutReplace: Boolean,
     showQuotedHeadline: Boolean,
-    imageSlideshowReplace: Boolean)
+    imageSlideshowReplace: Boolean,
+    videoReplace: Boolean)
 
 object ContentProperties {
   def fromResolvedMetaData(resolvedMetaData: ResolvedMetaData): ContentProperties =
@@ -187,7 +195,9 @@ object ContentProperties {
       showKickerTag = resolvedMetaData.showKickerTag,
       showByline = resolvedMetaData.showByline,
       showQuotedHeadline = resolvedMetaData.showQuotedHeadline,
-      imageSlideshowReplace = resolvedMetaData.imageSlideshowReplace)
+      imageSlideshowReplace = resolvedMetaData.imageSlideshowReplace,
+      videoReplace = resolvedMetaData.videoReplace
+    )
 }
 
 case class ContentProperties(
@@ -202,4 +212,5 @@ case class ContentProperties(
     showKickerTag: Boolean,
     showByline: Boolean,
     showQuotedHeadline: Boolean,
-    imageSlideshowReplace: Boolean)
+    imageSlideshowReplace: Boolean,
+    videoReplace: Boolean)
