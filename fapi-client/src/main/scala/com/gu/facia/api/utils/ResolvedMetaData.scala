@@ -115,7 +115,10 @@ object ResolvedMetaData {
       showByline = trailMeta.showByline.getOrElse(metaDataFromContent.showByline),
       imageCutoutReplace = trailMeta.imageCutoutReplace.getOrElse(metaDataFromContent.imageCutoutReplace),
       showQuotedHeadline = trailMeta.showQuotedHeadline.getOrElse(metaDataFromContent.showQuotedHeadline),
-      imageSlideshowReplace = trailMeta.imageSlideshowReplace.getOrElse(metaDataFromContent.imageSlideshowReplace))}
+      imageSlideshowReplace = trailMeta.imageSlideshowReplace.getOrElse(metaDataFromContent.imageSlideshowReplace),
+      videoReplace = trailMeta.videoReplace.exists(identity)
+    )}
+
 
   def toMap(resolvedMetaData: ResolvedMetaData): Map[String, Boolean] = resolvedMetaData match {
     case ResolvedMetaData(
