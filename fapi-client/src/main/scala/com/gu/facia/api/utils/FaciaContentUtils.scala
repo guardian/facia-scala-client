@@ -173,6 +173,12 @@ object FaciaContentUtils {
     linkSnap => linkSnap.properties.showQuotedHeadline,
     latestSnap => latestSnap.properties.showQuotedHeadline
   )
+  def isImmersive(fc: FaciaContent): Boolean = fold(fc)(
+    curatedContent => curatedContent.properties.isImmersive,
+    supportingCuratedContent => supportingCuratedContent.properties.isImmersive,
+    linkSnap => linkSnap.properties.isImmersive,
+    latestSnap => latestSnap.properties.isImmersive
+  )
   def showMainVideo(fc: FaciaContent): Boolean = fold(fc)(
     curatedContent => curatedContent.properties.showMainVideo,
     supportingCuratedContent => supportingCuratedContent.properties.showMainVideo,
