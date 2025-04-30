@@ -116,7 +116,7 @@ object ResolvedMetaData {
       imageCutoutReplace = trailMeta.imageCutoutReplace.getOrElse(metaDataFromContent.imageCutoutReplace),
       showQuotedHeadline = trailMeta.showQuotedHeadline.getOrElse(metaDataFromContent.showQuotedHeadline),
       imageSlideshowReplace = trailMeta.imageSlideshowReplace.getOrElse(metaDataFromContent.imageSlideshowReplace),
-      videoReplace = trailMeta.videoReplace.exists(identity)
+      videoReplace = trailMeta.videoReplace.getOrElse(metaDataFromContent.videoReplace)
     )}
 
 

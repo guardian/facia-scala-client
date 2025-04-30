@@ -103,12 +103,12 @@ object FaciaContentUtils {
     latestSnap => latestSnap.href.orElse(latestSnap.snapUri))
 
   def atomId(fc: FaciaContent): Option[String] = fold(fc)(
-    curatedContent => None,
-    supportingCuratedContent => None,
+    curatedContent => curatedContent.atomId,
+    supportingCuratedContent => supportingCuratedContent.atomId,
     linkSnap => linkSnap.atomId,
-    latestSnap => None
+    latestSnap => latestSnap.atomId
   )
-
+  
 
   def mediaType(fc: FaciaContent): Option[MediaType] = {
     def mediaTypeFromContent(content: Content): Option[MediaType] =
