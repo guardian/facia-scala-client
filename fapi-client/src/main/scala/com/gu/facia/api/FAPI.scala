@@ -223,12 +223,14 @@ object FAPI {
     GroupBoostConfig(BoostLevel.Default, List(BoostLevel.Default, BoostLevel.Boost, BoostLevel.MegaBoost), maxItems = 8)
   )
 
-  private def boostsConfigFor(collectionType: String, groupsConfig: List[GroupConfig]): Option[List[GroupBoostConfig]] =
+  private def boostsConfigFor(collectionType: String, groupsConfig: List[GroupConfig]): Option[List[GroupBoostConfig]] = {
+    val groupsConfigBiggestFirst = groupsConfig.reverse
     condOpt(collectionType) {
-      case "flexible/general" => flexibleGeneralBoosts.zip(groupsConfig).map { case (boosts, groupConfig) =>
+      case "flexible/general" => flexibleGeneralBoosts.zip(groupsConfigBiggestFirst).map { case (boosts, groupConfig) =>
         boosts.copy(maxItems = groupConfig.maxItems.getOrElse(boosts.maxItems))
       }
     }
+  }
 
   def applyDefaultBoostLevels(collectionConfig: CollectionConfig, contents: List[FaciaContent]): List[FaciaContent] = {
     applyDefaultBoostLevels[FaciaContent](collectionConfig.groupsConfig, collectionConfig.collectionType,
