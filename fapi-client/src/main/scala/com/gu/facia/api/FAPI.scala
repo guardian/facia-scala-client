@@ -5,10 +5,11 @@ import com.gu.contentapi.client.model.v1.Content
 import com.gu.facia.api.contentapi.ContentApi.{AdjustItemQuery, AdjustSearchQuery}
 import com.gu.facia.api.contentapi.{ContentApi, LatestSnapsRequest, LinkSnapsRequest}
 import com.gu.facia.api.models._
-import com.gu.facia.api.utils.BackfillResolver
+import com.gu.facia.api.utils.{BackfillResolver, BoostLevel, ContentProperties}
 import com.gu.facia.client.ApiClient
-import scala.collection.compat._
 
+import scala.PartialFunction.condOpt
+import scala.collection.compat._
 import scala.concurrent.{ExecutionContext, Future}
 
 
@@ -188,5 +189,76 @@ object FAPI {
 
     val backfillRequest = BackfillResolver.resolveFromConfig(collectionConfig)
     BackfillResolver.backfill(backfillRequest, adjustSearchQuery, adjustItemQuery)
+  }
+
+  private def updateContentProperties(content: FaciaContent, properties: ContentProperties): FaciaContent = content match {
+    case curatedContent: CuratedContent => curatedContent.copy(properties = properties)
+    case supportingCuratedContent: SupportingCuratedContent => supportingCuratedContent.copy(properties = properties)
+    case snap: LatestSnap => snap.copy(properties = properties)
+    case snap: LinkSnap => snap.copy(properties = properties)
+  }
+
+  private def updateGroup(content: FaciaContent, group: String): FaciaContent = content match {
+    case curatedContent: CuratedContent => curatedContent.copy(group = group)
+    case supportingCuratedContent: SupportingCuratedContent => supportingCuratedContent.copy(group = group)
+    case snap: LatestSnap => snap.copy(group = group)
+    case snap: LinkSnap => snap.copy(group = group)
+  }
+
+  case class GroupBoostConfig(default: BoostLevel, allowedBoosts: List[BoostLevel], maxItems: Int, group: String)
+
+  private val flexibleGeneralBoosts = List(
+    // Splash
+    GroupBoostConfig(BoostLevel.Default, List(BoostLevel.Default, BoostLevel.Boost, BoostLevel.MegaBoost, BoostLevel.GigaBoost), maxItems = 1, group = "3"),
+    // Very big
+    GroupBoostConfig(BoostLevel.MegaBoost, List(BoostLevel.MegaBoost), maxItems = 0, group = "2"),
+    // Big
+    GroupBoostConfig(BoostLevel.Boost, List(BoostLevel.Boost, BoostLevel.MegaBoost), maxItems = 0, group = "1"),
+    // Standard
+    GroupBoostConfig(BoostLevel.Default, List(BoostLevel.Default, BoostLevel.Boost, BoostLevel.MegaBoost), maxItems = 8, group = "0")
+  )
+
+  private def boostsConfigFor(collectionType: String, groupsConfig: List[GroupConfig]): Option[List[GroupBoostConfig]] = {
+    val groupsConfigTopGroupFirst = groupsConfig.reverse
+    condOpt(collectionType) {
+      case "flexible/general" => flexibleGeneralBoosts.zip(groupsConfigTopGroupFirst).map { case (boosts, groupConfig) =>
+        boosts.copy(maxItems = groupConfig.maxItems.getOrElse(boosts.maxItems))
+      }
+    }
+  }
+
+  def applyDefaultBoostLevelsAndGroups(collectionConfig: CollectionConfig, contents: List[FaciaContent]): List[FaciaContent] = {
+    applyDefaultBoostLevelsAndGroups[FaciaContent](
+      groupsConfig = collectionConfig.groupsConfig,
+      collectionType = collectionConfig.collectionType,
+      contents = contents,
+      getBoostLevel = _.properties.boostLevel,
+      setBoostLevel = (content, default) => updateContentProperties(content, content.properties.copy(boostLevel = default)),
+      setGroup = updateGroup
+    )
+  }
+
+  // NB - this will not behave as expected if there are "gaps" in the curated content (ie there are no curated cards in the
+  // second group but there are curated cards in the third group). But the fronts tool is supposed to prevent gaps.
+  def applyDefaultBoostLevelsAndGroups[T](groupsConfig: Option[GroupsConfig], collectionType: String, contents: List[T], getBoostLevel: T => BoostLevel, setBoostLevel: (T, BoostLevel) => T, setGroup: (T, String) => T): List[T] = {
+    val contentsWithDefaultBoosts = for {
+      gc <- groupsConfig
+      boostsConfig <- boostsConfigFor(collectionType, gc.config)
+    } yield {
+      val (result, _) = boostsConfig.foldLeft((List.empty[T], contents)) { case ((processed, unprocessed), groupConfig) =>
+        val (currentGroupContents, remaining) = unprocessed.splitAt(groupConfig.maxItems)
+        val currentGroupContentsWithBoostsAndGroupNumber = currentGroupContents.map(content => {
+          val contentWithGroupNumber = setGroup(content, groupConfig.group)
+          if (groupConfig.allowedBoosts.contains(getBoostLevel(contentWithGroupNumber)))
+            contentWithGroupNumber
+          else
+            setBoostLevel(contentWithGroupNumber, groupConfig.default)
+        })
+        (processed ++ currentGroupContentsWithBoostsAndGroupNumber, remaining)
+      }
+      result
+    }
+
+    contentsWithDefaultBoosts.getOrElse(contents)
   }
 }
