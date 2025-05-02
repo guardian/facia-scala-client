@@ -205,35 +205,23 @@ object FAPI {
     case snap: LinkSnap => snap.copy(group = group)
   }
 
-  private def applyDefaultBoost[T](
-    content: T,
-    default: BoostLevel,
-    allowedBoosts: List[BoostLevel],
-    getBoostLevel: T => BoostLevel,
-    setBoostLevel: (T, BoostLevel) => T
-  ): T =
-    if (allowedBoosts.contains(getBoostLevel(content)))
-      content
-    else
-      setBoostLevel(content, default)
-
   case class GroupBoostConfig(default: BoostLevel, allowedBoosts: List[BoostLevel], maxItems: Int, group: String)
 
   private val flexibleGeneralBoosts = List(
     // Splash
     GroupBoostConfig(BoostLevel.Default, List(BoostLevel.Default, BoostLevel.Boost, BoostLevel.MegaBoost, BoostLevel.GigaBoost), maxItems = 1, group = "3"),
-    // Very large
+    // Very big
     GroupBoostConfig(BoostLevel.MegaBoost, List(BoostLevel.MegaBoost), maxItems = 0, group = "2"),
-    // Large
+    // Big
     GroupBoostConfig(BoostLevel.Boost, List(BoostLevel.Boost, BoostLevel.MegaBoost), maxItems = 0, group = "1"),
     // Standard
     GroupBoostConfig(BoostLevel.Default, List(BoostLevel.Default, BoostLevel.Boost, BoostLevel.MegaBoost), maxItems = 8, group = "0")
   )
 
   private def boostsConfigFor(collectionType: String, groupsConfig: List[GroupConfig]): Option[List[GroupBoostConfig]] = {
-    val groupsConfigBiggestFirst = groupsConfig.reverse
+    val groupsConfigTopGroupFirst = groupsConfig.reverse
     condOpt(collectionType) {
-      case "flexible/general" => flexibleGeneralBoosts.zip(groupsConfigBiggestFirst).map { case (boosts, groupConfig) =>
+      case "flexible/general" => flexibleGeneralBoosts.zip(groupsConfigTopGroupFirst).map { case (boosts, groupConfig) =>
         boosts.copy(maxItems = groupConfig.maxItems.getOrElse(boosts.maxItems))
       }
     }
