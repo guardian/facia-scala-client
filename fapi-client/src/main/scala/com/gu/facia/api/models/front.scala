@@ -68,15 +68,7 @@ object Front {
    * We should never have a front with no containers so final fallback is a placeholder.
    */
   private def canonicalCollection(id: String, frontJson: FrontJson): String = {
-    val frontHeadlineCollections = id match {
-      //                PROD                             CODE
-      case "uk" => List("uk-alpha/news/regular-stories", "f3d7d2bc-e667-4a86-974f-fe27daeaebcc")
-      case "us" => List("us-alpha/news/regular-stories")
-      case "au" => List("au-alpha/news/regular-stories")
-      case _ => Nil
-    }
-    frontHeadlineCollections.find(frontJson.collections.contains)
-      .orElse(frontJson.canonical.filter(frontJson.collections.contains))
+    frontJson.canonical.filter(frontJson.collections.contains)
       .orElse(frontJson.collections.headOption)
       .getOrElse("no collections")
   }
