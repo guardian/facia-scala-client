@@ -26,7 +26,9 @@ class FaciaContentHelperTest extends AnyFreeSpec with Matchers with TestContent 
       showByline = false,
       showQuotedHeadline = false,
       showLivePlayable = false,
-      imageSlideshowReplace = false)
+      imageSlideshowReplace = false,
+      videoReplace = false
+    )
 
   "should return 'Missing Headline' when the headline is None in a Snaps" in {
     val snap = LatestSnap("myId",
@@ -44,20 +46,21 @@ class FaciaContentHelperTest extends AnyFreeSpec with Matchers with TestContent 
       emptyContentProperties,
       None,
       None,
-      Map.empty
+      Map.empty,
+      None
     )
     FaciaContentUtils.headlineOption(snap) should equal(None)
   }
 
   "should return the headline for a CuratedContent" in {
     val content = baseContent.copy(fields = Some(ContentFields(headline = Some("myTitle"), trailText = Some("Content trailtext"), byline = Some("Content byline"))))
-    val cc = CuratedContent(content, None, Nil, DefaultCardstyle, ContentFormat.defaultContentFormat, "The headline", None, None, "myGroup", None, emptyContentProperties, None, None, None, None, None, Map.empty)
+    val cc = CuratedContent(content, None, Nil, DefaultCardstyle, ContentFormat.defaultContentFormat, "The headline", None, None, "myGroup", None, emptyContentProperties, None, None, None, None, None, Map.empty, None)
     FaciaContentUtils.headlineOption(cc) should equal(Some("The headline"))
   }
 
   "should return 'Missing href' when the href is None in a CuratedContent" in {
     val content = baseContent.copy(fields = Some(ContentFields(headline = Some("myTitle"), trailText = Some("Content trailtext"), byline = Some("Content byline"))))
-    val cc = CuratedContent(content, None, Nil, DefaultCardstyle, ContentFormat.defaultContentFormat, "The headline", None, None, "myGroup", None, emptyContentProperties, None, None, None, None, None, Map.empty)
+    val cc = CuratedContent(content, None, Nil, DefaultCardstyle, ContentFormat.defaultContentFormat, "The headline", None, None, "myGroup", None, emptyContentProperties, None, None, None, None, None, Map.empty, None)
     FaciaContentUtils.href(cc) should equal(None)
   }
 
@@ -89,7 +92,8 @@ class FaciaContentHelperTest extends AnyFreeSpec with Matchers with TestContent 
       emptyContentProperties,
       None,
       None,
-      Map.empty
+      Map.empty,
+      None
     )
     FaciaContentUtils.href(snap) should equal(Some("The href"))
   }

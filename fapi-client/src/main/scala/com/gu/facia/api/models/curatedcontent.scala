@@ -190,7 +190,8 @@ case class LatestSnap(
   properties: ContentProperties,
   byline: Option[String],
   kicker: Option[ItemKicker],
-  override val brandingByEdition: BrandingByEdition
+  override val brandingByEdition: BrandingByEdition,
+  atomId: Option[String]
 ) extends Snap
 
 object LatestSnap {
@@ -216,7 +217,8 @@ object LatestSnap {
       ContentProperties.fromResolvedMetaData(resolvedMetaData),
       trail.safeMeta.byline.orElse(maybeContent.flatMap(_.fields.flatMap(_.byline))),
       ItemKicker.fromMaybeContentTrailMetaAndResolvedMetaData(maybeContent, trail.safeMeta, resolvedMetaData),
-      brandingByEdition
+      brandingByEdition,
+      trail.safeMeta.atomId
     )
   }
 
@@ -242,7 +244,8 @@ object LatestSnap {
       ContentProperties.fromResolvedMetaData(resolvedMetaData),
       supportingItem.safeMeta.byline.orElse(maybeContent.flatMap(_.fields.flatMap(_.byline))),
       ItemKicker.fromMaybeContentTrailMetaAndResolvedMetaData(maybeContent, supportingItem.safeMeta, resolvedMetaData),
-      brandingByEdition
+      brandingByEdition,
+      supportingItem.safeMeta.atomId
     )
   }
 }
@@ -264,8 +267,8 @@ case class CuratedContent(
   embedType: Option[String],
   embedUri: Option[String],
   embedCss: Option[String],
-  override val brandingByEdition: BrandingByEdition
-) extends FaciaContent
+  override val brandingByEdition: BrandingByEdition,
+  atomId: Option[String]) extends FaciaContent
 
 case class SupportingCuratedContent(
   content: Content,
@@ -279,7 +282,8 @@ case class SupportingCuratedContent(
   image: Option[FaciaImage],
   properties: ContentProperties,
   byline: Option[String],
-  kicker: Option[ItemKicker]) extends FaciaContent
+  kicker: Option[ItemKicker],
+  atomId: Option[String]) extends FaciaContent
 
 object CuratedContent {
 
@@ -308,7 +312,8 @@ object CuratedContent {
       embedType = trailMetaData.snapType,
       embedUri = trailMetaData.snapUri,
       embedCss = trailMetaData.snapCss,
-      brandingByEdition = content.brandingByEdition
+      brandingByEdition = content.brandingByEdition,
+      trailMetaData.atomId
     )
   }
 
@@ -338,7 +343,8 @@ object CuratedContent {
       embedType = trailMetaData.snapType,
       embedUri = trailMetaData.snapUri,
       embedCss = trailMetaData.snapCss,
-      brandingByEdition = content.brandingByEdition
+      brandingByEdition = content.brandingByEdition,
+      trailMetaData.atomId
     )}
 }
 
@@ -362,7 +368,8 @@ object SupportingCuratedContent {
       FaciaImage.getFaciaImage(Some(content), trailMetaData, resolvedMetaData),
       ContentProperties.fromResolvedMetaData(resolvedMetaData),
       trailMetaData.byline.orElse(content.fields.flatMap(_.byline)),
-      ItemKicker.fromContentAndTrail(Option(content), trailMetaData, resolvedMetaData, None)
+      ItemKicker.fromContentAndTrail(Option(content), trailMetaData, resolvedMetaData, None),
+      trailMetaData.atomId
     )
   }
 }

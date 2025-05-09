@@ -88,7 +88,8 @@ class CollectionTest extends AnyFreeSpec with Matchers with MockitoSugar with On
       contentProperties,
       byline,
       kicker,
-      latestContent map (_.brandingByEdition) getOrElse Map.empty
+      latestContent map (_.brandingByEdition) getOrElse Map.empty,
+      atomId = None
     )
 
   def makeLinkSnap(
