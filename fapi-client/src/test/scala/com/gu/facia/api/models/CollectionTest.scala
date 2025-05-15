@@ -13,6 +13,9 @@ import org.scalatest.matchers.should.Matchers
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.libs.json.{JsArray, JsString, Json}
 
+import scala.concurrent.ExecutionContext.Implicits.global
+import com.gu.contentapi.client.ContentApiClient
+
 class CollectionTest extends AnyFreeSpec with Matchers with MockitoSugar with OneInstancePerTest {
   val trailMetadata = spy(TrailMetaData.empty)
   val trail = Trail("internal-code/page/123", 1, None, Some(trailMetadata))
@@ -89,7 +92,8 @@ class CollectionTest extends AnyFreeSpec with Matchers with MockitoSugar with On
       byline,
       kicker,
       latestContent map (_.brandingByEdition) getOrElse Map.empty,
-      atomId = None
+      atomId = None,
+      None,
     )
 
   def makeLinkSnap(
@@ -122,7 +126,8 @@ class CollectionTest extends AnyFreeSpec with Matchers with MockitoSugar with On
       contentProperties,
       byline,
       kicker,
-      Map.empty
+      Map.empty,
+      None
     )
 
 
@@ -155,11 +160,14 @@ class CollectionTest extends AnyFreeSpec with Matchers with MockitoSugar with On
 
   "liveContent" - {
     val collection = Collection.fromCollectionJsonConfigAndContent("id", Some(collectionJson), collectionConfig)
+    val capiClient = mock[ContentApiClient]
 
     "Uses content fields when no facia override exists" in {
-      val curatedContent = Collection.liveContent(collection, contents)
-      curatedContent.head should have (
-        Symbol("headline") ("Content headline")
+
+     Collection.liveContent(collection, contents)(capiClient, global).map( curatedContent =>
+        curatedContent.head should have(
+          Symbol("headline")("Content headline")
+        )
       )
     }
 
@@ -169,12 +177,13 @@ class CollectionTest extends AnyFreeSpec with Matchers with MockitoSugar with On
       when(trailMetadata.customKicker).thenReturn(Some("Custom kicker"))
       when(trailMetadata.showKickerCustom).thenReturn(Some(true))
 
-      val curatedContent = Collection.liveContent(collection, contents)
+      val curatedContent = Collection.liveContent(collection, contents)(capiClient, global).map( curatedContent =>
       curatedContent.head should have (
         Symbol("headline") ("trail headline"),
         Symbol("href") (Some("trail href")),
-        Symbol("kicker") (Some(FreeHtmlKicker("Custom kicker")))
-      )
+        Symbol("kicker") (Some(FreeHtmlKicker("Custom kicker")))))
+
+
     }
 
     "excludes trails where no corresponding content is found" in {
