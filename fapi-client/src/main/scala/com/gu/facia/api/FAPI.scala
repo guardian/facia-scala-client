@@ -67,7 +67,7 @@ object FAPI {
   }
 
   private def getLiveContentForCollection(collection: Collection, adjustSearchQuery: AdjustSearchQuery = identity)
-                                   (implicit capiClient: ContentApiClient, ec: ExecutionContext): Response[Set[Content]] = {
+                                         (implicit capiClient: ContentApiClient, ec: ExecutionContext): Response[Set[Content]] = {
     val itemIdsForRequest = Collection.liveIdsWithoutSnaps(collection)
     val supportingIdsForRequest = Collection.liveSupportingIdsWithoutSnaps(collection)
     val allItemIdsForRequest = itemIdsForRequest ::: supportingIdsForRequest
@@ -75,11 +75,11 @@ object FAPI {
       hydrateQueries <- ContentApi.buildHydrateQueries(capiClient, allItemIdsForRequest, adjustSearchQuery)
       hydrateResponses <- ContentApi.getHydrateResponse(capiClient, hydrateQueries)
       content = ContentApi.itemsFromSearchResponses(hydrateResponses)}
-      yield content
+    yield content
   }
 
   private def getDraftContentForCollection(collection: Collection, adjustSearchQuery: AdjustSearchQuery = identity)
-                                   (implicit capiClient: ContentApiClient, ec: ExecutionContext): Response[Set[Content]] = {
+                                          (implicit capiClient: ContentApiClient, ec: ExecutionContext): Response[Set[Content]] = {
     val itemIdsForRequest =
       Collection.draftIdsWithoutSnaps(collection)
         .getOrElse(Collection.liveIdsWithoutSnaps(collection))
@@ -91,19 +91,20 @@ object FAPI {
       hydrateQueries <- ContentApi.buildHydrateQueries(capiClient, allItemIdsForRequest, adjustSearchQuery)
       hydrateResponses <- ContentApi.getHydrateResponse(capiClient, hydrateQueries)
       content = ContentApi.itemsFromSearchResponses(hydrateResponses)}
-      yield content
+    yield content
   }
 
   private def getLiveLatestSnapContentForCollection(collection: Collection, adjustItemQuery: AdjustItemQuery)
-                      (implicit capiClient: ContentApiClient, ec: ExecutionContext) = {
+                                                   (implicit capiClient: ContentApiClient, ec: ExecutionContext) = {
     val latestSnapsRequest: LatestSnapsRequest = Collection.liveLatestSnapsRequestFor(collection)
     val latestSupportingSnaps: LatestSnapsRequest = Collection.liveSupportingSnaps(collection)
     val allSnaps = latestSnapsRequest.join(latestSupportingSnaps)
-    for(snapContent <- ContentApi.latestContentFromLatestSnaps(capiClient, allSnaps, adjustItemQuery))
-      yield snapContent}
+    for (snapContent <- ContentApi.latestContentFromLatestSnaps(capiClient, allSnaps, adjustItemQuery))
+      yield snapContent
+  }
 
   private def getDraftLatestSnapContentForCollection(collection: Collection, adjustItemQuery: AdjustItemQuery)
-                      (implicit capiClient: ContentApiClient, ec: ExecutionContext): Response[Map[String, Option[Content]]] = {
+                                                    (implicit capiClient: ContentApiClient, ec: ExecutionContext): Response[Map[String, Option[Content]]] = {
     val latestSnapsRequest: LatestSnapsRequest =
       Collection.draftLatestSnapsRequestFor(collection)
         .getOrElse(Collection.liveLatestSnapsRequestFor(collection))
@@ -111,21 +112,22 @@ object FAPI {
       Collection.draftSupportingSnaps(collection)
         .getOrElse(Collection.liveSupportingSnaps(collection))
     val allSnaps = latestSnapsRequest.join(latestSupportingSnaps)
-    for(snapContent <- ContentApi.latestContentFromLatestSnaps(capiClient, allSnaps, adjustItemQuery))
-      yield snapContent}
+    for (snapContent <- ContentApi.latestContentFromLatestSnaps(capiClient, allSnaps, adjustItemQuery))
+      yield snapContent
+  }
 
   private def getLiveLinkSnapBrandingsForCollection(collection: Collection)
-    (
-      implicit capiClient: ContentApiClient,
-      ec: ExecutionContext
-    ): Response[Map[String, BrandingByEdition]] =
+                                                   (
+                                                     implicit capiClient: ContentApiClient,
+                                                     ec: ExecutionContext
+                                                   ): Response[Map[String, BrandingByEdition]] =
     getLinkSnapBrandings(Collection.liveLinkSnapsRequestFor(collection))
 
   private def getDraftLinkSnapBrandingsForCollection(collection: Collection)
-    (
-      implicit capiClient: ContentApiClient,
-      ec: ExecutionContext
-    ): Response[Map[String, BrandingByEdition]] =
+                                                    (
+                                                      implicit capiClient: ContentApiClient,
+                                                      ec: ExecutionContext
+                                                    ): Response[Map[String, BrandingByEdition]] =
     getLinkSnapBrandings(
       Collection.draftLinkSnapsRequestFor(collection).getOrElse(Collection.liveLinkSnapsRequestFor(collection))
     )
@@ -138,51 +140,59 @@ object FAPI {
   def getTreatsForCollection(collection: Collection, adjustSearchQuery: AdjustSearchQuery = identity, adjustItemQuery: AdjustItemQuery = identity)
                             (implicit capiClient: ContentApiClient, ec: ExecutionContext) = {
     val (treatIds, treatsSnapsRequest) = Collection.treatsRequestFor(collection)
-      for {
-        hydrateQueries <- ContentApi.buildHydrateQueries(capiClient, treatIds, adjustSearchQuery)
-        hydrateResponses <- ContentApi.getHydrateResponse(capiClient, hydrateQueries)
-        snapContent <- ContentApi.latestContentFromLatestSnaps(capiClient, treatsSnapsRequest, adjustItemQuery)
-        setOfContent = ContentApi.itemsFromSearchResponses(hydrateResponses)}
-    yield Collection.treatContent(collection, setOfContent, snapContent)
+    for {
+      hydrateQueries <- ContentApi.buildHydrateQueries(capiClient, treatIds, adjustSearchQuery)
+      hydrateResponses <- ContentApi.getHydrateResponse(capiClient, hydrateQueries)
+      snapContent <- ContentApi.latestContentFromLatestSnaps(capiClient, treatsSnapsRequest, adjustItemQuery)
+      setOfContent = ContentApi.itemsFromSearchResponses(hydrateResponses)
+      content <- Collection.treatContent(collection, setOfContent, snapContent)
+    }
+    yield content
   }
 
   def liveCollectionContentWithoutSnaps(collection: Collection, adjustSearchQuery: AdjustSearchQuery = identity)
-                                (implicit capiClient: ContentApiClient, ec: ExecutionContext): Response[List[FaciaContent]] = {
+                                       (implicit capiClient: ContentApiClient, ec: ExecutionContext): Response[List[FaciaContent]] = {
     val collectionWithoutSnaps = Collection.withoutSnaps(collection)
-    for(setOfContent <- getLiveContentForCollection(collection, adjustSearchQuery))
-      yield Collection.liveContent(collectionWithoutSnaps, setOfContent)
+    for {
+      setOfContent <- getLiveContentForCollection(collection, adjustSearchQuery)
+      liveContent <- Collection.liveContent(collectionWithoutSnaps, setOfContent)
+    } yield liveContent
   }
 
   def liveCollectionContentWithSnaps(collection: Collection, adjustSearchQuery: AdjustSearchQuery = identity, adjustSnapItemQuery: AdjustItemQuery = identity)
-                                   (implicit capiClient: ContentApiClient, ec: ExecutionContext): Response[List[FaciaContent]] = {
+                                    (implicit capiClient: ContentApiClient, ec: ExecutionContext): Response[List[FaciaContent]] = {
     for {
       setOfContent <- getLiveContentForCollection(collection, adjustSearchQuery)
       snapContent <- getLiveLatestSnapContentForCollection(collection, adjustSnapItemQuery)
       linkSnapBrandingsByEdition <- getLiveLinkSnapBrandingsForCollection(collection)
-    } yield Collection.liveContent(collection, setOfContent, snapContent, linkSnapBrandingsByEdition)
+      liveContent <- Collection.liveContent(collection, setOfContent, snapContent, linkSnapBrandingsByEdition)
+    } yield liveContent
   }
 
   def draftCollectionContentWithoutSnaps(collection: Collection, adjustSearchQuery: AdjustSearchQuery = identity)
-                                (implicit capiClient: ContentApiClient, ec: ExecutionContext): Response[List[FaciaContent]] = {
+                                        (implicit capiClient: ContentApiClient, ec: ExecutionContext): Response[List[FaciaContent]] = {
     val collectionWithoutSnaps = Collection.withoutSnaps(collection)
-    for(setOfContent <- getDraftContentForCollection(collection, adjustSearchQuery))
-      yield Collection.draftContent(collectionWithoutSnaps, setOfContent)
+    for {
+      setOfContent <- getDraftContentForCollection(collection, adjustSearchQuery)
+      draftContent <- Collection.draftContent(collectionWithoutSnaps, setOfContent)
+    } yield draftContent
   }
 
   def draftCollectionContentWithSnaps(collection: Collection, adjustSearchQuery: AdjustSearchQuery = identity, adjustSnapItemQuery: AdjustItemQuery = identity)
-                                   (implicit capiClient: ContentApiClient, ec: ExecutionContext): Response[List[FaciaContent]] = {
+                                     (implicit capiClient: ContentApiClient, ec: ExecutionContext): Response[List[FaciaContent]] = {
     for {
       setOfContent <- getDraftContentForCollection(collection, adjustSearchQuery)
       snapContent <- getDraftLatestSnapContentForCollection(collection, adjustSnapItemQuery)
       linkSnapBrandingsByEdition <- getDraftLinkSnapBrandingsForCollection(collection)
-    } yield Collection.draftContent(collection, setOfContent, snapContent, linkSnapBrandingsByEdition)
+      draftContent <- Collection.draftContent(collection, setOfContent, snapContent, linkSnapBrandingsByEdition)
+    } yield draftContent
   }
 
   /**
-    * Fetches content for the configured backfill query. The query can be manipulated for different
-    * requirements by providing adjustment functions. The results then have their facia metadata
-    * resolved using the collection information.
-    */
+   * Fetches content for the configured backfill query. The query can be manipulated for different
+   * requirements by providing adjustment functions. The results then have their facia metadata
+   * resolved using the collection information.
+   */
   def backfillFromConfig(collectionConfig: CollectionConfig,
                          adjustSearchQuery: AdjustSearchQuery = identity, adjustItemQuery: AdjustItemQuery = identity)
                         (implicit capiClient: ContentApiClient, faciaClient: ApiClient, ec: ExecutionContext): Response[List[FaciaContent]] = {
