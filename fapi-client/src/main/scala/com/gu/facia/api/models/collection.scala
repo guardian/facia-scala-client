@@ -2,13 +2,14 @@ package com.gu.facia.api.models
 
 import com.gu.contentapi.client.ContentApiClient
 import com.gu.contentapi.client.model.v1.{Content, ItemResponse}
-import com.gu.contentatom.thrift.AtomData
+import com.gu.contentatom.thrift.{Atom, AtomData}
 import com.gu.contentatom.thrift.atom.media.MediaAtom
 import com.gu.facia.api.contentapi.{ItemQueries, LatestSnapsRequest, LinkSnapsRequest}
 import com.gu.facia.client.models.{CollectionJson, SupportingItem, TargetedTerritory, Trail}
 import org.joda.time.{DateTime, DateTimeZone}
-import com.gu.facia.api.utils.{BoostLevel}
+import com.gu.facia.api.utils.BoostLevel
 import com.gu.facia.api.{CapiError, Response}
+
 import scala.concurrent.{ExecutionContext, Future}
 
 
@@ -129,8 +130,8 @@ object Collection {
             atoms <- faciaContent.content.atoms
             mediaAtoms <- atoms.media
             mainMediaAtom <- mediaAtoms.find(atom =>
-              atom match {
-                case media: MediaAtom => isExpired(media)
+              atom.data match {
+                case AtomData.Media(media) => isExpired(media)
                 case _ => false
               }
             )
