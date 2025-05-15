@@ -103,12 +103,12 @@ object FaciaContentUtils {
     latestSnap => latestSnap.href.orElse(latestSnap.snapUri))
 
   def atomId(fc: FaciaContent): Option[String] = fold(fc)(
-    curatedContent => None,
-    supportingCuratedContent => None,
+    curatedContent => curatedContent.atomId,
+    supportingCuratedContent => supportingCuratedContent.atomId,
     linkSnap => linkSnap.atomId,
-    latestSnap => None
+    latestSnap => latestSnap.atomId
   )
-
+  
 
   def mediaType(fc: FaciaContent): Option[MediaType] = {
     def mediaTypeFromContent(content: Content): Option[MediaType] =
@@ -185,6 +185,14 @@ object FaciaContentUtils {
     linkSnap => linkSnap.properties.showMainVideo,
     latestSnap => latestSnap.properties.showMainVideo
   )
+
+  def videoReplace(fc: FaciaContent): Boolean = fold(fc)(
+    curatedContent => curatedContent.properties.videoReplace,
+    supportingCuratedContent => supportingCuratedContent.properties.videoReplace,
+    linkSnap => linkSnap.properties.videoReplace,
+    latestSnap => latestSnap.properties.videoReplace
+  )
+
   def showLivePlayable(fc: FaciaContent): Boolean = fold(fc)(
     curatedContent => curatedContent.properties.showLivePlayable,
     supportingCuratedContent => supportingCuratedContent.properties.showLivePlayable,
