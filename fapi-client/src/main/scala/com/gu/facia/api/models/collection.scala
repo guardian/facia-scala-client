@@ -2,10 +2,9 @@ package com.gu.facia.api.models
 
 import com.gu.contentapi.client.model.v1.Content
 import com.gu.facia.api.contentapi.{LatestSnapsRequest, LinkSnapsRequest}
-import com.gu.facia.api.models.CollectionConfig.BetaCollections
 import com.gu.facia.client.models.{CollectionJson, SupportingItem, TargetedTerritory, Trail}
 import org.joda.time.DateTime
-import com.gu.facia.api.utils.{BoostLevel, ResolvedMetaData}
+import com.gu.facia.api.utils.{BoostLevel}
 
 
 case class Collection(
