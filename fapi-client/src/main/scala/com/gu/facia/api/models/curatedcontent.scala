@@ -3,6 +3,7 @@ package com.gu.facia.api.models
 import com.gu.contentapi.client.model.v1.{Content, TagType}
 import com.gu.contentapi.client.utils.CapiModelEnrichment.RenderingFormat
 import com.gu.contentapi.client.utils.format._
+import com.gu.contentatom.thrift.AtomData
 import com.gu.facia.api.utils.ContentApiUtils._
 import com.gu.facia.api.utils._
 import com.gu.facia.client.models.{MetaDataCommonFields, SupportingItem, Trail, TrailMetaData}
@@ -71,6 +72,7 @@ sealed trait FaciaContent {
   def properties: ContentProperties
   def byline: Option[String]
   def kicker: Option[ItemKicker]
+  def atomId: Option[String]
 }
 
 // This needs to be kept aligned with Frontend until it's pushed all the way upstream to Thrift
@@ -123,7 +125,8 @@ object Snap {
           contentProperties,
           trail.safeMeta.byline,
           ItemKicker.fromTrailMetaData(trail.safeMeta),
-          brandingByEdition
+          brandingByEdition,
+          None
         ))
       case _ => None
     }
@@ -149,7 +152,8 @@ object Snap {
         contentProperties,
         supportingItem.safeMeta.byline,
         ItemKicker.fromTrailMetaData(supportingItem.safeMeta),
-        Map.empty
+        Map.empty,
+        None
       ))
     case _ => None
   }
@@ -171,7 +175,8 @@ case class LinkSnap(
   properties: ContentProperties,
   byline: Option[String],
   kicker: Option[ItemKicker],
-  override val brandingByEdition: BrandingByEdition
+  override val brandingByEdition: BrandingByEdition,
+  atomData: Option[AtomData]
 ) extends Snap
 
 case class LatestSnap(
@@ -191,8 +196,10 @@ case class LatestSnap(
   byline: Option[String],
   kicker: Option[ItemKicker],
   override val brandingByEdition: BrandingByEdition,
-  atomId: Option[String]
-) extends Snap
+  atomId: Option[String],
+  atomData: Option[AtomData]
+
+                     ) extends Snap
 
 object LatestSnap {
   def fromTrailAndContent(trail: Trail, maybeContent: Option[Content]): LatestSnap = {
@@ -218,7 +225,8 @@ object LatestSnap {
       trail.safeMeta.byline.orElse(maybeContent.flatMap(_.fields.flatMap(_.byline))),
       ItemKicker.fromMaybeContentTrailMetaAndResolvedMetaData(maybeContent, trail.safeMeta, resolvedMetaData),
       brandingByEdition,
-      trail.safeMeta.atomId
+      trail.safeMeta.atomId,
+      None
     )
   }
 
@@ -245,7 +253,8 @@ object LatestSnap {
       supportingItem.safeMeta.byline.orElse(maybeContent.flatMap(_.fields.flatMap(_.byline))),
       ItemKicker.fromMaybeContentTrailMetaAndResolvedMetaData(maybeContent, supportingItem.safeMeta, resolvedMetaData),
       brandingByEdition,
-      supportingItem.safeMeta.atomId
+      supportingItem.safeMeta.atomId,
+      None
     )
   }
 }
@@ -268,7 +277,9 @@ case class CuratedContent(
   embedUri: Option[String],
   embedCss: Option[String],
   override val brandingByEdition: BrandingByEdition,
-  atomId: Option[String]) extends FaciaContent
+  atomId: Option[String],
+  atomData: Option[AtomData]
+                         ) extends FaciaContent
 
 case class SupportingCuratedContent(
   content: Content,
@@ -283,7 +294,9 @@ case class SupportingCuratedContent(
   properties: ContentProperties,
   byline: Option[String],
   kicker: Option[ItemKicker],
-  atomId: Option[String]) extends FaciaContent
+  atomId: Option[String],
+  atomData: Option[AtomData]
+                                   ) extends FaciaContent
 
 object CuratedContent {
 
@@ -313,7 +326,8 @@ object CuratedContent {
       embedUri = trailMetaData.snapUri,
       embedCss = trailMetaData.snapCss,
       brandingByEdition = content.brandingByEdition,
-      trailMetaData.atomId
+      trailMetaData.atomId,
+      None
     )
   }
 
@@ -344,7 +358,8 @@ object CuratedContent {
       embedUri = trailMetaData.snapUri,
       embedCss = trailMetaData.snapCss,
       brandingByEdition = content.brandingByEdition,
-      trailMetaData.atomId
+      trailMetaData.atomId,
+      None
     )}
 }
 
@@ -369,7 +384,8 @@ object SupportingCuratedContent {
       ContentProperties.fromResolvedMetaData(resolvedMetaData),
       trailMetaData.byline.orElse(content.fields.flatMap(_.byline)),
       ItemKicker.fromContentAndTrail(Option(content), trailMetaData, resolvedMetaData, None),
-      trailMetaData.atomId
+      trailMetaData.atomId,
+      None
     )
   }
 }
