@@ -117,13 +117,16 @@ object Collection {
 
   def enrichContentWithVideo(faciaContent: List[FaciaContent])(implicit capiClient: ContentApiClient, ec: ExecutionContext): Response[List[FaciaContent]] = {
 
-    def getAtomData(fcContent: FaciaContent)(implicit ec: ExecutionContext, capiClient: ContentApiClient): Response[Option[AtomData]] = {
+    def getMediaAtomData(fcContent: FaciaContent)(implicit ec: ExecutionContext, capiClient: ContentApiClient): Response[Option[AtomData.Media]] = {
       val futureMaybeAtomData = fcContent match {
         case faciaContent if faciaContent.properties.videoReplace && faciaContent.atomId.isDefined =>
           val futureResponse = capiClient.getResponse(ItemQueries.queryFromAtomId(faciaContent.atomId.get))
-          val videoReplaceAtom = futureResponse.map(resolveVideo)
-          videoReplaceAtom
-
+          futureResponse.map { response =>
+            resolveVideo(response) match {
+              case Some(media: AtomData.Media) => Some(media)
+              case _ => None
+            }
+          }
 
         case faciaContent: CuratedContent if faciaContent.properties.showMainVideo =>
           val maybeMainMediaAtomData = for {
@@ -135,7 +138,11 @@ object Collection {
                 case _ => false
               }
             )
-          } yield mainMediaAtom.data
+            mediaAtomData <- mainMediaAtom.data match {
+              case m: AtomData.Media => Some(m)
+              case _ => None
+            }
+          } yield mediaAtomData
 
           Future.successful(maybeMainMediaAtomData)
         case _ => Future.successful(None)
@@ -164,7 +171,7 @@ object Collection {
 
     val responses: Seq[Response[FaciaContent]] = faciaContent.map {
       case curatedContent: CuratedContent =>
-        getAtomData(curatedContent).map(atomData => curatedContent.copy(atomData = atomData))
+        getMediaAtomData(curatedContent).map(mediaAtomData => curatedContent.copy(mediaAtomData = mediaAtomData))
       case content => Response.Right(content)
     }
 
