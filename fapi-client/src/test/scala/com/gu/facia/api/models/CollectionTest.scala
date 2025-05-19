@@ -3,7 +3,6 @@ package com.gu.facia.api.models
 import com.gu.contentapi.client.model.v1.{Content, ContentFields, ContentType}
 import com.gu.facia.api.utils.ContentApiUtils._
 import com.gu.facia.api.utils._
-import com.gu.facia.client.models.CollectionConfigJson.emptyConfig.collectionType
 import com.gu.facia.client.models.{Branded, CollectionConfigJson, CollectionJson, Trail, TrailMetaData}
 import org.joda.time.DateTime
 import org.mockito.Mockito._
@@ -177,7 +176,7 @@ class CollectionTest extends AnyFreeSpec with Matchers with MockitoSugar with On
       when(trailMetadata.customKicker).thenReturn(Some("Custom kicker"))
       when(trailMetadata.showKickerCustom).thenReturn(Some(true))
 
-      val curatedContent = Collection.liveContent(collection, contents)(capiClient, global).map( curatedContent =>
+      Collection.liveContent(collection, contents)(capiClient, global).map( curatedContent =>
       curatedContent.head should have (
         Symbol("headline") ("trail headline"),
         Symbol("href") (Some("trail href")),
@@ -188,23 +187,13 @@ class CollectionTest extends AnyFreeSpec with Matchers with MockitoSugar with On
 
     "excludes trails where no corresponding content is found" in {
       val trail2 = Trail("content-id-2", 2, None, Some(trailMetadata))
-      val collectionJson = CollectionJson(
-        live = List(trail, trail2),
-        draft = None,
-        treats = None,
-        lastUpdated = new DateTime(1),
-        updatedBy = "test",
-        updatedEmail = "test@example.com",
-        displayName = Some("displayName"),
-        href = Some("href"),
-        previously = None,
-        targetedTerritory = None
-      )
-      val curatedContent = Collection.liveContent(collection, contents)
-      curatedContent.flatMap{
-        case c: CuratedContent => Some(c)
-        case _ => None
-      }.map(_.content.id) should equal(List("content-id"))
+
+      Collection.liveContent(collection, contents)(capiClient, global).map{ curatedContent =>
+        val curatedIds = curatedContent.collect {
+          case c: CuratedContent => c.content.id
+        }
+
+        curatedIds should equal(List("content-id"))}
     }
 
     "Successfully retrieve snaps from snapContent for latest snaps" in {
@@ -257,27 +246,28 @@ class CollectionTest extends AnyFreeSpec with Matchers with MockitoSugar with On
 
       val collection = Collection.fromCollectionJsonConfigAndContent("id", Some(collectionJsonTwo), collectionConfig)
 
-      val faciaContent = Collection.liveContent(collection, Set.empty, snapContent)
+      Collection.liveContent(collection, Set.empty, snapContent)(capiClient, global).map { faciaContent =>
 
-      faciaContent.length should be (4)
-      faciaContent(0) should be (makeLinkSnap(id = "snap/1415985080061", maybeFrontPublicationDate = Option(1L), snapUri = Some("abc")))
-      faciaContent(1) should be (makeLinkSnap(id = "snap/5345345215342", maybeFrontPublicationDate = Option(1L), snapCss = Some("css")))
-      faciaContent(2) should be (makeLatestSnap(
-                                  id = "snap/8474745745660",
-                                  maybeFrontPublicationDate = Option(1L),
-                                  href = Some("uk"),
-                                  headline = Some("Content headline"),
-                                  byline = Some("Content byline"),
-                                  trailText = Some("Content trailtext"),
-                                  latestContent = Some(snapContentOne)))
-      faciaContent(3) should be (makeLatestSnap(
-                                  id = "snap/4324234234234",
-                                  maybeFrontPublicationDate = Option(1L),
-                                  href = Some("culture"),
-                                  headline = Some("Content headline"),
-                                  byline = Some("Content byline"),
-                                  trailText = Some("Content trailtext"),
-                                  latestContent = Some(snapContentTwo)))
+        faciaContent.length should be(4)
+        faciaContent(0) should be(makeLinkSnap(id = "snap/1415985080061", maybeFrontPublicationDate = Option(1L), snapUri = Some("abc")))
+        faciaContent(1) should be(makeLinkSnap(id = "snap/5345345215342", maybeFrontPublicationDate = Option(1L), snapCss = Some("css")))
+        faciaContent(2) should be(makeLatestSnap(
+          id = "snap/8474745745660",
+          maybeFrontPublicationDate = Option(1L),
+          href = Some("uk"),
+          headline = Some("Content headline"),
+          byline = Some("Content byline"),
+          trailText = Some("Content trailtext"),
+          latestContent = Some(snapContentOne)))
+        faciaContent(3) should be(makeLatestSnap(
+          id = "snap/4324234234234",
+          maybeFrontPublicationDate = Option(1L),
+          href = Some("culture"),
+          headline = Some("Content headline"),
+          byline = Some("Content byline"),
+          trailText = Some("Content trailtext"),
+          latestContent = Some(snapContentTwo)))
+      }
     }
   }
 
@@ -432,6 +422,8 @@ class CollectionTest extends AnyFreeSpec with Matchers with MockitoSugar with On
   }
 
   "Internal code" - {
+    val capiClient = mock[ContentApiClient]
+
     val baseContent = Content(
       id = "content-id-one",
       `type` = ContentType.Article,
@@ -466,23 +458,26 @@ class CollectionTest extends AnyFreeSpec with Matchers with MockitoSugar with On
       val trail = Trail("internal-code/page/2", 1, None, Some(trailMetadata))
       val collectionJsonWithPageCode = collectionJson.copy(live = List(trail))
       val collection = Collection.fromCollectionJsonConfigAndContent("id", Some(collectionJsonWithPageCode), collectionConfig)
-      val result = Collection.liveContent(collection, contents)
-      result.length should be (1)
-      result.head should have (
+      Collection.liveContent(collection, contents)(capiClient, global).map{ content =>
+        content.length should be (1)
+          content.head should have (
         Symbol("headline")("straight banana")
-      )
+          )
+      }
     }
     "supporting with internalPageCode" in {
       val supporting = makeTrail("internal-code/page/2")
       val trail = makeTrailWithSupporting("internal-code/page/7", supporting)
       val collectionJsonWithPageCode = collectionJson.copy(live = List(trail))
       val collection = Collection.fromCollectionJsonConfigAndContent("id", Some(collectionJsonWithPageCode), collectionConfig)
-      val result = Collection.liveContent(collection, contents)
-      result.length should be (1)
-      result.head should have (
-        Symbol("headline")("straw berry")
-      )
-      FaciaContentUtils.headline(FaciaContentUtils.supporting(result.head).head) should be ("straight banana")
+      Collection.liveContent(collection, contents)(capiClient, global).map { content =>
+        content.length should be(1)
+        content.head should have(
+          Symbol("headline")("straw berry")
+        )
+        val supportingContent = FaciaContentUtils.supporting(content.head).head
+        FaciaContentUtils.headline(supportingContent) should be("straight banana")
+      }
     }
     "AspectRatio.getAspectRatio" in {
       val defaultCollectionType = collectionConfig.collectionType
