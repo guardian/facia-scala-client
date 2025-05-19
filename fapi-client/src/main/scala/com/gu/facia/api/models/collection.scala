@@ -131,7 +131,7 @@ object Collection {
             mediaAtoms <- atoms.media
             mainMediaAtom <- mediaAtoms.find(atom =>
               atom.data match {
-                case AtomData.Media(media) => isExpired(media)
+                case AtomData.Media(media) => !isExpired(media)
                 case _ => false
               }
             )
