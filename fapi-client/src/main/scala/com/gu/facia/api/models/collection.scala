@@ -135,9 +135,7 @@ object Collection {
                 case _ => false
               }
             )
-
-            mainMediaAtomData = mainMediaAtom.data
-          } yield mainMediaAtomData
+          } yield mainMediaAtom.data
 
           Future.successful(maybeMainMediaAtomData)
         case _ => Future.successful(None)
