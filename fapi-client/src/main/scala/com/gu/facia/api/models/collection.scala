@@ -123,7 +123,7 @@ object Collection {
           val futureResponse = capiClient.getResponse(ItemQueries.queryFromAtomId(faciaContent.atomId.get))
           futureResponse.map { response =>
             resolveVideo(response) match {
-              case Some(media: AtomData.Media) => Some(media)
+              case Some(atom: AtomData.Media) if !isExpired(atom.media) => Some(atom)
               case _ => None
             }
           }
