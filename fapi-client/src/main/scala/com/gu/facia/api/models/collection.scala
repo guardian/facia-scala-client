@@ -120,7 +120,7 @@ object Collection {
     def getMediaAtomData(fcContent: FaciaContent)(implicit ec: ExecutionContext, capiClient: ContentApiClient): Response[Option[AtomData.Media]] = {
       val futureMaybeAtomData = fcContent match {
         case faciaContent if faciaContent.properties.videoReplace && faciaContent.atomId.isDefined =>
-          val futureResponse = capiClient.getResponse(ItemQueries.queryFromAtomId(faciaContent.atomId.get))
+          val futureResponse = capiClient.getResponse(ContentApiClient.item(faciaContent.atomId.get))
           futureResponse.map { response =>
             resolveVideo(response) match {
               case Some(atom: AtomData.Media) if !isExpired(atom.media) => Some(atom)

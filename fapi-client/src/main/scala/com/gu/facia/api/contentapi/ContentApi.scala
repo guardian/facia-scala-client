@@ -155,8 +155,6 @@ trait ItemQueries {
   def latestContentQueryFromSnapUri(uri: String): ItemQuery
 
   def brandingQueryFromSnapUri(uri: URI): ItemQuery
-
-  def queryFromAtomId(atomId: String): ItemQuery
 }
 
 object ItemQueries extends ItemQueries {
@@ -171,9 +169,5 @@ object ItemQueries extends ItemQueries {
   def brandingQueryFromSnapUri(uri: URI): ItemQuery = {
     def cleaned(path: String) = path.stripPrefix("/").stripSuffix("/all").stripSuffix("/latest")
     ContentApiClient.item(cleaned(uri.getPath)).pageSize(1)
-  }
-
-  def queryFromAtomId(atomId: String): ItemQuery ={
-    ContentApiClient.item(s"atom/video/$atomId")
   }
 }
