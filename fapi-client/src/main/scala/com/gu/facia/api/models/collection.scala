@@ -143,7 +143,7 @@ object Collection extends StrictLogging {
 
 
         case faciaContent: CuratedContent if faciaContent.properties.showMainVideo =>
-           val mainAtom = for {
+          val mainAtom = for {
             atoms <- faciaContent.content.atoms
             mediaAtoms <- atoms.media
             validMediaAtom <- extractValidMediaAtom(mediaAtoms, faciaContent.content.id)
