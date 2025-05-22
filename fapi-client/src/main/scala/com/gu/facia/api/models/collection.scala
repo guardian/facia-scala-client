@@ -9,6 +9,7 @@ import com.gu.facia.client.models.{CollectionJson, SupportingItem, TargetedTerri
 import org.joda.time.{DateTime, DateTimeZone}
 import com.gu.facia.api.utils.BoostLevel
 import com.gu.facia.api.{CapiError, Response}
+import com.typesafe.scalalogging.StrictLogging
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -27,7 +28,7 @@ case class Collection(
   targetedTerritory: Option[TargetedTerritory]
 )
 
-object Collection {
+object Collection extends StrictLogging {
   def fromCollectionJsonConfigAndContent(collectionId: String, collectionJson: Option[CollectionJson], collectionConfig: CollectionConfig): Collection = {
     Collection(
       collectionId,
@@ -120,37 +121,49 @@ object Collection {
     def getMediaAtomData(fcContent: FaciaContent)(implicit ec: ExecutionContext, capiClient: ContentApiClient): Response[Option[AtomData.Media]] = {
       val futureMaybeAtomData = fcContent match {
         case faciaContent if faciaContent.properties.videoReplace && faciaContent.atomId.isDefined =>
-          val futureResponse = capiClient.getResponse(ContentApiClient.item(faciaContent.atomId.get))
-          futureResponse.map { response =>
+          val atomId = faciaContent.atomId.get
+          capiClient.getResponse(ContentApiClient.item(atomId)).flatMap { response =>
             resolveVideo(response) match {
-              case Some(atom: AtomData.Media) if !isExpired(atom.media) => Some(atom)
-              case _ => None
+              case Some(mediaAtom: AtomData.Media) if !isExpired(mediaAtom.media) =>
+                Future.successful(Some(mediaAtom))
+
+              case Some(mediaAtom: AtomData.Media) =>
+                logger.warn(s"Media atom $atomId is expired")
+                Future.successful(None)
+
+              case _ =>
+                logger.warn(s"No valid media atom found in CAPI response for ID $atomId")
+                Future.successful(None)
             }
+          }.recover {
+            case e =>
+              logger.warn(s"Exception while fetching media atom for ID $atomId: ${e.getMessage}", e)
+              None
           }
 
+
         case faciaContent: CuratedContent if faciaContent.properties.showMainVideo =>
-          val maybeMainMediaAtomData = for {
+          val mainAtom = for {
             atoms <- faciaContent.content.atoms
             mediaAtoms <- atoms.media
-            mainMediaAtom <- mediaAtoms.find(atom =>
-              atom.data match {
-                case AtomData.Media(media) => !isExpired(media)
-                case _ => false
+            validMediaAtom <- {
+              val maybeAtom = mediaAtoms.collectFirst {
+                case Atom(AtomData.Media(media)) if !isExpired(media) =>
+                  AtomData.Media(media)
               }
-            )
-            mediaAtomData <- mainMediaAtom.data match {
-              case m: AtomData.Media => Some(m)
-              case _ => None
-            }
-          } yield mediaAtomData
 
-          Future.successful(maybeMainMediaAtomData)
+              if (maybeAtom.isEmpty) {
+                logger.info(s"No valid (non-expired) media atoms found in content ID: ${faciaContent.content.id}")
+              }
+
+              Some(maybeAtom)
+            }.flatten
+          } yield validMediaAtom
+          Future.successful(mainAtom)
         case _ => Future.successful(None)
       }
 
-      Response.Async.Right(futureMaybeAtomData) mapError { err =>
-        CapiError(s"Failed to get mediaAtomData response ${err.message}", err.cause)
-      }
+      Response.Async.Right(futureMaybeAtomData)
     }
 
     def resolveVideo(response: ItemResponse): Option[AtomData] = {
