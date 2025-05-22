@@ -49,6 +49,7 @@ sealed trait MetaDataCommonFields {
   lazy val showQuotedHeadline: Option[Boolean] = json.get("showQuotedHeadline").flatMap(_.asOpt[Boolean])
   lazy val excludeFromRss: Option[Boolean] = json.get("excludeFromRss").flatMap(_.asOpt[Boolean])
   lazy val imageSlideshowReplace: Option[Boolean] = json.get("imageSlideshowReplace").flatMap(_.asOpt[Boolean])
+  lazy val videoReplace: Option[Boolean] = json.get("videoReplace").flatMap(_.asOpt[Boolean])
   lazy val slideshow: Option[List[SlideshowAsset]] =
     json.get("slideshow").flatMap(_.asOpt[List[SlideshowAsset]]).filter(_.nonEmpty)
   lazy val showLivePlayable: Option[Boolean] = json.get("showLivePlayable").flatMap(_.asOpt[Boolean])

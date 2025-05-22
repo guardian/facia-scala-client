@@ -27,7 +27,8 @@ class FaciaContentUtilsTest extends AnyFreeSpec with Matchers with TestContent {
     ContentProperties.fromResolvedMetaData(ResolvedMetaData.Default),
     byline = None,
     kicker = None,
-    brandingByEdition = Map.empty
+    brandingByEdition = Map.empty,
+    mediaAtomData = None
   )
 
   val staticDateTime = new DateTime().withYear(2015).withMonthOfYear(4).withDayOfMonth(22)
@@ -50,7 +51,9 @@ class FaciaContentUtilsTest extends AnyFreeSpec with Matchers with TestContent {
     properties = emptyProperties,
     byline = None,
     kicker = None,
-    brandingByEdition = Map.empty
+    brandingByEdition = Map.empty,
+    atomId = None,
+    mediaAtomData = None
   )
 
   def makeCuratedContent(curatedContentId: String, content: Content = content) = CuratedContent(
@@ -70,7 +73,9 @@ class FaciaContentUtilsTest extends AnyFreeSpec with Matchers with TestContent {
     embedType = None,
     embedUri = None,
     embedCss = None,
-    brandingByEdition = Map.empty
+    brandingByEdition = Map.empty,
+    atomId = None,
+    mediaAtomData = None
   )
 
   def makeSupportingCuratedContent(curatedContentId: String, content: Content = content) = SupportingCuratedContent(
@@ -85,7 +90,10 @@ class FaciaContentUtilsTest extends AnyFreeSpec with Matchers with TestContent {
     image = None,
     properties = emptyProperties,
     byline = None,
-    kicker = None)
+    kicker = None,
+    atomId = None,
+    mediaAtomData = None
+  )
 
   "webPublicationDateOption" - {
     "should return a None for a LinkSnap" in {
