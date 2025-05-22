@@ -143,27 +143,29 @@ object Collection extends StrictLogging {
 
 
         case faciaContent: CuratedContent if faciaContent.properties.showMainVideo =>
-          val mainAtom = for {
+           val mainAtom = for {
             atoms <- faciaContent.content.atoms
             mediaAtoms <- atoms.media
-            validMediaAtom <- {
-              val maybeAtom = mediaAtoms.collectFirst {
-                case Atom(AtomData.Media(media)) if !isExpired(media) =>
-                  AtomData.Media(media)
-              }
-
-              if (maybeAtom.isEmpty) {
-                logger.info(s"No valid (non-expired) media atoms found in content ID: ${faciaContent.content.id}")
-              }
-
-              Some(maybeAtom)
-            }.flatten
+            validMediaAtom <- extractValidMediaAtom(mediaAtoms, faciaContent.content.id)
           } yield validMediaAtom
           Future.successful(mainAtom)
         case _ => Future.successful(None)
       }
 
       Response.Async.Right(futureMaybeAtomData)
+    }
+
+    def extractValidMediaAtom(mediaAtoms: collection.Seq[Atom], contentId: String): Option[AtomData.Media] = {
+      mediaAtoms.collectFirst {
+        case atom if atom.data.isInstanceOf[AtomData.Media] =>
+          val mediaAtom = atom.data.asInstanceOf[AtomData.Media]
+          if (!isExpired(mediaAtom.media)) {
+            Some(mediaAtom)
+          } else {
+            logger.info(s"Media atom in content ID: $contentId is expired")
+            None
+          }
+      }.flatten
     }
 
     def resolveVideo(response: ItemResponse): Option[AtomData] = {
