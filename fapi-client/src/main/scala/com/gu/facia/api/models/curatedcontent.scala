@@ -67,6 +67,12 @@ object FaciaImage {
 
 }
 
+object AtomId {
+  def unapply(content: FaciaContent): Option[String] = {
+    content.atomId
+  }
+}
+
 sealed trait FaciaContent {
   def brandingByEdition: BrandingByEdition = Map.empty
 
