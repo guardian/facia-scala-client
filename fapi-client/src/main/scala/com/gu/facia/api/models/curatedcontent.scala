@@ -3,13 +3,17 @@ package com.gu.facia.api.models
 import com.gu.contentapi.client.model.v1.{Content, TagType}
 import com.gu.contentapi.client.utils.CapiModelEnrichment.RenderingFormat
 import com.gu.contentapi.client.utils.format._
+import com.gu.contentatom.thrift.AtomData.{ Media => MediaAtomData}
 import com.gu.facia.api.utils.ContentApiUtils._
 import com.gu.facia.api.utils._
 import com.gu.facia.client.models.{MetaDataCommonFields, SupportingItem, Trail, TrailMetaData}
 
 sealed trait FaciaImage
+
 case class Cutout(imageSrc: String, imageSrcWidth: Option[String], imageSrcHeight: Option[String]) extends FaciaImage
+
 case class Replace(imageSrc: String, imageSrcWidth: String, imageSrcHeight: String, imageCaption: Option[String]) extends FaciaImage
+
 case class ImageSlideshow(assets: List[Replace]) extends FaciaImage
 
 object FaciaImage {
@@ -23,7 +27,8 @@ object FaciaImage {
       imageReplace(trailMeta, resolvedMetadata)
     else if (resolvedMetadata.imageCutoutReplace)
       imageCutout(trailMeta) orElse maybeContent.flatMap(fromContentTags(_, trailMeta))
-    else None}
+    else None
+  }
 
   def fromContentTags(content: Content, trailMeta: MetaDataCommonFields): Option[FaciaImage] = {
     val contributorTags = content.tags.filter(_.`type` == TagType.Contributor)
@@ -57,35 +62,53 @@ object FaciaImage {
   def imageSlideshow(trailMeta: MetaDataCommonFields, resolvedMetaData: ResolvedMetaData): Option[FaciaImage] =
     trailMeta.slideshow.map { assets =>
       val slideshowAssets = assets.map(asset => Replace(asset.src, asset.width, asset.height, asset.caption))
-      ImageSlideshow(slideshowAssets)}
+      ImageSlideshow(slideshowAssets)
+    }
 
 }
+object AtomId {
+  def unapply(content: FaciaContent): Option[String] = {
+    content.atomId
+  }
+}
+
 
 sealed trait FaciaContent {
   def brandingByEdition: BrandingByEdition = Map.empty
+
   def maybeFrontPublicationDate: Option[Long]
+
   def href: Option[String]
+
   def trailText: Option[String]
+
   def group: String
+
   def image: Option[FaciaImage]
+
   def properties: ContentProperties
+
   def byline: Option[String]
+
   def kicker: Option[ItemKicker]
+
+  def atomId: Option[String]
 }
 
 // This needs to be kept aligned with Frontend until it's pushed all the way upstream to Thrift
 // https://github.com/guardian/frontend/blob/46ac997bbb6482bacbd59c3528ce3141623c8033/common/app/model/meta.scala#L220-L224
 
 final case class ContentFormat(
-  design: Design,
-  theme: Theme,
-  display: Display,
-)
+                                design: Design,
+                                theme: Theme,
+                                display: Display,
+                              )
 
 object ContentFormat {
   lazy val defaultContentFormat: ContentFormat = {
     ContentFormat(ArticleDesign, NewsPillar, StandardDisplay)
   }
+
   def apply(content: Content): ContentFormat = {
     ContentFormat(content.design, content.theme, content.display)
   }
@@ -99,9 +122,9 @@ object Snap {
   def maybeFromTrail(trail: Trail): Option[Snap] = maybeFromTrailAndBrandings(trail, Map.empty)
 
   def maybeFromTrailAndBrandings(
-    trail: Trail,
-    brandingByEdition: BrandingByEdition
-  ): Option[Snap] =
+                                  trail: Trail,
+                                  brandingByEdition: BrandingByEdition
+                                ): Option[Snap] =
     trail.safeMeta.snapType match {
       case Some("latest") =>
         Option(LatestSnap.fromTrailAndContent(trail, None))
@@ -123,7 +146,8 @@ object Snap {
           contentProperties,
           trail.safeMeta.byline,
           ItemKicker.fromTrailMetaData(trail.safeMeta),
-          brandingByEdition
+          brandingByEdition,
+          None
         ))
       case _ => None
     }
@@ -149,49 +173,55 @@ object Snap {
         contentProperties,
         supportingItem.safeMeta.byline,
         ItemKicker.fromTrailMetaData(supportingItem.safeMeta),
-        Map.empty
+        Map.empty,
+        None
       ))
     case _ => None
   }
 }
 
 sealed trait Snap extends FaciaContent
+
 case class LinkSnap(
-  id: String,
-  maybeFrontPublicationDate: Option[Long],
-  snapType: String,
-  snapUri: Option[String],
-  snapCss: Option[String],
-  atomId: Option[String],
-  headline: Option[String],
-  href: Option[String],
-  trailText: Option[String],
-  group: String,
-  image: Option[FaciaImage],
-  properties: ContentProperties,
-  byline: Option[String],
-  kicker: Option[ItemKicker],
-  override val brandingByEdition: BrandingByEdition
-) extends Snap
+                     id: String,
+                     maybeFrontPublicationDate: Option[Long],
+                     snapType: String,
+                     snapUri: Option[String],
+                     snapCss: Option[String],
+                     atomId: Option[String],
+                     headline: Option[String],
+                     href: Option[String],
+                     trailText: Option[String],
+                     group: String,
+                     image: Option[FaciaImage],
+                     properties: ContentProperties,
+                     byline: Option[String],
+                     kicker: Option[ItemKicker],
+                     override val brandingByEdition: BrandingByEdition,
+                     mediaAtomData: Option[MediaAtomData]
+                   ) extends Snap
 
 case class LatestSnap(
-  id: String,
-  maybeFrontPublicationDate: Option[Long],
-  cardStyle: CardStyle,
-  format: ContentFormat,
-  snapUri: Option[String],
-  snapCss: Option[String],
-  latestContent: Option[Content],
-  headline: Option[String],
-  href: Option[String],
-  trailText: Option[String],
-  group: String,
-  image: Option[FaciaImage],
-  properties: ContentProperties,
-  byline: Option[String],
-  kicker: Option[ItemKicker],
-  override val brandingByEdition: BrandingByEdition
-) extends Snap
+                       id: String,
+                       maybeFrontPublicationDate: Option[Long],
+                       cardStyle: CardStyle,
+                       format: ContentFormat,
+                       snapUri: Option[String],
+                       snapCss: Option[String],
+                       latestContent: Option[Content],
+                       headline: Option[String],
+                       href: Option[String],
+                       trailText: Option[String],
+                       group: String,
+                       image: Option[FaciaImage],
+                       properties: ContentProperties,
+                       byline: Option[String],
+                       kicker: Option[ItemKicker],
+                       override val brandingByEdition: BrandingByEdition,
+                       atomId: Option[String],
+                       mediaAtomData: Option[MediaAtomData]
+
+                     ) extends Snap
 
 object LatestSnap {
   def fromTrailAndContent(trail: Trail, maybeContent: Option[Content]): LatestSnap = {
@@ -216,7 +246,9 @@ object LatestSnap {
       ContentProperties.fromResolvedMetaData(resolvedMetaData),
       trail.safeMeta.byline.orElse(maybeContent.flatMap(_.fields.flatMap(_.byline))),
       ItemKicker.fromMaybeContentTrailMetaAndResolvedMetaData(maybeContent, trail.safeMeta, resolvedMetaData),
-      brandingByEdition
+      brandingByEdition,
+      trail.safeMeta.atomId,
+      None
     )
   }
 
@@ -242,44 +274,51 @@ object LatestSnap {
       ContentProperties.fromResolvedMetaData(resolvedMetaData),
       supportingItem.safeMeta.byline.orElse(maybeContent.flatMap(_.fields.flatMap(_.byline))),
       ItemKicker.fromMaybeContentTrailMetaAndResolvedMetaData(maybeContent, supportingItem.safeMeta, resolvedMetaData),
-      brandingByEdition
+      brandingByEdition,
+      supportingItem.safeMeta.atomId,
+      None
     )
   }
 }
 
 case class CuratedContent(
-  content: Content,
-  maybeFrontPublicationDate: Option[Long],
-  supportingContent: List[FaciaContent],
-  cardStyle: CardStyle,
-  format: ContentFormat,
-  headline: String,
-  href: Option[String],
-  trailText: Option[String],
-  group: String,
-  image: Option[FaciaImage],
-  properties: ContentProperties,
-  byline: Option[String],
-  kicker: Option[ItemKicker],
-  embedType: Option[String],
-  embedUri: Option[String],
-  embedCss: Option[String],
-  override val brandingByEdition: BrandingByEdition
-) extends FaciaContent
+                           content: Content,
+                           maybeFrontPublicationDate: Option[Long],
+                           supportingContent: List[FaciaContent],
+                           cardStyle: CardStyle,
+                           format: ContentFormat,
+                           headline: String,
+                           href: Option[String],
+                           trailText: Option[String],
+                           group: String,
+                           image: Option[FaciaImage],
+                           properties: ContentProperties,
+                           byline: Option[String],
+                           kicker: Option[ItemKicker],
+                           embedType: Option[String],
+                           embedUri: Option[String],
+                           embedCss: Option[String],
+                           override val brandingByEdition: BrandingByEdition,
+                           atomId: Option[String],
+                           mediaAtomData: Option[MediaAtomData]
+                         ) extends FaciaContent
 
 case class SupportingCuratedContent(
-  content: Content,
-  maybeFrontPublicationDate: Option[Long],
-  cardStyle: CardStyle,
-  format: ContentFormat,
-  headline: String,
-  href: Option[String],
-  trailText: Option[String],
-  group: String,
-  image: Option[FaciaImage],
-  properties: ContentProperties,
-  byline: Option[String],
-  kicker: Option[ItemKicker]) extends FaciaContent
+                                     content: Content,
+                                     maybeFrontPublicationDate: Option[Long],
+                                     cardStyle: CardStyle,
+                                     format: ContentFormat,
+                                     headline: String,
+                                     href: Option[String],
+                                     trailText: Option[String],
+                                     group: String,
+                                     image: Option[FaciaImage],
+                                     properties: ContentProperties,
+                                     byline: Option[String],
+                                     kicker: Option[ItemKicker],
+                                     atomId: Option[String],
+                                     mediaAtomData: Option[MediaAtomData]
+                                   ) extends FaciaContent
 
 object CuratedContent {
 
@@ -308,7 +347,9 @@ object CuratedContent {
       embedType = trailMetaData.snapType,
       embedUri = trailMetaData.snapUri,
       embedCss = trailMetaData.snapCss,
-      brandingByEdition = content.brandingByEdition
+      brandingByEdition = content.brandingByEdition,
+      trailMetaData.atomId,
+      None
     )
   }
 
@@ -338,8 +379,11 @@ object CuratedContent {
       embedType = trailMetaData.snapType,
       embedUri = trailMetaData.snapUri,
       embedCss = trailMetaData.snapCss,
-      brandingByEdition = content.brandingByEdition
-    )}
+      brandingByEdition = content.brandingByEdition,
+      trailMetaData.atomId,
+      None
+    )
+  }
 }
 
 object SupportingCuratedContent {
@@ -362,7 +406,9 @@ object SupportingCuratedContent {
       FaciaImage.getFaciaImage(Some(content), trailMetaData, resolvedMetaData),
       ContentProperties.fromResolvedMetaData(resolvedMetaData),
       trailMetaData.byline.orElse(content.fields.flatMap(_.byline)),
-      ItemKicker.fromContentAndTrail(Option(content), trailMetaData, resolvedMetaData, None)
+      ItemKicker.fromContentAndTrail(Option(content), trailMetaData, resolvedMetaData, None),
+      trailMetaData.atomId,
+      None
     )
   }
 }

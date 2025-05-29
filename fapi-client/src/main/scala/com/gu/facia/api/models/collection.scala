@@ -1,11 +1,17 @@
 package com.gu.facia.api.models
 
-import com.gu.contentapi.client.model.v1.Content
-import com.gu.facia.api.contentapi.{LatestSnapsRequest, LinkSnapsRequest}
-import com.gu.facia.api.models.CollectionConfig.BetaCollections
+import com.gu.contentapi.client.ContentApiClient
+import com.gu.contentapi.client.model.v1.{Content, ItemResponse}
+import com.gu.contentatom.thrift.{Atom, AtomData}
+import com.gu.contentatom.thrift.atom.media.MediaAtom
+import com.gu.facia.api.contentapi.{ItemQueries, LatestSnapsRequest, LinkSnapsRequest}
 import com.gu.facia.client.models.{CollectionJson, SupportingItem, TargetedTerritory, Trail}
-import org.joda.time.DateTime
-import com.gu.facia.api.utils.{BoostLevel, ResolvedMetaData}
+import org.joda.time.{DateTime, DateTimeZone}
+import com.gu.facia.api.utils.BoostLevel
+import com.gu.facia.api.{CapiError, Response}
+import com.typesafe.scalalogging.StrictLogging
+
+import scala.concurrent.{ExecutionContext, Future}
 
 
 case class Collection(
@@ -22,7 +28,7 @@ case class Collection(
   targetedTerritory: Option[TargetedTerritory]
 )
 
-object Collection {
+object Collection extends StrictLogging {
   def fromCollectionJsonConfigAndContent(collectionId: String, collectionJson: Option[CollectionJson], collectionConfig: CollectionConfig): Collection = {
     Collection(
       collectionId,
@@ -110,14 +116,90 @@ object Collection {
 
   }
 
+  private def enrichContentWithVideo(faciaContent: List[FaciaContent])(implicit capiClient: ContentApiClient, ec: ExecutionContext): Response[List[FaciaContent]] = {
+
+    def getMediaAtomData(fcContent: FaciaContent)(implicit ec: ExecutionContext, capiClient: ContentApiClient): Response[Option[AtomData.Media]] = {
+      val futureMaybeAtomData = fcContent match {
+        case faciaContent@AtomId(atomId) if faciaContent.properties.videoReplace =>
+          capiClient.getResponse(ContentApiClient.item(atomId)).map { response =>
+
+            resolveVideo(response) match {
+              case Some(mediaAtom: AtomData.Media) if !isExpired(mediaAtom.media) =>
+                Some(mediaAtom)
+
+              case Some(_: AtomData.Media) =>
+                logger.warn(s"Media atom $atomId is expired")
+                None
+
+              case _ =>
+                logger.warn(s"No valid media atom found in CAPI response for ID $atomId")
+                None
+            }
+          }.recover {
+            case e =>
+              logger.warn(s"Exception while fetching media atom for ID $atomId: ${e.getMessage}", e)
+              None
+          }
+
+
+        case faciaContent: CuratedContent if faciaContent.properties.showMainVideo =>
+          val mainAtom = for {
+            atoms <- faciaContent.content.atoms
+            mediaAtoms <- atoms.media
+            validMediaAtom <- extractValidMediaAtom(mediaAtoms, faciaContent.content.id)
+          } yield validMediaAtom
+          Future.successful(mainAtom)
+        case _ => Future.successful(None)
+      }
+
+      Response.Async.Right(futureMaybeAtomData)
+    }
+
+    def extractValidMediaAtom(mediaAtoms: collection.Seq[Atom], contentId: String): Option[AtomData.Media] = {
+      mediaAtoms.view.map(_.data).collectFirst {
+        case mediaAtom: AtomData.Media if !isExpired(mediaAtom.media) =>
+          Some(mediaAtom)
+        case mediaAtom: AtomData.Media =>
+          logger.info(s"Media atom in content ID: $contentId is expired")
+          None
+      }.flatten
+    }
+
+    def resolveVideo(response: ItemResponse): Option[AtomData] = response.media.map(_.data)
+
+
+    def isExpired(mediaAtom: MediaAtom): Boolean = {
+      val maybeExpired = for {
+        metadata <- mediaAtom.metadata
+        expiryDate <- metadata.expiryDate
+      } yield new DateTime(expiryDate).withZone(DateTimeZone.UTC).isBeforeNow
+      maybeExpired.getOrElse(false)
+    }
+
+
+    val responses: Seq[Response[FaciaContent]] = faciaContent.map {
+      case curatedContent: CuratedContent =>
+        getMediaAtomData(curatedContent).map {
+          case mediaAtomData@Some(_) => curatedContent.copy(mediaAtomData = mediaAtomData)
+          case None => curatedContent
+        }      
+      case content => Response.Right(content)
+    }
+
+    Response.traverse(responses.toList)
+
+  }
+
   /* Live Methods */
   def liveContent(
-    collection: Collection,
-    content: Set[Content],
-    snapContent: Map[String, Option[Content]] = Map.empty,
-    linkSnapBrandingsByEdition: Map[String, BrandingByEdition] = Map.empty
-  ): List[FaciaContent] =
-    contentFrom(collection, content, snapContent, linkSnapBrandingsByEdition, collection => collection.live)
+                   collection: Collection,
+                   content: Set[Content],
+                   snapContent: Map[String, Option[Content]] = Map.empty,
+                   linkSnapBrandingsByEdition: Map[String, BrandingByEdition] = Map.empty
+                 )(implicit capiClient: ContentApiClient, ec: ExecutionContext): Response[List[FaciaContent]] = {
+    val liveContent = contentFrom(collection, content, snapContent, linkSnapBrandingsByEdition, collection => collection.live)
+    enrichContentWithVideo(liveContent)
+  }
 
   def liveIdsWithoutSnaps(collection: Collection): List[String] =
     collection.live.filterNot(_.isSnap).map(_.id)
@@ -154,16 +236,18 @@ object Collection {
 
   /* Draft Methods */
   def draftContent(
-    collection: Collection,
-    content: Set[Content],
-    snapContent: Map[String, Option[Content]] = Map.empty,
-    linkSnapBrandingsByEdition: Map[String, BrandingByEdition] = Map.empty
-  ): List[FaciaContent] =
-    contentFrom(collection,
+                    collection: Collection,
+                    content: Set[Content],
+                    snapContent: Map[String, Option[Content]] = Map.empty,
+                    linkSnapBrandingsByEdition: Map[String, BrandingByEdition] = Map.empty
+                  )(implicit capiClient: ContentApiClient, ec: ExecutionContext): Response[List[FaciaContent]] = {
+    val draftContent = contentFrom(collection,
       content,
       snapContent,
       linkSnapBrandingsByEdition,
       collection => collection.draft.getOrElse(collection.live))
+    enrichContentWithVideo(draftContent)
+  }
 
   def draftIdsWithoutSnaps(collection: Collection): Option[List[String]] =
     collection.draft.map(_.filterNot(_.isSnap).map(_.id))
@@ -196,13 +280,16 @@ object Collection {
 
   /* Treats */
   def treatContent(collection: Collection,
-    content: Set[Content],
-    snapContent: Map[String, Option[Content]] = Map.empty): List[FaciaContent] =
-    contentFrom(collection,
+                   content: Set[Content],
+                   snapContent: Map[String, Option[Content]] = Map.empty)
+                  (implicit capiClient: ContentApiClient, ec: ExecutionContext): Response[List[FaciaContent]] = {
+    val treatContent = contentFrom(collection,
       content,
       snapContent,
       linkSnapBrandingsByEdition = Map.empty,
       collection => collection.treats)
+    enrichContentWithVideo(treatContent)
+  }
 
   def treatsRequestFor(collection: Collection): (List[String], LatestSnapsRequest) = {
     val latestSnapsRequest =
