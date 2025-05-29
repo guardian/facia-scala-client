@@ -182,7 +182,8 @@ object Collection extends StrictLogging {
         getMediaAtomData(curatedContent).map {
           case mediaAtomData@Some(_) => curatedContent.copy(mediaAtomData = mediaAtomData)
           case None => curatedContent
-        }      case content => Response.Right(content)
+        }      
+      case content => Response.Right(content)
     }
 
     Response.traverse(responses.toList)
