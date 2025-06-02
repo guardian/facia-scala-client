@@ -4,7 +4,7 @@ import com.gu.contentapi.client.ContentApiClient
 import com.gu.contentapi.client.model.v1.{Content, ItemResponse}
 import com.gu.contentatom.thrift.{Atom, AtomData}
 import com.gu.contentatom.thrift.atom.media.MediaAtom
-import com.gu.facia.api.contentapi.{ItemQueries, LatestSnapsRequest, LinkSnapsRequest}
+import com.gu.facia.api.contentapi.{ LatestSnapsRequest, LinkSnapsRequest}
 import com.gu.facia.client.models.{CollectionJson, SupportingItem, TargetedTerritory, Trail}
 import org.joda.time.{DateTime, DateTimeZone}
 import com.gu.facia.api.utils.BoostLevel
@@ -15,18 +15,18 @@ import scala.concurrent.{ExecutionContext, Future}
 
 
 case class Collection(
-  id: String,
-  displayName: String,
-  href: Option[String],
-  live: List[Trail],
-  draft: Option[List[Trail]],
-  treats: List[Trail],
-  lastUpdated: Option[DateTime],
-  updatedBy: Option[String],
-  updatedEmail: Option[String],
-  collectionConfig: CollectionConfig,
-  targetedTerritory: Option[TargetedTerritory]
-)
+                       id: String,
+                       displayName: String,
+                       href: Option[String],
+                       live: List[Trail],
+                       draft: Option[List[Trail]],
+                       treats: List[Trail],
+                       lastUpdated: Option[DateTime],
+                       updatedBy: Option[String],
+                       updatedEmail: Option[String],
+                       collectionConfig: CollectionConfig,
+                       targetedTerritory: Option[TargetedTerritory]
+                     )
 
 object Collection extends StrictLogging {
   def fromCollectionJsonConfigAndContent(collectionId: String, collectionJson: Option[CollectionJson], collectionConfig: CollectionConfig): Collection = {
@@ -52,12 +52,12 @@ object Collection extends StrictLogging {
       case _ => false
     }
   }
+
   private[models] def maxSupportingItems(isSplashCard: Boolean, collectionType: String, boostLevel: String): Int = {
     if (
-          (collectionType == "flexible/general" || collectionType == "flexible/special") &&
-          !isSplashCard && boostLevel == BoostLevel.Default.label)
-    {
-       2
+      (collectionType == "flexible/general" || collectionType == "flexible/special") &&
+        !isSplashCard && boostLevel == BoostLevel.Default.label) {
+      2
     } else {
       4
     }
@@ -73,41 +73,49 @@ object Collection extends StrictLogging {
     def resolveTrail(trail: Trail, index: Int): Option[FaciaContent] = {
       val boostLevel = trail.safeMeta.boostLevel
       val isSplash = isSplashCard(trail, index, collection.collectionConfig.collectionType)
-      val maxItems =  maxSupportingItems(isSplash, collection.collectionConfig.collectionType, boostLevel.getOrElse("default") )
+      val maxItems = maxSupportingItems(isSplash, collection.collectionConfig.collectionType, boostLevel.getOrElse("default"))
 
       content.find { c =>
         trail.id.endsWith("/" + c.fields.flatMap(_.internalPageCode).getOrElse(throw new RuntimeException("No internal page code")))
       }
         .map { content =>
-        trail.safeMeta.supporting
-          .map(_.flatMap(resolveSupportingContent))
-          .map(supportingItems => CuratedContent.fromTrailAndContentWithSupporting(content, trail.safeMeta, Option(trail.frontPublicationDate), supportingItems.take(maxItems), collection.collectionConfig))
-          .getOrElse(CuratedContent.fromTrailAndContent(content, trail.safeMeta, Option(trail.frontPublicationDate), collection.collectionConfig))}
+          trail.safeMeta.supporting
+            .map(_.flatMap(resolveSupportingContent))
+            .map(supportingItems => CuratedContent.fromTrailAndContentWithSupporting(content, trail.safeMeta, Option(trail.frontPublicationDate), supportingItems.take(maxItems), collection.collectionConfig))
+            .getOrElse(CuratedContent.fromTrailAndContent(content, trail.safeMeta, Option(trail.frontPublicationDate), collection.collectionConfig))
+        }
         .orElse {
           snapContent
-            .find{case (id, _) => trail.id == id}
-            .map(c => LatestSnap.fromTrailAndContent(trail, c._2))}
+            .find { case (id, _) => trail.id == id }
+            .map(c => LatestSnap.fromTrailAndContent(trail, c._2))
+        }
         .orElse {
           linkSnapBrandingsByEdition
-          .find {
-            case (id, _) => trail.id == id
-          }.flatMap {
+            .find {
+              case (id, _) => trail.id == id
+            }.flatMap {
             case (_, brandingByEdition) => Snap.maybeFromTrailAndBrandings(trail, brandingByEdition)
           }
-        .orElse { Snap.maybeFromTrail(trail) }
-      }
+            .orElse {
+              Snap.maybeFromTrail(trail)
+            }
+        }
     }
 
     def resolveSupportingContent(supportingItem: SupportingItem): Option[FaciaContent] = {
       content.find { c =>
         supportingItem.id.endsWith("/" + c.fields.flatMap(_.internalPageCode).getOrElse(throw new RuntimeException("No internal page code")))
       }
-        .map { content => SupportingCuratedContent.fromTrailAndContent(content, supportingItem.safeMeta, supportingItem.frontPublicationDate, collection.collectionConfig)}
+        .map { content => SupportingCuratedContent.fromTrailAndContent(content, supportingItem.safeMeta, supportingItem.frontPublicationDate, collection.collectionConfig) }
         .orElse {
           snapContent
-            .find{case (id, _) => supportingItem.id == id}
-            .map(c => LatestSnap.fromSupportingItemAndContent(supportingItem, c._2))}
-        .orElse{ Snap.maybeFromSupportingItem(supportingItem)}}
+            .find { case (id, _) => supportingItem.id == id }
+            .map(c => LatestSnap.fromSupportingItemAndContent(supportingItem, c._2))
+        }
+        .orElse {
+          Snap.maybeFromSupportingItem(supportingItem)
+        }
+    }
 
     for {
       (trail, index) <- from(collection).zipWithIndex
@@ -118,35 +126,24 @@ object Collection extends StrictLogging {
 
   private def enrichContentWithVideo(faciaContent: List[FaciaContent])(implicit capiClient: ContentApiClient, ec: ExecutionContext): Response[List[FaciaContent]] = {
 
-    def getMediaAtomData(fcContent: FaciaContent)(implicit ec: ExecutionContext, capiClient: ContentApiClient): Response[Option[AtomData.Media]] = {
+    def getMediaAtom(fcContent: FaciaContent)(implicit ec: ExecutionContext, capiClient: ContentApiClient): Response[Option[Atom]] = {
       val futureMaybeAtomData = fcContent match {
         case faciaContent@AtomId(atomId) if faciaContent.properties.videoReplace =>
           capiClient.getResponse(ContentApiClient.item(atomId)).map { response =>
-
-            resolveVideo(response) match {
-              case Some(mediaAtom: AtomData.Media) if !isExpired(mediaAtom.media) =>
-                Some(mediaAtom)
-
-              case Some(_: AtomData.Media) =>
-                logger.warn(s"Media atom $atomId is expired")
-                None
-
-              case _ =>
-                logger.warn(s"No valid media atom found in CAPI response for ID $atomId")
-                None
-            }
+            response.media.flatMap(atom =>
+              if (isValidMediaAtom(atom, atomId)) Some(atom) else None
+            )
           }.recover {
             case e =>
               logger.warn(s"Exception while fetching media atom for ID $atomId: ${e.getMessage}", e)
               None
           }
 
-
         case faciaContent: CuratedContent if faciaContent.properties.showMainVideo =>
           val mainAtom = for {
             atoms <- faciaContent.content.atoms
             mediaAtoms <- atoms.media
-            validMediaAtom <- extractValidMediaAtom(mediaAtoms, faciaContent.content.id)
+            validMediaAtom <- mediaAtoms.find(isValidMediaAtom(_, faciaContent.content.id))
           } yield validMediaAtom
           Future.successful(mainAtom)
         case _ => Future.successful(None)
@@ -155,18 +152,20 @@ object Collection extends StrictLogging {
       Response.Async.Right(futureMaybeAtomData)
     }
 
-    def extractValidMediaAtom(mediaAtoms: collection.Seq[Atom], contentId: String): Option[AtomData.Media] = {
-      mediaAtoms.view.map(_.data).collectFirst {
-        case mediaAtom: AtomData.Media if !isExpired(mediaAtom.media) =>
-          Some(mediaAtom)
-        case mediaAtom: AtomData.Media =>
-          logger.info(s"Media atom in content ID: $contentId is expired")
-          None
-      }.flatten
+    def isValidMediaAtom(atom: Atom, id: String): Boolean = {
+      atom.data match {
+        case mediaData: AtomData.Media =>
+          if (!isExpired(mediaData.media)) {
+            true
+          } else {
+            logger.warn(s"Media atom is expired in ${id}")
+            false
+          }
+        case _ =>
+          logger.warn(s"No valid media atom found in ${id}")
+          false
+      }
     }
-
-    def resolveVideo(response: ItemResponse): Option[AtomData] = response.media.map(_.data)
-
 
     def isExpired(mediaAtom: MediaAtom): Boolean = {
       val maybeExpired = for {
@@ -179,10 +178,10 @@ object Collection extends StrictLogging {
 
     val responses: Seq[Response[FaciaContent]] = faciaContent.map {
       case curatedContent: CuratedContent =>
-        getMediaAtomData(curatedContent).map {
-          case mediaAtomData@Some(_) => curatedContent.copy(mediaAtomData = mediaAtomData)
+        getMediaAtom(curatedContent).map {
+          case mediaAtom@Some(_) => curatedContent.copy(mediaAtom = mediaAtom)
           case None => curatedContent
-        }      
+        }
       case content => Response.Right(content)
     }
 
@@ -215,22 +214,22 @@ object Collection extends StrictLogging {
       allLiveSupportingItems(collection)
         .filter(_.isSnap)
         .filter(_.safeMeta.snapType.contains("latest"))
-        .flatMap(snap => snap.meta.flatMap(_.snapUri).map(uri => snap.id ->uri))
+        .flatMap(snap => snap.meta.flatMap(_.snapUri).map(uri => snap.id -> uri))
         .toMap)
 
   def liveLatestSnapsRequestFor(collection: Collection): LatestSnapsRequest =
     LatestSnapsRequest(
       collection.live
-      .filter(_.isSnap)
-      .filter(_.safeMeta.snapType.contains("latest"))
-      .flatMap(snap => snap.safeMeta.snapUri.map(uri => snap.id -> uri))
-      .toMap)
+        .filter(_.isSnap)
+        .filter(_.safeMeta.snapType.contains("latest"))
+        .flatMap(snap => snap.safeMeta.snapUri.map(uri => snap.id -> uri))
+        .toMap)
 
   private def linkSnapsRequestFor(trails: List[Trail]): LinkSnapsRequest = LinkSnapsRequest(
     trails.filter(_.isSnap)
-    .filter(_.safeMeta.snapType.contains("link"))
-    .flatMap(snap => snap.safeMeta.href.map(uri => snap.id -> uri))
-    .toMap)
+      .filter(_.safeMeta.snapType.contains("link"))
+      .flatMap(snap => snap.safeMeta.href.map(uri => snap.id -> uri))
+      .toMap)
 
   def liveLinkSnapsRequestFor(collection: Collection): LinkSnapsRequest = linkSnapsRequestFor(collection.live)
 
@@ -259,18 +258,18 @@ object Collection extends StrictLogging {
     allDraftSupportingItems(collection).map(_.filterNot(_.isSnap).map(_.id))
 
   def draftSupportingSnaps(collection: Collection): Option[LatestSnapsRequest] =
-      allDraftSupportingItems(collection)
-        .map( listOfSupportingItems =>
-          LatestSnapsRequest(
-            listOfSupportingItems.filter(_.isSnap)
-              .filter(_.safeMeta.snapType.contains("latest"))
-              .flatMap(snap => snap.meta.flatMap(_.snapUri).map(uri => snap.id ->uri))
-              .toMap))
+    allDraftSupportingItems(collection)
+      .map(listOfSupportingItems =>
+        LatestSnapsRequest(
+          listOfSupportingItems.filter(_.isSnap)
+            .filter(_.safeMeta.snapType.contains("latest"))
+            .flatMap(snap => snap.meta.flatMap(_.snapUri).map(uri => snap.id -> uri))
+            .toMap))
 
   def draftLatestSnapsRequestFor(collection: Collection): Option[LatestSnapsRequest] =
-      collection.draft.map( listOfTrails =>
-        LatestSnapsRequest(
-          listOfTrails.filter(_.isSnap)
+    collection.draft.map(listOfTrails =>
+      LatestSnapsRequest(
+        listOfTrails.filter(_.isSnap)
           .filter(_.safeMeta.snapType.contains("latest"))
           .flatMap(snap => snap.safeMeta.snapUri.map(uri => snap.id -> uri))
           .toMap))
@@ -302,10 +301,12 @@ object Collection extends StrictLogging {
 
     val treatIds = collection.treats.filterNot(_.isSnap).map(_.id)
 
-    (treatIds, latestSnapsRequest)}
+    (treatIds, latestSnapsRequest)
+  }
 
   def withoutSnaps(collection: Collection): Collection = {
     collection.copy(
       live = collection.live.filterNot(_.isSnap),
-      draft = collection.draft.map(_.filterNot(_.isSnap)))}
+      draft = collection.draft.map(_.filterNot(_.isSnap)))
+  }
 }
