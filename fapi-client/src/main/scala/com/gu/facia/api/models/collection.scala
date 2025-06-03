@@ -131,7 +131,7 @@ object Collection extends StrictLogging {
         case faciaContent@AtomId(atomId) if faciaContent.properties.videoReplace =>
           capiClient.getResponse(ContentApiClient.item(atomId)).map { response =>
             response.media.flatMap(atom =>
-              if (isValidMediaAtom(atom, atomId)) Some(atom) else None
+              Option.when(isValidMediaAtom(atom, atomId))(atom)
             )
           }.recover {
             case e =>
