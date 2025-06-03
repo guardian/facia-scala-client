@@ -3,7 +3,7 @@ package com.gu.facia.api.models
 import com.gu.contentapi.client.model.v1.{Content, TagType}
 import com.gu.contentapi.client.utils.CapiModelEnrichment.RenderingFormat
 import com.gu.contentapi.client.utils.format._
-import com.gu.contentatom.thrift.AtomData.{ Media => MediaAtomData}
+import com.gu.contentatom.thrift.Atom
 import com.gu.facia.api.utils.ContentApiUtils._
 import com.gu.facia.api.utils._
 import com.gu.facia.client.models.{MetaDataCommonFields, SupportingItem, Trail, TrailMetaData}
@@ -71,6 +71,8 @@ object AtomId {
     content.atomId
   }
 }
+
+
 
 
 sealed trait FaciaContent {
@@ -198,7 +200,7 @@ case class LinkSnap(
                      byline: Option[String],
                      kicker: Option[ItemKicker],
                      override val brandingByEdition: BrandingByEdition,
-                     mediaAtomData: Option[MediaAtomData]
+                     mediaAtom: Option[Atom]
                    ) extends Snap
 
 case class LatestSnap(
@@ -219,7 +221,7 @@ case class LatestSnap(
                        kicker: Option[ItemKicker],
                        override val brandingByEdition: BrandingByEdition,
                        atomId: Option[String],
-                       mediaAtomData: Option[MediaAtomData]
+                       mediaAtom: Option[Atom]
 
                      ) extends Snap
 
@@ -300,7 +302,7 @@ case class CuratedContent(
                            embedCss: Option[String],
                            override val brandingByEdition: BrandingByEdition,
                            atomId: Option[String],
-                           mediaAtomData: Option[MediaAtomData]
+                           mediaAtom: Option[Atom]
                          ) extends FaciaContent
 
 case class SupportingCuratedContent(
@@ -317,7 +319,7 @@ case class SupportingCuratedContent(
                                      byline: Option[String],
                                      kicker: Option[ItemKicker],
                                      atomId: Option[String],
-                                     mediaAtomData: Option[MediaAtomData]
+                                     mediaAtom: Option[Atom]
                                    ) extends FaciaContent
 
 object CuratedContent {
