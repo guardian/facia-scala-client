@@ -27,7 +27,7 @@ def artifactProducingSettings(supportScala3: Boolean) = Seq(
   organization := "com.gu",
   licenses := Seq(License.Apache2),
   resolvers ++= Resolver.sonatypeOssRepos("releases"),
-  crossScalaVersions := Seq(scalaVersion.value) ++ (if (supportScala3) Seq("3.3.3") else Seq.empty),
+  crossScalaVersions := Seq(scalaVersion.value) ++ (if (supportScala3) Seq("3.3.6") else Seq.empty),
   scalacOptions := Seq(
     "-release:8",
     "-feature",
