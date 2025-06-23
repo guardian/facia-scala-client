@@ -82,7 +82,8 @@ def fapiClient(playJsonVersion: PlayJsonVersion) =  playJsonSpecificProject("fap
       contentApiDefault,
       commercialShared,
       scalaTestMockito,
-      mockito
+      mockito,
+      jSoup
     ),
     artifactProducingSettings(supportScala3 = false) // currently blocked by contentApi & commercialShared clients
   )
