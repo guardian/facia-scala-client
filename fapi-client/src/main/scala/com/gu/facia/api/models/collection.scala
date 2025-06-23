@@ -10,9 +10,9 @@ import org.joda.time.{DateTime, DateTimeZone}
 import com.gu.facia.api.utils.BoostLevel
 import com.gu.facia.api.Response
 import com.typesafe.scalalogging.StrictLogging
+import org.jsoup.Jsoup
 
 import scala.concurrent.{ExecutionContext, Future}
-
 
 case class Collection(
                        id: String,
@@ -131,7 +131,7 @@ object Collection extends StrictLogging {
         case faciaContent@AtomId(atomId) if faciaContent.properties.videoReplace =>
           capiClient.getResponse(ContentApiClient.item(atomId)).map { response =>
             response.media.flatMap(atom =>
-              Option.when(isValidMediaAtom(atom, atomId))(atom)
+              Option.when(isValidMediaAtom(atom))(atom)
             )
           }.recover {
             case e =>
@@ -140,10 +140,12 @@ object Collection extends StrictLogging {
           }
 
         case faciaContent: CuratedContent if faciaContent.properties.showMainVideo =>
+          val mainField = faciaContent.content.fields.flatMap(_.main).get
           val mainAtom = for {
+            atomId <- extractMainMediaAtomIdFromHtml(mainField)
             atoms <- faciaContent.content.atoms
             mediaAtoms <- atoms.media
-            validMediaAtom <- mediaAtoms.find(isValidMediaAtom(_, faciaContent.content.id))
+            validMediaAtom <- mediaAtoms.find(atom => atom.id == atomId && isValidMediaAtom(atom))
           } yield validMediaAtom
           Future.successful(mainAtom)
         case _ => Future.successful(None)
@@ -152,17 +154,29 @@ object Collection extends StrictLogging {
       Response.Async.Right(futureMaybeAtomData)
     }
 
-    def isValidMediaAtom(atom: Atom, id: String): Boolean = {
+    //
+    // We need to make sure that we only select the main media atom rather than another embedded atom. This follows the same pattern implemented in Frontend.
+    //
+    def extractMainMediaAtomIdFromHtml(html: String): Option[String] = {
+      for {
+        document <- Some(Jsoup.parse(html))
+        atomContainer <- Option(document.getElementsByClass("element-atom").first())
+        bodyElement <- Some(atomContainer.getElementsByTag("gu-atom"))
+        atomId <- Some(bodyElement.attr("data-atom-id"))
+      } yield atomId
+    }
+
+    def isValidMediaAtom(atom: Atom): Boolean = {
       atom.data match {
         case mediaData: AtomData.Media =>
           if (!isExpired(mediaData.media)) {
             true
           } else {
-            logger.warn(s"Media atom is expired in ${id}")
+            logger.warn(s"Media atom ${atom.id} is expired")
             false
           }
         case _ =>
-          logger.warn(s"No valid media atom found in ${id}")
+          logger.warn(s"Media atom ${atom.id} is not valid")
           false
       }
     }
