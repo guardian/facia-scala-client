@@ -45,10 +45,10 @@ object Collection extends StrictLogging {
   }
 
 
-  private def isSplashCard(trail: Trail, index: Int, collectionType: String): Boolean = {
+  private[models] def isSplashCard(trail: Trail, index: Int, collectionType: String): Boolean = {
     (collectionType, trail.safeMeta.group, index) match {
       case ("flexible/general", Some("3"), _) => true
-      case ("flexible/special", Some("1"), 0) => true
+      case ("flexible/special", None, 0) => true
       case _ => false
     }
   }

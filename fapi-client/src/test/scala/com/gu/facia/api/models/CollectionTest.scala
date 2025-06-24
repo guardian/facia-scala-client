@@ -544,5 +544,49 @@ class CollectionTest extends AnyFreeSpec with Matchers with MockitoSugar with On
       Collection.maxSupportingItems(isSplashCard, collectionType, boostLevel) shouldBe 4
     }
   }
+  "isSplashCard" - {
+    "should return true for any card in a splash group of a flexible general" in {
+      val collectionType = "flexible/general"
+      val splashGroup = "3"
+      val trailMetaData = Some(TrailMetaData(Map("group" -> JsString(splashGroup))))
+      val trail = Trail("internal-code/page/1", 1, None, trailMetaData)
+      val trailIndex = 0
+      Collection.isSplashCard(trail, trailIndex, collectionType) should be (true)
+    }
+    "should return false for any card not in the splash group of a flexible general" in {
+      val collectionType = "flexible/general"
+      val bigGroup = "1"
+      val trailMetaData = Some(TrailMetaData(Map("group" -> JsString(bigGroup))))
+      val trail = Trail("internal-code/page/1", 1, None, trailMetaData)
+      val trailIndex = 0
+      Collection.isSplashCard(trail, trailIndex, collectionType) should be (false)
+    }
+    "should return true for the first card in the standard group of a flexible special" in {
+      val collectionType = "flexible/special"
+      val trailIndex = 0
+      Collection.isSplashCard(trail, trailIndex, collectionType) should be (true)
+    }
+    "should return false for the card in the snap group of a flexible special" in {
+      val collectionType = "flexible/special"
+      val snapGroup = "1"
+      val trailMetaData = Some(TrailMetaData(Map("group" -> JsString(snapGroup))))
+      val trail = Trail("internal-code/page/1", 1, None, trailMetaData)
+      val trailIndex = 0
+      Collection.isSplashCard(trail, trailIndex, collectionType) should be (false)
+    }
+    "should return false for the second card in the standard group of a flexible special" in {
+      val collectionType = "flexible/special"
+      val snapGroup = "1"
+      val trailMetaData = Some(TrailMetaData(Map("group" -> JsString(snapGroup))))
+      val trail = Trail("internal-code/page/1", 1, None, trailMetaData)
+      val trailIndex = 0
+      Collection.isSplashCard(trail, trailIndex, collectionType) should be (false)
+    }
+    "should return false if the container is not flexible general or flexible special" in {
+      val collectionType = "scollable/medium"
+      val trailIndex = 0
+      Collection.isSplashCard(trail, trailIndex, collectionType) should be (false)
+    }
+  }
 
 }
