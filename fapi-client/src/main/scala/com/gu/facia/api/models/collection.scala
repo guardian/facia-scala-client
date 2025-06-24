@@ -1,7 +1,7 @@
 package com.gu.facia.api.models
 
 import com.gu.contentapi.client.ContentApiClient
-import com.gu.contentapi.client.model.v1.Content
+import com.gu.contentapi.client.model.v1.{Block, BlockElement, Blocks, Content, ContentAtomElementFields}
 import com.gu.contentatom.thrift.{Atom, AtomData}
 import com.gu.contentatom.thrift.atom.media.MediaAtom
 import com.gu.facia.api.contentapi.{LatestSnapsRequest, LinkSnapsRequest}
@@ -10,7 +10,6 @@ import org.joda.time.{DateTime, DateTimeZone}
 import com.gu.facia.api.utils.BoostLevel
 import com.gu.facia.api.Response
 import com.typesafe.scalalogging.StrictLogging
-import org.jsoup.Jsoup
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -140,9 +139,8 @@ object Collection extends StrictLogging {
           }
 
         case faciaContent: CuratedContent if faciaContent.properties.showMainVideo =>
-          val mainField = faciaContent.content.fields.flatMap(_.main).get
           val mainAtom = for {
-            atomId <- extractMainMediaAtomIdFromHtml(mainField)
+            atomId <- getMainMediaAtomId(faciaContent)
             atoms <- faciaContent.content.atoms
             mediaAtoms <- atoms.media
             validMediaAtom <- mediaAtoms.find(atom => atom.id == atomId && isValidMediaAtom(atom))
@@ -154,15 +152,13 @@ object Collection extends StrictLogging {
       Response.Async.Right(futureMaybeAtomData)
     }
 
-    //
-    // We need to make sure that we only select the main media atom rather than another embedded atom. This follows the same pattern implemented in Frontend.
-    //
-    def extractMainMediaAtomIdFromHtml(html: String): Option[String] = {
+    def getMainMediaAtomId(faciaContent: CuratedContent): Option[String] = {
       for {
-        document <- Some(Jsoup.parse(html))
-        atomContainer <- Option(document.getElementsByClass("element-atom").first())
-        bodyElement <- Some(atomContainer.getElementsByTag("gu-atom"))
-        atomId <- Some(bodyElement.attr("data-atom-id"))
+        block       <- faciaContent.content.blocks
+        main        <- block.main
+        element     <- main.elements.headOption
+        atomData    <- element.contentAtomTypeData
+        atomId      = atomData.atomId
       } yield atomId
     }
 
