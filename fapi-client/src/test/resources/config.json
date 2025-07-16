@@ -241,7 +241,7 @@
       "priority" : "commercial"
     },
     "uk" : {
-      "collections" : [ "uk-alpha/news/regular-stories", "6aefcaf1-dbec-4058-a7b8-a925d4163831", "754c-8e8c-fad9-a927", "8852-9cf6-d938-01fb", "uk-alpha/contributors/feature-stories", "805a5c7f-9409-4e23-8209-b59e03134f54", "uk-alpha/features/feature-stories", "8b62a5f8-12da-4d4b-bf91-9b4d3a3770fa", "uk-alpha/people-in-the-news/feature-stories", "uk-alpha/special-other/special-story", "uk/most-viewed/regular-stories", "85346f2f-e24e-41ff-863b-ef4792c3294c" ],
+      "collections" : [ "e394b4df-85b2-4e94-aa9d-7ecf3baddee4", "6aefcaf1-dbec-4058-a7b8-a925d4163831", "754c-8e8c-fad9-a927", "8852-9cf6-d938-01fb", "uk-alpha/contributors/feature-stories", "805a5c7f-9409-4e23-8209-b59e03134f54", "uk-alpha/features/feature-stories", "8b62a5f8-12da-4d4b-bf91-9b4d3a3770fa", "uk-alpha/people-in-the-news/feature-stories", "uk-alpha/special-other/special-story", "uk/most-viewed/regular-stories", "85346f2f-e24e-41ff-863b-ef4792c3294c" ],
       "webTitle" : "Network Front",
       "title" : "Latest news, sport and comment from the Guardian",
       "description" : "Latest news, sport, business, comment, analysis and reviews from the Guardian, the world's leading liberal voice"
@@ -5583,7 +5583,7 @@
       "displayName" : "interactive",
       "type" : "fixed/small/slow-V-mpu"
     },
-    "uk-alpha/news/regular-stories" : {
+    "e394b4df-85b2-4e94-aa9d-7ecf3baddee4" : {
       "displayName" : "headlines",
       "type" : "dynamic/fast",
       "groups" : [ "standard", "big", "very big", "huge" ],

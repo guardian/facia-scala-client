@@ -38,7 +38,7 @@
       "collections" : [ "53b5-1b43-00ba-e414", "ee1c-3bf4-a5d8-cf8f", "0934-f1d5-b745-d792", "b475-0e55-3386-b3c5", "f13b-f974-f436-c803", "733c-4f32-0013-6248", "cf05-efc2-e03a-4ed3", "63e2-c5d6-6bef-65b8", "9ddb-b2ab-4bce-0cdf", "1be1-17a5-c04b-b002" ]
     },
     "uk" : {
-      "collections" : [ "uk-alpha/news/regular-stories", "uk-alpha/special-1/special-story", "754c-8e8c-fad9-a927", "8852-9cf6-d938-01fb", "uk-alpha/features/feature-stories", "uk/most-viewed/regular-stories", "uk-alpha/contributors/feature-stories", "uk-alpha/people-in-the-news/feature-stories", "uk-alpha/special-other/special-story", "9cd2-e508-2bc1-5afd" ],
+      "collections" : [ "e394b4df-85b2-4e94-aa9d-7ecf3baddee4", "uk-alpha/special-1/special-story", "754c-8e8c-fad9-a927", "8852-9cf6-d938-01fb", "uk-alpha/features/feature-stories", "uk/most-viewed/regular-stories", "uk-alpha/contributors/feature-stories", "uk-alpha/people-in-the-news/feature-stories", "uk-alpha/special-other/special-story", "9cd2-e508-2bc1-5afd" ],
       "webTitle" : "Network Front",
       "title" : "Latest news, sport and comment from the Guardian",
       "description" : "Latest news, sport, business, comment, analysis and reviews from the Guardian, the world's leading liberal voice"
@@ -1631,7 +1631,7 @@
       },
       "type" : "features"
     },
-    "uk-alpha/news/regular-stories" : {
+    "e394b4df-85b2-4e94-aa9d-7ecf3baddee4" : {
       "displayName" : "Top Stories",
       "type" : "news",
       "groups" : [ "standard", "big", "very big", "huge" ]
