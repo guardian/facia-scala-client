@@ -57,9 +57,9 @@ class IntegrationTest extends AnyFreeSpec with Matchers with ScalaFutures with O
 
   "getCollection" - {
     "should return the collection with a given id" in {
-      FAPI.getCollection("uk-alpha/news/regular-stories").asFuture.futureValue.fold(
+      FAPI.getCollection("e394b4df-85b2-4e94-aa9d-7ecf3baddee4").asFuture.futureValue.fold(
         err => fail(s"expected collection, got $err", err.cause),
-        collection => collection should have (Symbol("id") ("uk-alpha/news/regular-stories"))
+        collection => collection should have (Symbol("id") ("e394b4df-85b2-4e94-aa9d-7ecf3baddee4"))
       )
     }
   }
@@ -75,7 +75,7 @@ class IntegrationTest extends AnyFreeSpec with Matchers with ScalaFutures with O
 
   "collectionContent" - {
 
-    val collectionResponse: Either[ApiError, Collection] = FAPI.getCollection("uk-alpha/news/regular-stories").asFuture.futureValue
+    val collectionResponse: Either[ApiError, Collection] = FAPI.getCollection("e394b4df-85b2-4e94-aa9d-7ecf3baddee4").asFuture.futureValue
 
     "fetch collection" in {
       collectionResponse.fold(

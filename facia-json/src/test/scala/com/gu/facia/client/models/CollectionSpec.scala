@@ -37,7 +37,7 @@ class CollectionSpec extends AnyFlatSpec with Matchers with OptionValues with Re
   }
 
   it should "deserialize content with image src widths and heights attached" in {
-    val collection = getCollectionFixture("PROD/frontsapi/collection/uk-alpha/news/regular-stories/collection2.json")
+    val collection = getCollectionFixture("PROD/frontsapi/collection/e394b4df-85b2-4e94-aa9d-7ecf3baddee4/collection2.json")
 
     val itemMeta = collection.live.lift(1).value.safeMeta
     itemMeta.imageSrcWidth.value shouldBe "940"
@@ -45,7 +45,7 @@ class CollectionSpec extends AnyFlatSpec with Matchers with OptionValues with Re
   }
 
   it should "deserialize content with slideshows, where captions are optional" in {
-    val collection = getCollectionFixture("PROD/frontsapi/collection/uk-alpha/news/regular-stories/collection-with-captions.json")
+    val collection = getCollectionFixture("PROD/frontsapi/collection/e394b4df-85b2-4e94-aa9d-7ecf3baddee4/collection-with-captions.json")
 
     val item = collection.live.lift(0).value
     item.safeMeta.slideshow shouldBe Some(
@@ -72,7 +72,7 @@ class CollectionSpec extends AnyFlatSpec with Matchers with OptionValues with Re
   }
 
   it should "deserialize content with supporting items" in {
-    val collection = getCollectionFixture("PROD/frontsapi/collection/uk-alpha/news/regular-stories/collection.json")
+    val collection = getCollectionFixture("PROD/frontsapi/collection/e394b4df-85b2-4e94-aa9d-7ecf3baddee4/collection.json")
 
     val supportingContent = collection.live.headOption.value.safeMeta.supporting.value
     supportingContent should have size 3
