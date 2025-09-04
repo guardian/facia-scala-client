@@ -6,7 +6,7 @@ name := "facia-api-client"
 
 description := "Scala client for The Guardian's Facia JSON API"
 
-ThisBuild / scalaVersion := "2.13.15"
+ThisBuild / scalaVersion := "2.13.16"
 
 val sonatypeReleaseSettings = Seq(
   releaseVersion := fromAggregatedAssessedCompatibilityWithLatestRelease().value,
@@ -27,7 +27,7 @@ def artifactProducingSettings(supportScala3: Boolean) = Seq(
   organization := "com.gu",
   licenses := Seq(License.Apache2),
   resolvers ++= Resolver.sonatypeOssRepos("releases"),
-  crossScalaVersions := Seq(scalaVersion.value) ++ (if (supportScala3) Seq("3.3.3") else Seq.empty),
+  crossScalaVersions := Seq(scalaVersion.value) ++ (if (supportScala3) Seq("3.3.6") else Seq.empty),
   scalacOptions := Seq(
     "-release:8",
     "-feature",
@@ -68,7 +68,7 @@ def faciaJson(playJsonVersion: PlayJsonVersion) = playJsonSpecificProject("facia
       awsS3SdkV1, // ideally, this would be pushed out to a separate FAPI artifact, or just not used directly at all
       commonsIo,
       playJsonVersion.lib,
-      "org.scala-lang.modules" %% "scala-collection-compat" % "2.11.0",
+      "org.scala-lang.modules" %% "scala-collection-compat" % "2.13.0",
       scalaLogging
     ),
     artifactProducingSettings(supportScala3 = playJsonVersion.supportsScala3)
