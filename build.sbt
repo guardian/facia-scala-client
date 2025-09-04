@@ -6,7 +6,7 @@ name := "facia-api-client"
 
 description := "Scala client for The Guardian's Facia JSON API"
 
-ThisBuild / scalaVersion := "2.13.15"
+ThisBuild / scalaVersion := "2.13.16"
 
 val sonatypeReleaseSettings = Seq(
   releaseVersion := fromAggregatedAssessedCompatibilityWithLatestRelease().value,
