@@ -68,7 +68,7 @@ def faciaJson(playJsonVersion: PlayJsonVersion) = playJsonSpecificProject("facia
       awsS3SdkV1, // ideally, this would be pushed out to a separate FAPI artifact, or just not used directly at all
       commonsIo,
       playJsonVersion.lib,
-      "org.scala-lang.modules" %% "scala-collection-compat" % "2.11.0",
+      "org.scala-lang.modules" %% "scala-collection-compat" % "2.13.0",
       scalaLogging
     ),
     artifactProducingSettings(supportScala3 = playJsonVersion.supportsScala3)
