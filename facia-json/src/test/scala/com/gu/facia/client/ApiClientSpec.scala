@@ -18,18 +18,18 @@ import scala.util.hashing.MurmurHash3
 object FakeS3Fetching extends S3ByteArrayFetching with ResourcesHelper {
   private def pretendETagFor(bytes: Array[Byte]): String = MurmurHash3.bytesHash(bytes).toHexString
 
-  override def fetch(objectId: ObjectId)(implicit ec: ExecutionContext): Future[MissingOrETagged[Array[Byte]]] = Future {
+  override def fetch(objectId: ObjectId): Future[MissingOrETagged[Array[Byte]]] = Future.successful {
     slurpBytes(objectId.key).fold(Missing: MissingOrETagged[Array[Byte]]) { bytes =>
       ETaggedData(pretendETagFor(bytes), bytes)
     }
   }
 
-  override def fetchOnlyIfETagChanged(objectId: ObjectId, oldETag: String)(implicit ec: ExecutionContext): Future[Option[MissingOrETagged[Array[Byte]]]] = {
+  override def fetchOnlyIfETagChanged(objectId: ObjectId, oldETag: String): Future[Option[MissingOrETagged[Array[Byte]]]] = {
     fetch(objectId).map {
-      case taggedData: ETaggedData[_] =>
+      case taggedData: ETaggedData[Array[Byte]] =>
         Option.unless(oldETag == taggedData.eTag)(taggedData) // simulate a Not-Modified response, if there's no change in ETag
       case x => Some(x)
-    }
+    }(ExecutionContext.parasitic)
   }
 }
 
