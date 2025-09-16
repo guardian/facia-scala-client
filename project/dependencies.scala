@@ -4,7 +4,7 @@ object Dependencies {
   val capiVersion = "35.0.0"
   val eTagCachingVersion = "7.0.0"
 
-  val awsS3SdkV1 = "com.amazonaws" % "aws-java-sdk-s3" % "1.12.765"
+  val awsS3SdkV1 = "com.amazonaws" % "aws-java-sdk-s3" % "1.12.780"
   val eTagCachingS3Base = "com.gu.etag-caching" %% "aws-s3-base" % eTagCachingVersion
   val eTagCachingS3SupportForTesting = "com.gu.etag-caching" %% "aws-s3-sdk-v2" % eTagCachingVersion % Test
   val commonsIo = "org.apache.commons" % "commons-io" % "1.3.2"
