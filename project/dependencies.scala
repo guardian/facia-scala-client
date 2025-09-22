@@ -1,7 +1,7 @@
 import sbt._
 
 object Dependencies {
-  val capiVersion = "35.0.0"
+  val capiVersion = "37.0.0"
   val eTagCachingVersion = "7.0.0"
 
   val awsS3SdkV1 = "com.amazonaws" % "aws-java-sdk-s3" % "1.12.765"
