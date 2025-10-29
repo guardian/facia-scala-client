@@ -1,7 +1,7 @@
 import sbt._
 
 object Dependencies {
-  val capiVersion = "38.0.0"
+  val capiVersion = "38.0.0-PREVIEW.bump-capi-models-to-bring-in-looping-video-field.2025-10-29T1154.8305880f"
   val eTagCachingVersion = "7.0.0"
 
   val awsS3SdkV1 = "com.amazonaws" % "aws-java-sdk-s3" % "1.12.765"
