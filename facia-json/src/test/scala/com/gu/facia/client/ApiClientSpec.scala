@@ -43,22 +43,18 @@ class ApiClientSpec extends AnyFlatSpec with Matchers with OptionValues with Sca
   }
 
   val bucketName = "not used"
-  val legacyClient: ApiClient = ApiClient(bucketName, "DEV", FakeS3Client)
   val cachingClient: ApiClient = ApiClient.withCaching(bucketName, Environment.Dev, FakeS3Fetching)
 
-  // Here we're testing that both the legacy client & the new caching client satisfy the same test criteria
-  for ((name, client) <- Map("legacy" -> legacyClient, "caching" -> cachingClient)) {
-    s"$name ApiClient" should "fetch the config" in {
-      val config = client.config.futureValue
+  s"caching ApiClient" should "fetch the config" in {
+    val config = cachingClient.config.futureValue
 
-      config.collections should have size 334
-      config.fronts should have size 79
-    }
+    config.collections should have size 334
+    config.fronts should have size 79
+  }
 
-    it should "fetch a collection" in {
-      val collectionOpt = cachingClient.collection("2409-31b3-83df0-de5a").futureValue
+  it should "fetch a collection" in {
+    val collectionOpt = cachingClient.collection("2409-31b3-83df0-de5a").futureValue
 
-      collectionOpt.value.live should have size 8
-    }
+    collectionOpt.value.live should have size 8
   }
 }

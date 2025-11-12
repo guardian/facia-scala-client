@@ -39,7 +39,7 @@ def artifactProducingSettings(supportScala3: Boolean) = Seq(
 
 // fapi-client-core is independent of AWS SDK version.
 lazy val fapiClient_core = (project in file("fapi-client-core")).settings(
-  libraryDependencies += eTagCachingS3Base,
+  libraryDependencies += eTagCachingS3,
   artifactProducingSettings(supportScala3 = true)
 )
 
@@ -65,7 +65,7 @@ def faciaJson(playJsonVersion: PlayJsonVersion) = playJsonSpecificProject("facia
   .dependsOn(fapiClient_core)
   .settings(
     libraryDependencies ++= Seq(
-      awsS3SdkV1, // ideally, this would be pushed out to a separate FAPI artifact, or just not used directly at all
+      jodaTime,
       commonsIo,
       playJsonVersion.lib,
       "org.scala-lang.modules" %% "scala-collection-compat" % "2.11.0",
@@ -77,7 +77,7 @@ def faciaJson(playJsonVersion: PlayJsonVersion) = playJsonSpecificProject("facia
 def fapiClient(playJsonVersion: PlayJsonVersion) =  playJsonSpecificProject("fapi-client", playJsonVersion)
   .settings(
     libraryDependencies ++= Seq(
-      eTagCachingS3SupportForTesting,
+      eTagCachingS3,
       contentApi,
       contentApiDefault,
       commercialShared,

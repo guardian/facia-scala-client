@@ -2,7 +2,6 @@ package com.gu.facia.client
 
 import com.gu.etagcaching.FreshnessPolicy.AlwaysWaitForRefreshedValue
 import com.gu.etagcaching.aws.s3.{ObjectId, S3ByteArrayFetching}
-import com.gu.etagcaching.fetching.Fetching
 import com.gu.etagcaching.{ConfigCache, ETagCache}
 import com.gu.facia.client.models.{CollectionJson, ConfigJson}
 import play.api.libs.json.{Format, Json}
