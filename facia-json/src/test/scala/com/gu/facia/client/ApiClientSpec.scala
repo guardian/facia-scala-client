@@ -36,12 +36,6 @@ object FakeS3Fetching extends S3ByteArrayFetching with ResourcesHelper {
 class ApiClientSpec extends AnyFlatSpec with Matchers with OptionValues with ScalaFutures with IntegrationPatience {
   import scala.concurrent.ExecutionContext.Implicits.global
 
-  object FakeS3Client extends S3Client with ResourcesHelper {
-    override def get(bucket: String, path: String): Future[FaciaResult] = Future {
-      slurpOrDie(path)
-    }
-  }
-
   val bucketName = "not used"
   val cachingClient: ApiClient = ApiClient.withCaching(bucketName, Environment.Dev, FakeS3Fetching)
 
