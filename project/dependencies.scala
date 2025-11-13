@@ -4,8 +4,9 @@ object Dependencies {
   val capiVersion = "38.0.0"
   val eTagCachingVersion = "7.0.0"
 
+  val eTagCachingS3Base = "com.gu.etag-caching" %% "aws-s3-base" % eTagCachingVersion
+  val eTagCachingS3SupportForTesting = "com.gu.etag-caching" %% "aws-s3-sdk-v2" % eTagCachingVersion % Test
   val jodaTime = "joda-time" % "joda-time" % "2.14.0"
-  val eTagCachingS3 = "com.gu.etag-caching" %% "aws-s3-sdk-v2" % eTagCachingVersion
   val commonsIo = "org.apache.commons" % "commons-io" % "1.3.2"
   val contentApi = "com.gu" %% "content-api-client" % capiVersion
   val contentApiDefault = "com.gu" %% "content-api-client-default" % capiVersion % Test
