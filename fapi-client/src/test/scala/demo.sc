@@ -3,7 +3,7 @@ import com.gu.contentapi.client.GuardianContentClient
 import com.gu.etagcaching.aws.sdkv2.s3.S3ObjectFetching
 import com.gu.facia.api.FAPI
 import com.gu.facia.client.{ApiClient, Environment}
-import software.amazon.awssdk.auth.credentials.{AwsCredentialsProviderChain, EnvironmentVariableCredentialsProvider, ProfileCredentialsProvider}
+import software.amazon.awssdk.auth.credentials.{AwsCredentialsProviderChain, SystemPropertyCredentialsProvider, EnvironmentVariableCredentialsProvider, ProfileCredentialsProvider}
 import software.amazon.awssdk.regions.Region
 import software.amazon.awssdk.services.s3.S3AsyncClient
 
@@ -18,9 +18,9 @@ val awsProfileName = "cmsFronts"
 
 implicit val capiClient =  new GuardianContentClient(apiKey)
 implicit val apiClient: ApiClient = {
-  val credentialsProvider = new AwsCredentialsProviderChain(
-    new EnvironmentVariableCredentialsProvider(),
-//    new SystemPropertiesCredentialsProvider(),
+  val credentialsProvider =  AwsCredentialsProviderChain.of(
+    EnvironmentVariableCredentialsProvider.create(),
+    SystemPropertyCredentialsProvider.create(),
     ProfileCredentialsProvider.builder().profileName(awsProfileName).build()
   )
 
