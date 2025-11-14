@@ -1,9 +1,11 @@
-import com.amazonaws.auth.profile.ProfileCredentialsProvider
-import com.amazonaws.auth.{AWSCredentialsProviderChain, EnvironmentVariableCredentialsProvider, SystemPropertiesCredentialsProvider}
-import com.amazonaws.services.s3.AmazonS3Client
+import software.amazon.awssdk.http.nio.netty.NettyNioAsyncHttpClient
 import com.gu.contentapi.client.GuardianContentClient
+import com.gu.etagcaching.aws.sdkv2.s3.S3ObjectFetching
 import com.gu.facia.api.FAPI
-import com.gu.facia.client.{AmazonSdkS3Client, ApiClient}
+import com.gu.facia.client.{ApiClient, Environment}
+import software.amazon.awssdk.auth.credentials.{AwsCredentialsProviderChain, SystemPropertyCredentialsProvider, EnvironmentVariableCredentialsProvider, ProfileCredentialsProvider}
+import software.amazon.awssdk.regions.Region
+import software.amazon.awssdk.services.s3.S3AsyncClient
 
 import scala.concurrent.Await
 import scala.concurrent.duration._
@@ -16,15 +18,24 @@ val awsProfileName = "cmsFronts"
 
 implicit val capiClient =  new GuardianContentClient(apiKey)
 implicit val apiClient: ApiClient = {
-  val amazonS3Client = {
-    val credentialsProvider = new AWSCredentialsProviderChain(
-      new EnvironmentVariableCredentialsProvider(),
-      new SystemPropertiesCredentialsProvider(),
-      new ProfileCredentialsProvider(awsProfileName)
-    )
-    new AmazonS3Client(credentialsProvider)
-  }
-  ApiClient("aws-frontend-store", "DEV", AmazonSdkS3Client(amazonS3Client))
+  val credentialsProvider =  AwsCredentialsProviderChain.of(
+    EnvironmentVariableCredentialsProvider.create(),
+    SystemPropertyCredentialsProvider.create(),
+    ProfileCredentialsProvider.builder().profileName(awsProfileName).build()
+  )
+
+  lazy val amazonS3Client = S3AsyncClient
+    .builder()
+    .httpClient(NettyNioAsyncHttpClient.builder().build())
+    .credentialsProvider(credentialsProvider)
+    .region(Region.EU_WEST_1)
+    .build()
+
+  ApiClient.withCaching(
+    "aws-frontend-store",
+    Environment.Dev,
+    S3ObjectFetching.byteArraysWith(amazonS3Client)
+  )
 }
 
 val frontResult = FAPI.frontForPath("uk/business").fold(
