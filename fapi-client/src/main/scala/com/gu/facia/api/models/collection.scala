@@ -44,10 +44,11 @@ object Collection extends StrictLogging {
   }
 
 
-  private[models] def isSplashCard(trail: Trail, index: Int, collectionType: String): Boolean = {
-    (collectionType, trail.safeMeta.group, index) match {
-      case ("flexible/general", Some("3"), _) => true
-      case ("flexible/special", None, 0) => true
+  private[models] def isSplashCard(trail: Trail, index: Int, collectionType: String, collectionHasSnap: Boolean): Boolean = {
+    (collectionType, trail.safeMeta.group, index, collectionHasSnap) match {
+      case ("flexible/general", Some("3"), _, _) => true
+      case ("flexible/special", None, 0, false) => true
+      case ("flexible/special", None, 1, true) => true
       case _ => false
     }
   }
@@ -71,7 +72,7 @@ object Collection extends StrictLogging {
     // note that this does not currently deal with e.g. snaps
     def resolveTrail(trail: Trail, index: Int): Option[FaciaContent] = {
       val boostLevel = trail.safeMeta.boostLevel
-      val isSplash = isSplashCard(trail, index, collection.collectionConfig.collectionType)
+      val isSplash = isSplashCard(trail, index, collection.collectionConfig.collectionType, snapContent.nonEmpty)
       val maxItems = maxSupportingItems(isSplash, collection.collectionConfig.collectionType, boostLevel.getOrElse("default"))
 
       content.find { c =>
