@@ -551,7 +551,8 @@ class CollectionTest extends AnyFreeSpec with Matchers with MockitoSugar with On
       val trailMetaData = Some(TrailMetaData(Map("group" -> JsString(splashGroup))))
       val trail = Trail("internal-code/page/1", 1, None, trailMetaData)
       val trailIndex = 0
-      Collection.isSplashCard(trail, trailIndex, collectionType) should be (true)
+      val collectionHasSnap = false;
+      Collection.isSplashCard(trail, trailIndex, collectionType, collectionHasSnap) should be (true)
     }
     "should return false for any card not in the splash group of a flexible general" in {
       val collectionType = "flexible/general"
@@ -559,33 +560,38 @@ class CollectionTest extends AnyFreeSpec with Matchers with MockitoSugar with On
       val trailMetaData = Some(TrailMetaData(Map("group" -> JsString(bigGroup))))
       val trail = Trail("internal-code/page/1", 1, None, trailMetaData)
       val trailIndex = 0
-      Collection.isSplashCard(trail, trailIndex, collectionType) should be (false)
+      val collectionHasSnap = false;
+      Collection.isSplashCard(trail, trailIndex, collectionType, collectionHasSnap) should be (false)
     }
-    "should return true for the first card in the standard group of a flexible special" in {
+    "should return true for the first card of a flexible special when there is no snap" in {
       val collectionType = "flexible/special"
       val trailIndex = 0
-      Collection.isSplashCard(trail, trailIndex, collectionType) should be (true)
+      val collectionHasSnap = false;
+      Collection.isSplashCard(trail, trailIndex, collectionType, collectionHasSnap) should be (true)
     }
-    "should return false for the card in the snap group of a flexible special" in {
+    "should return false for the first card in a flexible special where there is a snap" in {
       val collectionType = "flexible/special"
-      val snapGroup = "1"
-      val trailMetaData = Some(TrailMetaData(Map("group" -> JsString(snapGroup))))
-      val trail = Trail("internal-code/page/1", 1, None, trailMetaData)
       val trailIndex = 0
-      Collection.isSplashCard(trail, trailIndex, collectionType) should be (false)
+      val collectionHasSnap = true;
+      Collection.isSplashCard(trail, trailIndex, collectionType, collectionHasSnap) should be (false)
     }
-    "should return false for the second card in the standard group of a flexible special" in {
+    "should return true for the second card of a flexible special when there is a snap" in {
       val collectionType = "flexible/special"
-      val snapGroup = "1"
-      val trailMetaData = Some(TrailMetaData(Map("group" -> JsString(snapGroup))))
-      val trail = Trail("internal-code/page/1", 1, None, trailMetaData)
-      val trailIndex = 0
-      Collection.isSplashCard(trail, trailIndex, collectionType) should be (false)
+      val trailIndex = 1
+      val collectionHasSnap = true;
+      Collection.isSplashCard(trail, trailIndex, collectionType, collectionHasSnap) should be (true)
+    }
+    "should return false for the third card of a flexible special when there is a snap" in {
+      val collectionType = "flexible/special"
+      val trailIndex = 2
+      val collectionHasSnap = true;
+      Collection.isSplashCard(trail, trailIndex, collectionType, collectionHasSnap) should be (false)
     }
     "should return false if the container is not flexible general or flexible special" in {
-      val collectionType = "scollable/medium"
+      val collectionType = "scrollable/medium"
       val trailIndex = 0
-      Collection.isSplashCard(trail, trailIndex, collectionType) should be (false)
+      val collectionHasSnap = false;
+      Collection.isSplashCard(trail, trailIndex, collectionType, collectionHasSnap) should be (false)
     }
   }
 
