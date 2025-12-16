@@ -26,10 +26,9 @@ val sonatypeReleaseSettings = Seq(
 def artifactProducingSettings(supportScala3: Boolean) = Seq(
   organization := "com.gu",
   licenses := Seq(License.Apache2),
-  resolvers ++= Resolver.sonatypeOssRepos("releases"),
   crossScalaVersions := Seq(scalaVersion.value) ++ (if (supportScala3) Seq("3.3.3") else Seq.empty),
   scalacOptions := Seq(
-    "-release:8",
+    "-release:11",
     "-feature",
     "-deprecation",
     "-Xfatal-warnings"
@@ -45,11 +44,7 @@ lazy val fapiClient_core = (project in file("fapi-client-core")).settings(
 
 lazy val root = (project in file(".")).aggregate(
     fapiClient_core,
-    faciaJson_play28,
-    faciaJson_play29,
     faciaJson_play30,
-    fapiClient_play28,
-    fapiClient_play29,
     fapiClient_play30
   ).settings(
     publish / skip := true,
@@ -68,10 +63,9 @@ def faciaJson(playJsonVersion: PlayJsonVersion) = playJsonSpecificProject("facia
       jodaTime,
       commonsIo,
       playJsonVersion.lib,
-      "org.scala-lang.modules" %% "scala-collection-compat" % "2.11.0",
       scalaLogging
     ),
-    artifactProducingSettings(supportScala3 = playJsonVersion.supportsScala3)
+    artifactProducingSettings(supportScala3 = true)
   )
 
 def fapiClient(playJsonVersion: PlayJsonVersion) =  playJsonSpecificProject("fapi-client", playJsonVersion)
@@ -87,12 +81,7 @@ def fapiClient(playJsonVersion: PlayJsonVersion) =  playJsonSpecificProject("fap
     artifactProducingSettings(supportScala3 = false) // currently blocked by contentApi & commercialShared clients
   )
 
-lazy val faciaJson_play28 = faciaJson(PlayJsonVersion.V28)
-lazy val faciaJson_play29 = faciaJson(PlayJsonVersion.V29)
 lazy val faciaJson_play30 = faciaJson(PlayJsonVersion.V30)
-
-lazy val fapiClient_play28 = fapiClient(PlayJsonVersion.V28).dependsOn(faciaJson_play28)
-lazy val fapiClient_play29 = fapiClient(PlayJsonVersion.V29).dependsOn(faciaJson_play29)
 lazy val fapiClient_play30 = fapiClient(PlayJsonVersion.V30).dependsOn(faciaJson_play30)
 
 Test/testOptions += Tests.Argument(
