@@ -170,6 +170,7 @@ object TestModel {
     def tagCategories: Option[scala.collection.Set[String]] = None
     def campaignInformationType: Option[String] = None
     def internalName: Option[String] = None
+    def keywordType: Option[com.gu.contentapi.client.model.v1.KeywordType] = None
   }
   implicit val stubTagFormat: Reads[StubTag] = Json.reads[StubTag]
 
