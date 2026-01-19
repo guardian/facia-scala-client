@@ -138,12 +138,26 @@ object Collection extends StrictLogging {
 
   private def enrichContentWithVideo(faciaContent: List[FaciaContent])(implicit capiClient: ContentApiClient, ec: ExecutionContext): Response[List[FaciaContent]] = {
 
+    def rewriteVideoDomain(atom: Atom) = {
+      atom.data match {
+        case mediaData: AtomData.Media =>
+          atom.copy(data = mediaData.copy(media = mediaData.media.copy(
+            assets = mediaData.media.assets.map { asset =>
+              asset.copy(id = asset.id.replaceFirst("https://uploads.guim.co.uk/", "https://videos.guim.co.uk/"))
+            }
+          )))
+        case _ => atom
+      }
+    }
+
     def getMediaAtom(fcContent: FaciaContent)(implicit ec: ExecutionContext, capiClient: ContentApiClient): Response[Option[Atom]] = {
       val futureMaybeAtomData = fcContent match {
-        case faciaContent@AtomId(atomId) if faciaContent.properties.videoReplace =>
+        case faciaContent @ AtomId(atomId) if faciaContent.properties.videoReplace =>
           capiClient.getResponse(ContentApiClient.item(atomId)).map { response =>
             response.media.flatMap(atom =>
-              Option.when(isValidMediaAtom(atom))(atom)
+              Some(atom)
+                .filter(isValidMediaAtom)
+                .map(rewriteVideoDomain)
             )
           }.recover {
             case e =>
