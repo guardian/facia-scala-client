@@ -1,8 +1,7 @@
 import sbt._
 
 object Dependencies {
-  // val capiVersion = "41.0.0"
-  val capiVersion = "42.0.0-PREVIEW.rjr-bump-capi-model-to-include-new-video-caption-field.2026-05-18T1328.9da92447"
+  val capiVersion = "43.0.0"
   val eTagCachingVersion = "7.0.0"
 
   val eTagCachingS3Base = "com.gu.etag-caching" %% "aws-s3-base" % eTagCachingVersion
