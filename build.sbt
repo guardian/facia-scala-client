@@ -26,7 +26,7 @@ val sonatypeReleaseSettings = Seq(
 def artifactProducingSettings(supportScala3: Boolean) = Seq(
   organization := "com.gu",
   licenses := Seq(License.Apache2),
-  crossScalaVersions := Seq(scalaVersion.value) ++ (if (supportScala3) Seq("3.3.3") else Seq.empty),
+  crossScalaVersions := Seq(scalaVersion.value) ++ (if (supportScala3) Seq("3.3.7") else Seq.empty),
   scalacOptions := Seq(
     "-release:11",
     "-feature",
