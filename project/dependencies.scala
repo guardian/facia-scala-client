@@ -1,7 +1,7 @@
 import sbt._
 
 object Dependencies {
-  val capiVersion = "44.0.0"
+  val capiVersion = "45.0.0-PREVIEW.eiresponsive-image.2026-06-22T1124.f1c45c1d"
   val eTagCachingVersion = "7.0.0"
 
   val eTagCachingS3Base = "com.gu.etag-caching" %% "aws-s3-base" % eTagCachingVersion
@@ -17,9 +17,9 @@ object Dependencies {
   val commercialShared = "com.gu" %% "commercial-shared" % "6.1.8"
 
   case class PlayJsonVersion(
-    majorMinorVersion: String,
-    groupId: String,
-    exactPlayJsonVersion: String
+      majorMinorVersion: String,
+      groupId: String,
+      exactPlayJsonVersion: String
   ) {
     val projectId = s"play$majorMinorVersion"
 
