@@ -11,7 +11,7 @@ import play.api.libs.json.JsString
 
 class FaciaContentHelperTest extends AnyFreeSpec with Matchers with TestContent {
 
-  val emptyTrail: Trail = Trail("no-id", 0, None, Option(TrailMetaData.empty))
+  val emptyTrail: Trail = Trail("no-id", 0, None, Option(TrailMetaData.empty), None)
 
   val emptyContentProperties =
     ContentProperties(
