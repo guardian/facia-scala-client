@@ -17,7 +17,7 @@ import com.gu.contentapi.client.ContentApiClient
 
 class CollectionTest extends AnyFreeSpec with Matchers with MockitoSugar with OneInstancePerTest {
   val trailMetadata = spy(TrailMetaData.empty)
-  val trail = Trail("internal-code/page/123", 1, None, Some(trailMetadata))
+  val trail = Trail("internal-code/page/123", 1, None, Some(trailMetadata), None)
   val collectionJson = CollectionJson(
     live = List(trail),
     draft = None,
@@ -186,7 +186,7 @@ class CollectionTest extends AnyFreeSpec with Matchers with MockitoSugar with On
     }
 
     "excludes trails where no corresponding content is found" in {
-      val trail2 = Trail("content-id-2", 2, None, Some(trailMetadata))
+      val trail2 = Trail("content-id-2", 2, None, Some(trailMetadata), None)
 
       Collection.liveContent(collection, contents)(capiClient, global).map{ curatedContent =>
         val curatedIds = curatedContent.collect {
@@ -197,10 +197,10 @@ class CollectionTest extends AnyFreeSpec with Matchers with MockitoSugar with On
     }
 
     "Successfully retrieve snaps from snapContent for latest snaps" in {
-      val snapOne = Trail("snap/1415985080061", 1, None, Some(TrailMetaData(Map("snapType" -> JsString("link"), "snapUri" -> JsString("abc")))))
-      val snapTwo = Trail("snap/5345345215342", 1, None, Some(TrailMetaData(Map("snapType" -> JsString("link"), "snapCss" -> JsString("css")))))
-      val snapLatestOne = Trail("snap/8474745745660", 1, None, Some(TrailMetaData(Map("snapType" -> JsString("latest"), "href" -> JsString("uk")))))
-      val snapLatestTwo = Trail("snap/4324234234234", 1, None, Some(TrailMetaData(Map("snapType" -> JsString("latest"), "href" -> JsString("culture")))))
+      val snapOne = Trail("snap/1415985080061", 1, None, Some(TrailMetaData(Map("snapType" -> JsString("link"), "snapUri" -> JsString("abc")))), None)
+      val snapTwo = Trail("snap/5345345215342", 1, None, Some(TrailMetaData(Map("snapType" -> JsString("link"), "snapCss" -> JsString("css")))), None)
+      val snapLatestOne = Trail("snap/8474745745660", 1, None, Some(TrailMetaData(Map("snapType" -> JsString("latest"), "href" -> JsString("uk")))), None)
+      val snapLatestTwo = Trail("snap/4324234234234", 1, None, Some(TrailMetaData(Map("snapType" -> JsString("latest"), "href" -> JsString("culture")))), None)
 
       val snapContentOne = Content(
         id = "content-id-one",
@@ -272,11 +272,11 @@ class CollectionTest extends AnyFreeSpec with Matchers with MockitoSugar with On
   }
 
   "liveIdsWithoutSnaps" - {
-    val trailOne = Trail("internal-code/page/1", 1, None, Some(trailMetadata))
-    val trailTwo = Trail("internal-code/page/2", 1, None, Some(trailMetadata))
-    val trailThree = Trail("artanddesign/gallery/2014/feb/28/beyond-basquiat-black-artists", 1, None, Some(trailMetadata))
-    val snapOne = Trail("snap/1415985080061", 1, None, Some(trailMetadata))
-    val snapTwo = Trail("snap/5345345215342", 1, None, Some(trailMetadata))
+    val trailOne = Trail("internal-code/page/1", 1, None, Some(trailMetadata), None)
+    val trailTwo = Trail("internal-code/page/2", 1, None, Some(trailMetadata), None)
+    val trailThree = Trail("artanddesign/gallery/2014/feb/28/beyond-basquiat-black-artists", 1, None, Some(trailMetadata), None)
+    val snapOne = Trail("snap/1415985080061", 1, None, Some(trailMetadata), None)
+    val snapTwo = Trail("snap/5345345215342", 1, None, Some(trailMetadata), None)
 
     val collectionJsonTwo = collectionJson.copy(live = List(trailOne, snapOne, snapTwo, trailTwo, trailThree))
 
@@ -303,12 +303,12 @@ class CollectionTest extends AnyFreeSpec with Matchers with MockitoSugar with On
 
   "Collection" - {
     "filter out the snaps in live" in {
-        val trailOne = Trail("internal-code/page/1", 1, None, Some(trailMetadata))
-        val trailTwo = Trail("internal-code/page/2", 1, None, Some(trailMetadata))
-        val snapOne = Trail("snap/1415985080061", 1, None, Some(TrailMetaData(Map("snapType" -> JsString("link"), "snapUri" -> JsString("abc")))))
-        val snapTwo = Trail("snap/5345345215342", 1, None, Some(TrailMetaData(Map("snapType" -> JsString("link"), "snapCss" -> JsString("css")))))
-        val snapLatestOne = Trail("snap/8474745745660", 1, None, Some(TrailMetaData(Map("snapType" -> JsString("latest"), "href" -> JsString("uk")))))
-        val snapLatestTwo = Trail("snap/4324234234234", 1, None, Some(TrailMetaData(Map("snapType" -> JsString("latest"), "href" -> JsString("culture")))))
+        val trailOne = Trail("internal-code/page/1", 1, None, Some(trailMetadata), None)
+        val trailTwo = Trail("internal-code/page/2", 1, None, Some(trailMetadata), None)
+        val snapOne = Trail("snap/1415985080061", 1, None, Some(TrailMetaData(Map("snapType" -> JsString("link"), "snapUri" -> JsString("abc")))), None)
+        val snapTwo = Trail("snap/5345345215342", 1, None, Some(TrailMetaData(Map("snapType" -> JsString("link"), "snapCss" -> JsString("css")))), None)
+        val snapLatestOne = Trail("snap/8474745745660", 1, None, Some(TrailMetaData(Map("snapType" -> JsString("latest"), "href" -> JsString("uk")))), None)
+        val snapLatestTwo = Trail("snap/4324234234234", 1, None, Some(TrailMetaData(Map("snapType" -> JsString("latest"), "href" -> JsString("culture")))), None)
 
         val snapContentOne = Content(
           id = "content-id-one",
@@ -362,12 +362,12 @@ class CollectionTest extends AnyFreeSpec with Matchers with MockitoSugar with On
       }
 
     "filter out the snaps in draft" in {
-      val trailOne = Trail("internal-code/page/1", 1, None, Some(trailMetadata))
-      val trailTwo = Trail("internal-code/page/2", 1, None, Some(trailMetadata))
-      val snapOne = Trail("snap/1415985080061", 1, None, Some(TrailMetaData(Map("snapType" -> JsString("link"), "snapUri" -> JsString("abc")))))
-      val snapTwo = Trail("snap/5345345215342", 1, None, Some(TrailMetaData(Map("snapType" -> JsString("link"), "snapCss" -> JsString("css")))))
-      val snapLatestOne = Trail("snap/8474745745660", 1, None, Some(TrailMetaData(Map("snapType" -> JsString("latest"), "href" -> JsString("uk")))))
-      val snapLatestTwo = Trail("snap/4324234234234", 1, None, Some(TrailMetaData(Map("snapType" -> JsString("latest"), "href" -> JsString("culture")))))
+      val trailOne = Trail("internal-code/page/1", 1, None, Some(trailMetadata), None)
+      val trailTwo = Trail("internal-code/page/2", 1, None, Some(trailMetadata), None)
+      val snapOne = Trail("snap/1415985080061", 1, None, Some(TrailMetaData(Map("snapType" -> JsString("link"), "snapUri" -> JsString("abc")))), None)
+      val snapTwo = Trail("snap/5345345215342", 1, None, Some(TrailMetaData(Map("snapType" -> JsString("link"), "snapCss" -> JsString("css")))), None)
+      val snapLatestOne = Trail("snap/8474745745660", 1, None, Some(TrailMetaData(Map("snapType" -> JsString("latest"), "href" -> JsString("uk")))), None)
+      val snapLatestTwo = Trail("snap/4324234234234", 1, None, Some(TrailMetaData(Map("snapType" -> JsString("latest"), "href" -> JsString("culture")))), None)
 
       val snapContentOne = Content(
         id = "content-id-one",
@@ -451,11 +451,11 @@ class CollectionTest extends AnyFreeSpec with Matchers with MockitoSugar with On
     )
 
     def makeTrail(id: String) =
-      Trail(id, 0, None, None)
+      Trail(id, 0, None, None, None)
     def makeTrailWithSupporting(id: String, supporting: Trail*) =
-      Trail(id, 0, None, Some(TrailMetaData(Map("supporting" -> JsArray(supporting.map(Json.toJson(_)))))))
+      Trail(id, 0, None, Some(TrailMetaData(Map("supporting" -> JsArray(supporting.map(Json.toJson(_)))))), None)
     "trails with internalPageCode" in {
-      val trail = Trail("internal-code/page/2", 1, None, Some(trailMetadata))
+      val trail = Trail("internal-code/page/2", 1, None, Some(trailMetadata), None)
       val collectionJsonWithPageCode = collectionJson.copy(live = List(trail))
       val collection = Collection.fromCollectionJsonConfigAndContent("id", Some(collectionJsonWithPageCode), collectionConfig)
       Collection.liveContent(collection, contents)(capiClient, global).map{ content =>
@@ -549,7 +549,7 @@ class CollectionTest extends AnyFreeSpec with Matchers with MockitoSugar with On
       val collectionType = "flexible/general"
       val splashGroup = "3"
       val trailMetaData = Some(TrailMetaData(Map("group" -> JsString(splashGroup))))
-      val trail = Trail("internal-code/page/1", 1, None, trailMetaData)
+      val trail = Trail("internal-code/page/1", 1, None, trailMetaData, None)
       val trailIndex = 0
       val collectionHasSnap = false;
       Collection.isSplashCard(trail, trailIndex, collectionType, collectionHasSnap) should be (true)
@@ -558,7 +558,7 @@ class CollectionTest extends AnyFreeSpec with Matchers with MockitoSugar with On
       val collectionType = "flexible/general"
       val bigGroup = "1"
       val trailMetaData = Some(TrailMetaData(Map("group" -> JsString(bigGroup))))
-      val trail = Trail("internal-code/page/1", 1, None, trailMetaData)
+      val trail = Trail("internal-code/page/1", 1, None, trailMetaData, None)
       val trailIndex = 0
       val collectionHasSnap = false;
       Collection.isSplashCard(trail, trailIndex, collectionType, collectionHasSnap) should be (false)
