@@ -75,20 +75,6 @@ object SupportingItemMetaData {
 
 case class SupportingItemMetaData(json: Map[String, JsValue]) extends MetaDataCommonFields
 
-object SupportingItem {
-  implicit val jsonFormat: OFormat[SupportingItem] = Json.format[SupportingItem]
-}
-
-case class SupportingItem(
-  id: String,
-  frontPublicationDate: Option[Long],
-  publishedBy: Option[String],
-  meta: Option[SupportingItemMetaData]
-) {
-  val isSnap: Boolean = id.startsWith("snap/")
-  lazy val safeMeta = meta.getOrElse(TrailMetaData.empty)
-}
-
 object TrailMetaData {
   implicit val flatReads: Reads[TrailMetaData] = new Reads[TrailMetaData] {
     override def reads(j: JsValue): JsResult[TrailMetaData] = {
@@ -110,6 +96,59 @@ case class TrailMetaData(json: Map[String, JsValue]) extends MetaDataCommonField
   lazy val supporting: Option[List[SupportingItem]] = json.get("supporting").flatMap(_.asOpt[List[SupportingItem]])
 }
 
+sealed trait VariantId
+object VariantId {
+  case object A extends VariantId
+  case object B extends VariantId
+
+  implicit val format: Format[VariantId] = new Format[VariantId] {
+    override def reads(json: JsValue): JsResult[VariantId] = json.validate[String].flatMap {
+      case "A" => JsSuccess(A)
+      case "B" => JsSuccess(B)
+      case other => JsError(s"Unknown VariantId: $other")
+    }
+    override def writes(o: VariantId): JsValue = o match {
+      case A => JsString("A")
+      case B => JsString("B")
+    }
+  }
+}
+
+case class VariantMeta(id: VariantId, meta: TrailMetaData)
+object VariantMeta {
+  implicit val jsonFormat: OFormat[VariantMeta] = Json.format[VariantMeta]
+}
+
+case class Test(
+  testUuid: String,
+  variantMeta: List[VariantMeta],
+  startDate: Option[DateTime],
+  expiryDate: Option[DateTime],
+  createdByName: String,
+  createdByEmail: String,
+  hasManuallyEndedOnThisTrail: Boolean,
+  manuallyEndedOnThisTrailByName: Option[String],
+  manuallyEndedOnThisTrailByEmail: Option[String]
+)
+object Test {
+  implicit val jsonFormat: OFormat[Test] = Json.format[Test]
+}
+
+object SupportingItem {
+  implicit val jsonFormat: OFormat[SupportingItem] = Json.format[SupportingItem]
+}
+
+case class SupportingItem(
+  id: String,
+  frontPublicationDate: Option[Long],
+  publishedBy: Option[String],
+  meta: Option[SupportingItemMetaData],
+  tests: Option[List[Test]]
+) {
+  val isSnap: Boolean = id.startsWith("snap/")
+  lazy val safeMeta = meta.getOrElse(TrailMetaData.empty)
+}
+
 object Trail {
   implicit val jsonFormat: OFormat[Trail] = Json.format[Trail]
 }
@@ -118,7 +157,8 @@ case class Trail(
   id: String,
   frontPublicationDate: Long,
   publishedBy: Option[String],
-  meta: Option[TrailMetaData]
+  meta: Option[TrailMetaData],
+  tests: Option[List[Test]]
 ) {
   val isSnap: Boolean = id.startsWith("snap/")
   lazy val safeMeta = meta.getOrElse(TrailMetaData.empty)
