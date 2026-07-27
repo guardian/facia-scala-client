@@ -120,12 +120,13 @@ object VariantMeta {
 }
 
 case class Test(
-  testUuid: String,
+  testUuid: String, // A static referrer, which will help if the card moves from container to container. The same testUuid can be shared across multiple Tests
   variantMeta: List[VariantMeta],
   startDate: Option[DateTime],
   expiryDate: Option[DateTime],
   createdByName: String,
   createdByEmail: String,
+  frontsThisTestCanRunOn: List[String],
   hasManuallyEndedOnThisTrail: Boolean,
   manuallyEndedOnThisTrailByName: Option[String],
   manuallyEndedOnThisTrailByEmail: Option[String]
