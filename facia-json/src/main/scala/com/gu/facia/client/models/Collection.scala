@@ -126,6 +126,7 @@ case class Test(
   expiryDate: Option[DateTime],
   createdByName: String,
   createdByEmail: String,
+  frontsThisTestWasCreatedOn: List[String],
   hasManuallyEndedOnThisTrail: Boolean,
   manuallyEndedOnThisTrailByName: Option[String],
   manuallyEndedOnThisTrailByEmail: Option[String]
