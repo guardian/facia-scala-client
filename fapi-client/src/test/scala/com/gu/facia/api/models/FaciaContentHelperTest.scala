@@ -74,7 +74,7 @@ class FaciaContentHelperTest extends AnyFreeSpec with Matchers with TestContent 
 
   "should return boost level for a CuratedContent" in {
     val content = baseContent.copy(fields = Some(ContentFields(headline = Some("myTitle"), trailText = Some("Content trailtext"), byline = Some("myByline"))))
-    val cc = CuratedContent.fromTrailAndContent(content, TrailMetaData(Map("boostLevel" -> JsString("gigaboost"))), None, CollectionConfig.fromCollectionJson(CollectionConfigJson.withDefaults()))
+    val cc = CuratedContent.fromTrailAndContent(content, TrailMetaData(Map("boostLevel" -> JsString("gigaboost"))), None, CollectionConfig.fromCollectionJson(CollectionConfigJson.withDefaults()), None)
     FaciaContentUtils.boostLevel(cc) should equal(BoostLevel.GigaBoost)
   }  
 

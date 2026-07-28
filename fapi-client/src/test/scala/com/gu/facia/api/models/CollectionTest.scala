@@ -93,6 +93,7 @@ class CollectionTest extends AnyFreeSpec with Matchers with MockitoSugar with On
       latestContent map (_.brandingByEdition) getOrElse Map.empty,
       atomId = None,
       None,
+      None
     )
 
   def makeLinkSnap(
@@ -126,6 +127,7 @@ class CollectionTest extends AnyFreeSpec with Matchers with MockitoSugar with On
       byline,
       kicker,
       Map.empty,
+      None,
       None
     )
 
