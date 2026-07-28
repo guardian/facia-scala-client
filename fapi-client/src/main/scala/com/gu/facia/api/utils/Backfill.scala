@@ -38,7 +38,7 @@ object BackfillResolver {
         for {
           backfillContent <- ContentApi.backfillContentFromResponse(backfillResponse)
         } yield {
-          backfillContent.map(CuratedContent.fromTrailAndContent(_, TrailMetaData.empty, None, collectionConfig))
+          backfillContent.map(CuratedContent.fromTrailAndContent(_, TrailMetaData.empty, None, collectionConfig, None))
         }
       case CollectionBackfill(parentCollectionId) =>
         val collectionBackfillResult =
