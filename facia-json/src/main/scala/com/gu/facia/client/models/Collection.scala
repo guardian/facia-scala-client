@@ -120,16 +120,16 @@ object VariantMeta {
 }
 
 case class Test(
-  testUuid: String, // A static referrer, which will help if the card moves from container to container. The same testUuid can be shared across multiple Tests
-  variantMeta: List[VariantMeta],
-  startDate: Option[Long],
-  expiryDate: Option[Long],
-  createdByName: String,
-  createdByEmail: String,
-  frontsThisTestCanRunOn: List[String],
-  hasManuallyEndedOnThisTrail: Boolean,
-  manuallyEndedOnThisTrailByName: Option[String],
-  manuallyEndedOnThisTrailByEmail: Option[String]
+  testUuid: String, // a static reference that persists if the card moves between containers, and can be shared across multiple Test instances on multiple cards.
+  variantMeta: List[VariantMeta], // the list of variants for this test, each with its own metadata
+  startDate: Option[Long], // the start date of the test, in milliseconds since epoch
+  expiryDate: Option[Long], // the expiry date of the test, in milliseconds since epoch. If the test has expired, it will not be shown to users.
+  createdByName: String, // the name of the person who created the test
+  createdByEmail: String, // the email of the person who created the test
+  frontsThisTestCanRunOn: List[String], // the list of fronts that this test can run on.
+  hasManuallyEndedOnThisTrail: Boolean, // whether this test has been manually ended on this trail. If true, the test will not be shown to users on this trail, nor will it report to Ophan, even if it is still active on other trails.
+  manuallyEndedOnThisTrailByName: Option[String], // the name of the person who manually ended this test on this trail, if applicable
+  manuallyEndedOnThisTrailByEmail: Option[String] // the email of the person who manually ended this test on this trail, if applicable
 )
 object Test {
   implicit val jsonFormat: OFormat[Test] = Json.format[Test]
