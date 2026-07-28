@@ -88,8 +88,16 @@ object Collection extends StrictLogging {
         .map { content =>
           trail.safeMeta.supporting
             .map(_.flatMap(resolveSupportingContent))
-            .map(supportingItems => CuratedContent.fromTrailAndContentWithSupporting(content, trail.safeMeta, Option(trail.frontPublicationDate), supportingItems.take(maxItems), collection.collectionConfig))
-            .getOrElse(CuratedContent.fromTrailAndContent(content, trail.safeMeta, Option(trail.frontPublicationDate), collection.collectionConfig))
+            .map(supportingItems => CuratedContent.fromTrailAndContentWithSupporting(
+              content,
+              trail.safeMeta,
+              Option(trail.frontPublicationDate),
+              supportingItems.take(maxItems),
+              collection.collectionConfig,
+              trail.tests
+            )
+            )
+            .getOrElse(CuratedContent.fromTrailAndContent(content, trail.safeMeta, Option(trail.frontPublicationDate), collection.collectionConfig, trail.tests))
         }
         .orElse {
           snapContent
@@ -113,7 +121,7 @@ object Collection extends StrictLogging {
       content.find { c =>
         supportingItem.id.endsWith("/" + c.fields.flatMap(_.internalPageCode).getOrElse(throw new RuntimeException("No internal page code")))
       }
-        .map { content => SupportingCuratedContent.fromTrailAndContent(content, supportingItem.safeMeta, supportingItem.frontPublicationDate, collection.collectionConfig) }
+        .map { content => SupportingCuratedContent.fromTrailAndContent(content, supportingItem.safeMeta, supportingItem.frontPublicationDate, collection.collectionConfig, supportingItem.tests) }
         .orElse {
           snapContent
             .find { case (id, _) => supportingItem.id == id }
