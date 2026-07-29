@@ -92,7 +92,6 @@ class CollectionTest extends AnyFreeSpec with Matchers with MockitoSugar with On
       kicker,
       latestContent map (_.brandingByEdition) getOrElse Map.empty,
       atomId = None,
-      None,
       None
     )
 
@@ -127,7 +126,6 @@ class CollectionTest extends AnyFreeSpec with Matchers with MockitoSugar with On
       byline,
       kicker,
       Map.empty,
-      None,
       None
     )
 

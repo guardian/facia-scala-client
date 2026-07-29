@@ -28,8 +28,7 @@ class FaciaContentUtilsTest extends AnyFreeSpec with Matchers with TestContent {
     byline = None,
     kicker = None,
     brandingByEdition = Map.empty,
-    mediaAtom = None,
-    tests = None
+    mediaAtom = None
   )
 
   val staticDateTime = new DateTime().withYear(2015).withMonthOfYear(4).withDayOfMonth(22)
@@ -54,8 +53,7 @@ class FaciaContentUtilsTest extends AnyFreeSpec with Matchers with TestContent {
     kicker = None,
     brandingByEdition = Map.empty,
     atomId = None,
-    mediaAtom = None,
-    tests = None
+    mediaAtom = None
   )
 
   def makeCuratedContent(curatedContentId: String, content: Content = content) = CuratedContent(
