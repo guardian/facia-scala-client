@@ -2,7 +2,7 @@ import sbt._
 
 object Dependencies {
   val capiVersion = "47.0.0"
-  val eTagCachingVersion = "7.0.0"
+  val eTagCachingVersion = "17.0.2"
 
   val eTagCachingS3Base = "com.gu.etag-caching" %% "aws-s3-base" % eTagCachingVersion
   val eTagCachingS3SupportForTesting = "com.gu.etag-caching" %% "aws-s3-sdk-v2" % eTagCachingVersion % Test
