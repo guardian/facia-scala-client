@@ -114,6 +114,11 @@ object VariantId {
   }
 }
 
+/**
+ * @param meta only contains the fields that are actually being tested, i.e. the fields that differ
+ *             per variant. Any field not being tested will not be present here, and consumers should
+ *             fall back to the trail's own [[TrailMetaData]] for those.
+ */
 case class VariantMeta(id: VariantId, meta: TrailMetaData)
 object VariantMeta {
   implicit val jsonFormat: OFormat[VariantMeta] = Json.format[VariantMeta]
