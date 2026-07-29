@@ -48,7 +48,6 @@ class FaciaContentHelperTest extends AnyFreeSpec with Matchers with TestContent 
       None,
       Map.empty,
       None,
-      None,
       None
     )
     FaciaContentUtils.headlineOption(snap) should equal(None)
@@ -96,7 +95,6 @@ class FaciaContentHelperTest extends AnyFreeSpec with Matchers with TestContent 
       None,
       Map.empty,
       None,
-      None,
       None
     )
     FaciaContentUtils.href(snap) should equal(Some("The href"))
@@ -125,7 +123,6 @@ class FaciaContentHelperTest extends AnyFreeSpec with Matchers with TestContent 
       None,
       None,
       Map.empty,
-      None,
       None
     )
 
