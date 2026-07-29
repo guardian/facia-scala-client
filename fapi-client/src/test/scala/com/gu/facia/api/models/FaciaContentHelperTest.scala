@@ -48,6 +48,7 @@ class FaciaContentHelperTest extends AnyFreeSpec with Matchers with TestContent 
       None,
       Map.empty,
       None,
+      None,
       None
     )
     FaciaContentUtils.headlineOption(snap) should equal(None)
@@ -55,25 +56,25 @@ class FaciaContentHelperTest extends AnyFreeSpec with Matchers with TestContent 
 
   "should return the headline for a CuratedContent" in {
     val content = baseContent.copy(fields = Some(ContentFields(headline = Some("myTitle"), trailText = Some("Content trailtext"), byline = Some("Content byline"))))
-    val cc = CuratedContent(content, None, Nil, DefaultCardstyle, ContentFormat.defaultContentFormat, "The headline", None, None, "myGroup", None, emptyContentProperties, None, None, None, None, None, Map.empty, None, None)
+    val cc = CuratedContent(content, None, Nil, DefaultCardstyle, ContentFormat.defaultContentFormat, "The headline", None, None, "myGroup", None, emptyContentProperties, None, None, None, None, None, Map.empty, None, None, None)
     FaciaContentUtils.headlineOption(cc) should equal(Some("The headline"))
   }
 
   "should return 'Missing href' when the href is None in a CuratedContent" in {
     val content = baseContent.copy(fields = Some(ContentFields(headline = Some("myTitle"), trailText = Some("Content trailtext"), byline = Some("Content byline"))))
-    val cc = CuratedContent(content, None, Nil, DefaultCardstyle, ContentFormat.defaultContentFormat, "The headline", None, None, "myGroup", None, emptyContentProperties, None, None, None, None, None, Map.empty, None, None)
+    val cc = CuratedContent(content, None, Nil, DefaultCardstyle, ContentFormat.defaultContentFormat, "The headline", None, None, "myGroup", None, emptyContentProperties, None, None, None, None, None, Map.empty, None, None, None)
     FaciaContentUtils.href(cc) should equal(None)
   }
 
   "should return default boost level for a CuratedContent if the boostLevel is not present in meta data" in {
     val content = baseContent.copy(fields = Some(ContentFields(headline = Some("myTitle"), trailText = Some("Content trailtext"), byline = Some("myByline"))))
-    val cc = CuratedContent.fromTrailAndContent(content, TrailMetaData.empty, None, CollectionConfig.fromCollectionJson(CollectionConfigJson.withDefaults()))
+    val cc = CuratedContent.fromTrailAndContent(content, TrailMetaData.empty, None, CollectionConfig.fromCollectionJson(CollectionConfigJson.withDefaults()), None)
     FaciaContentUtils.boostLevel(cc) should equal(BoostLevel.Default)
   }
 
   "should return boost level for a CuratedContent" in {
     val content = baseContent.copy(fields = Some(ContentFields(headline = Some("myTitle"), trailText = Some("Content trailtext"), byline = Some("myByline"))))
-    val cc = CuratedContent.fromTrailAndContent(content, TrailMetaData(Map("boostLevel" -> JsString("gigaboost"))), None, CollectionConfig.fromCollectionJson(CollectionConfigJson.withDefaults()))
+    val cc = CuratedContent.fromTrailAndContent(content, TrailMetaData(Map("boostLevel" -> JsString("gigaboost"))), None, CollectionConfig.fromCollectionJson(CollectionConfigJson.withDefaults()), None)
     FaciaContentUtils.boostLevel(cc) should equal(BoostLevel.GigaBoost)
   }  
 
@@ -94,6 +95,7 @@ class FaciaContentHelperTest extends AnyFreeSpec with Matchers with TestContent 
       None,
       None,
       Map.empty,
+      None,
       None,
       None
     )
@@ -123,6 +125,7 @@ class FaciaContentHelperTest extends AnyFreeSpec with Matchers with TestContent 
       None,
       None,
       Map.empty,
+      None,
       None
     )
 
