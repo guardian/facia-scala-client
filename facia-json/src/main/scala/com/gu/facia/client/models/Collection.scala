@@ -153,6 +153,11 @@ object SupportingItem {
   implicit val jsonFormat: OFormat[SupportingItem] = Json.format[SupportingItem]
 }
 
+/**
+ * @param tests the list of A/B tests configured on this supporting item. Note that expired tests
+ *              and tests which have been manually ended aren't removed from this list. Consumers
+ *              must check a test's expiry/manually-ended status themselves.
+ */
 case class SupportingItem(
   id: String,
   frontPublicationDate: Option[Long],
@@ -168,6 +173,11 @@ object Trail {
   implicit val jsonFormat: OFormat[Trail] = Json.format[Trail]
 }
 
+/**
+ * @param tests the list of A/B tests configured on this trail. Note that expired tests
+ *              and tests which have been manually ended aren't removed from this list. Consumers
+ *              must check a test's expiry/manually-ended status themselves.
+ */
 case class Trail(
   id: String,
   frontPublicationDate: Long,
