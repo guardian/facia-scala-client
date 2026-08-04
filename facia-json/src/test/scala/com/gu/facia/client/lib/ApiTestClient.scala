@@ -1,6 +1,6 @@
 package com.gu.facia.client.lib
 
-import com.gu.facia.client.models.{CollectionJson, ConfigJson}
+import com.gu.facia.client.models.{CollectionJson, ConfigJson, CustomSubnavConfig}
 import com.gu.facia.client.{ApiClient, Environment}
 import play.api.libs.json.{Format, Json}
 
@@ -18,4 +18,7 @@ class ApiTestClient extends ApiClient with ResourcesHelper {
 
   override def collection(id: String): Future[Option[CollectionJson]] =
     retrieve[CollectionJson](environment.collectionS3Path(id))
+
+  override def subnavConfig(): Future[Option[CustomSubnavConfig]] =
+    retrieve[CustomSubnavConfig](environment.customSubnavS3Path)
 }

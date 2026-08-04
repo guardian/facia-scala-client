@@ -1,0 +1,44 @@
+{
+  "live": [
+    {
+      "id": "football-nav",
+      "header": {
+        "headerText": "Football",
+        "dotcomPath": "/football",
+        "copy": "All football"
+      },
+      "format": "large",
+      "links": [
+        {
+          "linkText": "Premier League",
+          "dotcomPath": "/football/premierleague"
+        },
+        {
+          "linkText": "Women's football",
+          "dotcomPath": "/football/womens-football"
+        }
+      ],
+      "pages": [
+        {
+          "type": "front",
+          "path": "/football"
+        }
+      ],
+      "images": [
+        {
+          "imageSrc": "https://media.guim.co.uk/image.jpg",
+          "breakpoint": "mobile"
+        }
+      ],
+      "palette": {
+        "text": "#ffffff",
+        "header": "#052962",
+        "link": "#ffe500"
+      },
+      "lastUpdated": 1722770562000,
+      "updatedBy": "Test User",
+      "updatedEmail": "test.user@theguardian.com"
+    }
+  ],
+  "draft": []
+}

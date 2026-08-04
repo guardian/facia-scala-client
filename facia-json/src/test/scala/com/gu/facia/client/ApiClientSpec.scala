@@ -53,4 +53,15 @@ class ApiClientSpec extends AnyFlatSpec with Matchers with OptionValues with Sca
 
     collectionOpt.value.live should have size 8
   }
+
+  it should "fetch the custom subnav config" in {
+    val subnavConfigOpt = cachingClient.subnavConfig().futureValue
+
+    val subnav = subnavConfigOpt.value.live.head
+    subnav.id shouldBe "football-nav"
+    subnav.header.headerText shouldBe "Football"
+    subnav.links should have size 2
+    subnav.pages should have size 1
+    subnavConfigOpt.value.draft shouldBe empty
+  }
 }
