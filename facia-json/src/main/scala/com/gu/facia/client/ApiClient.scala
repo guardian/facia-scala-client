@@ -3,7 +3,7 @@ package com.gu.facia.client
 import com.gu.etagcaching.FreshnessPolicy.AlwaysWaitForRefreshedValue
 import com.gu.etagcaching.aws.s3.{ObjectId, S3ByteArrayFetching}
 import com.gu.etagcaching.{ConfigCache, ETagCache}
-import com.gu.facia.client.models.{CollectionJson, ConfigJson}
+import com.gu.facia.client.models.{CollectionJson, ConfigJson, CustomSubnavConfig}
 import play.api.libs.json.{Format, Json}
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -12,6 +12,8 @@ trait ApiClient {
   def config: Future[ConfigJson]
 
   def collection(id: String): Future[Option[CollectionJson]]
+
+  def subnavConfig(): Future[Option[CustomSubnavConfig]]
 }
 
 object ApiClient {
@@ -45,11 +47,15 @@ object ApiClient {
 
     private val configCache = eTagCache[ConfigJson](_.maximumSize(1))
     private val collectionCache = eTagCache[CollectionJson](configureCollectionCache)
+    private val subnavCache = eTagCache[CustomSubnavConfig](_.maximumSize(1))
 
     override def config: Future[ConfigJson] =
       configCache.get(environment.configS3Path).map(getOrWarnAboutMissingConfig)
 
     override def collection(id: String): Future[Option[CollectionJson]] =
       collectionCache.get(environment.collectionS3Path(id))
+
+    override def subnavConfig(): Future[Option[CustomSubnavConfig]] =
+      subnavCache.get(environment.customSubnavS3Path)
   }
 }
