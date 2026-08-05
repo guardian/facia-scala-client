@@ -88,6 +88,14 @@ object Palette {
   implicit val paletteFormat: OFormat[Palette] = Json.format[Palette]
 }
 
+case class Palettes(
+  light: Palette,
+  dark: Palette
+)
+object Palettes {
+  implicit val palettesFormat: OFormat[Palettes] = Json.format[Palettes]
+}
+
 sealed trait CustomSubnavFormat
 object CustomSubnavFormat {
   case object Large extends CustomSubnavFormat
@@ -112,7 +120,7 @@ case class CustomSubnav(
   links: List[SubnavLink],
   pages: List[TargetedPage],
   images: Option[List[SubnavImage]],
-  palette: Option[Palette],
+  palette: Option[Palettes],
   lastUpdated: DateTime,
   updatedBy: String,
   updatedEmail: String,
