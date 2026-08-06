@@ -62,12 +62,12 @@ object ImageBreakpoint {
   }
 }
 
-case class Image(
+case class SubnavImage(
   imageSrc: String,
   breakpoint: ImageBreakpoint
 )
-object Image {
-  implicit val imageFormat: OFormat[Image] = Json.format[Image]
+object SubnavImage {
+  implicit val subnavImageFormat: OFormat[SubnavImage] = Json.format[SubnavImage]
 }
 
 case class CustomSubnavHeader(
@@ -86,6 +86,14 @@ case class Palette(
 )
 object Palette {
   implicit val paletteFormat: OFormat[Palette] = Json.format[Palette]
+}
+
+case class Palettes(
+  light: Palette,
+  dark: Palette
+)
+object Palettes {
+  implicit val palettesFormat: OFormat[Palettes] = Json.format[Palettes]
 }
 
 sealed trait CustomSubnavFormat
@@ -111,8 +119,8 @@ case class CustomSubnav(
   format: CustomSubnavFormat,
   links: List[SubnavLink],
   pages: List[TargetedPage],
-  images: Option[List[Image]],
-  palette: Option[Palette],
+  images: Option[List[SubnavImage]],
+  palette: Option[Palettes],
   lastUpdated: DateTime,
   updatedBy: String,
   updatedEmail: String,
