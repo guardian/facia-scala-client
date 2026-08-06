@@ -30,10 +30,17 @@
           "breakpoint": "mobile"
         }
       ],
-      "palette": {
-        "text": "#ffffff",
-        "header": "#052962",
-        "link": "#ffe500"
+      "palettes": {
+        "light": {
+          "text": "#ffffff",
+          "header": "#052962",
+          "link": "#ffe500"
+        },
+        "dark": {
+          "text": "#000000",
+          "header": "#052962",
+          "link": "#ffe500"
+        }
       },
       "lastUpdated": 1722770562000,
       "updatedBy": "Test User",
