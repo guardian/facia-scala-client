@@ -6,7 +6,8 @@ import com.gu.contentapi.client.utils.format._
 import com.gu.contentatom.thrift.Atom
 import com.gu.facia.api.utils.ContentApiUtils._
 import com.gu.facia.api.utils._
-import com.gu.facia.client.models.{MetaDataCommonFields, SupportingItem, Trail, TrailMetaData}
+import com.gu.facia.client.models.{MetaDataCommonFields, SupportingItem, Test, Trail, TrailMetaData}
+
 
 sealed trait FaciaImage
 
@@ -222,7 +223,6 @@ case class LatestSnap(
                        override val brandingByEdition: BrandingByEdition,
                        atomId: Option[String],
                        mediaAtom: Option[Atom]
-
                      ) extends Snap
 
 object LatestSnap {
@@ -302,7 +302,8 @@ case class CuratedContent(
                            embedCss: Option[String],
                            override val brandingByEdition: BrandingByEdition,
                            atomId: Option[String],
-                           mediaAtom: Option[Atom]
+                           mediaAtom: Option[Atom],
+                           tests: Option[List[Test]]
                          ) extends FaciaContent
 
 case class SupportingCuratedContent(
@@ -319,7 +320,8 @@ case class SupportingCuratedContent(
                                      byline: Option[String],
                                      kicker: Option[ItemKicker],
                                      atomId: Option[String],
-                                     mediaAtom: Option[Atom]
+                                     mediaAtom: Option[Atom],
+                                     tests: Option[List[Test]]
                                    ) extends FaciaContent
 
 object CuratedContent {
@@ -328,7 +330,8 @@ object CuratedContent {
                                         trailMetaData: TrailMetaData,
                                         maybeFrontPublicationDate: Option[Long],
                                         supportingContent: List[FaciaContent],
-                                        collectionConfig: CollectionConfig) = {
+                                        collectionConfig: CollectionConfig,
+                                        tests: Option[List[Test]] ) = {
     val cardStyle = CardStyle(content, trailMetaData)
     val resolvedMetaData = ResolvedMetaData.fromContentAndTrailMetaData(content, trailMetaData, cardStyle)
 
@@ -351,14 +354,16 @@ object CuratedContent {
       embedCss = trailMetaData.snapCss,
       brandingByEdition = content.brandingByEdition,
       trailMetaData.atomId,
-      None
+      None,
+      tests
     )
   }
 
   def fromTrailAndContent(content: Content,
                           trailMetaData: MetaDataCommonFields,
                           maybeFrontPublicationDate: Option[Long],
-                          collectionConfig: CollectionConfig): CuratedContent = {
+                          collectionConfig: CollectionConfig,
+                          tests: Option[List[Test]] ): CuratedContent = {
 
     val cardStyle = CardStyle(content, trailMetaData)
     val resolvedMetaData = ResolvedMetaData.fromContentAndTrailMetaData(content, trailMetaData, cardStyle)
@@ -383,7 +388,8 @@ object CuratedContent {
       embedCss = trailMetaData.snapCss,
       brandingByEdition = content.brandingByEdition,
       trailMetaData.atomId,
-      None
+      None,
+      tests
     )
   }
 }
@@ -392,7 +398,8 @@ object SupportingCuratedContent {
   def fromTrailAndContent(content: Content,
                           trailMetaData: MetaDataCommonFields,
                           maybeFrontPublicationDate: Option[Long],
-                          collectionConfig: CollectionConfig): SupportingCuratedContent = {
+                          collectionConfig: CollectionConfig,
+                          tests: Option[List[Test]] ): SupportingCuratedContent = {
     val cardStyle = CardStyle(content, trailMetaData)
     val resolvedMetaData = ResolvedMetaData.fromContentAndTrailMetaData(content, trailMetaData, cardStyle)
 
@@ -410,7 +417,8 @@ object SupportingCuratedContent {
       trailMetaData.byline.orElse(content.fields.flatMap(_.byline)),
       ItemKicker.fromContentAndTrail(Option(content), trailMetaData, resolvedMetaData, None),
       trailMetaData.atomId,
-      None
+      None,
+      tests
     )
   }
 }

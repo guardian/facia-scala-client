@@ -75,7 +75,8 @@ class FaciaContentUtilsTest extends AnyFreeSpec with Matchers with TestContent {
     embedCss = None,
     brandingByEdition = Map.empty,
     atomId = None,
-    mediaAtom = None
+    mediaAtom = None,
+    tests = None
   )
 
   def makeSupportingCuratedContent(curatedContentId: String, content: Content = content) = SupportingCuratedContent(
@@ -92,7 +93,8 @@ class FaciaContentUtilsTest extends AnyFreeSpec with Matchers with TestContent {
     byline = None,
     kicker = None,
     atomId = None,
-    mediaAtom = None
+    mediaAtom = None,
+    tests = None
   )
 
   "webPublicationDateOption" - {

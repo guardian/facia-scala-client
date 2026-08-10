@@ -75,20 +75,6 @@ object SupportingItemMetaData {
 
 case class SupportingItemMetaData(json: Map[String, JsValue]) extends MetaDataCommonFields
 
-object SupportingItem {
-  implicit val jsonFormat: OFormat[SupportingItem] = Json.format[SupportingItem]
-}
-
-case class SupportingItem(
-  id: String,
-  frontPublicationDate: Option[Long],
-  publishedBy: Option[String],
-  meta: Option[SupportingItemMetaData]
-) {
-  val isSnap: Boolean = id.startsWith("snap/")
-  lazy val safeMeta = meta.getOrElse(TrailMetaData.empty)
-}
-
 object TrailMetaData {
   implicit val flatReads: Reads[TrailMetaData] = new Reads[TrailMetaData] {
     override def reads(j: JsValue): JsResult[TrailMetaData] = {
@@ -110,15 +96,99 @@ case class TrailMetaData(json: Map[String, JsValue]) extends MetaDataCommonField
   lazy val supporting: Option[List[SupportingItem]] = json.get("supporting").flatMap(_.asOpt[List[SupportingItem]])
 }
 
+sealed trait VariantId
+object VariantId {
+  case object A extends VariantId
+  case object B extends VariantId
+
+  implicit val format: Format[VariantId] = new Format[VariantId] {
+    override def reads(json: JsValue): JsResult[VariantId] = json.validate[String].flatMap {
+      case "A" => JsSuccess(A)
+      case "B" => JsSuccess(B)
+      case other => JsError(s"Unknown VariantId: $other")
+    }
+    override def writes(o: VariantId): JsValue = o match {
+      case A => JsString("A")
+      case B => JsString("B")
+    }
+  }
+}
+
+/**
+ * @param meta only contains the fields that are actually being tested, i.e. the fields that differ
+ *             per variant. Any field not being tested will not be present here, and consumers should
+ *             fall back to the trail's own [[TrailMetaData]] for those.
+ */
+case class VariantMeta(id: VariantId, meta: TrailMetaData)
+object VariantMeta {
+  implicit val jsonFormat: OFormat[VariantMeta] = Json.format[VariantMeta]
+}
+
+/**
+ * Represents an A/B test running on a trail within a collection.
+ *
+ * @param testUuid a static reference that persists if the card moves between containers, and can be shared across multiple Test instances on multiple cards.
+ * @param variantMeta the list of variants for this test, each with its own metadata
+ * @param startDate the start date of the test, in milliseconds since epoch
+ * @param expiryDate the expiry date of the test, in milliseconds since epoch. If the test has expired, it will not be shown to users.
+ * @param createdByName the name of the person who created the test
+ * @param createdByEmail the email of the person who created the test
+ * @param frontsThisTestCanRunOn the list of fronts that this test can run on.
+ * @param hasManuallyEndedOnThisTrail whether this test has been manually ended on this trail. If true, the test will not be shown to users on this trail, nor will it report to Ophan, even if it is still active on other trails.
+ * @param manuallyEndedOnThisTrailByName the name of the person who manually ended this test on this trail, if applicable
+ * @param manuallyEndedOnThisTrailByEmail the email of the person who manually ended this test on this trail, if applicable
+ */
+case class Test(
+  testUuid: String,
+  variantMeta: List[VariantMeta],
+  startDate: Option[Long],
+  expiryDate: Option[Long],
+  createdByName: String,
+  createdByEmail: String,
+  frontsThisTestCanRunOn: List[String],
+  hasManuallyEndedOnThisTrail: Boolean,
+  manuallyEndedOnThisTrailByName: Option[String],
+  manuallyEndedOnThisTrailByEmail: Option[String]
+)
+object Test {
+  implicit val jsonFormat: OFormat[Test] = Json.format[Test]
+}
+
+object SupportingItem {
+  implicit val jsonFormat: OFormat[SupportingItem] = Json.format[SupportingItem]
+}
+
+/**
+ * @param tests the list of A/B tests configured on this supporting item. Note that expired tests
+ *              and tests which have been manually ended aren't removed from this list. Consumers
+ *              must check a test's expiry/manually-ended status themselves.
+ */
+case class SupportingItem(
+  id: String,
+  frontPublicationDate: Option[Long],
+  publishedBy: Option[String],
+  meta: Option[SupportingItemMetaData],
+  tests: Option[List[Test]]
+) {
+  val isSnap: Boolean = id.startsWith("snap/")
+  lazy val safeMeta = meta.getOrElse(TrailMetaData.empty)
+}
+
 object Trail {
   implicit val jsonFormat: OFormat[Trail] = Json.format[Trail]
 }
 
+/**
+ * @param tests the list of A/B tests configured on this trail. Note that expired tests
+ *              and tests which have been manually ended aren't removed from this list. Consumers
+ *              must check a test's expiry/manually-ended status themselves.
+ */
 case class Trail(
   id: String,
   frontPublicationDate: Long,
   publishedBy: Option[String],
-  meta: Option[TrailMetaData]
+  meta: Option[TrailMetaData],
+  tests: Option[List[Test]]
 ) {
   val isSnap: Boolean = id.startsWith("snap/")
   lazy val safeMeta = meta.getOrElse(TrailMetaData.empty)
