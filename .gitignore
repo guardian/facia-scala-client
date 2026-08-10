@@ -41,3 +41,6 @@ target/
 .bloop/
 .metals/
 metals.sbt
+
+# Build tools & caches
+.carabiner/
