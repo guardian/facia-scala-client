@@ -137,6 +137,7 @@ object VariantMeta {
  * @param hasManuallyEndedOnThisTrail whether this test has been manually ended on this trail. If true, the test will not be shown to users on this trail, nor will it report to Ophan, even if it is still active on other trails.
  * @param manuallyEndedOnThisTrailByName the name of the person who manually ended this test on this trail, if applicable
  * @param manuallyEndedOnThisTrailByEmail the email of the person who manually ended this test on this trail, if applicable
+ * @param manuallyEndedOnThisTrailDate the date at which the test was manually ended on this trail, if applicable, in milliseconds since epoch
  */
 case class Test(
   testUuid: String,
@@ -148,7 +149,8 @@ case class Test(
   frontsThisTestCanRunOn: List[String],
   hasManuallyEndedOnThisTrail: Boolean,
   manuallyEndedOnThisTrailByName: Option[String],
-  manuallyEndedOnThisTrailByEmail: Option[String]
+  manuallyEndedOnThisTrailByEmail: Option[String],
+  manuallyEndedOnThisTrailDate: Option[Long]
 )
 object Test {
   implicit val jsonFormat: OFormat[Test] = Json.format[Test]
