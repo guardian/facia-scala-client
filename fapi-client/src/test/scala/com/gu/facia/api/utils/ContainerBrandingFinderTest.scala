@@ -1,6 +1,11 @@
 package com.gu.facia.api.utils
 
-import com.gu.commercial.branding.{Branding, Logo, PaidMultiSponsorBranding, Sponsored}
+import com.gu.commercial.branding.{
+  Branding,
+  Logo,
+  PaidMultiSponsorBranding,
+  Sponsored
+}
 import com.gu.contentapi.client.model.v1.Content
 import com.gu.facia.api.TestModel.{getContentItem, getTag}
 import com.gu.facia.api.models.CollectionConfig
@@ -10,12 +15,21 @@ import org.scalatest.OptionValues
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
 
-class ContainerBrandingFinderTest extends AnyFlatSpec with Matchers with OptionValues {
+class ContainerBrandingFinderTest
+    extends AnyFlatSpec
+    with Matchers
+    with OptionValues {
 
   private def getTagBrandedItem = getContentItem("TagBrandedContent.json")
-  private def getMultipleTagBrandedItem = getContentItem("TagBrandedContent-MultipleBrands.json")
-  private def getSectionBrandedItem = getContentItem("SectionBrandedContent.json")
-  private def getAfterDateTargetedTagBrandedItem = getContentItem("AfterDateTargetedTagBrandedContent.json")
+  private def getMultipleTagBrandedItem = getContentItem(
+    "TagBrandedContent-MultipleBrands.json"
+  )
+  private def getSectionBrandedItem = getContentItem(
+    "SectionBrandedContent.json"
+  )
+  private def getAfterDateTargetedTagBrandedItem = getContentItem(
+    "AfterDateTargetedTagBrandedContent.json"
+  )
   private def getInappropriateItem = getContentItem("InappropriateContent.json")
   private def getPaidItem = getContentItem("PaidContent.json")
   private def getFoundationTag = getTag("FoundationTag.json")
@@ -24,7 +38,8 @@ class ContainerBrandingFinderTest extends AnyFlatSpec with Matchers with OptionV
   private def getPaidTag2 = getTag("PaidTag2.json")
   private def getSeriesTag = getTag("SeriesTag.json")
 
-  private val brandedContainerConfig = CollectionConfig.empty.copy(metadata = Some(List(Branded)))
+  private val brandedContainerConfig =
+    CollectionConfig.empty.copy(metadata = Some(List(Branded)))
 
   "findBranding: content" should "give branding if all items in set have same branding" in {
     val items = Set(
@@ -37,7 +52,8 @@ class ContainerBrandingFinderTest extends AnyFlatSpec with Matchers with OptionV
         brandingType = Sponsored,
         sponsorName = "Fairtrade Foundation",
         logo = Logo(
-          src = "https://static.theguardian.com/commercial/sponsor/sustainable/series/spotlight-commodities/logo.png",
+          src =
+            "https://static.theguardian.com/commercial/sponsor/sustainable/series/spotlight-commodities/logo.png",
           dimensions = None,
           link = "http://www.fairtrade.org.uk/",
           label = "Supported by"
@@ -45,7 +61,8 @@ class ContainerBrandingFinderTest extends AnyFlatSpec with Matchers with OptionV
         logoForDarkBackground = None,
         aboutThisLink = "https://www.theguardian.com/uk",
         hostedCampaignColour = None
-      ))
+      )
+    )
   }
 
   it should "give no branding if any item in set has different branding" in {
@@ -68,7 +85,8 @@ class ContainerBrandingFinderTest extends AnyFlatSpec with Matchers with OptionV
   }
 
   it should "give no branding for an empty set" in {
-    val branding = findBranding(brandedContainerConfig, "uk", Set.empty[Content])
+    val branding =
+      findBranding(brandedContainerConfig, "uk", Set.empty[Content])
     branding should be(None)
   }
 
@@ -95,13 +113,15 @@ class ContainerBrandingFinderTest extends AnyFlatSpec with Matchers with OptionV
       getFoundationTag,
       getFoundationTag2
     )
-    val branding = findBranding(brandedContainerConfig, "uk", items = Set.empty, tags)
+    val branding =
+      findBranding(brandedContainerConfig, "uk", items = Set.empty, tags)
     branding.value should be(
       Branding(
         brandingType = Sponsored,
         sponsorName = "Fairtrade Foundation",
         logo = Logo(
-          src = "https://static.theguardian.com/commercial/sponsor/sustainable/series/spotlight-commodities/logo.png",
+          src =
+            "https://static.theguardian.com/commercial/sponsor/sustainable/series/spotlight-commodities/logo.png",
           dimensions = None,
           link = "http://www.fairtrade.org.uk/",
           label = "Supported by"
@@ -118,7 +138,8 @@ class ContainerBrandingFinderTest extends AnyFlatSpec with Matchers with OptionV
       getFoundationTag,
       getSeriesTag
     )
-    val branding = findBranding(brandedContainerConfig, "uk", items = Set.empty, tags)
+    val branding =
+      findBranding(brandedContainerConfig, "uk", items = Set.empty, tags)
     branding should be(None)
   }
 
@@ -127,7 +148,8 @@ class ContainerBrandingFinderTest extends AnyFlatSpec with Matchers with OptionV
       getPaidTag,
       getPaidTag2
     )
-    val branding = findBranding(brandedContainerConfig, "uk", items = Set.empty, tags)
+    val branding =
+      findBranding(brandedContainerConfig, "uk", items = Set.empty, tags)
     branding.value should be(PaidMultiSponsorBranding)
   }
 
@@ -140,7 +162,8 @@ class ContainerBrandingFinderTest extends AnyFlatSpec with Matchers with OptionV
         brandingType = Sponsored,
         sponsorName = "Fairtrade Foundation",
         logo = Logo(
-          src = "https://static.theguardian.com/commercial/sponsor/sustainable/series/spotlight-commodities/logo.png",
+          src =
+            "https://static.theguardian.com/commercial/sponsor/sustainable/series/spotlight-commodities/logo.png",
           dimensions = None,
           link = "http://www.fairtrade.org.uk/",
           label = "Supported by"

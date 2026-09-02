@@ -8,34 +8,33 @@ object CommercialPriority extends FrontPriority
 object TrainingPriority extends FrontPriority
 object EmailPriority extends FrontPriority
 
-case class FrontImage(
-                       imageUrl: String,
-                       imageHeight: Int,
-                       imageWidth: Int)
+case class FrontImage(imageUrl: String, imageHeight: Int, imageWidth: Int)
 
 case class Front(
-                  id: String,
-                  collections: List[String],
-                  navSection: Option[String],
-                  webTitle: Option[String],
-                  title: Option[String],
-                  description: Option[String],
-                  onPageDescription: Option[String],
-                  frontImage: Option[FrontImage],
-                  isImageDisplayed: Boolean,
-                  priority: FrontPriority,
-                  isHidden: Boolean,
-                  canonicalCollection: String,
-                  group: Option[String])
+    id: String,
+    collections: List[String],
+    navSection: Option[String],
+    webTitle: Option[String],
+    title: Option[String],
+    description: Option[String],
+    onPageDescription: Option[String],
+    frontImage: Option[FrontImage],
+    isImageDisplayed: Boolean,
+    priority: FrontPriority,
+    isHidden: Boolean,
+    canonicalCollection: String,
+    group: Option[String]
+)
 
 object Front {
   private def getFrontPriority(frontJson: FrontJson): FrontPriority =
     frontJson.priority match {
       case Some("commercial") => CommercialPriority
-      case Some("training") => TrainingPriority
-      case Some("email") => EmailPriority
-      case Some("edition") => TrainingPriority
-      case _ => EditorialPriority}
+      case Some("training")   => TrainingPriority
+      case Some("email")      => EmailPriority
+      case Some("edition")    => TrainingPriority
+      case _                  => EditorialPriority
+    }
 
   private def getImageUrl(frontJson: FrontJson): Option[FrontImage] =
     for {
@@ -62,20 +61,20 @@ object Front {
     )
   }
 
-  /**
-   * If we're on a network front, try hard-coded headlines ids, otherwise use editorially
-   * chosen canonical container if present, falling back to the first available collection.
-   * We should never have a front with no containers so final fallback is a placeholder.
-   */
+  /** If we're on a network front, try hard-coded headlines ids, otherwise use editorially
+    * chosen canonical container if present, falling back to the first available collection.
+    * We should never have a front with no containers so final fallback is a placeholder.
+    */
   private def canonicalCollection(id: String, frontJson: FrontJson): String = {
-    frontJson.canonical.filter(frontJson.collections.contains)
+    frontJson.canonical
+      .filter(frontJson.collections.contains)
       .orElse(frontJson.collections.headOption)
       .getOrElse("no collections")
   }
 
   def frontsFromConfig(configJson: ConfigJson): Set[Front] = {
-    configJson.fronts
-      .map { case (id, json) => Front.fromFrontJson(id, json)}
-      .toSet
+    configJson.fronts.map { case (id, json) =>
+      Front.fromFrontJson(id, json)
+    }.toSet
   }
 }

@@ -14,8 +14,9 @@ class IdsSearchQueriesTest extends AnyFreeSpec with Matchers {
     }
 
     "should limit batches over 50" in {
-      IdsSearchQueries.makeBatches(fiftyOne) should be (Some(
-        Seq(fifty, Seq("fiftyFirst"))))
+      IdsSearchQueries.makeBatches(fiftyOne) should be(
+        Some(Seq(fifty, Seq("fiftyFirst")))
+      )
     }
   }
 }

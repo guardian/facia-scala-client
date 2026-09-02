@@ -11,112 +11,235 @@ import play.api.libs.json.{JsBoolean, JsString}
 
 class CuratedContentTest extends AnyFreeSpec with Matchers with TestContent {
 
-  val collectionConfig = CollectionConfig.fromCollectionJson(CollectionConfigJson.withDefaults())
+  val collectionConfig =
+    CollectionConfig.fromCollectionJson(CollectionConfigJson.withDefaults())
 
   "CuratedContent headline" - {
 
-    val contentWithFieldHeadline = baseContent.copy(fields = Some(ContentFields(headline = Some("Content headline"), trailText = Some("Content trailtext"), byline = Some("Content byline"))))
-    val contentWithoutFieldHeadline = baseContent.copy(webTitle = "contentWithoutFieldHeadlineHeadline", fields = Some(ContentFields(trailText = Some("Content trailtext"), byline = Some("Content byline"))))
+    val contentWithFieldHeadline = baseContent.copy(fields =
+      Some(
+        ContentFields(
+          headline = Some("Content headline"),
+          trailText = Some("Content trailtext"),
+          byline = Some("Content byline")
+        )
+      )
+    )
+    val contentWithoutFieldHeadline = baseContent.copy(
+      webTitle = "contentWithoutFieldHeadlineHeadline",
+      fields = Some(
+        ContentFields(
+          trailText = Some("Content trailtext"),
+          byline = Some("Content byline")
+        )
+      )
+    )
 
-    val trailMetaDataWithHeadline = TrailMetaData(Map("headline" -> JsString("trailMetaDataHeadline")))
+    val trailMetaDataWithHeadline =
+      TrailMetaData(Map("headline" -> JsString("trailMetaDataHeadline")))
     val trailMetaDataWithoutHeadline = TrailMetaData(Map.empty)
 
     "should resolve the headline from TrailMetaData" in {
-      val curatedContent = CuratedContent.fromTrailAndContent(contentWithFieldHeadline, trailMetaDataWithHeadline, None, collectionConfig, None)
-      curatedContent.headline should be ("trailMetaDataHeadline")
+      val curatedContent = CuratedContent.fromTrailAndContent(
+        contentWithFieldHeadline,
+        trailMetaDataWithHeadline,
+        None,
+        collectionConfig,
+        None
+      )
+      curatedContent.headline should be("trailMetaDataHeadline")
     }
 
     "should resolve the headline from Content fields.headline" in {
-      val curatedContent = CuratedContent.fromTrailAndContent(contentWithFieldHeadline, trailMetaDataWithoutHeadline, None, collectionConfig, None)
-      curatedContent.headline should be ("Content headline")
+      val curatedContent = CuratedContent.fromTrailAndContent(
+        contentWithFieldHeadline,
+        trailMetaDataWithoutHeadline,
+        None,
+        collectionConfig,
+        None
+      )
+      curatedContent.headline should be("Content headline")
     }
     "should resolve the headline from Content webTitle" in {
-      val curatedContent = CuratedContent.fromTrailAndContent(contentWithoutFieldHeadline, trailMetaDataWithoutHeadline, None, collectionConfig, None)
-      curatedContent.headline should be ("contentWithoutFieldHeadlineHeadline")
+      val curatedContent = CuratedContent.fromTrailAndContent(
+        contentWithoutFieldHeadline,
+        trailMetaDataWithoutHeadline,
+        None,
+        collectionConfig,
+        None
+      )
+      curatedContent.headline should be("contentWithoutFieldHeadlineHeadline")
     }
   }
 
   "CuratedContent itemKicker" - {
     val emptyContent = baseContent.copy(
-      fields = Some(ContentFields(headline = Some("Content headline"), trailText = Some("Content trailtext"), byline = Some("Content byline"))),
+      fields = Some(
+        ContentFields(
+          headline = Some("Content headline"),
+          trailText = Some("Content trailtext"),
+          byline = Some("Content byline")
+        )
+      ),
       tags = List(Tag("id", TagType.Keyword, None, None, "", "", ""))
     )
 
     val emptyTrailMetaData = TrailMetaData(Map.empty)
-    val collectionConfig = CollectionConfig.fromCollectionJson(CollectionConfigJson.withDefaults())
-    val collectionConfigShowSections = CollectionConfig.fromCollectionJson(CollectionConfigJson.withDefaults(showSections = Option(true)))
-    val collectionConfigShowTags = CollectionConfig.fromCollectionJson(CollectionConfigJson.withDefaults(showTags = Option(true)))
+    val collectionConfig =
+      CollectionConfig.fromCollectionJson(CollectionConfigJson.withDefaults())
+    val collectionConfigShowSections = CollectionConfig.fromCollectionJson(
+      CollectionConfigJson.withDefaults(showSections = Option(true))
+    )
+    val collectionConfigShowTags = CollectionConfig.fromCollectionJson(
+      CollectionConfigJson.withDefaults(showTags = Option(true))
+    )
 
     "should resolve to None" in {
-      val curatedContent = CuratedContent.fromTrailAndContent(emptyContent, emptyTrailMetaData, None, collectionConfig, None)
-      curatedContent.kicker should be (None)
+      val curatedContent = CuratedContent.fromTrailAndContent(
+        emptyContent,
+        emptyTrailMetaData,
+        None,
+        collectionConfig,
+        None
+      )
+      curatedContent.kicker should be(None)
     }
 
     "should resolve to SectionKicker with config showSections true" in {
-      val curatedContent = CuratedContent.fromTrailAndContent(emptyContent, emptyTrailMetaData, None, collectionConfigShowSections, None)
-      curatedContent.kicker.value shouldBe a [SectionKicker]
+      val curatedContent = CuratedContent.fromTrailAndContent(
+        emptyContent,
+        emptyTrailMetaData,
+        None,
+        collectionConfigShowSections,
+        None
+      )
+      curatedContent.kicker.value shouldBe a[SectionKicker]
     }
 
     "should resolve to TagKicker with config showTags true" in {
       //This test requires content to have tags
-      val curatedContent = CuratedContent.fromTrailAndContent(emptyContent, emptyTrailMetaData, None, collectionConfigShowTags, None)
-      curatedContent.kicker.value shouldBe a [TagKicker]
+      val curatedContent = CuratedContent.fromTrailAndContent(
+        emptyContent,
+        emptyTrailMetaData,
+        None,
+        collectionConfigShowTags,
+        None
+      )
+      curatedContent.kicker.value shouldBe a[TagKicker]
     }
 
     "should resolve to SectionKicker for trailMetaData showKickerSection true" in {
-      val trailMetaDataShowKickerSection = TrailMetaData(Map("showKickerSection" -> JsBoolean(value = true)))
-      val curatedContent = CuratedContent.fromTrailAndContent(emptyContent, trailMetaDataShowKickerSection, None, collectionConfigShowTags, None)
-      curatedContent.kicker.value shouldBe a [SectionKicker]
+      val trailMetaDataShowKickerSection =
+        TrailMetaData(Map("showKickerSection" -> JsBoolean(value = true)))
+      val curatedContent = CuratedContent.fromTrailAndContent(
+        emptyContent,
+        trailMetaDataShowKickerSection,
+        None,
+        collectionConfigShowTags,
+        None
+      )
+      curatedContent.kicker.value shouldBe a[SectionKicker]
     }
 
     "should resolve to SectionKicker for trailMetaData showKickerTag true" in {
-      val trailMetaDataShowKickerTag = TrailMetaData(Map("showKickerTag" -> JsBoolean(value = true)))
-      val curatedContent = CuratedContent.fromTrailAndContent(emptyContent, trailMetaDataShowKickerTag, None, collectionConfigShowTags, None)
-      curatedContent.kicker.value shouldBe a [TagKicker]
+      val trailMetaDataShowKickerTag =
+        TrailMetaData(Map("showKickerTag" -> JsBoolean(value = true)))
+      val curatedContent = CuratedContent.fromTrailAndContent(
+        emptyContent,
+        trailMetaDataShowKickerTag,
+        None,
+        collectionConfigShowTags,
+        None
+      )
+      curatedContent.kicker.value shouldBe a[TagKicker]
     }
   }
 
   "SupportingCuratedContent itemKicker" - {
     val emptyContent = baseContent.copy(
-      fields = Some(ContentFields(
-        headline = Some("Content headline"),
-        trailText = Some("Content trailtext"),
-        byline = Some("Content byline"),
-        internalPageCode = Some(123)
-      )),
+      fields = Some(
+        ContentFields(
+          headline = Some("Content headline"),
+          trailText = Some("Content trailtext"),
+          byline = Some("Content byline"),
+          internalPageCode = Some(123)
+        )
+      ),
       tags = Seq(Tag("id", TagType.Keyword, None, None, "", "", ""))
     )
 
     val emptyTrailMetaData = TrailMetaData(Map.empty)
-    val collectionConfig = CollectionConfig.fromCollectionJson(CollectionConfigJson.withDefaults())
-    val collectionConfigShowSections = CollectionConfig.fromCollectionJson(CollectionConfigJson.withDefaults(showSections = Option(true)))
-    val collectionConfigShowTags = CollectionConfig.fromCollectionJson(CollectionConfigJson.withDefaults(showTags = Option(true)))
+    val collectionConfig =
+      CollectionConfig.fromCollectionJson(CollectionConfigJson.withDefaults())
+    val collectionConfigShowSections = CollectionConfig.fromCollectionJson(
+      CollectionConfigJson.withDefaults(showSections = Option(true))
+    )
+    val collectionConfigShowTags = CollectionConfig.fromCollectionJson(
+      CollectionConfigJson.withDefaults(showTags = Option(true))
+    )
 
     "should resolve to None" in {
-      val supportingCuratedContent = SupportingCuratedContent.fromTrailAndContent(emptyContent, emptyTrailMetaData, None, collectionConfig, None)
-      supportingCuratedContent.kicker should be (None)
+      val supportingCuratedContent =
+        SupportingCuratedContent.fromTrailAndContent(
+          emptyContent,
+          emptyTrailMetaData,
+          None,
+          collectionConfig,
+          None
+        )
+      supportingCuratedContent.kicker should be(None)
     }
 
     "should resolve to None with config showSections true" in {
-      val supportingCuratedContent = SupportingCuratedContent.fromTrailAndContent(emptyContent, emptyTrailMetaData, None, collectionConfigShowSections, None)
-      supportingCuratedContent.kicker should be (None)
+      val supportingCuratedContent =
+        SupportingCuratedContent.fromTrailAndContent(
+          emptyContent,
+          emptyTrailMetaData,
+          None,
+          collectionConfigShowSections,
+          None
+        )
+      supportingCuratedContent.kicker should be(None)
     }
 
     "should resolve to None with config showTags true" in {
-      val supportingCuratedContent = SupportingCuratedContent.fromTrailAndContent(emptyContent, emptyTrailMetaData, None, collectionConfigShowTags, None)
-      supportingCuratedContent.kicker should be (None)
+      val supportingCuratedContent =
+        SupportingCuratedContent.fromTrailAndContent(
+          emptyContent,
+          emptyTrailMetaData,
+          None,
+          collectionConfigShowTags,
+          None
+        )
+      supportingCuratedContent.kicker should be(None)
     }
 
     "should resolve to SectionKicker for trailMetaData showKickerSection true" in {
-      val trailMetaDataShowKickerSection = TrailMetaData(Map("showKickerSection" -> JsBoolean(value = true)))
-      val supportingCuratedContent = SupportingCuratedContent.fromTrailAndContent(emptyContent, trailMetaDataShowKickerSection, None, collectionConfigShowTags, None)
-      supportingCuratedContent.kicker.value shouldBe a [SectionKicker]
+      val trailMetaDataShowKickerSection =
+        TrailMetaData(Map("showKickerSection" -> JsBoolean(value = true)))
+      val supportingCuratedContent =
+        SupportingCuratedContent.fromTrailAndContent(
+          emptyContent,
+          trailMetaDataShowKickerSection,
+          None,
+          collectionConfigShowTags,
+          None
+        )
+      supportingCuratedContent.kicker.value shouldBe a[SectionKicker]
     }
 
     "should resolve to SectionKicker for trailMetaData showKickerTag true" in {
-      val trailMetaDataShowKickerTag = TrailMetaData(Map("showKickerTag" -> JsBoolean(value = true)))
-      val supportingCuratedContent = SupportingCuratedContent.fromTrailAndContent(emptyContent, trailMetaDataShowKickerTag, None, collectionConfigShowTags, None)
-      supportingCuratedContent.kicker.value shouldBe a [TagKicker]
+      val trailMetaDataShowKickerTag =
+        TrailMetaData(Map("showKickerTag" -> JsBoolean(value = true)))
+      val supportingCuratedContent =
+        SupportingCuratedContent.fromTrailAndContent(
+          emptyContent,
+          trailMetaDataShowKickerTag,
+          None,
+          collectionConfigShowTags,
+          None
+        )
+      supportingCuratedContent.kicker.value shouldBe a[TagKicker]
     }
   }
 
@@ -126,45 +249,73 @@ class CuratedContentTest extends AnyFreeSpec with Matchers with TestContent {
     val cutoutSrc = "https://somewhere-on-the-internet/cutout-image.jpg"
     val cutoutDimensions = "200"
     val contentWithCommentTone = baseContent.copy(
-      fields = Some(ContentFields(headline = Some("Content headline"), trailText = Some("Content trailtext"), byline = Some("Content byline"))),
-      tags = List(Tag(ResolvedMetaData.Comment, TagType.Tone, None, None, "", "", ""))
+      fields = Some(
+        ContentFields(
+          headline = Some("Content headline"),
+          trailText = Some("Content trailtext"),
+          byline = Some("Content byline")
+        )
+      ),
+      tags = List(
+        Tag(ResolvedMetaData.Comment, TagType.Tone, None, None, "", "", "")
+      )
     )
 
     "should default the cutout image for content with the Comment tone" in {
-      val trailMetadata = TrailMetaData(Map(
-        "imageCutoutSrc" -> JsString(cutoutSrc),
-        "imageCutoutSrcWidth" -> JsString(cutoutDimensions),
-        "imageCutoutSrcHeight" -> JsString(cutoutDimensions)
-      ))
-      val curatedContent = CuratedContent.fromTrailAndContent(contentWithCommentTone, trailMetadata, None, collectionConfig, None)
+      val trailMetadata = TrailMetaData(
+        Map(
+          "imageCutoutSrc" -> JsString(cutoutSrc),
+          "imageCutoutSrcWidth" -> JsString(cutoutDimensions),
+          "imageCutoutSrcHeight" -> JsString(cutoutDimensions)
+        )
+      )
+      val curatedContent = CuratedContent.fromTrailAndContent(
+        contentWithCommentTone,
+        trailMetadata,
+        None,
+        collectionConfig,
+        None
+      )
 
-      val expectedImage = Some(Cutout(
-        cutoutSrc,
-        Some(cutoutDimensions),
-        Some(cutoutDimensions)
-      ))
+      val expectedImage = Some(
+        Cutout(
+          cutoutSrc,
+          Some(cutoutDimensions),
+          Some(cutoutDimensions)
+        )
+      )
 
       curatedContent.image shouldBe expectedImage
     }
 
     "should default to the replacement image, not the cutout image, when `imageReplace` is true for content with the Comment tone" in {
-      val trailMetadata = TrailMetaData(Map(
-        "imageReplace" -> JsBoolean(true),
-        "imageSrc" -> JsString(replaceSrc),
-        "imageSrcWidth" -> JsString(replaceDimensions),
-        "imageSrcHeight" -> JsString(replaceDimensions),
-        "imageCutoutSrc" -> JsString(cutoutSrc),
-        "imageCutoutSrcWidth" -> JsString(cutoutDimensions),
-        "imageCutoutSrcHeight" -> JsString(cutoutDimensions)
-      ))
-      val curatedContent = CuratedContent.fromTrailAndContent(contentWithCommentTone, trailMetadata, None, collectionConfig, None)
-
-      val expectedImage = Some(Replace(
-        replaceSrc,
-        replaceDimensions,
-        replaceDimensions,
+      val trailMetadata = TrailMetaData(
+        Map(
+          "imageReplace" -> JsBoolean(true),
+          "imageSrc" -> JsString(replaceSrc),
+          "imageSrcWidth" -> JsString(replaceDimensions),
+          "imageSrcHeight" -> JsString(replaceDimensions),
+          "imageCutoutSrc" -> JsString(cutoutSrc),
+          "imageCutoutSrcWidth" -> JsString(cutoutDimensions),
+          "imageCutoutSrcHeight" -> JsString(cutoutDimensions)
+        )
+      )
+      val curatedContent = CuratedContent.fromTrailAndContent(
+        contentWithCommentTone,
+        trailMetadata,
+        None,
+        collectionConfig,
         None
-      ))
+      )
+
+      val expectedImage = Some(
+        Replace(
+          replaceSrc,
+          replaceDimensions,
+          replaceDimensions,
+          None
+        )
+      )
 
       curatedContent.image shouldBe expectedImage
     }

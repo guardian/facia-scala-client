@@ -13,7 +13,9 @@ import scala.io.Source
 object TestModel {
 
   private def getJson(fileName: String): JsValue =
-    Json.parse(Source.fromURL(getClass.getResource(s"/branding/$fileName")).mkString)
+    Json.parse(
+      Source.fromURL(getClass.getResource(s"/branding/$fileName")).mkString
+    )
 
   trait HasName[A] { def nameOf(a: A): String }
 
@@ -35,50 +37,62 @@ object TestModel {
     }
   }
 
-  private def byName[A](otherName: String)(a: A)(implicit n: HasName[A]): Boolean =
+  private def byName[A](otherName: String)(a: A)(implicit
+      n: HasName[A]
+  ): Boolean =
     n.nameOf(a).toLowerCase == otherName.replaceAll("-", "")
 
-  implicit val capiDateReads: Reads[CapiDateTime] = __.read[String] map { dateString =>
-    CapiDateTime(
-      LocalDateTime.parse(dateString, ISO_OFFSET_DATE_TIME).toInstant(UTC).toEpochMilli,
-      dateString
-    )
+  implicit val capiDateReads: Reads[CapiDateTime] = __.read[String] map {
+    dateString =>
+      CapiDateTime(
+        LocalDateTime
+          .parse(dateString, ISO_OFFSET_DATE_TIME)
+          .toInstant(UTC)
+          .toEpochMilli,
+        dateString
+      )
   }
 
   case class TestSponsorshipTargeting(
-    publishedSince: Option[CapiDateTime],
-    validEditions: Option[Seq[String]]
+      publishedSince: Option[CapiDateTime],
+      validEditions: Option[Seq[String]]
   ) extends SponsorshipTargeting
-  implicit val testSponsorshipTargeting: Reads[TestSponsorshipTargeting] = Json.reads[TestSponsorshipTargeting]
+  implicit val testSponsorshipTargeting: Reads[TestSponsorshipTargeting] =
+    Json.reads[TestSponsorshipTargeting]
 
-  case class TestLogoDimensions(width: Int, height: Int) extends SponsorshipLogoDimensions
-  implicit val testLogoDimensionsFormat: Reads[TestLogoDimensions] = Json.reads[TestLogoDimensions]
+  case class TestLogoDimensions(width: Int, height: Int)
+      extends SponsorshipLogoDimensions
+  implicit val testLogoDimensionsFormat: Reads[TestLogoDimensions] =
+    Json.reads[TestLogoDimensions]
 
   case class TestSponsorship(
-    sponsorshipTypeName: String,
-    sponsorshipPackageName: Option[String],
-    sponsorName: String,
-    sponsorLogo: String,
-    sponsorLink: String,
-    targeting: Option[TestSponsorshipTargeting],
-    aboutLink: Option[String],
-    sponsorLogoDimensions: Option[TestLogoDimensions],
-    highContrastSponsorLogo: Option[String],
-    highContrastSponsorLogoDimensions: Option[TestLogoDimensions]
+      sponsorshipTypeName: String,
+      sponsorshipPackageName: Option[String],
+      sponsorName: String,
+      sponsorLogo: String,
+      sponsorLink: String,
+      targeting: Option[TestSponsorshipTargeting],
+      aboutLink: Option[String],
+      sponsorLogoDimensions: Option[TestLogoDimensions],
+      highContrastSponsorLogo: Option[String],
+      highContrastSponsorLogoDimensions: Option[TestLogoDimensions]
   ) extends Sponsorship {
     def sponsorshipType: SponsorshipType =
       SponsorshipType.list.find(byName(sponsorshipTypeName)(_)).get
     def sponsorshipPackage: Option[SponsorshipPackage] =
-      sponsorshipPackageName.flatMap(p => SponsorshipPackage.list.find(byName(p)(_)))
+      sponsorshipPackageName.flatMap(p =>
+        SponsorshipPackage.list.find(byName(p)(_))
+      )
     def validFrom = None
     def validTo = None
   }
-  implicit val testSponsorShipFormat: Reads[TestSponsorship] = Json.reads[TestSponsorship]
+  implicit val testSponsorShipFormat: Reads[TestSponsorship] =
+    Json.reads[TestSponsorship]
 
   case class StubSection(
-    id: String,
-    webTitle: String,
-    activeSponsorships: Option[Seq[TestSponsorship]]
+      id: String,
+      webTitle: String,
+      activeSponsorships: Option[Seq[TestSponsorship]]
   ) extends Section {
     def webUrl: String = ""
     def apiUrl: String = ""
@@ -86,7 +100,8 @@ object TestModel {
   }
   implicit val stubSectionFormat: Reads[StubSection] = Json.reads[StubSection]
 
-  case class StubFields(isInappropriateForSponsorship: Option[Boolean]) extends ContentFields {
+  case class StubFields(isInappropriateForSponsorship: Option[Boolean])
+      extends ContentFields {
     def headline: Option[String] = None
     def standfirst: Option[String] = None
     def trailText: Option[String] = None
@@ -142,10 +157,10 @@ object TestModel {
   implicit val stubFieldsFormat: Reads[StubFields] = Json.reads[StubFields]
 
   case class StubTag(
-    id: String,
-    typeName: String,
-    webTitle: String,
-    activeSponsorships: Option[Seq[TestSponsorship]]
+      id: String,
+      typeName: String,
+      webTitle: String,
+      activeSponsorships: Option[Seq[TestSponsorship]]
   ) extends Tag {
     def `type`: TagType = TagType.list.find(byName(typeName)(_)).get
     def sectionId: Option[String] = None
@@ -170,14 +185,15 @@ object TestModel {
     def tagCategories: Option[scala.collection.Set[String]] = None
     def campaignInformationType: Option[String] = None
     def internalName: Option[String] = None
-    def keywordType: Option[com.gu.contentapi.client.model.v1.KeywordType] = None
+    def keywordType: Option[com.gu.contentapi.client.model.v1.KeywordType] =
+      None
   }
   implicit val stubTagFormat: Reads[StubTag] = Json.reads[StubTag]
 
   case class StubElement(
-    id: String,
-    relation: String,
-    typeName: String
+      id: String,
+      relation: String,
+      typeName: String
   ) extends Element {
     def `type`: ElementType = ElementType.list.find(byName(typeName)(_)).get
     def galleryIndex: Option[Int] = None
@@ -186,12 +202,12 @@ object TestModel {
   implicit val stubElementFormat: Reads[StubElement] = Json.reads[StubElement]
 
   case class StubItem(
-    id: String,
-    typeName: String,
-    section: Option[StubSection],
-    fields: Option[StubFields],
-    tags: Seq[StubTag],
-    elements: Option[Seq[StubElement]]
+      id: String,
+      typeName: String,
+      section: Option[StubSection],
+      fields: Option[StubFields],
+      tags: Seq[StubTag],
+      elements: Option[Seq[StubElement]]
   ) extends Content {
     def `type`: ContentType = ContentType.list.find(byName(typeName)(_)).get
     def sectionId: Option[String] = None
@@ -218,8 +234,8 @@ object TestModel {
   }
   implicit val stubItemFormat: Reads[StubItem] = Json.reads[StubItem]
 
-  def getContentItem(fileName: String): Content = getJson(fileName).validate[StubItem].get
+  def getContentItem(fileName: String): Content =
+    getJson(fileName).validate[StubItem].get
   def getTag(fileName: String): Tag = getJson(fileName).validate[StubTag].get
 
 }
-

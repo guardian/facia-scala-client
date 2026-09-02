@@ -10,7 +10,7 @@ object IdsSearchQueries {
 
   def makeBatches(ids: Seq[Id]): Option[Seq[Seq[Id]]] = {
     def batchAndRemaining(ids: Seq[Id]): Option[(Seq[Id], Seq[Id])] =
-      ids.inits.find{ init =>
+      ids.inits.find { init =>
         init.length <= MaxBatchSize
       } map { batch =>
         (batch, ids.drop(batch.length))
@@ -20,11 +20,12 @@ object IdsSearchQueries {
     def iter(ids: Seq[Id], accumulator: Seq[Seq[Id]]): Option[Seq[Seq[Id]]] = {
       if (ids.isEmpty) {
         Some(accumulator)
-      } else batchAndRemaining(ids) match {
-        case None => None
-        case Some((batch, remaining)) =>
-          iter(remaining, accumulator :+ batch)
-      }
+      } else
+        batchAndRemaining(ids) match {
+          case None => None
+          case Some((batch, remaining)) =>
+            iter(remaining, accumulator :+ batch)
+        }
     }
 
     iter(ids, Seq.empty)

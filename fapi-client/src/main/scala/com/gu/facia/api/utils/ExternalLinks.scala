@@ -13,18 +13,24 @@ object ExternalLinks {
     "https://composer.release.dev-gutools.co.uk",
     "https://composer.code.dev-gutools.co.uk",
     "http://preview.gutools.co.uk",
-    "https://preview.gutools.co.uk")
+    "https://preview.gutools.co.uk"
+  )
 
   val guardianDomains: List[String] = origins flatMap { uri =>
     Try {
-      new URI(uri).getHost.stripPrefix("www.")}
-    .toOption
+      new URI(uri).getHost.stripPrefix("www.")
+    }.toOption
   }
 
   def external(url: String): Boolean =
-    Try(Option(new URI(url).getHost)
-      .exists({ host => !guardianDomains.exists({ domain =>
-        host == domain || host.endsWith(s".$domain")})}))
+    Try(
+      Option(new URI(url).getHost)
+        .exists({ host =>
+          !guardianDomains.exists({ domain =>
+            host == domain || host.endsWith(s".$domain")
+          })
+        })
+    )
       .getOrElse(false)
 
   def internalPath(url: String) =
@@ -32,7 +38,6 @@ object ExternalLinks {
       None
     else
       Try {
-        Option(new URI(url).getPath)}
-      .toOption.flatten
+        Option(new URI(url).getPath)
+      }.toOption.flatten
 }
-
