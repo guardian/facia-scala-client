@@ -548,3 +548,23 @@ object SupportingCuratedContent {
     )
   }
 }
+
+sealed trait EventGraphicsKind
+object EventGraphicsKind {
+  case object ElectionTracker extends EventGraphicsKind
+}
+
+case class EventGraphics(
+    id: String,
+    kind: EventGraphicsKind,
+    properties: ContentProperties,
+    group: String
+) extends FaciaContent {
+  override def maybeFrontPublicationDate: Option[Long] = None
+  override def href: Option[String] = None
+  override def trailText: Option[String] = None
+  override def image: Option[FaciaImage] = None
+  override def byline: Option[String] = None
+  override def kicker: Option[ItemKicker] = None
+  override def atomId: Option[String] = None
+}
