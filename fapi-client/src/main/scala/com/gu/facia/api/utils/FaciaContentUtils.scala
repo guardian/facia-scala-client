@@ -58,12 +58,7 @@ object FaciaContentUtils {
     latestSnap => latestSnap.latestContent.map(_.id)
   )
 
-  def group(fc: FaciaContent): String = fold(fc)(
-    curatedContent => curatedContent.group,
-    supportingCuratedContent => supportingCuratedContent.group,
-    linkSnap => linkSnap.group,
-    latestSnap => latestSnap.group
-  )
+  def group(fc: FaciaContent): String = fc.group
 
   def embedType(fc: FaciaContent): Option[String] = fold(fc)(
     curatedContent => curatedContent.embedType,
@@ -86,13 +81,7 @@ object FaciaContentUtils {
     latestSnap => latestSnap.snapUri
   )
 
-  def itemKicker(fc: FaciaContent): Option[ItemKicker] =
-    fold(fc)(
-      curatedContent => curatedContent.kicker,
-      supportingCuratedContent => supportingCuratedContent.kicker,
-      linkSnap => linkSnap.kicker,
-      latestSnap => latestSnap.kicker
-    )
+  def itemKicker(fc: FaciaContent): Option[ItemKicker] = fc.kicker
 
   def headlineOption(fc: FaciaContent): Option[String] = fold(fc)(
     curatedContent => Option(curatedContent.headline),
@@ -124,12 +113,7 @@ object FaciaContentUtils {
     latestSnap => latestSnap.href.orElse(latestSnap.snapUri)
   )
 
-  def atomId(fc: FaciaContent): Option[String] = fold(fc)(
-    curatedContent => curatedContent.atomId,
-    supportingCuratedContent => supportingCuratedContent.atomId,
-    linkSnap => linkSnap.atomId,
-    latestSnap => latestSnap.atomId
-  )
+  def atomId(fc: FaciaContent): Option[String] = fc.atomId
 
   def mediaType(fc: FaciaContent): Option[MediaType] = {
     def mediaTypeFromContent(content: Content): Option[MediaType] =
@@ -187,61 +171,19 @@ object FaciaContentUtils {
   )
   def discussionId(fc: FaciaContent) = shortUrlPath(fc)
 
-  def isBoosted(fc: FaciaContent): Boolean = fold(fc)(
-    curatedContent => curatedContent.properties.isBoosted,
-    supportingCuratedContent => supportingCuratedContent.properties.isBoosted,
-    linkSnap => linkSnap.properties.isBoosted,
-    latestSnap => latestSnap.properties.isBoosted
-  )
-  def boostLevel(fc: FaciaContent): BoostLevel = fold(fc)(
-    curatedContent => curatedContent.properties.boostLevel,
-    supportingCuratedContent => supportingCuratedContent.properties.boostLevel,
-    linkSnap => linkSnap.properties.boostLevel,
-    latestSnap => latestSnap.properties.boostLevel
-  )
-  def showBoostedHeadline(fc: FaciaContent): Boolean = fold(fc)(
-    curatedContent => curatedContent.properties.showBoostedHeadline,
-    supportingCuratedContent =>
-      supportingCuratedContent.properties.showBoostedHeadline,
-    linkSnap => linkSnap.properties.showBoostedHeadline,
-    latestSnap => latestSnap.properties.showBoostedHeadline
-  )
-  def showQuotedHeadline(fc: FaciaContent): Boolean = fold(fc)(
-    curatedContent => curatedContent.properties.showQuotedHeadline,
-    supportingCuratedContent =>
-      supportingCuratedContent.properties.showQuotedHeadline,
-    linkSnap => linkSnap.properties.showQuotedHeadline,
-    latestSnap => latestSnap.properties.showQuotedHeadline
-  )
-  def isImmersive(fc: FaciaContent): Boolean = fold(fc)(
-    curatedContent => curatedContent.properties.isImmersive,
-    supportingCuratedContent => supportingCuratedContent.properties.isImmersive,
-    linkSnap => linkSnap.properties.isImmersive,
-    latestSnap => latestSnap.properties.isImmersive
-  )
-  def showMainVideo(fc: FaciaContent): Boolean = fold(fc)(
-    curatedContent => curatedContent.properties.showMainVideo,
-    supportingCuratedContent =>
-      supportingCuratedContent.properties.showMainVideo,
-    linkSnap => linkSnap.properties.showMainVideo,
-    latestSnap => latestSnap.properties.showMainVideo
-  )
+  def isBoosted(fc: FaciaContent): Boolean = fc.properties.isBoosted
+  def boostLevel(fc: FaciaContent): BoostLevel = fc.properties.boostLevel
+  def showBoostedHeadline(fc: FaciaContent): Boolean =
+    fc.properties.showBoostedHeadline
+  def showQuotedHeadline(fc: FaciaContent): Boolean =
+    fc.properties.showQuotedHeadline
+  def isImmersive(fc: FaciaContent): Boolean = fc.properties.isImmersive
+  def showMainVideo(fc: FaciaContent): Boolean = fc.properties.showMainVideo
 
-  def videoReplace(fc: FaciaContent): Boolean = fold(fc)(
-    curatedContent => curatedContent.properties.videoReplace,
-    supportingCuratedContent =>
-      supportingCuratedContent.properties.videoReplace,
-    linkSnap => linkSnap.properties.videoReplace,
-    latestSnap => latestSnap.properties.videoReplace
-  )
+  def videoReplace(fc: FaciaContent): Boolean = fc.properties.videoReplace
 
-  def showLivePlayable(fc: FaciaContent): Boolean = fold(fc)(
-    curatedContent => curatedContent.properties.showLivePlayable,
-    supportingCuratedContent =>
-      supportingCuratedContent.properties.showLivePlayable,
-    linkSnap => linkSnap.properties.showLivePlayable,
-    latestSnap => latestSnap.properties.showLivePlayable
-  )
+  def showLivePlayable(fc: FaciaContent): Boolean =
+    fc.properties.showLivePlayable
   def sectionName(fc: FaciaContent): Option[String] = fold(fc)(
     curatedContent => curatedContent.content.sectionName,
     supportingCuratedContent => supportingCuratedContent.content.sectionName,
@@ -256,19 +198,9 @@ object FaciaContentUtils {
   )
   def section(fc: FaciaContent): String = maybeSection(fc).getOrElse("")
 
-  def byline(fc: FaciaContent): Option[String] = fold(fc)(
-    curatedContent => curatedContent.byline,
-    supportingCuratedContent => supportingCuratedContent.byline,
-    linkSnap => linkSnap.byline,
-    latestSnap => latestSnap.byline
-  )
+  def byline(fc: FaciaContent): Option[String] = fc.byline
 
-  def showByline(fc: FaciaContent): Boolean = fold(fc)(
-    curatedContent => curatedContent.properties.showByline,
-    supportingCuratedContent => supportingCuratedContent.properties.showByline,
-    linkSnap => linkSnap.properties.showByline,
-    latestSnap => latestSnap.properties.showByline
-  )
+  def showByline(fc: FaciaContent): Boolean = fc.properties.showByline
 
   private def tagsOfType(fc: FaciaContent)(tagType: TagType): Seq[Tag] =
     tags(fc).filter(_.`type` == tagType)
@@ -318,12 +250,7 @@ object FaciaContentUtils {
     fieldsGet(fc)(_.flatMap(_.starRating))
   ).toOption.flatten
 
-  def trailText(fc: FaciaContent): Option[String] = fold(fc)(
-    curatedContent => curatedContent.trailText,
-    supportingCuratedContent => supportingCuratedContent.trailText,
-    linkSnap => linkSnap.trailText,
-    latestSnap => latestSnap.trailText
-  )
+  def trailText(fc: FaciaContent): Option[String] = fc.trailText
 
   def wordCount(fc: FaciaContent): Option[Int] =
     fieldsGet(fc)(_.flatMap(_.wordcount))
@@ -359,12 +286,7 @@ object FaciaContentUtils {
     latestSnap => latestSnap.cardStyle
   )
 
-  def image(fc: FaciaContent): Option[FaciaImage] = fold(fc)(
-    curatedContent => curatedContent.image,
-    supportingCuratedContent => supportingCuratedContent.image,
-    linkSnap => linkSnap.image,
-    latestSnap => latestSnap.image
-  )
+  def image(fc: FaciaContent): Option[FaciaImage] = fc.image
 
   def isClosedForComments(fc: FaciaContent) = fieldsExists(fc)(
     !_.flatMap(_.commentCloseDate).exists(_.toJodaDateTime.isAfterNow)
@@ -377,11 +299,6 @@ object FaciaContentUtils {
     latestSnap => Option(latestSnap.properties)
   )
 
-  def maybeFrontPublicationDate(fc: FaciaContent): Option[Long] = fold(fc)(
-    curatedContent => curatedContent.maybeFrontPublicationDate,
-    supportingCuratedContent =>
-      supportingCuratedContent.maybeFrontPublicationDate,
-    linkSnap => linkSnap.maybeFrontPublicationDate,
-    latestSnap => latestSnap.maybeFrontPublicationDate
-  )
+  def maybeFrontPublicationDate(fc: FaciaContent): Option[Long] =
+    fc.maybeFrontPublicationDate
 }
