@@ -24,13 +24,14 @@ object BoostLevel {
   def fromMetaData(value: String): BoostLevel = value match {
     case GigaBoost.label => GigaBoost
     case MegaBoost.label => MegaBoost
-    case Boost.label => Boost
-    case _ => Default
+    case Boost.label     => Boost
+    case _               => Default
   }
 }
 
 object ResolvedMetaData {
-  implicit val resolvedMetaDataFormat: Format[ResolvedMetaData] = Json.format[ResolvedMetaData]
+  implicit val resolvedMetaDataFormat: Format[ResolvedMetaData] =
+    Json.format[ResolvedMetaData]
 
   val Cartoon = "type/cartoon"
   val Video = "type/video"
@@ -84,85 +85,121 @@ object ResolvedMetaData {
       showQuotedHeadline = trailMeta.showQuotedHeadline.exists(identity),
       imageSlideshowReplace = trailMeta.imageSlideshowReplace.exists(identity),
       videoReplace = trailMeta.videoReplace.exists(identity)
-  )
+    )
 
   def fromContent(content: Content, cardStyle: CardStyle): ResolvedMetaData =
-      cardStyle match {
-        case com.gu.facia.api.utils.Comment => Default.copy(
+    cardStyle match {
+      case com.gu.facia.api.utils.Comment =>
+        Default.copy(
           showByline = true,
           showQuotedHeadline = true,
-          imageCutoutReplace = true)
-        case _ if isCartoonForContent(content) => Default.copy(showByline = true)
-        case _ if isVideoForContent(content) => Default.copy(showMainVideo = true)
-        case _ => Default
-      }
+          imageCutoutReplace = true
+        )
+      case _ if isCartoonForContent(content) => Default.copy(showByline = true)
+      case _ if isVideoForContent(content)   => Default.copy(showMainVideo = true)
+      case _                                 => Default
+    }
 
-  def fromContentAndTrailMetaData(content: Content, trailMeta: MetaDataCommonFields, cardStyle: CardStyle): ResolvedMetaData = {
+  def fromContentAndTrailMetaData(
+      content: Content,
+      trailMeta: MetaDataCommonFields,
+      cardStyle: CardStyle
+  ): ResolvedMetaData = {
     val metaDataFromContent = fromContent(content, cardStyle)
     metaDataFromContent.copy(
-      isBreaking = trailMeta.isBreaking.getOrElse(metaDataFromContent.isBreaking),
+      isBreaking =
+        trailMeta.isBreaking.getOrElse(metaDataFromContent.isBreaking),
       isBoosted = trailMeta.isBoosted.getOrElse(metaDataFromContent.isBoosted),
       boostLevel = trailMeta.boostLevel.getOrElse(BoostLevel.Default.label),
-      isImmersive = trailMeta.isImmersive.getOrElse(metaDataFromContent.isImmersive),
+      isImmersive =
+        trailMeta.isImmersive.getOrElse(metaDataFromContent.isImmersive),
       imageHide = trailMeta.imageHide.getOrElse(metaDataFromContent.imageHide),
-      imageReplace = trailMeta.imageReplace.getOrElse(metaDataFromContent.imageReplace),
-      showKickerSection = trailMeta.showKickerSection.getOrElse(metaDataFromContent.showKickerSection),
-      showKickerCustom = trailMeta.showKickerCustom.getOrElse(metaDataFromContent.showKickerCustom),
-      showBoostedHeadline = trailMeta.showBoostedHeadline.getOrElse(metaDataFromContent.showBoostedHeadline),
-      showMainVideo =  trailMeta.showMainVideo.getOrElse(metaDataFromContent.showMainVideo),
-      showLivePlayable = trailMeta.showLivePlayable.getOrElse(metaDataFromContent.showLivePlayable),
-      showKickerTag = trailMeta.showKickerTag.getOrElse(metaDataFromContent.showKickerTag),
-      showByline = trailMeta.showByline.getOrElse(metaDataFromContent.showByline),
-      imageCutoutReplace = trailMeta.imageCutoutReplace.getOrElse(metaDataFromContent.imageCutoutReplace),
-      showQuotedHeadline = trailMeta.showQuotedHeadline.getOrElse(metaDataFromContent.showQuotedHeadline),
-      imageSlideshowReplace = trailMeta.imageSlideshowReplace.getOrElse(metaDataFromContent.imageSlideshowReplace),
-      videoReplace = trailMeta.videoReplace.getOrElse(metaDataFromContent.videoReplace)
-    )}
-
-
-  def toMap(resolvedMetaData: ResolvedMetaData): Map[String, Boolean] = resolvedMetaData match {
-    case ResolvedMetaData(
-      isBreaking,
-      isBoosted,
-      boostLevel,
-      isImmersive,
-      imageHide,
-      imageReplace,
-      showKickerSection,
-      showKickerCustom,
-      showBoostedHeadline,
-      showMainVideo,
-      showLivePlayable,
-      showKickerTag,
-      showByline,
-      imageCutoutReplace,
-      showQuotedHeadline,
-      imageSlideshowReplace,
-      videoReplace
-    ) =>
-      Map(
-        "isBreaking" -> isBreaking,
-        "isBoosted" -> isBoosted,
-        "boostLevel.default" -> (BoostLevel.fromMetaData(boostLevel) == BoostLevel.Default),
-        "boostLevel.boost" -> (BoostLevel.fromMetaData(boostLevel) == BoostLevel.Boost),
-        "boostLevel.megaboost" -> (BoostLevel.fromMetaData(boostLevel) == BoostLevel.MegaBoost),
-        "boostLevel.gigaBoost" -> (BoostLevel.fromMetaData(boostLevel) == BoostLevel.GigaBoost),
-        "isImmersive" -> isImmersive,
-        "imageHide" -> imageHide,
-        "imageReplace" -> imageReplace,
-        "showKickerSection" -> showKickerSection,
-        "showKickerCustom" -> showKickerCustom,
-        "showBoostedHeadline" -> showBoostedHeadline,
-        "showMainVideo" -> showMainVideo,
-        "showLivePlayable" -> showLivePlayable,
-        "showKickerTag" -> showKickerTag,
-        "showByline" -> showByline,
-        "imageCutoutReplace" -> imageCutoutReplace,
-        "showQuotedHeadline" -> showQuotedHeadline,
-        "imageSlideshowReplace" -> imageSlideshowReplace,
-        "videoReplace" -> videoReplace
-      )
+      imageReplace =
+        trailMeta.imageReplace.getOrElse(metaDataFromContent.imageReplace),
+      showKickerSection = trailMeta.showKickerSection.getOrElse(
+        metaDataFromContent.showKickerSection
+      ),
+      showKickerCustom = trailMeta.showKickerCustom.getOrElse(
+        metaDataFromContent.showKickerCustom
+      ),
+      showBoostedHeadline = trailMeta.showBoostedHeadline.getOrElse(
+        metaDataFromContent.showBoostedHeadline
+      ),
+      showMainVideo =
+        trailMeta.showMainVideo.getOrElse(metaDataFromContent.showMainVideo),
+      showLivePlayable = trailMeta.showLivePlayable.getOrElse(
+        metaDataFromContent.showLivePlayable
+      ),
+      showKickerTag =
+        trailMeta.showKickerTag.getOrElse(metaDataFromContent.showKickerTag),
+      showByline =
+        trailMeta.showByline.getOrElse(metaDataFromContent.showByline),
+      imageCutoutReplace = trailMeta.imageCutoutReplace.getOrElse(
+        metaDataFromContent.imageCutoutReplace
+      ),
+      showQuotedHeadline = trailMeta.showQuotedHeadline.getOrElse(
+        metaDataFromContent.showQuotedHeadline
+      ),
+      imageSlideshowReplace = trailMeta.imageSlideshowReplace.getOrElse(
+        metaDataFromContent.imageSlideshowReplace
+      ),
+      videoReplace =
+        trailMeta.videoReplace.getOrElse(metaDataFromContent.videoReplace)
+    )
   }
+
+  def toMap(resolvedMetaData: ResolvedMetaData): Map[String, Boolean] =
+    resolvedMetaData match {
+      case ResolvedMetaData(
+            isBreaking,
+            isBoosted,
+            boostLevel,
+            isImmersive,
+            imageHide,
+            imageReplace,
+            showKickerSection,
+            showKickerCustom,
+            showBoostedHeadline,
+            showMainVideo,
+            showLivePlayable,
+            showKickerTag,
+            showByline,
+            imageCutoutReplace,
+            showQuotedHeadline,
+            imageSlideshowReplace,
+            videoReplace
+          ) =>
+        Map(
+          "isBreaking" -> isBreaking,
+          "isBoosted" -> isBoosted,
+          "boostLevel.default" -> (BoostLevel.fromMetaData(
+            boostLevel
+          ) == BoostLevel.Default),
+          "boostLevel.boost" -> (BoostLevel.fromMetaData(
+            boostLevel
+          ) == BoostLevel.Boost),
+          "boostLevel.megaboost" -> (BoostLevel.fromMetaData(
+            boostLevel
+          ) == BoostLevel.MegaBoost),
+          "boostLevel.gigaBoost" -> (BoostLevel.fromMetaData(
+            boostLevel
+          ) == BoostLevel.GigaBoost),
+          "isImmersive" -> isImmersive,
+          "imageHide" -> imageHide,
+          "imageReplace" -> imageReplace,
+          "showKickerSection" -> showKickerSection,
+          "showKickerCustom" -> showKickerCustom,
+          "showBoostedHeadline" -> showBoostedHeadline,
+          "showMainVideo" -> showMainVideo,
+          "showLivePlayable" -> showLivePlayable,
+          "showKickerTag" -> showKickerTag,
+          "showByline" -> showByline,
+          "imageCutoutReplace" -> imageCutoutReplace,
+          "showQuotedHeadline" -> showQuotedHeadline,
+          "imageSlideshowReplace" -> imageSlideshowReplace,
+          "videoReplace" -> videoReplace
+        )
+    }
 }
 
 case class ResolvedMetaData(
@@ -182,10 +219,13 @@ case class ResolvedMetaData(
     imageCutoutReplace: Boolean,
     showQuotedHeadline: Boolean,
     imageSlideshowReplace: Boolean,
-    videoReplace: Boolean)
+    videoReplace: Boolean
+)
 
 object ContentProperties {
-  def fromResolvedMetaData(resolvedMetaData: ResolvedMetaData): ContentProperties =
+  def fromResolvedMetaData(
+      resolvedMetaData: ResolvedMetaData
+  ): ContentProperties =
     ContentProperties(
       isBreaking = resolvedMetaData.isBreaking,
       isBoosted = resolvedMetaData.isBoosted,
@@ -216,4 +256,5 @@ case class ContentProperties(
     showByline: Boolean,
     showQuotedHeadline: Boolean,
     imageSlideshowReplace: Boolean,
-    videoReplace: Boolean)
+    videoReplace: Boolean
+)

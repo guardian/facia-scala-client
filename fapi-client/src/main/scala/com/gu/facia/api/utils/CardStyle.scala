@@ -23,10 +23,16 @@ object CardStyle {
   val external = "external"
   val news = "news"
 
-  def apply(content: Content, trailMetaData: MetaDataCommonFields): CardStyle = {
+  def apply(
+      content: Content,
+      trailMetaData: MetaDataCommonFields
+  ): CardStyle = {
     val href = trailMetaData.href
 
-    if (trailMetaData.snapType.contains("link") && href.exists(ExternalLinks.external)) {
+    if (
+      trailMetaData.snapType
+        .contains("link") && href.exists(ExternalLinks.external)
+    ) {
       ExternalLink
     } else if (content.theme == SpecialReportTheme) {
       SpecialReport

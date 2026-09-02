@@ -6,20 +6,38 @@ import com.gu.contentapi.client.utils.format._
 import com.gu.contentatom.thrift.Atom
 import com.gu.facia.api.utils.ContentApiUtils._
 import com.gu.facia.api.utils._
-import com.gu.facia.client.models.{MetaDataCommonFields, SupportingItem, Test, Trail, TrailMetaData}
-
+import com.gu.facia.client.models.{
+  MetaDataCommonFields,
+  SupportingItem,
+  Test,
+  Trail,
+  TrailMetaData
+}
 
 sealed trait FaciaImage
 
-case class Cutout(imageSrc: String, imageSrcWidth: Option[String], imageSrcHeight: Option[String]) extends FaciaImage
+case class Cutout(
+    imageSrc: String,
+    imageSrcWidth: Option[String],
+    imageSrcHeight: Option[String]
+) extends FaciaImage
 
-case class Replace(imageSrc: String, imageSrcWidth: String, imageSrcHeight: String, imageCaption: Option[String]) extends FaciaImage
+case class Replace(
+    imageSrc: String,
+    imageSrcWidth: String,
+    imageSrcHeight: String,
+    imageCaption: Option[String]
+) extends FaciaImage
 
 case class ImageSlideshow(assets: List[Replace]) extends FaciaImage
 
 object FaciaImage {
 
-  def getFaciaImage(maybeContent: Option[Content], trailMeta: MetaDataCommonFields, resolvedMetadata: ResolvedMetaData): Option[FaciaImage] = {
+  def getFaciaImage(
+      maybeContent: Option[Content],
+      trailMeta: MetaDataCommonFields,
+      resolvedMetadata: ResolvedMetaData
+  ): Option[FaciaImage] = {
     if (resolvedMetadata.imageHide)
       None
     else if (resolvedMetadata.imageSlideshowReplace)
@@ -27,11 +45,16 @@ object FaciaImage {
     else if (resolvedMetadata.imageReplace)
       imageReplace(trailMeta, resolvedMetadata)
     else if (resolvedMetadata.imageCutoutReplace)
-      imageCutout(trailMeta) orElse maybeContent.flatMap(fromContentTags(_, trailMeta))
+      imageCutout(trailMeta) orElse maybeContent.flatMap(
+        fromContentTags(_, trailMeta)
+      )
     else None
   }
 
-  def fromContentTags(content: Content, trailMeta: MetaDataCommonFields): Option[FaciaImage] = {
+  def fromContentTags(
+      content: Content,
+      trailMeta: MetaDataCommonFields
+  ): Option[FaciaImage] = {
     val contributorTags = content.tags.filter(_.`type` == TagType.Contributor)
     if (contributorTags.length == 1)
       for {
@@ -47,10 +70,15 @@ object FaciaImage {
     height <- trailMeta.imageCutoutSrcHeight
   } yield Cutout(src, Option(width), Option(height))
 
-  def imageReplace(trailMeta: MetaDataCommonFields, resolvedMetaData: ResolvedMetaData): Option[FaciaImage] = {
+  def imageReplace(
+      trailMeta: MetaDataCommonFields,
+      resolvedMetaData: ResolvedMetaData
+  ): Option[FaciaImage] = {
     trailMeta.imageSource match {
       case Some(imageSource) =>
-        Some(Replace(imageSource.src, imageSource.width, imageSource.height, None))
+        Some(
+          Replace(imageSource.src, imageSource.width, imageSource.height, None)
+        )
       case None =>
         for {
           src <- trailMeta.imageSrc
@@ -60,9 +88,14 @@ object FaciaImage {
     }
   }
 
-  def imageSlideshow(trailMeta: MetaDataCommonFields, resolvedMetaData: ResolvedMetaData): Option[FaciaImage] =
+  def imageSlideshow(
+      trailMeta: MetaDataCommonFields,
+      resolvedMetaData: ResolvedMetaData
+  ): Option[FaciaImage] =
     trailMeta.slideshow.map { assets =>
-      val slideshowAssets = assets.map(asset => Replace(asset.src, asset.width, asset.height, asset.caption))
+      val slideshowAssets = assets.map(asset =>
+        Replace(asset.src, asset.width, asset.height, asset.caption)
+      )
       ImageSlideshow(slideshowAssets)
     }
 
@@ -72,9 +105,6 @@ object AtomId {
     content.atomId
   }
 }
-
-
-
 
 sealed trait FaciaContent {
   def brandingByEdition: BrandingByEdition = Map.empty
@@ -102,10 +132,10 @@ sealed trait FaciaContent {
 // https://github.com/guardian/frontend/blob/46ac997bbb6482bacbd59c3528ce3141623c8033/common/app/model/meta.scala#L220-L224
 
 final case class ContentFormat(
-                                design: Design,
-                                theme: Theme,
-                                display: Display,
-                              )
+    design: Design,
+    theme: Theme,
+    display: Display
+)
 
 object ContentFormat {
   lazy val defaultContentFormat: ContentFormat = {
@@ -122,116 +152,141 @@ object Snap {
   val LinkType = "link"
   val DefaultType = LinkType
 
-  def maybeFromTrail(trail: Trail): Option[Snap] = maybeFromTrailAndBrandings(trail, Map.empty)
+  def maybeFromTrail(trail: Trail): Option[Snap] =
+    maybeFromTrailAndBrandings(trail, Map.empty)
 
   def maybeFromTrailAndBrandings(
-                                  trail: Trail,
-                                  brandingByEdition: BrandingByEdition
-                                ): Option[Snap] =
+      trail: Trail,
+      brandingByEdition: BrandingByEdition
+  ): Option[Snap] =
     trail.safeMeta.snapType match {
       case Some("latest") =>
         Option(LatestSnap.fromTrailAndContent(trail, None))
       case Some(snapType) =>
-        val resolvedMetaData = ResolvedMetaData.fromTrailMetaData(trail.safeMeta)
-        val contentProperties = ContentProperties.fromResolvedMetaData(resolvedMetaData)
-        Option(LinkSnap(
-          trail.id,
-          Option(trail.frontPublicationDate),
-          snapType,
-          trail.safeMeta.snapUri,
-          trail.safeMeta.snapCss,
-          trail.safeMeta.atomId,
-          trail.safeMeta.headline,
-          trail.safeMeta.href,
-          trail.safeMeta.trailText,
-          trail.safeMeta.group.getOrElse("0"),
-          FaciaImage.getFaciaImage(None, trail.safeMeta, resolvedMetaData),
-          contentProperties,
-          trail.safeMeta.byline,
-          ItemKicker.fromTrailMetaData(trail.safeMeta),
-          brandingByEdition,
-          None
-        ))
+        val resolvedMetaData =
+          ResolvedMetaData.fromTrailMetaData(trail.safeMeta)
+        val contentProperties =
+          ContentProperties.fromResolvedMetaData(resolvedMetaData)
+        Option(
+          LinkSnap(
+            trail.id,
+            Option(trail.frontPublicationDate),
+            snapType,
+            trail.safeMeta.snapUri,
+            trail.safeMeta.snapCss,
+            trail.safeMeta.atomId,
+            trail.safeMeta.headline,
+            trail.safeMeta.href,
+            trail.safeMeta.trailText,
+            trail.safeMeta.group.getOrElse("0"),
+            FaciaImage.getFaciaImage(None, trail.safeMeta, resolvedMetaData),
+            contentProperties,
+            trail.safeMeta.byline,
+            ItemKicker.fromTrailMetaData(trail.safeMeta),
+            brandingByEdition,
+            None
+          )
+        )
       case _ => None
     }
 
-  def maybeFromSupportingItem(supportingItem: SupportingItem): Option[Snap] = supportingItem.safeMeta.snapType match {
-    case Some("latest") =>
-      Option(LatestSnap.fromSupportingItemAndContent(supportingItem, None))
-    case Some(snapType) =>
-      val resolvedMetaData = ResolvedMetaData.fromTrailMetaData(supportingItem.safeMeta)
-      val contentProperties = ContentProperties.fromResolvedMetaData(resolvedMetaData)
-      Option(LinkSnap(
-        supportingItem.id,
-        supportingItem.frontPublicationDate,
-        snapType,
-        supportingItem.safeMeta.snapUri,
-        supportingItem.safeMeta.snapCss,
-        supportingItem.safeMeta.atomId,
-        supportingItem.safeMeta.headline,
-        supportingItem.safeMeta.href,
-        supportingItem.safeMeta.trailText,
-        supportingItem.safeMeta.group.getOrElse("0"),
-        FaciaImage.getFaciaImage(None, supportingItem.safeMeta, resolvedMetaData),
-        contentProperties,
-        supportingItem.safeMeta.byline,
-        ItemKicker.fromTrailMetaData(supportingItem.safeMeta),
-        Map.empty,
-        None
-      ))
-    case _ => None
-  }
+  def maybeFromSupportingItem(supportingItem: SupportingItem): Option[Snap] =
+    supportingItem.safeMeta.snapType match {
+      case Some("latest") =>
+        Option(LatestSnap.fromSupportingItemAndContent(supportingItem, None))
+      case Some(snapType) =>
+        val resolvedMetaData =
+          ResolvedMetaData.fromTrailMetaData(supportingItem.safeMeta)
+        val contentProperties =
+          ContentProperties.fromResolvedMetaData(resolvedMetaData)
+        Option(
+          LinkSnap(
+            supportingItem.id,
+            supportingItem.frontPublicationDate,
+            snapType,
+            supportingItem.safeMeta.snapUri,
+            supportingItem.safeMeta.snapCss,
+            supportingItem.safeMeta.atomId,
+            supportingItem.safeMeta.headline,
+            supportingItem.safeMeta.href,
+            supportingItem.safeMeta.trailText,
+            supportingItem.safeMeta.group.getOrElse("0"),
+            FaciaImage
+              .getFaciaImage(None, supportingItem.safeMeta, resolvedMetaData),
+            contentProperties,
+            supportingItem.safeMeta.byline,
+            ItemKicker.fromTrailMetaData(supportingItem.safeMeta),
+            Map.empty,
+            None
+          )
+        )
+      case _ => None
+    }
 }
 
 sealed trait Snap extends FaciaContent
 
 case class LinkSnap(
-                     id: String,
-                     maybeFrontPublicationDate: Option[Long],
-                     snapType: String,
-                     snapUri: Option[String],
-                     snapCss: Option[String],
-                     atomId: Option[String],
-                     headline: Option[String],
-                     href: Option[String],
-                     trailText: Option[String],
-                     group: String,
-                     image: Option[FaciaImage],
-                     properties: ContentProperties,
-                     byline: Option[String],
-                     kicker: Option[ItemKicker],
-                     override val brandingByEdition: BrandingByEdition,
-                     mediaAtom: Option[Atom]
-                   ) extends Snap
+    id: String,
+    maybeFrontPublicationDate: Option[Long],
+    snapType: String,
+    snapUri: Option[String],
+    snapCss: Option[String],
+    atomId: Option[String],
+    headline: Option[String],
+    href: Option[String],
+    trailText: Option[String],
+    group: String,
+    image: Option[FaciaImage],
+    properties: ContentProperties,
+    byline: Option[String],
+    kicker: Option[ItemKicker],
+    override val brandingByEdition: BrandingByEdition,
+    mediaAtom: Option[Atom]
+) extends Snap
 
 case class LatestSnap(
-                       id: String,
-                       maybeFrontPublicationDate: Option[Long],
-                       cardStyle: CardStyle,
-                       format: ContentFormat,
-                       snapUri: Option[String],
-                       snapCss: Option[String],
-                       latestContent: Option[Content],
-                       headline: Option[String],
-                       href: Option[String],
-                       trailText: Option[String],
-                       group: String,
-                       image: Option[FaciaImage],
-                       properties: ContentProperties,
-                       byline: Option[String],
-                       kicker: Option[ItemKicker],
-                       override val brandingByEdition: BrandingByEdition,
-                       atomId: Option[String],
-                       mediaAtom: Option[Atom]
-                     ) extends Snap
+    id: String,
+    maybeFrontPublicationDate: Option[Long],
+    cardStyle: CardStyle,
+    format: ContentFormat,
+    snapUri: Option[String],
+    snapCss: Option[String],
+    latestContent: Option[Content],
+    headline: Option[String],
+    href: Option[String],
+    trailText: Option[String],
+    group: String,
+    image: Option[FaciaImage],
+    properties: ContentProperties,
+    byline: Option[String],
+    kicker: Option[ItemKicker],
+    override val brandingByEdition: BrandingByEdition,
+    atomId: Option[String],
+    mediaAtom: Option[Atom]
+) extends Snap
 
 object LatestSnap {
-  def fromTrailAndContent(trail: Trail, maybeContent: Option[Content]): LatestSnap = {
-    val cardStyle: CardStyle = maybeContent.map(CardStyle.apply(_, trail.safeMeta)).getOrElse(DefaultCardstyle)
-    val contentFormat: ContentFormat = maybeContent.map(ContentFormat.apply).getOrElse(ContentFormat.defaultContentFormat)
+  def fromTrailAndContent(
+      trail: Trail,
+      maybeContent: Option[Content]
+  ): LatestSnap = {
+    val cardStyle: CardStyle = maybeContent
+      .map(CardStyle.apply(_, trail.safeMeta))
+      .getOrElse(DefaultCardstyle)
+    val contentFormat: ContentFormat = maybeContent
+      .map(ContentFormat.apply)
+      .getOrElse(ContentFormat.defaultContentFormat)
     val resolvedMetaData: ResolvedMetaData =
-      maybeContent.fold(ResolvedMetaData.fromTrailMetaData(trail.safeMeta))(ResolvedMetaData.fromContentAndTrailMetaData(_, trail.safeMeta, cardStyle))
-    val brandingByEdition = maybeContent map (_.brandingByEdition) getOrElse Map.empty
+      maybeContent.fold(ResolvedMetaData.fromTrailMetaData(trail.safeMeta))(
+        ResolvedMetaData.fromContentAndTrailMetaData(
+          _,
+          trail.safeMeta,
+          cardStyle
+        )
+      )
+    val brandingByEdition =
+      maybeContent map (_.brandingByEdition) getOrElse Map.empty
     LatestSnap(
       trail.id,
       Option(trail.frontPublicationDate),
@@ -240,26 +295,50 @@ object LatestSnap {
       trail.safeMeta.snapUri,
       trail.safeMeta.snapCss,
       maybeContent,
-      trail.safeMeta.headline.orElse(maybeContent.flatMap(_.fields.flatMap(_.headline))).orElse(maybeContent.map(_.webTitle)),
+      trail.safeMeta.headline
+        .orElse(maybeContent.flatMap(_.fields.flatMap(_.headline)))
+        .orElse(maybeContent.map(_.webTitle)),
       trail.safeMeta.href.orElse(maybeContent.map(_.id)),
-      trail.safeMeta.trailText.orElse(maybeContent.flatMap(_.fields.flatMap(_.trailText))),
+      trail.safeMeta.trailText
+        .orElse(maybeContent.flatMap(_.fields.flatMap(_.trailText))),
       trail.safeMeta.group.getOrElse("0"),
       FaciaImage.getFaciaImage(maybeContent, trail.safeMeta, resolvedMetaData),
       ContentProperties.fromResolvedMetaData(resolvedMetaData),
-      trail.safeMeta.byline.orElse(maybeContent.flatMap(_.fields.flatMap(_.byline))),
-      ItemKicker.fromMaybeContentTrailMetaAndResolvedMetaData(maybeContent, trail.safeMeta, resolvedMetaData),
+      trail.safeMeta.byline
+        .orElse(maybeContent.flatMap(_.fields.flatMap(_.byline))),
+      ItemKicker.fromMaybeContentTrailMetaAndResolvedMetaData(
+        maybeContent,
+        trail.safeMeta,
+        resolvedMetaData
+      ),
       brandingByEdition,
       trail.safeMeta.atomId,
       None
     )
   }
 
-  def fromSupportingItemAndContent(supportingItem: SupportingItem, maybeContent: Option[Content]): LatestSnap = {
-    val cardStyle: CardStyle = maybeContent.map(CardStyle.apply(_, supportingItem.safeMeta)).getOrElse(DefaultCardstyle)
-    val contentFormat: ContentFormat = maybeContent.map(ContentFormat.apply).getOrElse(ContentFormat.defaultContentFormat)
+  def fromSupportingItemAndContent(
+      supportingItem: SupportingItem,
+      maybeContent: Option[Content]
+  ): LatestSnap = {
+    val cardStyle: CardStyle = maybeContent
+      .map(CardStyle.apply(_, supportingItem.safeMeta))
+      .getOrElse(DefaultCardstyle)
+    val contentFormat: ContentFormat = maybeContent
+      .map(ContentFormat.apply)
+      .getOrElse(ContentFormat.defaultContentFormat)
     val resolvedMetaData: ResolvedMetaData =
-      maybeContent.fold(ResolvedMetaData.fromTrailMetaData(supportingItem.safeMeta))(ResolvedMetaData.fromContentAndTrailMetaData(_, supportingItem.safeMeta, cardStyle))
-    val brandingByEdition = maybeContent map (_.brandingByEdition) getOrElse Map.empty
+      maybeContent.fold(
+        ResolvedMetaData.fromTrailMetaData(supportingItem.safeMeta)
+      )(
+        ResolvedMetaData.fromContentAndTrailMetaData(
+          _,
+          supportingItem.safeMeta,
+          cardStyle
+        )
+      )
+    val brandingByEdition =
+      maybeContent map (_.brandingByEdition) getOrElse Map.empty
     LatestSnap(
       supportingItem.id,
       supportingItem.frontPublicationDate,
@@ -268,14 +347,23 @@ object LatestSnap {
       supportingItem.safeMeta.snapUri,
       supportingItem.safeMeta.snapCss,
       maybeContent,
-      supportingItem.safeMeta.headline.orElse(maybeContent.flatMap(_.fields.flatMap(_.headline))).orElse(maybeContent.map(_.webTitle)),
+      supportingItem.safeMeta.headline
+        .orElse(maybeContent.flatMap(_.fields.flatMap(_.headline)))
+        .orElse(maybeContent.map(_.webTitle)),
       supportingItem.safeMeta.href,
-      supportingItem.safeMeta.trailText.orElse(maybeContent.flatMap(_.fields.flatMap(_.trailText))),
+      supportingItem.safeMeta.trailText
+        .orElse(maybeContent.flatMap(_.fields.flatMap(_.trailText))),
       supportingItem.safeMeta.group.getOrElse("0"),
-      FaciaImage.getFaciaImage(maybeContent, supportingItem.safeMeta, resolvedMetaData),
+      FaciaImage
+        .getFaciaImage(maybeContent, supportingItem.safeMeta, resolvedMetaData),
       ContentProperties.fromResolvedMetaData(resolvedMetaData),
-      supportingItem.safeMeta.byline.orElse(maybeContent.flatMap(_.fields.flatMap(_.byline))),
-      ItemKicker.fromMaybeContentTrailMetaAndResolvedMetaData(maybeContent, supportingItem.safeMeta, resolvedMetaData),
+      supportingItem.safeMeta.byline
+        .orElse(maybeContent.flatMap(_.fields.flatMap(_.byline))),
+      ItemKicker.fromMaybeContentTrailMetaAndResolvedMetaData(
+        maybeContent,
+        supportingItem.safeMeta,
+        resolvedMetaData
+      ),
       brandingByEdition,
       supportingItem.safeMeta.atomId,
       None
@@ -284,56 +372,62 @@ object LatestSnap {
 }
 
 case class CuratedContent(
-                           content: Content,
-                           maybeFrontPublicationDate: Option[Long],
-                           supportingContent: List[FaciaContent],
-                           cardStyle: CardStyle,
-                           format: ContentFormat,
-                           headline: String,
-                           href: Option[String],
-                           trailText: Option[String],
-                           group: String,
-                           image: Option[FaciaImage],
-                           properties: ContentProperties,
-                           byline: Option[String],
-                           kicker: Option[ItemKicker],
-                           embedType: Option[String],
-                           embedUri: Option[String],
-                           embedCss: Option[String],
-                           override val brandingByEdition: BrandingByEdition,
-                           atomId: Option[String],
-                           mediaAtom: Option[Atom],
-                           tests: Option[List[Test]]
-                         ) extends FaciaContent
+    content: Content,
+    maybeFrontPublicationDate: Option[Long],
+    supportingContent: List[FaciaContent],
+    cardStyle: CardStyle,
+    format: ContentFormat,
+    headline: String,
+    href: Option[String],
+    trailText: Option[String],
+    group: String,
+    image: Option[FaciaImage],
+    properties: ContentProperties,
+    byline: Option[String],
+    kicker: Option[ItemKicker],
+    embedType: Option[String],
+    embedUri: Option[String],
+    embedCss: Option[String],
+    override val brandingByEdition: BrandingByEdition,
+    atomId: Option[String],
+    mediaAtom: Option[Atom],
+    tests: Option[List[Test]]
+) extends FaciaContent
 
 case class SupportingCuratedContent(
-                                     content: Content,
-                                     maybeFrontPublicationDate: Option[Long],
-                                     cardStyle: CardStyle,
-                                     format: ContentFormat,
-                                     headline: String,
-                                     href: Option[String],
-                                     trailText: Option[String],
-                                     group: String,
-                                     image: Option[FaciaImage],
-                                     properties: ContentProperties,
-                                     byline: Option[String],
-                                     kicker: Option[ItemKicker],
-                                     atomId: Option[String],
-                                     mediaAtom: Option[Atom],
-                                     tests: Option[List[Test]]
-                                   ) extends FaciaContent
+    content: Content,
+    maybeFrontPublicationDate: Option[Long],
+    cardStyle: CardStyle,
+    format: ContentFormat,
+    headline: String,
+    href: Option[String],
+    trailText: Option[String],
+    group: String,
+    image: Option[FaciaImage],
+    properties: ContentProperties,
+    byline: Option[String],
+    kicker: Option[ItemKicker],
+    atomId: Option[String],
+    mediaAtom: Option[Atom],
+    tests: Option[List[Test]]
+) extends FaciaContent
 
 object CuratedContent {
 
-  def fromTrailAndContentWithSupporting(content: Content,
-                                        trailMetaData: TrailMetaData,
-                                        maybeFrontPublicationDate: Option[Long],
-                                        supportingContent: List[FaciaContent],
-                                        collectionConfig: CollectionConfig,
-                                        tests: Option[List[Test]] ) = {
+  def fromTrailAndContentWithSupporting(
+      content: Content,
+      trailMetaData: TrailMetaData,
+      maybeFrontPublicationDate: Option[Long],
+      supportingContent: List[FaciaContent],
+      collectionConfig: CollectionConfig,
+      tests: Option[List[Test]]
+  ) = {
     val cardStyle = CardStyle(content, trailMetaData)
-    val resolvedMetaData = ResolvedMetaData.fromContentAndTrailMetaData(content, trailMetaData, cardStyle)
+    val resolvedMetaData = ResolvedMetaData.fromContentAndTrailMetaData(
+      content,
+      trailMetaData,
+      cardStyle
+    )
 
     CuratedContent(
       content,
@@ -341,14 +435,21 @@ object CuratedContent {
       supportingContent,
       cardStyle,
       ContentFormat(content),
-      trailMetaData.headline.orElse(content.fields.flatMap(_.headline)).getOrElse(content.webTitle),
+      trailMetaData.headline
+        .orElse(content.fields.flatMap(_.headline))
+        .getOrElse(content.webTitle),
       trailMetaData.href,
       trailMetaData.trailText.orElse(content.fields.flatMap(_.trailText)),
       trailMetaData.group.getOrElse("0"),
       FaciaImage.getFaciaImage(Some(content), trailMetaData, resolvedMetaData),
       ContentProperties.fromResolvedMetaData(resolvedMetaData),
       trailMetaData.byline.orElse(content.fields.flatMap(_.byline)),
-      ItemKicker.fromContentAndTrail(Option(content), trailMetaData, resolvedMetaData, Some(collectionConfig)),
+      ItemKicker.fromContentAndTrail(
+        Option(content),
+        trailMetaData,
+        resolvedMetaData,
+        Some(collectionConfig)
+      ),
       embedType = trailMetaData.snapType,
       embedUri = trailMetaData.snapUri,
       embedCss = trailMetaData.snapCss,
@@ -359,14 +460,20 @@ object CuratedContent {
     )
   }
 
-  def fromTrailAndContent(content: Content,
-                          trailMetaData: MetaDataCommonFields,
-                          maybeFrontPublicationDate: Option[Long],
-                          collectionConfig: CollectionConfig,
-                          tests: Option[List[Test]] ): CuratedContent = {
+  def fromTrailAndContent(
+      content: Content,
+      trailMetaData: MetaDataCommonFields,
+      maybeFrontPublicationDate: Option[Long],
+      collectionConfig: CollectionConfig,
+      tests: Option[List[Test]]
+  ): CuratedContent = {
 
     val cardStyle = CardStyle(content, trailMetaData)
-    val resolvedMetaData = ResolvedMetaData.fromContentAndTrailMetaData(content, trailMetaData, cardStyle)
+    val resolvedMetaData = ResolvedMetaData.fromContentAndTrailMetaData(
+      content,
+      trailMetaData,
+      cardStyle
+    )
 
     CuratedContent(
       content,
@@ -374,15 +481,21 @@ object CuratedContent {
       supportingContent = Nil,
       cardStyle = cardStyle,
       ContentFormat(content),
-
-      trailMetaData.headline.orElse(content.fields.flatMap(_.headline)).getOrElse(content.webTitle),
+      trailMetaData.headline
+        .orElse(content.fields.flatMap(_.headline))
+        .getOrElse(content.webTitle),
       trailMetaData.href,
       trailMetaData.trailText.orElse(content.fields.flatMap(_.trailText)),
       trailMetaData.group.getOrElse("0"),
       FaciaImage.getFaciaImage(Some(content), trailMetaData, resolvedMetaData),
       ContentProperties.fromResolvedMetaData(resolvedMetaData),
       trailMetaData.byline.orElse(content.fields.flatMap(_.byline)),
-      ItemKicker.fromContentAndTrail(Option(content), trailMetaData, resolvedMetaData, Some(collectionConfig)),
+      ItemKicker.fromContentAndTrail(
+        Option(content),
+        trailMetaData,
+        resolvedMetaData,
+        Some(collectionConfig)
+      ),
       embedType = trailMetaData.snapType,
       embedUri = trailMetaData.snapUri,
       embedCss = trailMetaData.snapCss,
@@ -395,27 +508,40 @@ object CuratedContent {
 }
 
 object SupportingCuratedContent {
-  def fromTrailAndContent(content: Content,
-                          trailMetaData: MetaDataCommonFields,
-                          maybeFrontPublicationDate: Option[Long],
-                          collectionConfig: CollectionConfig,
-                          tests: Option[List[Test]] ): SupportingCuratedContent = {
+  def fromTrailAndContent(
+      content: Content,
+      trailMetaData: MetaDataCommonFields,
+      maybeFrontPublicationDate: Option[Long],
+      collectionConfig: CollectionConfig,
+      tests: Option[List[Test]]
+  ): SupportingCuratedContent = {
     val cardStyle = CardStyle(content, trailMetaData)
-    val resolvedMetaData = ResolvedMetaData.fromContentAndTrailMetaData(content, trailMetaData, cardStyle)
+    val resolvedMetaData = ResolvedMetaData.fromContentAndTrailMetaData(
+      content,
+      trailMetaData,
+      cardStyle
+    )
 
     SupportingCuratedContent(
       content,
       maybeFrontPublicationDate,
       cardStyle,
       ContentFormat(content),
-      trailMetaData.headline.orElse(content.fields.flatMap(_.headline)).getOrElse(content.webTitle),
+      trailMetaData.headline
+        .orElse(content.fields.flatMap(_.headline))
+        .getOrElse(content.webTitle),
       trailMetaData.href,
       trailMetaData.trailText.orElse(content.fields.flatMap(_.trailText)),
       trailMetaData.group.getOrElse("0"),
       FaciaImage.getFaciaImage(Some(content), trailMetaData, resolvedMetaData),
       ContentProperties.fromResolvedMetaData(resolvedMetaData),
       trailMetaData.byline.orElse(content.fields.flatMap(_.byline)),
-      ItemKicker.fromContentAndTrail(Option(content), trailMetaData, resolvedMetaData, None),
+      ItemKicker.fromContentAndTrail(
+        Option(content),
+        trailMetaData,
+        resolvedMetaData,
+        None
+      ),
       trailMetaData.atomId,
       None,
       tests

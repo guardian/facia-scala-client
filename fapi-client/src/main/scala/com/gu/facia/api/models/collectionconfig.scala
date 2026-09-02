@@ -1,7 +1,24 @@
 package com.gu.facia.api.models
 
-import com.gu.facia.api.models.CollectionConfig.AspectRatio.{Landscape53, Landscape54, Landscape54Collections, Portrait45, PortraitCollections, Square}
-import com.gu.facia.client.models.{AnyPlatform, Backfill, CollectionConfigJson, CollectionPlatform, DisplayHintsJson, FrontsToolSettings, GroupConfigJson, Metadata, TargetedTerritory}
+import com.gu.facia.api.models.CollectionConfig.AspectRatio.{
+  Landscape53,
+  Landscape54,
+  Landscape54Collections,
+  Portrait45,
+  PortraitCollections,
+  Square
+}
+import com.gu.facia.client.models.{
+  AnyPlatform,
+  Backfill,
+  CollectionConfigJson,
+  CollectionPlatform,
+  DisplayHintsJson,
+  FrontsToolSettings,
+  GroupConfigJson,
+  Metadata,
+  TargetedTerritory
+}
 
 case class GroupConfig(name: String, maxItems: Option[Int])
 case class GroupsConfig(config: List[GroupConfig]) {
@@ -10,14 +27,15 @@ case class GroupsConfig(config: List[GroupConfig]) {
 }
 
 object GroupsConfig {
-  def fromGroupsConfigJson(groupsConfig: List[GroupConfigJson]): GroupsConfig = GroupsConfig(
-    groupsConfig.map { group =>
-      GroupConfig(
-        name = group.name,
-        maxItems = group.maxItems
-      )
-    }
-  )
+  def fromGroupsConfigJson(groupsConfig: List[GroupConfigJson]): GroupsConfig =
+    GroupsConfig(
+      groupsConfig.map { group =>
+        GroupConfig(
+          name = group.name,
+          maxItems = group.maxItems
+        )
+      }
+    )
 
   def fromGroups(groups: List[String]): GroupsConfig = GroupsConfig(
     groups.map { group =>
@@ -29,15 +47,18 @@ object GroupsConfig {
   )
 }
 
-case class DisplayHints(maxItemsToDisplay: Option[Int], suppressImages: Option[Boolean])
+case class DisplayHints(
+    maxItemsToDisplay: Option[Int],
+    suppressImages: Option[Boolean]
+)
 
 object DisplayHints {
-  def fromDisplayHintsJson(displayHintsJson: DisplayHintsJson): DisplayHints = DisplayHints(
-    maxItemsToDisplay = displayHintsJson.maxItemsToDisplay,
-    suppressImages = displayHintsJson.suppressImages
-  )
+  def fromDisplayHintsJson(displayHintsJson: DisplayHintsJson): DisplayHints =
+    DisplayHints(
+      maxItemsToDisplay = displayHintsJson.maxItemsToDisplay,
+      suppressImages = displayHintsJson.suppressImages
+    )
 }
-
 
 case class CollectionConfig(
     displayName: Option[String],
@@ -61,7 +82,7 @@ case class CollectionConfig(
     targetedTerritory: Option[TargetedTerritory],
     platform: CollectionPlatform = AnyPlatform,
     frontsToolSettings: Option[FrontsToolSettings]
-  )
+)
 
 object CollectionConfig {
   val DefaultCollectionType = "fixed/small/slow-IV"
@@ -90,7 +111,9 @@ object CollectionConfig {
     frontsToolSettings = None
   )
 
-  def fromCollectionJson(collectionJson: CollectionConfigJson): CollectionConfig =
+  def fromCollectionJson(
+      collectionJson: CollectionConfigJson
+  ): CollectionConfig =
     CollectionConfig(
       collectionJson.displayName,
       collectionJson.backfill,
@@ -98,7 +121,10 @@ object CollectionConfig {
       collectionJson.collectionType getOrElse DefaultCollectionType,
       collectionJson.href,
       collectionJson.description,
-      collectionJson.groupsConfig.filter(_.nonEmpty).map(GroupsConfig.fromGroupsConfigJson).orElse(collectionJson.groups.map(GroupsConfig.fromGroups)),
+      collectionJson.groupsConfig
+        .filter(_.nonEmpty)
+        .map(GroupsConfig.fromGroupsConfigJson)
+        .orElse(collectionJson.groups.map(GroupsConfig.fromGroups)),
       collectionJson.uneditable.exists(identity),
       collectionJson.showTags.exists(identity),
       collectionJson.showSections.exists(identity),
@@ -141,30 +167,32 @@ object CollectionConfig {
       "flexible/general",
       "scrollable/small",
       "scrollable/medium",
-      "static/medium/4",
+      "static/medium/4"
     )
 
     val PortraitCollections = List(
       "scrollable/feature",
-      "static/feature/2",
+      "static/feature/2"
     )
   }
 
-    val BetaCollections = List(
-      "flexible/special",
-      "flexible/general",
-      "scrollable/small",
-      "scrollable/medium",
-      "static/medium/4",
-    )
-
+  val BetaCollections = List(
+    "flexible/special",
+    "flexible/general",
+    "scrollable/small",
+    "scrollable/medium",
+    "static/medium/4"
+  )
 
   def getAspectRatio(collectionConfig: CollectionConfig): AspectRatio = {
     collectionConfig.collectionType match {
-      case _ if PortraitCollections.contains(collectionConfig.collectionType) => Portrait45
-      case _ if Landscape54Collections.contains(collectionConfig.collectionType) => Landscape54
+      case _ if PortraitCollections.contains(collectionConfig.collectionType) =>
+        Portrait45
+      case _
+          if Landscape54Collections.contains(collectionConfig.collectionType) =>
+        Landscape54
       case "scrollable/highlights" => Square
-      case _ => Landscape53
+      case _                       => Landscape53
     }
   }
 }

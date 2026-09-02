@@ -3,7 +3,11 @@ package com.gu.facia.client
 import com.gu.etagcaching.FreshnessPolicy.AlwaysWaitForRefreshedValue
 import com.gu.etagcaching.aws.s3.{ObjectId, S3ByteArrayFetching}
 import com.gu.etagcaching.{ConfigCache, ETagCache}
-import com.gu.facia.client.models.{CollectionJson, ConfigJson, CustomSubnavConfig}
+import com.gu.facia.client.models.{
+  CollectionJson,
+  ConfigJson,
+  CustomSubnavConfig
+}
 import play.api.libs.json.{Format, Json}
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -19,7 +23,9 @@ trait ApiClient {
 object ApiClient {
   private val Encoding = "utf-8"
 
-  private def getOrWarnAboutMissingConfig(configOpt: Option[ConfigJson]): ConfigJson =
+  private def getOrWarnAboutMissingConfig(
+      configOpt: Option[ConfigJson]
+  ): ConfigJson =
     configOpt.getOrElse(throw BackendError("Config was missing!! NOT GOOD!"))
 
   private def parseBytes[B: Format](bytes: Array[Byte]): B =
@@ -27,14 +33,14 @@ object ApiClient {
       throw JsonDeserialisationError(s"Could not deserialize JSON")
     }
 
-  /**
-   * @param s3Fetching see scaladoc on `S3ByteArrayFetching` i.e. use `S3ObjectFetching.byteArraysWith(s3AsyncClient)`
-   */
+  /** @param s3Fetching see scaladoc on `S3ByteArrayFetching` i.e. use `S3ObjectFetching.byteArraysWith(s3AsyncClient)`
+    */
   def withCaching(
-    bucket: String,
-    environment: Environment,
-    s3Fetching: S3ByteArrayFetching,
-    configureCollectionCache: ConfigCache = _.maximumSize(10000) // at most 1GB RAM worst case
+      bucket: String,
+      environment: Environment,
+      s3Fetching: S3ByteArrayFetching,
+      configureCollectionCache: ConfigCache =
+        _.maximumSize(10000) // at most 1GB RAM worst case
   )(implicit ec: ExecutionContext): ApiClient = new ApiClient {
     private val fetching =
       s3Fetching.keyOn[String](path => ObjectId(bucket, path))
@@ -46,7 +52,8 @@ object ApiClient {
     )
 
     private val configCache = eTagCache[ConfigJson](_.maximumSize(1))
-    private val collectionCache = eTagCache[CollectionJson](configureCollectionCache)
+    private val collectionCache =
+      eTagCache[CollectionJson](configureCollectionCache)
     private val subnavCache = eTagCache[CustomSubnavConfig](_.maximumSize(1))
 
     override def config: Future[ConfigJson] =

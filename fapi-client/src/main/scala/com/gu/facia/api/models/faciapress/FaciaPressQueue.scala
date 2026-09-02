@@ -4,8 +4,7 @@ import com.gu.facia.client.json.{JodaReads, JodaWrites}
 import org.joda.time.DateTime
 import play.api.libs.json._
 
-/**
-  * Strictly speaking, these models aren't part of the facia API - they are specific to communication between
+/** Strictly speaking, these models aren't part of the facia API - they are specific to communication between
   * the fronts tool and facia-press in the frontend project. It's useful to enforce consistency between the two apps
   * though to avoid messages failing to parse, and this seems the most obvious place to put them, so here they are.
   */
@@ -13,13 +12,13 @@ import play.api.libs.json._
 object PressType {
   implicit val jsonFormat: Format[PressType] = new Format[PressType] {
     override def reads(json: JsValue): JsResult[PressType] = json match {
-      case JsString("live") => JsSuccess(Live)
+      case JsString("live")  => JsSuccess(Live)
       case JsString("draft") => JsSuccess(Draft)
-      case _ => JsError("Content type must be either 'live' or 'draft'")
+      case _                 => JsError("Content type must be either 'live' or 'draft'")
     }
 
     override def writes(o: PressType): JsValue = o match {
-      case Live => JsString("live")
+      case Live  => JsString("live")
       case Draft => JsString("draft")
     }
   }
@@ -41,7 +40,7 @@ object FrontPath {
 
     override def reads(json: JsValue): JsResult[FrontPath] = json match {
       case JsString(path) => JsSuccess(FrontPath(path))
-      case _ => JsError("Front path must be a String")
+      case _              => JsError("Front path must be a String")
     }
   }
 }
@@ -55,4 +54,9 @@ object PressJob {
   implicit val jsonFormat: Format[PressJob] = Json.format[PressJob]
 }
 
-case class PressJob(path: FrontPath, pressType: PressType, creationTime: DateTime = DateTime.now, forceConfigUpdate: Option[Boolean] = Option(false))
+case class PressJob(
+    path: FrontPath,
+    pressType: PressType,
+    creationTime: DateTime = DateTime.now,
+    forceConfigUpdate: Option[Boolean] = Option(false)
+)

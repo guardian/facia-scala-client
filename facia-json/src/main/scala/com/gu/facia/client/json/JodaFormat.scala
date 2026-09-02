@@ -19,18 +19,21 @@ object JodaWrites {
 
 object JodaReads {
 
-  implicit val JodaDateTimeReads : Reads[DateTime] = new Reads[DateTime] {
+  implicit val JodaDateTimeReads: Reads[DateTime] = new Reads[DateTime] {
 
     val dateFormat = ISODateTimeFormat.dateTimeParser().withOffsetParsed()
 
-    def parse(s: String) = allCatch[DateTime] opt (DateTime.parse(s, dateFormat))
+    def parse(s: String) =
+      allCatch[DateTime] opt (DateTime.parse(s, dateFormat))
 
     def reads(json: JsValue): JsResult[DateTime] = json match {
       case JsNumber(d) => JsSuccess(new DateTime(d.toLong))
-      case JsString(s) => parse(s) match {
-        case Some(d) => JsSuccess(d)
-        case _ => JsError(JsPath(), s"error.unexpected.date.format. Date: '$s'")
-      }
+      case JsString(s) =>
+        parse(s) match {
+          case Some(d) => JsSuccess(d)
+          case _ =>
+            JsError(JsPath(), s"error.unexpected.date.format. Date: '$s'")
+        }
       case _ => JsError(JsPath(), "error.expected.date")
     }
   }
@@ -38,5 +41,6 @@ object JodaReads {
 }
 
 object JodaFormat {
-  implicit val JodaDateTimeFormat: Format[DateTime] = Format(JodaReads.JodaDateTimeReads, JodaWrites.JodaDateTimeWrites)
+  implicit val JodaDateTimeFormat: Format[DateTime] =
+    Format(JodaReads.JodaDateTimeReads, JodaWrites.JodaDateTimeWrites)
 }
