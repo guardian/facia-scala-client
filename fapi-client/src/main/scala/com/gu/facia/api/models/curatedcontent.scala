@@ -549,14 +549,14 @@ object SupportingCuratedContent {
   }
 }
 
-sealed trait EventGraphicsKind
-object EventGraphicsKind {
-  case object ElectionTracker extends EventGraphicsKind
+sealed trait EventGraphicKind
+object EventGraphicKind {
+  case object ElectionTracker extends EventGraphicKind
 }
 
 case class EventGraphic(
     id: String,
-    kind: EventGraphicsKind,
+    kind: EventGraphicKind,
     properties: ContentProperties,
     group: String
 ) extends FaciaContent {
