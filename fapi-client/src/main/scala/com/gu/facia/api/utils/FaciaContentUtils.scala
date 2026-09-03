@@ -15,14 +15,14 @@ object FaciaContentUtils {
       scc: (SupportingCuratedContent) => T,
       ls: (LinkSnap) => T,
       las: (LatestSnap) => T,
-      eg: (EventGraphics) => T
+      eg: (EventGraphic) => T
   ): T = fc match {
     case curatedContent: CuratedContent => c(curatedContent)
     case supportingCuratedContent: SupportingCuratedContent =>
       scc(supportingCuratedContent)
-    case linkSnap: LinkSnap           => ls(linkSnap)
-    case latestSnap: LatestSnap       => las(latestSnap)
-    case eventGraphics: EventGraphics => eg(eventGraphics)
+    case linkSnap: LinkSnap         => ls(linkSnap)
+    case latestSnap: LatestSnap     => las(latestSnap)
+    case eventGraphic: EventGraphic => eg(eventGraphic)
   }
 
   def maybeContent(fc: FaciaContent): Option[Content] = fold(fc)(
@@ -53,7 +53,7 @@ object FaciaContentUtils {
     scc = supportingCuratedContent => supportingCuratedContent.content.id,
     ls = linkSnap => linkSnap.id,
     las = latestSnap => latestSnap.id,
-    eg = eg => eg.id
+    eg = eg => eg.eventViewPath
   )
 
   def maybeContentId(fc: FaciaContent): Option[String] = fold(fc)(
@@ -268,7 +268,7 @@ object FaciaContentUtils {
     case c: CuratedContent           => c.supportingContent
     case _: Snap                     => Nil
     case _: SupportingCuratedContent => Nil
-    case _: EventGraphics            => Nil
+    case _: EventGraphic             => Nil
   }
 
   def starRating(fc: FaciaContent): Option[Int] = Try(

@@ -549,14 +549,11 @@ object SupportingCuratedContent {
   }
 }
 
-sealed trait EventGraphicsKind
-object EventGraphicsKind {
-  case object ElectionTracker extends EventGraphicsKind
-}
-
-case class EventGraphics(
-    id: String,
-    kind: EventGraphicsKind,
+case class EventGraphic(
+    eventViewPath: String,
+    // the graphics type, e.g. "ElectionTracker", or any other new graphics type we add in the future
+    // this is voluntarily left an open "String" rather than a sealed trait to avoid releasing the lib for each new type of events
+    kind: String,
     properties: ContentProperties,
     group: String
 ) extends FaciaContent {
