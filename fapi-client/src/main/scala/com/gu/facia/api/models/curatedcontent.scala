@@ -554,7 +554,7 @@ object EventGraphicsKind {
   case object ElectionTracker extends EventGraphicsKind
 }
 
-case class EventGraphics(
+case class EventGraphic(
     id: String,
     kind: EventGraphicsKind,
     properties: ContentProperties,

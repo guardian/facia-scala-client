@@ -392,8 +392,8 @@ object FAPI {
       supportingCuratedContent.copy(properties = properties)
     case snap: LatestSnap => snap.copy(properties = properties)
     case snap: LinkSnap   => snap.copy(properties = properties)
-    case eventGraphics: EventGraphics =>
-      eventGraphics.copy(properties = properties)
+    case eventGraphic: EventGraphic =>
+      eventGraphic.copy(properties = properties)
   }
 
   private def updateGroup(content: FaciaContent, group: String): FaciaContent =
@@ -403,8 +403,8 @@ object FAPI {
         supportingCuratedContent.copy(group = group)
       case snap: LatestSnap => snap.copy(group = group)
       case snap: LinkSnap   => snap.copy(group = group)
-      case eventGraphics: EventGraphics =>
-        eventGraphics.copy(group = group)
+      case eventGraphic: EventGraphic =>
+        eventGraphic.copy(group = group)
     }
 
   case class GroupBoostConfig(
