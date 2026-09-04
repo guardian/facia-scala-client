@@ -175,6 +175,11 @@ object Collection extends StrictLogging {
               Snap.maybeFromTrail(trail)
             }
         }
+        .orElse {
+          Option.when(trail.isEventGraphic) {
+            EventGraphic.fromTrail(trail)
+          }
+        }
     }
 
     def resolveSupportingContent(
@@ -334,13 +339,20 @@ object Collection extends StrictLogging {
     enrichContentWithVideo(liveContent)
   }
 
-  def liveIdsWithoutSnaps(collection: Collection): List[String] =
-    collection.live.filterNot(_.isSnap).map(_.id)
+  def liveContentIdsWithoutSnaps(collection: Collection): List[String] =
+    collection.live
+      .filterNot(_.isSnap)
+      .filterNot(_.isEventGraphic)
+      .map(_.id)
 
   private def allLiveSupportingItems(
       collection: Collection
   ): List[SupportingItem] =
-    collection.live.flatMap(_.meta).flatMap(_.supporting).flatten
+    collection.live
+      .filterNot(_.isEventGraphic)
+      .flatMap(_.meta)
+      .flatMap(_.supporting)
+      .flatten
 
   def liveSupportingIdsWithoutSnaps(collection: Collection): List[String] =
     allLiveSupportingItems(collection).filterNot(_.isSnap).map(_.id)
@@ -397,13 +409,22 @@ object Collection extends StrictLogging {
     enrichContentWithVideo(draftContent)
   }
 
-  def draftIdsWithoutSnaps(collection: Collection): Option[List[String]] =
-    collection.draft.map(_.filterNot(_.isSnap).map(_.id))
+  def draftContentIdsWithoutSnaps(
+      collection: Collection
+  ): Option[List[String]] =
+    collection.draft.map(
+      _.filterNot(_.isSnap).filterNot(_.isEventGraphic).map(_.id)
+    )
 
   private def allDraftSupportingItems(
       collection: Collection
   ): Option[List[SupportingItem]] =
-    collection.draft.map(_.flatMap(_.meta).flatMap(_.supporting).flatten)
+    collection.draft.map(
+      _.filterNot(_.isEventGraphic)
+        .flatMap(_.meta)
+        .flatMap(_.supporting)
+        .flatten
+    )
 
   def draftSupportingIdsWithoutSnaps(
       collection: Collection
