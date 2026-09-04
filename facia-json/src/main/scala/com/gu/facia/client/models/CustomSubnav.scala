@@ -55,30 +55,67 @@ object TargetedPage {
 sealed trait ImageBreakpoint
 object ImageBreakpoint {
   case object Mobile extends ImageBreakpoint
+  case object MobileMedium extends ImageBreakpoint
+  case object MobileLandscape extends ImageBreakpoint
+  case object Phablet extends ImageBreakpoint
   case object Tablet extends ImageBreakpoint
-  case object Web extends ImageBreakpoint
+  case object Desktop extends ImageBreakpoint
+  case object LeftCol extends ImageBreakpoint
+  case object Wide extends ImageBreakpoint
 
   implicit val imageBreakpointFormat: Format[ImageBreakpoint] =
     new Format[ImageBreakpoint] {
       override def reads(json: JsValue): JsResult[ImageBreakpoint] =
         json match {
-          case JsString("mobile") => JsSuccess(Mobile)
-          case JsString("tablet") => JsSuccess(Tablet)
-          case JsString("web")    => JsSuccess(Web)
-          case _                  => JsError("Invalid ImageBreakpoint")
+          case JsString("mobile")          => JsSuccess(Mobile)
+          case JsString("mobileMedium")    => JsSuccess(MobileMedium)
+          case JsString("mobileLandscape") => JsSuccess(MobileLandscape)
+          case JsString("phablet")         => JsSuccess(Phablet)
+          case JsString("tablet")          => JsSuccess(Tablet)
+          case JsString("desktop")         => JsSuccess(Desktop)
+          case JsString("leftCol")         => JsSuccess(LeftCol)
+          case JsString("wide")            => JsSuccess(Wide)
+          case _                           => JsError("Invalid ImageBreakpoint")
         }
 
       override def writes(o: ImageBreakpoint): JsValue = o match {
-        case Mobile => JsString("mobile")
-        case Tablet => JsString("tablet")
-        case Web    => JsString("web")
+        case Mobile          => JsString("mobile")
+        case MobileMedium    => JsString("mobileMedium")
+        case MobileLandscape => JsString("mobileLandscape")
+        case Phablet         => JsString("phablet")
+        case Tablet          => JsString("tablet")
+        case Desktop         => JsString("desktop")
+        case LeftCol         => JsString("leftCol")
+        case Wide            => JsString("wide")
+      }
+    }
+}
+
+sealed trait SubnavImagePlatform
+object SubnavImagePlatform {
+  case object Ios extends SubnavImagePlatform
+  case object WebAndroid extends SubnavImagePlatform
+
+  implicit val subnavImagePlatformFormat: Format[SubnavImagePlatform] =
+    new Format[SubnavImagePlatform] {
+      override def reads(json: JsValue): JsResult[SubnavImagePlatform] =
+        json match {
+          case JsString("ios")         => JsSuccess(Ios)
+          case JsString("web-android") => JsSuccess(WebAndroid)
+          case _                       => JsError("Invalid SubnavImagePlatform")
+        }
+
+      override def writes(o: SubnavImagePlatform): JsValue = o match {
+        case Ios        => JsString("ios")
+        case WebAndroid => JsString("web-android")
       }
     }
 }
 
 case class SubnavImage(
     imageSrc: String,
-    breakpoint: ImageBreakpoint
+    breakpoint: ImageBreakpoint,
+    platform: SubnavImagePlatform
 )
 object SubnavImage {
   implicit val subnavImageFormat: OFormat[SubnavImage] =
