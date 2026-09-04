@@ -123,7 +123,7 @@ object FAPI {
       capiClient: ContentApiClient,
       ec: ExecutionContext
   ): Response[Set[Content]] = {
-    val itemIdsForRequest = Collection.liveIdsWithoutSnaps(collection)
+    val itemIdsForRequest = Collection.liveContentIdsWithoutSnaps(collection)
     val supportingIdsForRequest =
       Collection.liveSupportingIdsWithoutSnaps(collection)
     val allItemIdsForRequest = itemIdsForRequest ::: supportingIdsForRequest
@@ -150,8 +150,8 @@ object FAPI {
   ): Response[Set[Content]] = {
     val itemIdsForRequest =
       Collection
-        .draftIdsWithoutSnaps(collection)
-        .getOrElse(Collection.liveIdsWithoutSnaps(collection))
+        .draftContentIdsWithoutSnaps(collection)
+        .getOrElse(Collection.liveContentIdsWithoutSnaps(collection))
     val supportingIdsForRequest =
       Collection
         .draftSupportingIdsWithoutSnaps(collection)
