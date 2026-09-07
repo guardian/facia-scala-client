@@ -53,7 +53,7 @@ object FaciaContentUtils {
     scc = supportingCuratedContent => supportingCuratedContent.content.id,
     ls = linkSnap => linkSnap.id,
     las = latestSnap => latestSnap.id,
-    eg = eg => eg.eventViewPath
+    eg = eg => eg.id
   )
 
   def maybeContentId(fc: FaciaContent): Option[String] = fold(fc)(
