@@ -94,20 +94,23 @@ object ImageBreakpoint {
 sealed trait SubnavImagePlatform
 object SubnavImagePlatform {
   case object Ios extends SubnavImagePlatform
-  case object WebAndroid extends SubnavImagePlatform
+  case object Web extends SubnavImagePlatform
+  case object Android extends SubnavImagePlatform
 
   implicit val subnavImagePlatformFormat: Format[SubnavImagePlatform] =
     new Format[SubnavImagePlatform] {
       override def reads(json: JsValue): JsResult[SubnavImagePlatform] =
         json match {
-          case JsString("ios")         => JsSuccess(Ios)
-          case JsString("web-android") => JsSuccess(WebAndroid)
-          case _                       => JsError("Invalid SubnavImagePlatform")
+          case JsString("ios")     => JsSuccess(Ios)
+          case JsString("web")     => JsSuccess(Web)
+          case JsString("android") => JsSuccess(Android)
+          case _                   => JsError("Invalid SubnavImagePlatform")
         }
 
       override def writes(o: SubnavImagePlatform): JsValue = o match {
-        case Ios        => JsString("ios")
-        case WebAndroid => JsString("web-android")
+        case Ios     => JsString("ios")
+        case Web     => JsString("web")
+        case Android => JsString("android")
       }
     }
 }
@@ -115,7 +118,7 @@ object SubnavImagePlatform {
 case class SubnavImage(
     imageSrc: String,
     breakpoint: ImageBreakpoint,
-    platform: SubnavImagePlatform
+    platforms: List[SubnavImagePlatform]
 )
 object SubnavImage {
   implicit val subnavImageFormat: OFormat[SubnavImage] =
