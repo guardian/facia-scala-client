@@ -27,7 +27,8 @@
       "images": [
         {
           "imageSrc": "https://media.guim.co.uk/image.jpg",
-          "breakpoint": "mobile"
+          "breakpoint": "mobile",
+          "platforms": ["web", "android"]
         }
       ],
       "palettes": {
