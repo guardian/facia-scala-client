@@ -8,7 +8,7 @@ import com.gu.facia.client.models.{
   ConfigJson,
   CustomSubnavConfig
 }
-import play.api.libs.json.{Format, Json}
+import play.api.libs.json.{Format, JsError, JsSuccess, Json}
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -29,8 +29,12 @@ object ApiClient {
     configOpt.getOrElse(throw BackendError("Config was missing!! NOT GOOD!"))
 
   private def parseBytes[B: Format](bytes: Array[Byte]): B =
-    Json.fromJson[B](Json.parse(new String(bytes, Encoding))) getOrElse {
-      throw JsonDeserialisationError(s"Could not deserialize JSON")
+    Json.fromJson[B](Json.parse(new String(bytes, Encoding))) match {
+      case JsSuccess(value, _) => value
+      case JsError(errors) =>
+        throw JsonDeserialisationError(
+          s"Failed to parse JSON: $errors"
+        )
     }
 
   /** @param s3Fetching see scaladoc on `S3ByteArrayFetching` i.e. use `S3ObjectFetching.byteArraysWith(s3AsyncClient)`

@@ -562,3 +562,14 @@ case class EventGraphic(
   override def kicker: Option[ItemKicker] = None
   override def atomId: Option[String] = None
 }
+
+object EventGraphic {
+  def fromTrail(trail: Trail): EventGraphic = {
+    EventGraphic(
+      id = trail.id.stripPrefix(Trail.eventGraphicPrefix),
+      properties =
+        ContentProperties.fromResolvedMetaData(ResolvedMetaData.Default),
+      group = trail.safeMeta.group.getOrElse("0")
+    )
+  }
+}

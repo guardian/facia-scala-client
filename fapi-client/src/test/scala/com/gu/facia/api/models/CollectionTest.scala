@@ -416,7 +416,7 @@ class CollectionTest
     }
 
     "Removes snaps from a collection and returns the ids to query" in {
-      Collection.liveIdsWithoutSnaps(collection) should be
+      Collection.liveContentIdsWithoutSnaps(collection) should be
       List(
         "internal-code/page/1",
         "internal-code/page/2",
@@ -433,7 +433,9 @@ class CollectionTest
         collectionConfig
       )
 
-      Collection.liveIdsWithoutSnaps(collectionAllSnaps) should be(List.empty)
+      Collection.liveContentIdsWithoutSnaps(collectionAllSnaps) should be(
+        List.empty
+      )
     }
   }
 

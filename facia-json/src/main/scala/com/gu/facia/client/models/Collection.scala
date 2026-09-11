@@ -238,6 +238,7 @@ case class SupportingItem(
 
 object Trail {
   implicit val jsonFormat: OFormat[Trail] = Json.format[Trail]
+  val eventGraphicPrefix: String = "event-graphic/"
 }
 
 /** @param tests the list of A/B tests configured on this trail. Note that expired tests
@@ -252,7 +253,8 @@ case class Trail(
     tests: Option[List[Test]]
 ) {
   val isSnap: Boolean = id.startsWith("snap/")
-  lazy val safeMeta = meta.getOrElse(TrailMetaData.empty)
+  val isEventGraphic: Boolean = id.startsWith(Trail.eventGraphicPrefix)
+  lazy val safeMeta: TrailMetaData = meta.getOrElse(TrailMetaData.empty)
 }
 
 object CollectionJson {
