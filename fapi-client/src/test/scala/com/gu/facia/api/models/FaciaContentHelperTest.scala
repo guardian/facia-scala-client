@@ -36,7 +36,8 @@ class FaciaContentHelperTest
       showQuotedHeadline = false,
       showLivePlayable = false,
       imageSlideshowReplace = false,
-      videoReplace = false
+      videoReplace = false,
+      multimediaSlideshowReplace = false
     )
 
   "should return 'Missing Headline' when the headline is None in a Snaps" in {
@@ -93,6 +94,8 @@ class FaciaContentHelperTest
       Map.empty,
       None,
       None,
+      None,
+      None,
       None
     )
     FaciaContentUtils.headlineOption(cc) should equal(Some("The headline"))
@@ -126,6 +129,8 @@ class FaciaContentHelperTest
       None,
       None,
       Map.empty,
+      None,
+      None,
       None,
       None,
       None
