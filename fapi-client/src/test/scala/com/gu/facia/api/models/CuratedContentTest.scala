@@ -79,7 +79,9 @@ class CuratedContentTest extends AnyFreeSpec with Matchers with TestContent {
       val trailMetaData = TrailMetaData(
         Map(
           "multimediaSlideshowReplace" -> JsBoolean(true),
-          "multimediaSlideshowAtomId" -> JsString("atom/multimediaslideshow/123")
+          "multimediaSlideshowAtomId" -> JsString(
+            "atom/multimediaslideshow/123"
+          )
         )
       )
       val curatedContent = CuratedContent.fromTrailAndContent(
