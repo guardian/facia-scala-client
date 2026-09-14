@@ -63,7 +63,8 @@ object ResolvedMetaData {
     imageCutoutReplace = false,
     showQuotedHeadline = false,
     imageSlideshowReplace = false,
-    videoReplace = false
+    videoReplace = false,
+    multimediaSlideshowReplace = false
   )
 
   def fromTrailMetaData(trailMeta: MetaDataCommonFields): ResolvedMetaData =
@@ -84,7 +85,9 @@ object ResolvedMetaData {
       imageCutoutReplace = trailMeta.imageCutoutReplace.exists(identity),
       showQuotedHeadline = trailMeta.showQuotedHeadline.exists(identity),
       imageSlideshowReplace = trailMeta.imageSlideshowReplace.exists(identity),
-      videoReplace = trailMeta.videoReplace.exists(identity)
+      videoReplace = trailMeta.videoReplace.exists(identity),
+      multimediaSlideshowReplace =
+        trailMeta.multimediaSlideshowReplace.exists(identity)
     )
 
   def fromContent(content: Content, cardStyle: CardStyle): ResolvedMetaData =
@@ -144,7 +147,9 @@ object ResolvedMetaData {
         metaDataFromContent.imageSlideshowReplace
       ),
       videoReplace =
-        trailMeta.videoReplace.getOrElse(metaDataFromContent.videoReplace)
+        trailMeta.videoReplace.getOrElse(metaDataFromContent.videoReplace),
+      multimediaSlideshowReplace = trailMeta.multimediaSlideshowReplace
+        .getOrElse(metaDataFromContent.multimediaSlideshowReplace)
     )
   }
 
@@ -167,7 +172,8 @@ object ResolvedMetaData {
             imageCutoutReplace,
             showQuotedHeadline,
             imageSlideshowReplace,
-            videoReplace
+            videoReplace,
+            multimediaSlideshowReplace
           ) =>
         Map(
           "isBreaking" -> isBreaking,
@@ -197,7 +203,8 @@ object ResolvedMetaData {
           "imageCutoutReplace" -> imageCutoutReplace,
           "showQuotedHeadline" -> showQuotedHeadline,
           "imageSlideshowReplace" -> imageSlideshowReplace,
-          "videoReplace" -> videoReplace
+          "videoReplace" -> videoReplace,
+          "multimediaSlideshowReplace" -> multimediaSlideshowReplace
         )
     }
 }
@@ -219,7 +226,8 @@ case class ResolvedMetaData(
     imageCutoutReplace: Boolean,
     showQuotedHeadline: Boolean,
     imageSlideshowReplace: Boolean,
-    videoReplace: Boolean
+    videoReplace: Boolean,
+    multimediaSlideshowReplace: Boolean
 )
 
 object ContentProperties {
@@ -239,7 +247,8 @@ object ContentProperties {
       showByline = resolvedMetaData.showByline,
       showQuotedHeadline = resolvedMetaData.showQuotedHeadline,
       imageSlideshowReplace = resolvedMetaData.imageSlideshowReplace,
-      videoReplace = resolvedMetaData.videoReplace
+      videoReplace = resolvedMetaData.videoReplace,
+      multimediaSlideshowReplace = resolvedMetaData.multimediaSlideshowReplace
     )
 }
 
@@ -256,5 +265,6 @@ case class ContentProperties(
     showByline: Boolean,
     showQuotedHeadline: Boolean,
     imageSlideshowReplace: Boolean,
-    videoReplace: Boolean
+    videoReplace: Boolean,
+    multimediaSlideshowReplace: Boolean
 )
