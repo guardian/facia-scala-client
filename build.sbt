@@ -26,7 +26,9 @@ val sonatypeReleaseSettings = Seq(
 def artifactProducingSettings(supportScala3: Boolean) = Seq(
   organization := "com.gu",
   licenses := Seq(License.Apache2),
-  crossScalaVersions := Seq(scalaVersion.value) ++ (if (supportScala3) Seq("3.3.8") else Seq.empty),
+  crossScalaVersions := Seq(scalaVersion.value) ++ (if (supportScala3)
+                                                      Seq("3.9.0")
+                                                    else Seq.empty),
   scalacOptions := Seq(
     "-release:11",
     "-feature",
@@ -42,49 +44,62 @@ lazy val fapiClient_core = (project in file("fapi-client-core")).settings(
   artifactProducingSettings(supportScala3 = true)
 )
 
-lazy val root = (project in file(".")).aggregate(
+lazy val root = (project in file("."))
+  .aggregate(
     fapiClient_core,
     faciaJson_play30,
     fapiClient_play30
-  ).settings(
+  )
+  .settings(
     publish / skip := true,
     sonatypeReleaseSettings
   )
 
-def playJsonSpecificProject(module: String, playJsonVersion: PlayJsonVersion) = Project(s"$module-${playJsonVersion.projectId}", file(s"$module-${playJsonVersion.projectId}"))
-  .settings(
-    sourceDirectory := baseDirectory.value / s"../$module/src"
+def playJsonSpecificProject(module: String, playJsonVersion: PlayJsonVersion) =
+  Project(
+    s"$module-${playJsonVersion.projectId}",
+    file(s"$module-${playJsonVersion.projectId}")
   )
+    .settings(
+      sourceDirectory := baseDirectory.value / s"../$module/src"
+    )
 
-def faciaJson(playJsonVersion: PlayJsonVersion) = playJsonSpecificProject("facia-json", playJsonVersion)
-  .dependsOn(fapiClient_core)
-  .settings(
-    libraryDependencies ++= Seq(
-      jodaTime,
-      commonsIo,
-      playJsonVersion.lib,
-      scalaLogging
-    ),
-    artifactProducingSettings(supportScala3 = true)
-  )
+def faciaJson(playJsonVersion: PlayJsonVersion) =
+  playJsonSpecificProject("facia-json", playJsonVersion)
+    .dependsOn(fapiClient_core)
+    .settings(
+      libraryDependencies ++= Seq(
+        jodaTime,
+        commonsIo,
+        playJsonVersion.lib,
+        scalaLogging
+      ),
+      artifactProducingSettings(supportScala3 = true)
+    )
 
-def fapiClient(playJsonVersion: PlayJsonVersion) =  playJsonSpecificProject("fapi-client", playJsonVersion)
-  .settings(
-    libraryDependencies ++= Seq(
-      eTagCachingS3SupportForTesting,
-      contentApi,
-      contentApiDefault,
-      commercialShared,
-      scalaTestMockito,
-      mockito,
-    ),
-    artifactProducingSettings(supportScala3 = false) // currently blocked by contentApi & commercialShared clients
-  )
+def fapiClient(playJsonVersion: PlayJsonVersion) =
+  playJsonSpecificProject("fapi-client", playJsonVersion)
+    .settings(
+      libraryDependencies ++= Seq(
+        eTagCachingS3SupportForTesting,
+        contentApi,
+        contentApiDefault,
+        commercialShared,
+        scalaTestMockito,
+        mockito
+      ),
+      artifactProducingSettings(supportScala3 =
+        false
+      ) // currently blocked by contentApi & commercialShared clients
+    )
 
 lazy val faciaJson_play30 = faciaJson(PlayJsonVersion.V30)
-lazy val fapiClient_play30 = fapiClient(PlayJsonVersion.V30).dependsOn(faciaJson_play30)
+lazy val fapiClient_play30 =
+  fapiClient(PlayJsonVersion.V30).dependsOn(faciaJson_play30)
 
-Test/testOptions += Tests.Argument(
+Test / testOptions += Tests.Argument(
   TestFrameworks.ScalaTest,
-  "-u", s"test-results/scala-${scalaVersion.value}", "-o"
+  "-u",
+  s"test-results/scala-${scalaVersion.value}",
+  "-o"
 )
