@@ -1,1 +1,1 @@
-ThisBuild / version := "42.0.1-SNAPSHOT"
+ThisBuild / version := "43.0.0-PREVIEW.abbump-dependency.2026-09-23T1114.431b077f"
