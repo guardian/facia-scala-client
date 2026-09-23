@@ -231,6 +231,8 @@ object TestModel {
     def aliasPaths: Option[Seq[AliasPath]] = None
     def channels: Option[collection.Seq[ContentChannel]] = None
     def schemaOrg: Option[SchemaOrg] = None
+    def abTests: Option[collection.Seq[ABTest]] = None
+    def isVariantOf: Option[String] = None
   }
   implicit val stubItemFormat: Reads[StubItem] = Json.reads[StubItem]
 
