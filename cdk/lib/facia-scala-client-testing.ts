@@ -15,7 +15,8 @@ export class FaciaScalaClientTesting extends GuStack {
                 {
                     actions: [
                         "s3:GetObject", // required by FAPI to download files
-                        "s3:ListBucket" // avoiding S3 AccessDenied errors when FAPI tries to get nonexistent objects
+                        "s3:ListBucket", // avoiding S3 AccessDenied errors when FAPI tries to get nonexistent objects
+                        "sts:AssumeRoleWithWebIdentity" // required for GitHub Actions to assume this role
                     ],
                     resources: [
                         `${fapiBucketArn}/DEV/*`, // object resource specified for s3:GetObject
@@ -25,7 +26,13 @@ export class FaciaScalaClientTesting extends GuStack {
             )],
             condition: {
                 githubOrganisation: "guardian",
-                repositories: "facia-scala-client:*"
+                repositories: "facia-scala-client:*",
+                "StringEquals": {
+                    "token.actions.githubusercontent.com:aud": "sts.amazonaws.com"
+                },
+                "StringLike": {
+                    "token.actions.githubusercontent.com:sub": "repo:guardian@164318/facia-scala-client@20723151:*"
+                }
             }
         })
     }
