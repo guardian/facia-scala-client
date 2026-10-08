@@ -1,7 +1,6 @@
-Facia Scala Client [![fapi-client-play30 Scala version support](https://index.scala-lang.org/guardian/facia-scala-client/fapi-client-play30/latest-by-scala-version.svg)](https://index.scala-lang.org/guardian/facia-scala-client/fapi-client-play30) [![Release](https://github.com/guardian/facia-scala-client/actions/workflows/release.yml/badge.svg)](https://github.com/guardian/facia-scala-client/actions/workflows/release.yml)
-==================
+# Facia Scala Client [![fapi-client-play30 Scala version support](https://index.scala-lang.org/guardian/facia-scala-client/fapi-client-play30/latest-by-scala-version.svg)](https://index.scala-lang.org/guardian/facia-scala-client/fapi-client-play30) [![Release](https://github.com/guardian/facia-scala-client/actions/workflows/release.yml/badge.svg)](https://github.com/guardian/facia-scala-client/actions/workflows/release.yml)
 
-Facia's Scala client is split into two parts.
+Facia's Scala client is split into two parts:
 
 ## The Fronts API client
 
@@ -27,8 +26,8 @@ Add the following line to your [SBT build file](https://www.scala-sbt.org/1.0/do
 
 To use the Fronts API client you will need instances of:
 
-* the content API client
-* the underlying Facia JSON library
+- the content API client
+- the underlying Facia JSON library
 
 These instances will need to be configured with your access/API keys. The `FAPI` class contains
 the public interface to the behaviour in the library. Examples of how to use the client can be
