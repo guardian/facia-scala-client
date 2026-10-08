@@ -391,6 +391,8 @@ case class CuratedContent(
     override val brandingByEdition: BrandingByEdition,
     atomId: Option[String],
     mediaAtom: Option[Atom],
+    multimediaSlideshowAtomId: Option[String],
+    multimediaSlideshowAtom: Option[Atom],
     tests: Option[List[Test]]
 ) extends FaciaContent
 
@@ -456,6 +458,8 @@ object CuratedContent {
       brandingByEdition = content.brandingByEdition,
       trailMetaData.atomId,
       None,
+      trailMetaData.multimediaSlideshowAtomId,
+      None,
       tests
     )
   }
@@ -501,6 +505,8 @@ object CuratedContent {
       embedCss = trailMetaData.snapCss,
       brandingByEdition = content.brandingByEdition,
       trailMetaData.atomId,
+      None,
+      trailMetaData.multimediaSlideshowAtomId,
       None,
       tests
     )
