@@ -3,6 +3,7 @@ Facia Scala Client [![fapi-client-play30 Scala version support](https://index.sc
 
 Facia's Scala client is split into two parts.
 
+temp
 ## The Fronts API client
 
 The `fapi-client` project contains the main Fronts API client. This provides ways to fetch Fronts
