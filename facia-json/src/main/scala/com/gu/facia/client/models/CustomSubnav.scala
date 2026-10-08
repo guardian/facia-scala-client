@@ -127,9 +127,9 @@ object SubnavImage {
 
 case class CustomSubnavHeader(
     headerText: String,
-    showHeaderText: Boolean = true,
     dotcomPath: Option[String],
-    copy: String
+    copy: String,
+    showHeaderText: Boolean = true,
 )
 object CustomSubnavHeader {
   implicit val customSubnavHeaderFormat: OFormat[CustomSubnavHeader] =
