@@ -9,7 +9,8 @@ export class FaciaScalaClientTesting extends GuStack {
         super(scope, id, props);
         const fapiBucketArn = 'arn:aws:s3:::facia-tool-store';
 
-        const role = new Role(this, 'GithubActionsRole', {
+        const role = new Role(this, 'FaciaScalaClientCIRole', {
+            roleName: 'facia-scala-client-ci', // Explicit name for clarity
             assumedBy: new FederatedPrincipal(
                 `arn:aws:iam::${this.account}:oidc-provider/token.actions.githubusercontent.com`,
                 {
@@ -17,7 +18,6 @@ export class FaciaScalaClientTesting extends GuStack {
                         'token.actions.githubusercontent.com:aud': 'sts.amazonaws.com',
                     },
                     StringLike: {
-                        // guardian org id (164318) + facia-scala-client repo id (20723151)
                         'token.actions.githubusercontent.com:sub':
                             'repo:guardian@164318/facia-scala-client@20723151:*',
                     },
@@ -29,16 +29,16 @@ export class FaciaScalaClientTesting extends GuStack {
         role.addToPolicy(
             new PolicyStatement({
                 actions: [
-                    's3:GetObject', // required by FAPI to download files
-                    's3:ListBucket', // avoids S3 AccessDenied when FAPI requests nonexistent objects
+                    's3:GetObject',
+                    's3:ListBucket',
                 ],
                 resources: [
-                    `${fapiBucketArn}/DEV/*`, // object resource for s3:GetObject
-                    fapiBucketArn, // bucket resource for s3:ListBucket
+                    `${fapiBucketArn}/DEV/*`,
+                    fapiBucketArn,
                 ],
             }),
         );
 
-        new CfnOutput(this, 'GithubActionsRole-Arn', { value: role.roleArn });
+        new CfnOutput(this, 'FaciaScalaClientCIRoleArn', { value: role.roleArn });
     }
 }
