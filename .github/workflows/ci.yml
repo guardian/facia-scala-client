@@ -20,9 +20,8 @@ jobs:
         uses: actions/checkout@v3
       - uses: aws-actions/configure-aws-credentials@v6 # Needed for S3 read access for the tests!
         with:
-          # The AWS role is configured as a GitHub Repo secret, the value is the cloudformation-output of the
-          # 'Facia-Scala-Client-CI-Role-Provider' cloudformation stack.
-          role-to-assume: ${{ secrets.AWS_ROLE_FOR_TESTS }}
+          # This is a temp change, to avoid updating the original value until tested
+          role-to-assume: ${{ secrets.AWS_ROLE_FOR_TESTS_UPDATED }}
           aws-region: eu-west-1
       - uses: guardian/setup-scala@v2
       - name: Build and Test
