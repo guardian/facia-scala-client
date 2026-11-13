@@ -26,7 +26,7 @@ object Dependencies {
   val scalaTestMockito = "org.scalatestplus" %% "mockito-5-23" % "3.2.20.0" % Test
   val scalaTest = "org.scalatest" %% "scalatest" % "3.2.20" % Test
   val scalaLogging = "com.typesafe.scala-logging" %% "scala-logging" % "3.9.6"
-  val commercialShared = "com.gu" %% "commercial-shared" % "6.1.8"
+  val commercialShared = "com.gu" %% "commercial-shared" % "6.2.10"
 
   case class PlayJsonVersion(
       majorMinorVersion: String,
