@@ -2,7 +2,7 @@ import sbt.*
 
 object Dependencies {
   val capiVersion = "52.0.0"
-  val eTagCachingVersion = "18.0.0"
+  val eTagCachingVersion = "19.0.2"
   val jacksonVersion = "2.18.11"
 
   // Keep Play JSON's Jackson modules aligned on a patched release.
