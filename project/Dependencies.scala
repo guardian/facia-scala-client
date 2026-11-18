@@ -1,7 +1,7 @@
 import sbt.*
 
 object Dependencies {
-  val capiVersion = "51.0.0"
+  val capiVersion = "52.0.0"
   val eTagCachingVersion = "18.0.0"
   val jacksonVersion = "2.18.11"
 
