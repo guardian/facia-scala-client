@@ -19,7 +19,7 @@ class CustomSubnavServiceTest extends AnyFreeSpec with Matchers with TestContent
       header = CustomSubnavHeader("Header", None, "Copy"),
       format = Large,
       links = Nil,
-      pages = None,
+      pages = Some(pages),
       images = None,
       palette = None,
       lastUpdated = updatedAt,
