@@ -168,7 +168,7 @@ case class CustomSubnav(
     header: CustomSubnavHeader,
     format: CustomSubnavFormat,
     links: List[SubnavLink],
-    pages: List[TargetedPage],
+    pages: Option[List[TargetedPage]],
     images: Option[List[SubnavImage]],
     palette: Option[Palettes],
     lastUpdated: DateTime,
