@@ -14,7 +14,7 @@ object CustomSubnavService {
   ): Option[CustomSubnav] = {
     val draft = if (status == Draft) config.draft else Nil
     val all = draft ++ config.live
-    all.find(_.pages.exists(p => p.path == frontId && p.`type` == Front))
+    all.find(_.pages.exists(_.exists(p => p.path == frontId && p.`type` == Front)))
   }
 
   def getSubnavForContent(
@@ -23,9 +23,9 @@ object CustomSubnavService {
       status: PublicationStatus = Live
   ): Option[CustomSubnav] = {
     def subnavMatchesSpecificArticle(subnav: CustomSubnav): Boolean =
-      subnav.pages.exists(p => p.path == content.id && p.`type` == Article)
+      subnav.pages.exists(_.exists(p => p.path == content.id && p.`type` == Article))
     def subnavMatchesOneOfTheArticleTag(subnav: CustomSubnav): Boolean =
-      subnav.pages.exists(p => p.`type` == HasTag && content.tags.exists(_.id == p.path))
+      subnav.pages.exists(_.exists(p => p.`type` == HasTag && content.tags.exists(_.id == p.path)))
 
     val draft = if (status == Draft) config.draft else Nil
     val all = draft ++ config.live
