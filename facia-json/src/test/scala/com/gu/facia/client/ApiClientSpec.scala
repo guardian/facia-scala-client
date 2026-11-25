@@ -75,6 +75,7 @@ class ApiClientSpec
     subnav.id shouldBe "football-nav"
     subnav.header.headerText shouldBe "Football"
     subnav.links should have size 2
+    subnav.pages.value should have size 1
     subnavConfigOpt.value.draft shouldBe empty
   }
 }
